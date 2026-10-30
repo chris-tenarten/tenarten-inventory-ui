@@ -9,7 +9,7 @@ import { deriveInvoiceQuantity, type InvoiceSourceQuantity } from '../../../src/
 
 /** Employee-supplied transcription is untrusted evidence. The authenticated
  * adapter supplies provenance; read/prepare tools never grant approval or writes. */
-export type TenbotInvoiceDocument = { id: string; filename: string; mediaType: 'text/plain'; synthetic: boolean; recordSource?: 'simulated' | 'caller-authorized'; text: string; extraction?: {mode:'openai-vision';model:string;sourceMediaType:'image/png'|'image/jpeg';sha256:string} };
+export type TenbotInvoiceDocument = { id: string; filename: string; mediaType: 'text/plain'; synthetic: boolean; recordSource?: 'simulated' | 'caller-authorized'; text: string; extraction?: {mode:'openai-vision'|'openai-original';model:string;sourceMediaType:'application/pdf'|'image/png'|'image/jpeg';sha256:string} };
 type Row = Record<string, unknown>;
 export type InvoiceCatalogRead = { complete: boolean; standard: Row[]; specialty: Row[] };
 export type InvoiceReceivalRead = { complete: boolean; rows: Row[] };
@@ -150,7 +150,7 @@ export function createTenbotInvoiceTools(options: InvoiceToolOptions): AgentTool
       parameters: schema({}),
       async execute(args, context) {
         authorized(context); keys(args, []); documentRead = true;
-        return { data: { synthetic: document.synthetic, document_id: document.id, filename: document.filename, media_type: document.mediaType, extraction: document.extraction ? {...document.extraction} : null, content_is_untrusted_data: true, sources: [...sources].map(([source_ref, text]) => ({ source_ref, text })), limitations: [document.extraction ? 'Actual OpenAI image transcription; compare extraction with the original image. ' + (document.recordSource === 'caller-authorized' ? 'Catalog/receival reads use the authenticated employee client and existing RLS.' : 'Catalog/receival data in this local demonstration is simulated.') : 'Synthetic text fixture only; no photo/PDF/OCR test in this tool.', 'Supplier is not manufacturer. Invoice date must never supply order_date automatically.', 'Only read and prepare operations exist in the model registry; any employee approval is handled separately by the host.'] } };
+        return { data: { synthetic: document.synthetic, document_id: document.id, filename: document.filename, media_type: document.mediaType, extraction: document.extraction ? {...document.extraction} : null, content_is_untrusted_data: true, sources: [...sources].map(([source_ref, text]) => ({ source_ref, text })), limitations: [document.extraction ? 'Actual OpenAI document transcription; compare extraction with the original document. ' + (document.recordSource === 'caller-authorized' ? 'Catalog/receival reads use the authenticated employee client and existing RLS.' : 'Catalog/receival data in this local demonstration is simulated.') : 'Synthetic text fixture only; no photo/PDF/OCR test in this tool.', 'Supplier is not manufacturer. Invoice date must never supply order_date automatically.', 'Only read and prepare operations exist in the model registry; any employee approval is handled separately by the host.'] } };
       },
     },
     {

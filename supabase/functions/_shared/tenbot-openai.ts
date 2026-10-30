@@ -20,12 +20,21 @@ export type OpenAIProviderOptions = {
   fetcher?: typeof fetch; timeoutMs?: number;
   /** Hosted accounting pins both the model and Standard service tier. */
   requireResponseMetadata?:boolean;
+  /** Server-downloaded original only. Never a caller-supplied URL or derivative.
+   * File/image inputs require an exact pre-count before the shared reservation. */
+  originalAttachment?:{filename:string;mediaType:'application/pdf'|'image/png'|'image/jpeg';bytes:Uint8Array};
 };
 const encoder = new TextEncoder();
 const ENDPOINT = 'https://api.openai.com/v1/responses';
+const COUNT_ENDPOINT = ENDPOINT+'/input_tokens';
 const MAX_REQUEST_BYTES = 180000;
 const MAX_RESPONSE_BYTES = 96000;
 function object(value: unknown): value is Record<string, unknown> { return !!value && typeof value === 'object' && !Array.isArray(value); }
+function originalContent(original:NonNullable<OpenAIProviderOptions['originalAttachment']>):JsonValue {
+  let binary='';for(let offset=0;offset<original.bytes.length;offset+=8192)binary+=String.fromCharCode(...original.bytes.subarray(offset,offset+8192));
+  const data='data:'+original.mediaType+';base64,'+btoa(binary);
+  return original.mediaType==='application/pdf'?{type:'input_file',filename:original.filename,file_data:data,detail:'high'}:{type:'input_image',image_url:data,detail:'high'};
+}
 function validPrice(price: OpenAIPrice) { return object(price) && Object.keys(price).length === 4 && ['inputPerMillion', 'cachedInputPerMillion', 'cacheWritePerMillion', 'outputPerMillion'].every(key => typeof price[key as keyof OpenAIPrice] === 'number' && Number.isFinite(price[key as keyof OpenAIPrice]) && price[key as keyof OpenAIPrice] >= 0) && price.inputPerMillion > 0 && price.outputPerMillion > 0 && price.cachedInputPerMillion <= price.inputPerMillion && price.cacheWritePerMillion >= price.inputPerMillion; }
 function nativeInput(request: AgentStepRequest): JsonValue[] {
   const items: JsonValue[] = [];
@@ -115,15 +124,30 @@ export function createOpenAIProvider(options: OpenAIProviderOptions): AgentProvi
   // Copy configuration so later mutation cannot silently authorize spending or alter pricing.
   const model = options.model; const price = { ...options.pricing }; const spendingAuthorized = options.spendingAuthorized === true;
   const apiKey = options.apiKey; const fetcher = options.fetcher ?? fetch; const reserve = options.reserveBudget; const timeoutMs = options.timeoutMs ?? 25000; const requireResponseMetadata=options.requireResponseMetadata===true;
+  const original=options.originalAttachment?{...options.originalAttachment,bytes:new Uint8Array(options.originalAttachment.bytes)}:null;
+  if(original&&(!original.filename.trim()||original.filename.length>180||/[\u0000-\u001f\u007f]/.test(original.filename)||!['application/pdf','image/png','image/jpeg'].includes(original.mediaType)||!original.bytes.length||original.bytes.length>12000000))throw new AgentStepError('invalid-original-attachment');
   return { name: 'OpenAI Responses', model, async step(request) {
     if (!spendingAuthorized) throw new AgentStepError('spending-not-authorized');
     if (typeof apiKey !== 'string' || apiKey.trim().length < 16 || !reserve) throw new AgentStepError('provider-not-configured');
     if (request.signal.aborted) throw new AgentStepError('provider-cancelled');
-    const body = JSON.stringify(buildOpenAIRequest(model, request)); const inputBytes = encoder.encode(body).byteLength;
-    if (inputBytes > MAX_REQUEST_BYTES) throw new AgentStepError('oversized-request');
+    const value=buildOpenAIRequest(model, request),textBytes=encoder.encode(JSON.stringify(value)).byteLength;
+    if(textBytes>MAX_REQUEST_BYTES)throw new AgentStepError('oversized-request');
+    if(original){const input=value.input as Record<string,JsonValue>[],last=input.filter(item=>item.role==='user').at(-1);if(!last||typeof last.content!=='string')throw new AgentStepError('invalid-original-input');last.content=[{type:'input_text',text:last.content},originalContent(original)];}
+    const body = JSON.stringify(value); const inputBytes = encoder.encode(body).byteLength;
+    if (inputBytes > (original?16200000:MAX_REQUEST_BYTES)) throw new AgentStepError('oversized-request');
+    let documentTokens=0;
+    if(original){
+      // Same original input as the model request; no Files service or public URL.
+      // Counted document tokens are added to the ordinary text/framing bound,
+      // deliberately over-reserving text rather than guessing page/image cost.
+      let response:Response;try{response=await fetcher(COUNT_ENDPOINT,{method:'POST',headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json'},body:JSON.stringify({model,instructions:value.instructions,input:value.input,tools:value.tools}),signal:AbortSignal.any([request.signal,AbortSignal.timeout(10000)])});}catch{throw new AgentStepError('document-token-count-unavailable');}
+      const raw=await response.text();if(!response.ok||raw.length>10000)throw new AgentStepError('document-token-count-unavailable');
+      let counted:unknown;try{counted=JSON.parse(raw);}catch{throw new AgentStepError('invalid-document-token-count');}
+      if(!object(counted)||counted.object!=='response.input_tokens'||!Number.isSafeInteger(counted.input_tokens)||Number(counted.input_tokens)<=0||Number(counted.input_tokens)>50000)throw new AgentStepError('invalid-document-token-count');documentTokens=Number(counted.input_tokens);
+    }
     // UTF-8 bytes plus framing conservatively bound text tokens. Assume every
     // input token incurs the pinned 30m cache-write rate; no cache hit is promised.
-    const reserved = ((inputBytes + 2048) * price.cacheWritePerMillion + request.maxOutputTokens * price.outputPerMillion) / 1000000;
+    const reserved = ((documentTokens+(original?textBytes:inputBytes)+2048) * price.cacheWritePerMillion + request.maxOutputTokens * price.outputPerMillion) / 1000000;
     if (!Number.isFinite(request.remainingUsd) || reserved > request.remainingUsd + 1e-9) throw new AgentStepError('request-budget-unavailable');
     let reservation: BudgetReservation;
     try { reservation = await reserve(reserved); } catch { throw new AgentStepError('request-budget-unavailable'); }
