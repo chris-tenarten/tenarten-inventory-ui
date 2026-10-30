@@ -1352,5 +1352,33 @@
       "heading": "## Accepted candidate source review — dormant chris_dev canary"
     },
     "acceptedAuthorityRevision": "596b33c5682edf24cfaf3d613b23569e1ea42801"
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-messaging",
+    "path": "docs/project-memory/CURRENT_STATE.md",
+    "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+    "afterBlob": "f6b905fb369c253902fa6883ee957a8e898aed93",
+    "recordDigest": "868e7190ae61c7e32e9963edf4669636cddd31a1cdb9a670af98713e8eb33a9c",
+    "reviewedCandidate": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+      "heading": "## Accepted record source review — dormant canary status appendix"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-proposals",
+    "path": "docs/project-memory/CURRENT_STATE.md",
+    "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+    "afterBlob": "f6b905fb369c253902fa6883ee957a8e898aed93",
+    "recordDigest": "64bc5848f3e589dea04a8aab52b77794bfba2379db835c1e8731746d262bb792",
+    "reviewedCandidate": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+      "heading": "## Accepted record source review — dormant canary status appendix"
+    }
   }
 ]
