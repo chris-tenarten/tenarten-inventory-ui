@@ -1,0 +1,93 @@
+# TenBot receival candidate release-proof review — October 30, 2026
+
+Status: focused source-proof correction for a local TenDev-preparation candidate. This is not deployment, migration-application or write-canary evidence. Chris’s current explicit release-proof correction governs; the separate Advisory thread is unavailable. Tier 3 / focused Level 3 review reuses the accepted isolated PostgreSQL, Storage, permission, quantity, browser and native-document evidence. No inference, hosted changes, operational rows, migration application or broad audit was performed for this receipt.
+
+The accepted implementation is `ffed10ac28736e48ecff8edf032a3b414254f307`; canonical released application source is `2a3e45c64163968d421d77b5a41a49f5ac469fc2`, represented by canonical preparation base `c63527cc2f270a5d8cdb41890bd871b489be467d`. The initial exact selective source object is `f4998e1e7fb78d03cb6583d32da8226b3681af79`. Select the 14 accepted application overlays from the accepted manifest and only the five-line Inventory completion listener; preserve canonical knowledge, Messaging, document authority, and unrelated work. The final proof receipt commit identifies the exact selected source tree through the review metadata; this document does not contain or invent its own commit hash.
+
+## Accepted record source review — Inventory completion refresh
+
+Chris accepts `ffed10ac28736e48ecff8edf032a3b414254f307` and its documented selective release scope; this focused review verifies the already accepted Inventory completion listener against six existing claims.
+
+Business meaning, permission policy, lifecycle and effects are unchanged for the six existing employee knowledge records below. This statement concerns their existing claims and grants, not the entire new restricted invoice/source/approval implementation. No claim is expanded to say that the candidate is deployed, migrations are applied, or any employee may execute agent writes. The new listener only calls the existing `loadPendingReceivals` reader on `tenops:pending-receivals-changed` and removes its listener on unmount. No manual form, receiving, stock movement, reservation, canonical service, permission or knowledge prose is replaced.
+
+All six comparisons use `src/app/inventory/page.tsx`, pinned/canonical before blob `d7f7b77a202883eabb445dde88f6f6b481cc434b`, selected after blob `dd5ee510821dd9bd39c52916f19c90a0bfaa61a8`, selected SHA256 `d3017e5037f9e0840097abe8b1a295f379999055e7c5e6066f08be05a0d35dc1`. The exact canonical-to-selected diff contains only that listener. The dev helper `src/modules/inventory/pending-receival-contract.ts`, blob `51fd2c3668dda59facb07d00612ce09eb24c9b27`, belonged to the older reviewed dev Inventory blob `081d40a120cd8ce4bbc6be884f282cf0c27ce377`. It is deliberately absent from the selected tree and is not an additional dependency of these six exact current inline-source reviews. The canonical inline source does not import that helper; restoring its bytes is not required to preserve these claims. This is an explicit review of the selected source and dependency shape, not permission to ignore a changed helper used by an otherwise current review.
+
+| Record ID | Unchanged content/authority digest | Focused semantic conclusion |
+|---|---|---|
+| `inventory-pending-create` | `240867443b00f8f12d50578963ff6337c5a38701c9d5833f7ea0f2a384c70a00` | The manual + Pending Receival form, Add Pending Receivals/Save Changes labels, required fields, positive expected quantity and no-on-hand effect remain unchanged. The completion event only reloads the existing caller-scoped queue reader. |
+| `inventory-pending-receive` | `53015734080f00d2a16f67984ef72f44b1de3a4695be5bfd831f423704e1257f` | The Received By / Quantity received now / Confirm Receive flow, remaining-balance bounds, existing receipt RPCs, reservation identity and undo limits remain unchanged. No completion-event handler receives material. |
+| `inventory-stock-movement` | `2b74456d88bd763a77940da9ff284938b21aa4288bd834465677bae46dfc1f36` | Record Stock, Intake/Outtake and selected-lot Stock Movement paths, lot matching, available-stock bounds and Activity effects remain byte-identical. The listener does not call these writes. |
+| `inventory-stock-reservation` | `1d52c259c505a87b45313a6fcd635126f64e40c375a6dcd906fb8f4b9893fdd0` | Canonical Job, temporary work label and general-stock identities, split/release validation and existing Save Details/Return to General Stock actions remain unchanged. No new Job or reservation authority is introduced. |
+| `inventory-stock-search` | `44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a` | Current Inventory grouping/search/selected-lot behavior, reservation separation, loadData and existing operational-read checks remain unchanged. Only pending-queue refresh is added. |
+| `knowledge-inventory` | `1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb` | The existing overview still distinguishes pending from on-hand, read from mutation, receive permission from adjustment permission, and reservation identities. The three selected Manifest Inventory/receiving paragraphs and claim/grant digest remain unchanged; the new restricted agent is not described as deployed knowledge. |
+
+Preserve all 42 original dev reviews and append the 12 distinct canonical-only reviews, including all 13 authentic canonical historical entries. Older no-claim reviews remain historical proof of their exact source/dependency trees. A candidate retaining its original pinned before blob needs no semantic-change acknowledgment. Where these six exact current reviews replace an older dev source/dependency shape, the replacement must be bound to the same record, semantic path and unchanged content/authority digest; current-source helper drift or changed claims remain held. The existing `knowledge-inventory` Manifest binding retains its independent exact canonical receipt. No other record review is broadened by this table. Existing semantic or authority changes outside these tuples remain held.
+
+## Accepted candidate source review — restricted TenDev preparation
+
+Chris accepts the exact `ffed10ac28736e48ecff8edf032a3b414254f307` implementation for disabled-first TenDev preparation and the ten listed migration contents. These are accepted candidate sources and unapplied migrations, not historically deployed source or proof of database application. Scope is `tendev-preparation`, origin `https://tendev.pages.dev`. The original ten migration bytes and business source remain frozen. New cleanup-authentication corrections, if included, require their separate technical-candidate section and are not retroactively attributed to this acceptance.
+
+The new invoice/provider/runtime paths add real lifecycle behavior: private immutable original evidence, native document input, bounded caller-scoped investigation, durable review/CAS, exact approval, execution permits and canonical dependent creation. They therefore must not be classified as generic infrastructure with globally unchanged lifecycle/effects. Existing employee knowledge claims stay unchanged and ordinary Production behavior remains outside activation. Caller JWT/RBAC/RLS, independent catalog permission, immutable approval, transaction/idempotency/audit/quantity checks, no on-hand increase and shared spending enforcement remain hard boundaries. The service client is restricted to fixed metadata/metering RPCs and is not passed to business tools. No model has an approval or execution tool.
+
+Scope: tendev-preparation.
+
+This review is not evidence of hosted application or deployment.
+
+This review grants no migration application, write activation, push or deployment authority.
+
+| Path | Git blob | SHA256 | Authority | Kind | Accepted authority revision |
+|---|---|---|---|---|---|
+| supabase/functions/_shared/tenbot-invoice-catalog.ts | e25dc58ba1edac7488f4ead934ce2a227856365a | 37911acdadc696ab28672b66112d6b25ddf6568570a8de13d393343a0996668b | product-accepted | runtime | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/functions/_shared/tenbot-invoice-extraction.ts | eeb1e886c17f88c23a3bcd5ea7ea89387be7865d | 53e7a45ff333652e0ff62787a06d85d2f58851c0562cac8a243d78d232bf06c2 | product-accepted | runtime | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/functions/_shared/tenbot-invoice.ts | a29a491925002f37dfa231b72002f0423186ca93 | 70aacad48a2897061aa71c70cb6d9fa6f3436620cbca2ce3dfcb39d93c2fe6cc | product-accepted | runtime | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/functions/_shared/tenbot-openai.ts | 9eee1e6256f5e88168eeafea1be1f93e7f50f53d | 15beeaa80b55725f6984616d58fbc9253834ecc12939991250d20934327f846a | product-accepted | runtime | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/functions/_shared/tenbot-receival-cleanup.ts | 703247d7ef77bba67a96c71f65491dde99ceb0ad | ddfb957d32f1be4f3b2f89e730d6f0333542d6c736d099d99db6d281f1a10187 | product-accepted | runtime | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/functions/_shared/tenbot-receival-hosted.ts | 8d57402b8a4cb074f1b7a1eebd9eb1660432b48f | c8107501bd40f67a5f77131987ad2a29a6717ee258656b99b7b5138a86123ceb | product-accepted | runtime | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/functions/_shared/tenbot-receival-runtime.ts | b2f234e5fa404212f2c4c4bca6ea623bbb3e0836 | 39f72d7feca6af85264eac7e431aa6e2f86ee3a063612cb5a7a4517e7c36e359 | product-accepted | runtime | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/functions/tenbot/index.ts | 5d285780d3540e9babd0956af346c9dc139dda9a | faaf952fc5bada2a396b43b8a40e46a36bba5209c784431d93bd03f8967b557b | product-accepted | runtime | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261029210000_invoice_pending_receival_approval.sql | b2ac2c70af9eb8711578f40e57039f3d606be3d9 | 8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030110000_catalog_write_authorization.sql | f041b370519383d13a3f13bfe12c28d93f00a856 | 8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7 | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql | aced236d65b7e547c3ee036e779e01196a6c5d2b | 797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63 | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql | 4a4114a4f3dbaa81869776e1298b555bcac3371c | 388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441 | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql | 4c21e082ef4c30a2db43a2b24e07018e7a9ff1f2 | f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742 | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030150000_invoice_receival_originals.sql | 73f3b70a149ea807f32022ce587caa87220e2e91 | bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00 | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql | 2f34c5972127b70c9b4dc776aba6f3f90535d1fa | f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql | a13b7303520d4ce178c1eb795513ceccdf410746 | ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284 | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql | 1eb5003f7d00e400550ce3e5c79b99c5ba1a02ee | 6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03 | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+| supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql | 3db080d20d22d18e996bd7dc226a055825e0bf72 | 534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3 | product-accepted | unapplied-migration | ffed10ac28736e48ecff8edf032a3b414254f307 |
+
+The older historical entries for `tenbot-invoice.ts`, `tenbot-openai.ts` and `tenbot/index.ts` remain authentic evidence of their old deployed bytes. They do not certify these newer blobs. Only an exact separately verified candidate tuple may supersede a historical mismatch for this preparation scope; later deployed claims still require genuine execution receipts. Migration presence or candidate classification never proves application. Migrations bound to substantive employee claims would still require record review.
+
+## Candidate technical source review — preparation and cleanup corrections
+
+Product acceptance remains pending for these technical changes.
+
+Scope: tendev-preparation.
+
+This review is not evidence of hosted application or deployment.
+
+This review grants no migration application, write activation, push or deployment authority.
+
+The focused proof correction distinguishes product-accepted candidate source from technical-review source and unapplied migration evidence, using exact committed source/receipt/blob/SHA tuples. It is limited to the TenDev URL and dev release-build target. It preserves prior executed migration evidence, refuses edited applied migrations, keeps real claim/authority/current-helper drift held, and reports superseded or inapplicable old source reviews without deleting their history. The new cleanup entry is explicitly sensitive and needs its own exact proof. None of this advances knowledge release pins or turns a candidate into deployed knowledge.
+
+The cleanup correction replaces the accepted service-key HTTP wake with a short-lived purpose/nonce/expiry/limit-bound HMAC wake and private atomic single-use run consumption. The service credential remains only in the Edge environment; the public pg_net queue receives an anon gateway JWT and a bounded cleanup capability, never service-role credentials or invoice content. Source selection/deletion still delegates to the reviewed expired-unexecuted-original contracts. Both SQL/Edge controls remain default OFF, and the new migration installs no secret, Cron schedule or activation. This maintenance authentication/run lifecycle is a new technical correction; it is not called unchanged permission policy or retroactively Product-accepted.
+
+| Path | Git blob | SHA256 | Authority | Kind | Accepted authority revision |
+|---|---|---|---|---|---|
+| scripts/generate-tenbot-knowledge.mjs | 4b9e2fed0ac623a07a479b7f54998df53c9f9741 | bf065d4c5d519b42a99d1b5ffa3382c589169f7d9cdaff69412eae2e5f1eb8b7 | technical-review | runtime | none |
+| scripts/tenbot-knowledge/release-sync.mjs | c4186f970015348173e6a893d27adb0116b4e34e | 486a082400dd02923b700955f70039aac1f33926ff2caa8256620d98ecd93b39 | technical-review | runtime | none |
+| supabase/functions/_shared/tenbot-receival-cleanup.ts | b9b659a8944aa1d4f13ea9407c4938fb4ed32815 | 13a803362707e1729cd6d0590ead1b62fea52f26585f225c6575dc7f30c46d10 | technical-review | runtime | none |
+| supabase/functions/tenbot-receival-cleanup/index.ts | 5c4f7e99842fcb920000f39ad42747ab7c0110fb | 6a89f90d487ebc20c6ac971df8cfc2c7a6806234f830fca8ca7a1816bc6f2e74 | technical-review | runtime | none |
+| supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql | 23bb3f091583762e72dc98ddf981668f733b7e63 | dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496 | technical-review | unapplied-migration | none |
+
+The table identifies prepared local bytes only. The original ten migration hashes remain unchanged. The new cleanup-wake migration is unapplied and separately pending Product acceptance. Focused proof handling passes 18 offline groups; cleanup real-crypto/HTTP behavior passes 14 offline groups plus targeted TypeScript/lint/diff checks. SQL rollback verification is prepared but not claimed as executed at this receipt freeze. These doubles are not database or hosted Deno proof.
+
+## Canonical selection and retained evidence
+
+The accepted 14-file application-overlay list remains exactly the accepted release-scope manifest; the two cleanup paths in that list identify their original accepted versions and may be replaced only by separately reviewed technical correction bytes. Inventory uses the selected listener blob above, not the whole dev page. No knowledge prose, record grants, relationships, tool registry, source authority or retrieval behavior is expanded. The generator must still fail for unknown paths, unsupported claims, changed proof tuples or a different candidate source.
+
+Fresh read-only shared metadata before this correction found no drift across 10 affected tables, 26 routines, 88 role-capability configuration rows and 11 private bucket definitions; canonical prerequisites exist, all ten candidate migration versions and receival objects are absent, and the private originals bucket does not yet exist. The real isolated evidence remains 8 compatibility, 11 private Storage and 9 permit/runtime groups, with checkpoint reuse explicitly recorded. This is reused evidence with known projection limits, not a new shared database validation or full purchasing lifecycle replica.
+
+The one prior real native original-PDF extraction used retained private Storage bytes and caller authorization (4.314 seconds, $0.000595). No model call was made for this proof correction. Original inference controls and the hosted finite read-only policy are unchanged.
+
+The current shared backend remains unmodified; default-off execution, empty pilot allowlist, no canary, no new spending and no cleanup scheduling activation remain required until separately authorized. TenDev staging and actual Deno/Storage/Auth integration still need their normal exact-source verification; this preparation receipt alone does not clear those gates.
