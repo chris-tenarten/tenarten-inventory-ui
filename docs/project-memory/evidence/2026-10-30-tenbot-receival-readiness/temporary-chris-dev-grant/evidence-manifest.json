@@ -1,0 +1,75 @@
+{
+  "recordedAt": "2026-10-30T18:14:18.980Z",
+  "secretPatternScanPassed": true,
+  "privateActorsCopied": false,
+  "files": [
+    {
+      "path": "browser/completed-receipt-after-expiry.png",
+      "sha256": "a60f92a68f917945fc57a6f684fa244748e21082a5baec48e619fc1890c32fb5"
+    },
+    {
+      "path": "browser/expired-mobile.png",
+      "sha256": "cb79ddf4c3e83f35732324d3170370e712c3f418b639c978d1b7d37745d80678"
+    },
+    {
+      "path": "browser/focus-revoked-desktop.png",
+      "sha256": "0e0a05dcdaddd97d7eeee429b974ef7a102e44c927c1ebfd65dde8aee9360f56"
+    },
+    {
+      "path": "browser/report.json",
+      "sha256": "f27c14dcf1a56c130b588ec46e7802d8f481bea4eeb54c9417c0664edf8a29e2"
+    },
+    {
+      "path": "fixture-initial-preflight-stop.json",
+      "sha256": "725afcb498ad9803d8ce17deffaf3219e9d9db3753a784f6eaebef59d663de99"
+    },
+    {
+      "path": "fixture-migration-application.json",
+      "sha256": "e9e58766620b94cc9d59f4e519a435e75c91c51c4f20c483525dee04760ac08a"
+    },
+    {
+      "path": "fixture-paused.json",
+      "sha256": "97e06c516852e1a91ff6a245dace1f222ecdfae5573831e62313ac93b8f4acb4"
+    },
+    {
+      "path": "fixture-preparation.json",
+      "sha256": "be63c34df21ed59a830b9b61680a792c6e7c3dd1ee0a1bb8f87056e078320a50"
+    },
+    {
+      "path": "grant-created-proof.json",
+      "sha256": "0965db456a19c57a037b3d944c8c6db14a5163599b12696285df1701e9cb177b"
+    },
+    {
+      "path": "grant-database-results.json",
+      "sha256": "8959e74a50627bc0e2af3825f4db7f117b761f69c36055c5629377f46655f62c"
+    },
+    {
+      "path": "grant-database-stop-history-725afcb498ad9803d8ce.json",
+      "sha256": "725afcb498ad9803d8ce17deffaf3219e9d9db3753a784f6eaebef59d663de99"
+    },
+    {
+      "path": "independent-grant-review-final.json",
+      "sha256": "9d9e5a7980fac0edb7dba65a8c6d549fb0f3c3e6888821ce45b2bcc78d672874"
+    },
+    {
+      "path": "independent-grant-review.json",
+      "sha256": "10aa9198f5562391857564e0895aa485863934ab6fb06001ef411768b8626b76"
+    },
+    {
+      "path": "runtime-offline-results.json",
+      "sha256": "cb16b1f5159a781a90dcc337a94bfed491fe538821f9e74d9d18c07e8cb3b9dc"
+    },
+    {
+      "path": "shared-off-verification.json",
+      "sha256": "95395bf0ee203f641cfcb1d8f6616fa17e440a8346d687a5bc26412e5998d94e"
+    },
+    {
+      "path": "source-validation-manifest.json",
+      "sha256": "836af5bb4414611c2a2e3f8a2df4af222e9d97b9d7fe63030d17999ca1e0445c"
+    },
+    {
+      "path": "sql-implementation-notes.json",
+      "sha256": "1162d738bc35595b4924813a97df97891ef84f2d495c4cceceb58c1b139b8d10"
+    }
+  ]
+}

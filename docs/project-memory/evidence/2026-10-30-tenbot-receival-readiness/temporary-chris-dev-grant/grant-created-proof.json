@@ -1,0 +1,33 @@
+{
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "draftId": "7a56f39d-a7ee-48bc-befd-6dd58a4258e7",
+  "hash": "33e4ef89b6dff7f45d6f2469040dbf1d0c30a1cafd90d9ef7f16c6fca8e2c428",
+  "createdRecordIds": [
+    "972cc379-737e-4cdc-b019-1b1b9c42df1d"
+  ],
+  "actualRow": {
+    "id": "972cc379-737e-4cdc-b019-1b1b9c42df1d",
+    "status": "pending",
+    "vendor": "T&M Supply",
+    "material_name": "Alaska White",
+    "size": "#0",
+    "unit": "Bag",
+    "quantity_expected": 1,
+    "quantity_received": 0,
+    "production_job_id": null,
+    "temporary_job_label": null,
+    "receipt_inventory_item_id": null,
+    "receipt_transaction_id": null,
+    "received_at": null
+  },
+  "auditEvents": [
+    "prepared",
+    "approved",
+    "executed"
+  ],
+  "sourceId": "edd97a2e-43cc-4734-a5dd-f8ff316417c0",
+  "sourceRetained": true,
+  "rawAgentStateCleared": true,
+  "realSharedCanary": false,
+  "inferenceCalls": 0
+}

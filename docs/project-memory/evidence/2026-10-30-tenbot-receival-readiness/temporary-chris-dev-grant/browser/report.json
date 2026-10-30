@@ -1,0 +1,309 @@
+{
+  "passed": true,
+  "checks": [
+    "Unchanged Developer role cannot adjust Inventory or manage catalog globally; owner-scoped active projection enables the one-line duplicate review and exact approval controls.",
+    "Focus refresh of revoked owner scope unchecks/disables pending approval and detaches only the browser attachment; no source cleanup is attempted and normal text-only TenBot guidance remains usable.",
+    "Server-reported remaining lifetime expires the open 390px UI without an approval request; normal composer and mobile containment remain intact.",
+    "A synthetic successful receipt retains its returned ID and Inventory link after expiration/revocation; no approval replay or inference occurs."
+  ],
+  "groups": 4,
+  "mode": "Compiled normal Messaging; intercepted synthetic Auth/status/draft/approval only. Not database security or inference evidence.",
+  "actualInference": false,
+  "actualDatabase": false,
+  "grantActivations": 0,
+  "operationalWrites": 0,
+  "externalRequestsForwarded": 0,
+  "blockedNetwork": [
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/"
+    },
+    {
+      "name": "focus-revocation",
+      "kind": "websocket"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/catalog"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/contacts"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/transmittals"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/purchasing"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/proposals"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/samples"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/activity"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/inventory"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/inventory"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/material-usage"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/manpower-reporting"
+    },
+    {
+      "scenario": "focus-revocation",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/pre-production"
+    },
+    {
+      "name": "focus-revocation",
+      "kind": "websocket"
+    },
+    {
+      "scenario": "server-duration-expiry",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/"
+    },
+    {
+      "name": "server-duration-expiry",
+      "kind": "websocket"
+    },
+    {
+      "name": "server-duration-expiry",
+      "kind": "websocket"
+    },
+    {
+      "name": "server-duration-expiry",
+      "kind": "websocket"
+    },
+    {
+      "scenario": "server-duration-expiry",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/"
+    },
+    {
+      "name": "completed-receipt",
+      "kind": "websocket"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/catalog"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/contacts"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/transmittals"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/purchasing"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/proposals"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/samples"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/activity"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/inventory"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/inventory"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/material-usage"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/manpower-reporting"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/pre-production"
+    },
+    {
+      "name": "completed-receipt",
+      "kind": "websocket"
+    },
+    {
+      "scenario": "completed-receipt",
+      "kind": "http",
+      "method": "HEAD",
+      "path": "/inventory"
+    }
+  ],
+  "traces": [
+    {
+      "scenario": "focus-revocation",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "focus-revocation",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "focus-revocation",
+      "action": "upload",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "focus-revocation",
+      "action": "ask",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "focus-revocation",
+      "action": "review",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "focus-revocation",
+      "action": "ask",
+      "workspace": null
+    },
+    {
+      "scenario": "server-duration-expiry",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "server-duration-expiry",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "server-duration-expiry",
+      "action": "upload",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "server-duration-expiry",
+      "action": "ask",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "server-duration-expiry",
+      "action": "review",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "completed-receipt",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "completed-receipt",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "completed-receipt",
+      "action": "upload",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "completed-receipt",
+      "action": "ask",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "completed-receipt",
+      "action": "review",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "completed-receipt",
+      "action": "approve",
+      "workspace": "invoice-receivals.v1"
+    }
+  ],
+  "errors": [],
+  "port": 3014
+}

@@ -1,0 +1,94 @@
+{
+  "status": "local-artifact-verified-no-upload-or-execution",
+  "createdAt": "2026-10-30T17:17:50.727Z",
+  "reference": "SYN-TENDEV-RECEIVAL-20261030-01",
+  "invoiceDate": "2026-10-30",
+  "synthetic": true,
+  "physicalShipment": false,
+  "paymentRequested": false,
+  "pages": 1,
+  "mediaType": "application/pdf",
+  "filePath": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+  "byteSize": 2877,
+  "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+  "render": {
+    "filePath": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01-page-1.png",
+    "sha256": "ff06f2509d07d12bd567798ed293a176dc0a9bfe39dc08653ae0fc831d8176b2",
+    "width": 918,
+    "height": 1188,
+    "method": "existing pdfjs-dist + @napi-rs/canvas; system Poppler absent"
+  },
+  "extractedText": {
+    "filePath": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.txt",
+    "sha256": "3a4c9cf7a26f48aaf85677a81fa47f992e9846962f5946c601e9a1b93f861a31",
+    "method": "existing pdfjs-dist getTextContent",
+    "verifiedMaterialLine": "Alaska White | #0 | 1 Bag"
+  },
+  "catalogReference": {
+    "source": "standard",
+    "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "supplier": "T&M Supply",
+    "material": "Alaska White",
+    "size": "#0",
+    "vendorSku": null,
+    "catalogUnit": "50lb bag",
+    "catalogSnapshotSha256": "d1f36457f987804be315ba04f98b75f035e4c9f50db650c007337b409b56f3b2",
+    "employeeAuthorizationProof": false
+  },
+  "expectedQuantity": {
+    "sourceQuantity": {
+      "quantity": "1",
+      "unit": "Bag"
+    },
+    "sourceKind": "package_count",
+    "packageCount": "1",
+    "receivalQuantity": "1",
+    "receivalUnit": "Bag",
+    "calculation": "source_package_count",
+    "inventoryStockingUnit": null,
+    "perPackageFromCatalog": {
+      "quantity": "50",
+      "unit": "LB",
+      "container": "Bag"
+    },
+    "derivedTotalFromCatalog": {
+      "quantity": "50",
+      "unit": "LB"
+    }
+  },
+  "noWeightNumberOnInvoice": true,
+  "pricesIncluded": false,
+  "jobAssociation": null,
+  "employeeOrCustomerData": false,
+  "marker": {
+    "bundled": true,
+    "operation": "create",
+    "expectedOutputCount": 1,
+    "format": "pdf",
+    "exitCode": 0
+  },
+  "apiInferenceCalls": 0,
+  "uploaded": false,
+  "databaseMutations": 0,
+  "writeActivation": false,
+  "immutableArtifact": true,
+  "visualInspection": {
+    "passed": true,
+    "method": "view_image of final rendered page",
+    "pagesInspected": 1,
+    "issues": [],
+    "confirmed": [
+      "Supplier/reference/date legible",
+      "Exactly one Alaska White #0 1 Bag line",
+      "Synthetic/not-for-payment/no-shipment labels clear",
+      "No package-weight number, price, Job, employee or customer data",
+      "No clipping, overlap, missing glyphs or table defects"
+    ]
+  },
+  "generationCommand": {
+    "artifactWritten": true,
+    "initialExitCode": 1,
+    "postWriteCleanupIssue": "Installed PDF.js document proxy lacks destroy(); all PDF/PNG/text/receipt files had already been written. Scratch generator cleanup corrected; immutable PDF was not regenerated.",
+    "independentReopenAndHashVerification": "PASS"
+  }
+}

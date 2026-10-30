@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "recordedAt": "2026-10-30T17:55:40.055Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "phase": "prepare-synthetic-auth",
+  "category": "AssertionError",
+  "message": "Expected values to be strictly equal:\n\nfalse !== true\n",
+  "groupsPassed": 0,
+  "noAutomaticRetry": true,
+  "productionRequests": 0,
+  "inferenceCalls": 0
+}

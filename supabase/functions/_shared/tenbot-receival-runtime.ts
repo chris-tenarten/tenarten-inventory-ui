@@ -32,6 +32,9 @@ import {catalogRequestIssues} from './tenbot-invoice-catalog.ts';
 import type {ProposedCatalogMaterial,LocalReceivalDraft,LocalDraftRow,LocalOrderDetails} from '../../../src/modules/tenbot/live-review.ts';
 
 import type {InvoiceReceivalSource,InvoiceReceivalSourceState} from '../../../src/modules/inventory/invoice-receival-attachments.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
+// @ts-ignore -- Edge requires explicit extensions.
+import {TENBOT_CANARY_OWNER} from '../../../src/modules/inventory/tenbot-canary-access.ts';
 
 export type ReceivalRuntimeSourceStore={get(id:string):Promise<InvoiceReceivalSource>;download(id:string):Promise<{source:InvoiceReceivalSource;original:Blob}>;record(input:{actorId:string;sourceId:string;expectedVersion:number;verifiedSha256:string;state:InvoiceReceivalSourceState}):Promise<InvoiceReceivalSource>;abandon(id:string):Promise<unknown>};
 type Row=Record<string,unknown>;
@@ -197,7 +200,11 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
     const result=durable.execution??await (async()=>{const approval=await service.approve({draftId:durable.id,hash:durable.hash,confirmation:INVOICE_RECEIVAL_APPROVAL});await deps.beforeExecute?.({owner,draftId:durable.id,hash:durable.hash,approvalId:approval.id});return service.execute({draftId:durable.id,hash:durable.hash,approvalId:approval.id});})();
     const query=caller.from('pending_receivals') as {select(columns:string):{in(column:string,ids:string[]):{abortSignal(signal:AbortSignal):PromiseLike<{data:unknown;error:unknown}>}}};
     const verified=await query.select('id,status,quantity_expected,quantity_received,unit,vendor,material_name,size,production_job_id').in('id',result.createdRecordIds).abortSignal(AbortSignal.timeout(4000));
-    const records=array(verified.data);await authorize(owner,true);
+    // This is an already committed canonical receipt, not another mutation.
+    // The temporary grant may expire/revoke immediately after commit. Preserve
+    // the fresh read permission and caller RLS checks without falsely claiming
+    // the successful write failed because adjustment access has since ended.
+    const records=array(verified.data);await authorize(owner,owner!==TENBOT_CANARY_OWNER);
     const matches=records.length===durable.lines.length&&result.createdRecordIds.every((id,index)=>{
      const actual=records.find(r=>r.id===id),expected=durable.lines[index];
      return actual&&expected&&actual.status==='pending'&&Number(actual.quantity_received)===0&&Number(actual.quantity_expected)===Number(expected.quantityExpected)&&actual.unit===expected.unit&&actual.vendor===expected.vendor&&actual.material_name===expected.material&&(actual.size??'')===expected.size&&(actual.production_job_id??null)===expected.productionJobId;
@@ -207,7 +214,7 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
     // authorized receiving/editing must not turn an exact retry into endless
     // failures, and never authorizes another write. Keep the initial strict
     // readback plus fresh caller-RLS visibility of every returned record ID.
-    if(verified.error||!visible||!matches&&!result.idempotent)fail('Creation returned a durable receipt, but current records could not be verified. Retry the exact approval to reconcile; do not create a new request.',503);
+    if(verified.error||!visible||!matches&&!result.idempotent)fail(owner===TENBOT_CANARY_OWNER?'Creation returned a durable receipt, but current records could not be verified. Reconcile the exact receipt and returned IDs with your authorized read access; do not reactivate access or create a new request.':'Creation returned a durable receipt, but current records could not be verified. Retry the exact approval to reconcile; do not create a new request.',503);
     const notice=!matches?'These receivals were already created. Their current Inventory state has changed since creation; the original receipt and record IDs are unchanged. No additional records were created.':undefined;
     const draft:LocalReceivalDraft=value?.draft??{id:body.draftId,revision:Number(body.revision),hash:body.hash,status:'created',simulation:false,attachmentId:'durable:'+durable.id,orderDetails:durable.metadata,missingFields:[],canApprove:false,rows:durable.lines.map(line=>({lineId:line.sourceLineId,sourceText:line.sourceText,sourceQuantity:line.sourceQuantity,quantityBasis:line.quantityBasis,materialId:line.catalogId?`${line.catalogSource}:${line.catalogId}`:null,materialName:line.material,size:line.size,quantity:line.quantityExpected,unit:line.unit,jobId:line.productionJobId,excluded:false,reasons:[],catalogRequest:line.newMaterial,duplicateReview:line.duplicateReview,duplicateAcknowledgement:line.duplicateAcknowledgement})),durableDraftId:durable.id,durableHash:durable.hash,executionEnabled,provenance:{supplier:durable.document.supplier,documentReference:durable.document.reference,attachmentSha256:durable.document.sha256},reviewed:true};
     draft.status='created';draft.canApprove=false;

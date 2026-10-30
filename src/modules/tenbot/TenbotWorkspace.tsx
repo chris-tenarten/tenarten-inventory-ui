@@ -1,12 +1,13 @@
 'use client';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
-import {useEffect,useRef,useState,type ReactNode} from 'react';
+import {useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
 import {Info,MoreHorizontal,Paperclip,X} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {ReceivalDraftReview} from './ReceivalDraftReview';
-import {createInvoiceReceivalAttachmentService} from '../inventory/invoice-receival-attachments';
+import {createInvoiceReceivalAttachmentService,invoiceOriginalSha256} from '../inventory/invoice-receival-attachments';
+import {parseTenbotCanaryAccess,tenbotCanaryRemainingMs} from '../inventory/tenbot-canary-access';
 import {clearHistoryLocator,historyAccessHash,readHistoryLocator,saveHistoryLocator,type HistoryBinding} from './conversation-history';
 import {invalidateReceivalApproval,localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,receivalReviewNotice,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
@@ -115,6 +116,7 @@ export function useTenbotConversation():TenbotConversation{
  const [experiment,setExperiment]=useState(false),[authenticatedExperiment,setAuthenticatedExperiment]=useState(false),[developerDiagnostics,setDeveloperDiagnostics]=useState(false);
  const [orderDetails,setOrderDetails]=useState({orderedBy:'',orderDate:'',location:''});
  const [experimentStatus,setExperimentStatus]=useState<LocalDemoStatus|null>(null),[syntheticConfirmed,setSyntheticConfirmed]=useState(false);
+ const [canaryDeadline,setCanaryDeadline]=useState<number|null>(null);
  const [attachment,setAttachment]=useState<LocalAttachment|null>(null),[attachmentPreview,setAttachmentPreview]=useState('');
  const [selectedAttachment,setSelectedAttachment]=useState<File|null>(null);
  const [attachmentOrigin,setAttachmentOrigin]=useState<{originalFilename:string;renderedPdf:boolean}|null>(null);
@@ -138,6 +140,42 @@ export function useTenbotConversation():TenbotConversation{
  const lastAnswer=messages.at(-1)?.answer;
  const accessFingerprint=JSON.stringify(auth.profile);
  const currentAccess=useRef(accessFingerprint);currentAccess.current=accessFingerprint;
+ const canUseReceivalAccess=()=>canaryDeadline===null||canaryDeadline>Date.now();
+ const expireCanaryAccess=useCallback(()=>{
+  setExperimentStatus(status=>status?.canaryAccess?{...status,canPrepare:false,executionEnabled:false,canAcknowledgeDuplicates:false,blockedReason:'Temporary canary access expired or was revoked. No new action is authorized.'}:status);
+  // A completed receipt is evidence, not an outstanding authorization. Keep its
+  // returned IDs visible while invalidating every remaining approval control.
+  setLocalApproval(value=>value&&!value.simulation&&value.draft.status==='created'?value:null);
+  setReceivalDraft(value=>value&&!value.simulation?{...value,canApprove:false,executionEnabled:false,blockReason:'Temporary canary access expired or was revoked.'}:value);
+  // Drop only this browser's submission context. Private originals, durable
+  // approvals and audit evidence are not deleted or changed by UI expiry.
+  // Keeping an expired attachment selected would prevent ordinary text help.
+  setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setSyntheticConfirmed(false);
+ },[]);
+ const receiveExperimentStatus=useCallback((status:LocalDemoStatus)=>{
+  if(status.canaryAccess){const access=parseTenbotCanaryAccess(status.canaryAccess,owner);if(!access)throw Error('Temporary canary access is unavailable.');setCanaryDeadline(Date.now()+tenbotCanaryRemainingMs(access));}
+  else setCanaryDeadline(null);
+  setExperimentStatus(status);
+ },[owner]);
+ useEffect(()=>{
+  if(canaryDeadline===null)return;
+  // This is only a convenience for a stale UI. Every server action independently
+  // checks the database clock, current grant and exact approved operation.
+  const timer=setTimeout(expireCanaryAccess,Math.max(0,canaryDeadline-Date.now()));
+  return()=>clearTimeout(timer);
+ },[canaryDeadline,expireCanaryAccess]);
+ useEffect(()=>{
+  if(!hostedReceivals||!experimentStatus?.canaryAccess)return;
+  let current=true;
+  const refresh=async()=>{
+   const expectedGrant=experimentStatus.canaryAccess!.grantId;
+   try{const {data,error}=await supabase.rpc('get_my_tenbot_receival_canary_access',{});if(!current||currentOwner.current!==owner)return;if(error)throw Error('unavailable');const access=parseTenbotCanaryAccess(data,owner);if(!access||access.grantId!==expectedGrant)throw Error('changed');setCanaryDeadline(Date.now()+tenbotCanaryRemainingMs(access));}
+   catch{if(current&&currentOwner.current===owner)expireCanaryAccess();}
+  };
+  const focus=()=>{if(document.visibilityState==='visible')void refresh();};
+  window.addEventListener('focus',focus);document.addEventListener('visibilitychange',focus);
+  return()=>{current=false;window.removeEventListener('focus',focus);document.removeEventListener('visibilitychange',focus);};
+ },[hostedReceivals,experimentStatus?.canaryAccess,owner,expireCanaryAccess]);
  useEffect(()=>{
   const closeOutside=(event:PointerEvent)=>{const popup=privacyRef.current;if(popup?.open&&event.target instanceof Node&&!popup.contains(event.target))popup.open=false;};
   window.addEventListener('pointerdown',closeOutside);
@@ -147,7 +185,7 @@ export function useTenbotConversation():TenbotConversation{
   let current=true;const generation=++lifecycle.current;
   const active=()=>current&&generation===lifecycle.current&&currentOwner.current===owner&&currentAccess.current===accessFingerprint;
   historyBinding.current=null;conversation.current={owner};liveTurn.current=null;
-  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setHostedReceivals(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
+  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setHostedReceivals(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setCanaryDeadline(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
   setHistoryLoading(available);
   if(!available){
    // Pending Auth is not a sign-out. Do not destroy the opaque locator while the
@@ -163,13 +201,13 @@ export function useTenbotConversation():TenbotConversation{
     if(enabled){
      const status=await invoke<LocalDemoStatus>({action:'status',localAgentExperiment:true,localReceivalExecution:receivals},owner);
      if(receivals&&(status.mode!=='authenticated-receivals'||status.simulation!==false))throw new Error('The authenticated receivals server returned an incompatible mode.');
-     if(!active())return;setExperimentStatus(status);
+     if(!active())return;receiveExperimentStatus(status);
     }else{
      // An older/Qwen-only backend can reject status; normal conversation remains
      // available. Never send experimental flags or enable document controls.
      const status=await invoke<{mode:string;historyAvailable:boolean;receivalPilotAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
      if(!active()||status?.mode!=='assistant'||status.historyAvailable!==true)return;
-     if(status.receivalPilotAvailable===true){const candidate=await invoke<LocalDemoStatus>({action:'status',hostedReceivalRequest:true},owner);if(!active())return;if(candidate.mode==='authenticated-receivals'&&candidate.simulation===false&&candidate.requiresPrivateOriginal===true){setHostedReceivals(true);setExperimentStatus(candidate);}}
+     if(status.receivalPilotAvailable===true){const candidate=await invoke<LocalDemoStatus>({action:'status',hostedReceivalRequest:true},owner);if(!active())return;if(candidate.mode==='authenticated-receivals'&&candidate.simulation===false&&candidate.requiresPrivateOriginal===true){receiveExperimentStatus(candidate);setHostedReceivals(true);}}
     }
     const binding:HistoryBinding={owner,accessHash:await historyAccessHash(accessFingerprint),mode:enabled?(receivals?'authenticated':'synthetic'):'hosted'};
     if(!active())return;historyBinding.current=binding;
@@ -191,7 +229,7 @@ export function useTenbotConversation():TenbotConversation{
    finally{if(active())setHistoryLoading(false);}
   })();
   return()=>{current=false;lifecycle.current=generation+1;};
- },[owner,available,accessFingerprint,auth.ready,auth.accessStatus]);
+ },[owner,available,accessFingerprint,auth.ready,auth.accessStatus,receiveExperimentStatus]);
  useEffect(()=>{
   const invalidate=()=>setMessages(turns=>turns.map(turn=>volatileAnswer(turn.answer)?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
   const refresh=async()=>{
@@ -237,6 +275,7 @@ export function useTenbotConversation():TenbotConversation{
    }
    return result;
   }catch(e){
+   if(hostedReceivals&&experimentStatus?.canaryAccess&&e&&typeof e==='object'&&'status' in e&&e.status===403)expireCanaryAccess();
    if(e instanceof Error&&/^Conversation (unavailable|changed)/.test(e.message)&&generation===lifecycle.current&&conversation.current.owner===owner){conversation.current={owner};clearHistoryLocator();}
    throw e;
   }
@@ -248,6 +287,7 @@ export function useTenbotConversation():TenbotConversation{
   if(historyLoading||experiment&&!experimentStatus){setError('TenBot is restoring the current conversation. Please wait a moment.');return false;}
   if(!current||current.length>1200||lock.current)return false;
   let turnAttachment=attachment;
+  if(liveDemo&&(selectedAttachment||turnAttachment)&&!canUseReceivalAccess()){expireCanaryAccess();setError('Temporary canary access expired or was revoked.');return false;}
   if(selectedAttachment){
    if(!syntheticConfirmed){setError('Confirm the attachment contains approved synthetic test data before sending.');return false;}
    const uploaded=await uploadInvoice(selectedAttachment);
@@ -298,7 +338,10 @@ export function useTenbotConversation():TenbotConversation{
  async function clear(){
   if(!begin())return;
   try{
-   if(conversation.current.id||attachment)await request({action:'clear',...(conversation.current.id?{conversationId:conversation.current.id}:{}),...(attachment?{attachmentId:attachment.attachmentId}:{})});
+   const inactiveCanary=Boolean(experimentStatus?.canaryAccess&&(experimentStatus.canPrepare===false||!canUseReceivalAccess()));
+   // Expired access cannot authorize source cleanup. A local reset still lets
+   // the employee return to conversation; retained evidence remains untouched.
+   if(!inactiveCanary&&(conversation.current.id||attachment))await request({action:'clear',...(conversation.current.id?{conversationId:conversation.current.id}:{}),...(attachment?{attachmentId:attachment.attachmentId}:{})});
    conversation.current={owner};clearHistoryLocator();setMessages([]);setDraft(null);setError('');setNotice('');setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
   }catch{setError('TenBot could not clear this conversation. Retry.');}finally{finish();}
  }
@@ -319,9 +362,10 @@ export function useTenbotConversation():TenbotConversation{
   catch(e){setError(e instanceof Error?e.message:'Review failed.');}finally{finish();}
  }
  async function uploadInvoice(file:File):Promise<LocalAttachment|undefined>{
-  if(!liveDemo||!syntheticConfirmed||!experimentStatus||experimentStatus.canPrepare===false||!begin())return;
+  if(!liveDemo||!syntheticConfirmed||!experimentStatus||experimentStatus.canPrepare===false||!canUseReceivalAccess()||!begin())return;
   const requestAccess=currentAccess.current;
   try{
+   if(experimentStatus.canaryAccess&&await invoiceOriginalSha256(file)!==experimentStatus.canaryAccess.documentSha256)throw Error('This temporary canary permits only the approved synthetic invoice file.');
    const prepared=await prepareInvoiceImage(file,experimentStatus.maxAttachmentBytes);
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
    const source=experimentStatus.requiresPrivateOriginal?await createInvoiceReceivalAttachmentService(supabase).upload(file,file.name):null;
@@ -343,7 +387,7 @@ export function useTenbotConversation():TenbotConversation{
   }catch{setError('The private original is unavailable or no longer authorized.');}finally{finish();}
  }
  async function saveReceivalReview(edits:LocalRowEdit[],details:LocalOrderDetails){
-  if(!liveDemo||!receivalDraft||receivalDraft.status!=='review_required'||!begin())return;
+  if(!liveDemo||!receivalDraft||receivalDraft.status!=='review_required'||!canUseReceivalAccess()||!begin())return;
   const requestAccess=currentAccess.current;
   setReceivalDraft(invalidateReceivalApproval(receivalDraft));setLocalApproval(null);
   try{
@@ -355,7 +399,7 @@ export function useTenbotConversation():TenbotConversation{
   }catch(e){setError(e instanceof Error?e.message:'The draft could not be reviewed.');}finally{finish();}
  }
  async function approveReceivalReview(current:LocalReceivalDraft){
-  if(!liveDemo||!experimentStatus||receivalExecutionBlock(current,experimentStatus)||receivalDraft?.id!==current.id||receivalDraft.revision!==current.revision||receivalDraft.hash!==current.hash||!current.canApprove||!begin())return;
+  if(!liveDemo||!experimentStatus||!canUseReceivalAccess()||receivalExecutionBlock(current,experimentStatus)||receivalDraft?.id!==current.id||receivalDraft.revision!==current.revision||receivalDraft.hash!==current.hash||!current.canApprove||!begin())return;
   const requestAccess=currentAccess.current;
   try{
    const value=await request<LocalApproval>({action:'approve',draftId:current.id,revision:current.revision,hash:current.hash,...(!current.simulation?{durableDraftId:current.durableDraftId,durableHash:current.durableHash}:{}),confirmation:true});
@@ -444,7 +488,7 @@ export function useTenbotConversation():TenbotConversation{
      </>:null}<p className="mt-2 text-xs text-slate-600">This is the image sent for interpretation. Only your submitted attachment is used.</p></details>:null}
      {attachment&&!receivalDraft?<details className="text-xs text-slate-600"><summary className="min-h-9 cursor-pointer py-2">Order details (optional)</summary><div className="space-y-2"><p>Leave unknown values blank. Invoice date does not automatically supply the order date.</p>{([['orderedBy','Ordered by'],['orderDate','Order date'],['location','Destination location']] as const).map(([key,label])=><label key={key} className="block">{label}<input aria-label={label} disabled={busy} type={key==='orderDate'?'date':'text'} maxLength={120} value={orderDetails[key]} onChange={event=>setOrderDetails(value=>({...value,[key]:event.target.value}))} className="min-h-11 w-full rounded border bg-white p-2"/></label>)}</div></details>:null}
    </>:null}
-   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} onDetails={setOrderDetails} onEdit={()=>{setError('');setNotice('');setLocalApproval(null);}} onReview={saveReceivalReview} onApprove={approveReceivalReview} canRequestCatalogMaterial={available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')} canAcknowledgeDuplicates={available&&auth.can('writeBusinessData')&&auth.can('adjustInventory')}/>:null}
+   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}:${Boolean(experimentStatus.canaryAccess&&(experimentStatus.canPrepare===false||!canUseReceivalAccess()))}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} onDetails={setOrderDetails} onEdit={()=>{setError('');setNotice('');setLocalApproval(null);}} onReview={saveReceivalReview} onApprove={approveReceivalReview} canRequestCatalogMaterial={!experimentStatus.canaryAccess&&available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')} canAcknowledgeDuplicates={available&&auth.can('writeBusinessData')&&canUseReceivalAccess()&&(auth.can('adjustInventory')||hostedReceivals&&Boolean(experimentStatus.canaryAccess)&&experimentStatus.canAcknowledgeDuplicates===true)}/>:null}
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">
