@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "readOnly": true,
+  "httpStatus": 401,
+  "credentialRefreshed": false,
+  "noRetry": true,
+  "mutations": 0
+}

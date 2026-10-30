@@ -1,0 +1,54 @@
+{
+  "recordedAt": "2026-10-30T16:24:19.697Z",
+  "accepted": {
+    "sha": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "tree": "b957f7671b8db6f254e228d6eec6c7e37c07b297",
+    "parent": "f4998e1e7fb78d03cb6583d32da8226b3681af79",
+    "ref": "refs/tenops/candidates/receival-blockers-accepted-source-20261030",
+    "paths": [
+      "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/focused-source-review.json"
+    ]
+  },
+  "correction": {
+    "sha": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "tree": "ec4d568fcc6aca08f72b8f2a7e3dc0d5c4e7287a",
+    "parent": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "ref": "refs/tenops/candidates/receival-blockers-technical-source-20261030",
+    "paths": [
+      "scripts/generate-tenbot-knowledge.mjs",
+      "scripts/tenbot-knowledge/release-sync.mjs",
+      "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+      "supabase/functions/tenbot-receival-cleanup/index.ts",
+      "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql"
+    ]
+  },
+  "technical": [
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "sha256": "bf065d4c5d519b42a99d1b5ffa3382c589169f7d9cdaff69412eae2e5f1eb8b7"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-sync.mjs",
+      "sha256": "486a082400dd02923b700955f70039aac1f33926ff2caa8256620d98ecd93b39"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+      "sha256": "13a803362707e1729cd6d0590ead1b62fea52f26585f225c6575dc7f30c46d10"
+    },
+    {
+      "path": "supabase/functions/tenbot-receival-cleanup/index.ts",
+      "sha256": "6a89f90d487ebc20c6ac971df8cfc2c7a6806234f830fca8ca7a1816bc6f2e74"
+    },
+    {
+      "path": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+      "sha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496"
+    }
+  ],
+  "originalTenMigrationHashesPreserved": true,
+  "branchOrWorktreeCreated": false,
+  "sharedIndexChanged": false,
+  "devHeadChanged": false,
+  "push": false,
+  "deployment": false
+}

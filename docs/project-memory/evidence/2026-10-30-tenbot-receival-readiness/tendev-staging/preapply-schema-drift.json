@@ -1,0 +1,35 @@
+{
+  "baselineCheckedAt": "2026-10-30T15:08:37.394Z",
+  "currentCheckedAt": "2026-10-30T16:06:19.048Z",
+  "source": "ffed10ac28736e48ecff8edf032a3b414254f307",
+  "metadataOnly": true,
+  "operationalRowsRead": 0,
+  "mutations": 0,
+  "changedAffectedSections": [],
+  "sections": {
+    "tables": {
+      "matches": true,
+      "currentCount": 10
+    },
+    "routines": {
+      "matches": true,
+      "currentCount": 26
+    },
+    "roleCapabilities": {
+      "matches": true,
+      "currentCount": 88
+    },
+    "buckets": {
+      "matches": true,
+      "currentCount": 11
+    },
+    "migrationVersions": {
+      "matches": true,
+      "currentCount": 2
+    },
+    "newObjectsPresent": {
+      "matches": true,
+      "currentCount": null
+    }
+  }
+}

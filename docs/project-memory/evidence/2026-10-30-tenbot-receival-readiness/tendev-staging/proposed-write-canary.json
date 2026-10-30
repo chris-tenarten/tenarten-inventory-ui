@@ -1,0 +1,30 @@
+{
+  "status": "Proposed only; not executable or approved",
+  "host": "https://tendev.pages.dev",
+  "sharedDatabaseRef": "vxdxjhazkqhpkwdqtobp",
+  "employee": "Product must designate an existing dedicated synthetic non-Admin employee identity, or explicitly authorize creation and minimum permissions. No ordinary employee activation and no Chris/Admin privilege inheritance.",
+  "permissions": [
+    "readOperationalData",
+    "writeBusinessData",
+    "adjustInventory"
+  ],
+  "initialCatalogCreates": 0,
+  "initialPendingCreates": 1,
+  "material": "One existing authorized catalog record; exact ID, supplier and ordering unit must be read using the designated employee JWT and pinned before approval. No privileged catalog-row lookup or invented IDs.",
+  "invoiceReference": "TENBOT-TENDEV-CANARY-20261030-01",
+  "invoice": "One synthetic PDF/photo line: one existing ordering unit, no package conversion ambiguity. Final bytes/hash are pinned after the actual approved catalog target is selected.",
+  "jobAssociation": null,
+  "approval": "Separate Product approval of exact employee UUID, catalog UUID, final document hash, immutable payload, inference cap/window and cleanup plan; then the employee explicitly approves the exact server-reviewed draft.",
+  "executionScope": "TenDev-only origin plus one enrolled employee, finite window, maximum one batch/one pending row. No Receive operation or on-hand change.",
+  "suggestedInferenceCapUsd": 0.05,
+  "budget": "Within the existing shared allowance only while funded/unexpired; do not increase/renew automatically. No inference has been spent for this preparation.",
+  "cleanup": "Turn off enrollment/window after the canary. Use the existing authorized Inventory Cancel action for the exact unreceived canary row after separate approval; never receive it. Retain completed batch original/audit as approved business evidence. Failed/abandoned originals use the corrected private24h cleanup. No generic SQL purge.",
+  "needsBeforeCanaryApproval": [
+    "release-proof and cleanup-auth corrections accepted",
+    "disabled-first hosted Deno/JWT/Storage/approval smoke passed",
+    "named synthetic employee identity authorized",
+    "actual catalog target and final synthetic invoice hash pinned",
+    "funded finite inference allowance confirmed",
+    "exact cancellation/retention plan approved"
+  ]
+}

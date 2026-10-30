@@ -1,0 +1,137 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:04:43.551Z",
+  "acceptedLocalCandidate": "ffed10ac28736e48ecff8edf032a3b414254f307",
+  "canonicalBase": "c63527cc2f270a5d8cdb41890bd871b489be467d",
+  "canonicalRuntime": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "source": "/private/tmp/tenops-tenbot-receival-tendev-20261030/source",
+  "overlay": [
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "efc5124fc25f47e94d328c34c167c5de1ccd0926d4538e9368676fe01093d6eb"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sha256": "04e4022db6808d3a768cb28f7a58342f1ca4905a08d1d45173597d2c4dc81d1e"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "da47f752219db5810284767fa20ae8f1bb225d3334ecb61ad195552042978ce1"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-service.ts",
+      "sha256": "4cc9d6fe8164e8fe98026d499d53f5235f18ff44cfa34c46eb472f9ae8c82343"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-attachments.ts",
+      "sha256": "620cd88fc655ee194622e266fd527ea3fe92dcec2842b43f0c5e6308afac4edb"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "39f72d7feca6af85264eac7e431aa6e2f86ee3a063612cb5a7a4517e7c36e359"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "c8107501bd40f67a5f77131987ad2a29a6717ee258656b99b7b5138a86123ceb"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+      "sha256": "53e7a45ff333652e0ff62787a06d85d2f58851c0562cac8a243d78d232bf06c2"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+      "sha256": "37911acdadc696ab28672b66112d6b25ddf6568570a8de13d393343a0996668b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "70aacad48a2897061aa71c70cb6d9fa6f3436620cbca2ce3dfcb39d93c2fe6cc"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "15beeaa80b55725f6984616d58fbc9253834ecc12939991250d20934327f846a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+      "sha256": "ddfb957d32f1be4f3b2f89e730d6f0333542d6c736d099d99db6d281f1a10187"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "faaf952fc5bada2a396b43b8a40e46a36bba5209c784431d93bd03f8967b557b"
+    },
+    {
+      "path": "supabase/functions/tenbot-receival-cleanup/index.ts",
+      "sha256": "9f82a8631865ff944a4ad5f90aeaff40864428c30adce6ffa74dea56138ff3bc"
+    },
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    }
+  ],
+  "inventory": {
+    "path": "src/app/inventory/page.tsx",
+    "sha256": "d3017e5037f9e0840097abe8b1a295f379999055e7c5e6066f08be05a0d35dc1",
+    "canonicalManualCreationPreserved": true,
+    "onlyCompletionListenerSelected": true
+  },
+  "sourceHashesVerified": true,
+  "unrelatedDevExcluded": true,
+  "productionDeployment": false,
+  "writeCanaryExecuted": false,
+  "gitMutation": false
+}

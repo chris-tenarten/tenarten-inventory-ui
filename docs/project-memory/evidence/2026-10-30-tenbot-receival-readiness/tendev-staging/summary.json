@@ -1,0 +1,134 @@
+{
+  "status": "HOLD - stopped before shared migration application or deployment",
+  "recordedAt": "2026-10-30T16:11:18.979355+00:00",
+  "acceptedLocalCandidate": "ffed10ac28736e48ecff8edf032a3b414254f307",
+  "selectivePreparedObject": "f4998e1e7fb78d03cb6583d32da8226b3681af79",
+  "selectiveObjectDeployed": false,
+  "tier": 3,
+  "testingLevel": 3,
+  "passed": {
+    "exactMigrationHashes": 10,
+    "exactSourceHashes": 24,
+    "affectedSharedSchemaDrift": false,
+    "requiredPrerequisitesPresent": true,
+    "candidateObjectCollisions": false,
+    "establishedCloudflareAuthentication": "one normal refresh cleared initial401",
+    "existingProviderSettingsUnchanged": true,
+    "reusedRealDatabaseSecurityGroups": 28
+  },
+  "blocked": {
+    "candidateKnowledgeProof": {
+      "status": "review-required",
+      "semanticRecordIds": [
+        "inventory-pending-create",
+        "inventory-pending-receive",
+        "inventory-stock-movement",
+        "inventory-stock-reservation",
+        "inventory-stock-search",
+        "knowledge-inventory"
+      ],
+      "unclassifiedSensitivePaths": [
+        "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+        "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+        "supabase/functions/_shared/tenbot-invoice.ts",
+        "supabase/functions/_shared/tenbot-openai.ts",
+        "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+        "supabase/functions/_shared/tenbot-receival-hosted.ts",
+        "supabase/functions/_shared/tenbot-receival-runtime.ts",
+        "supabase/functions/tenbot/index.ts",
+        "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+        "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+        "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+        "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+        "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+        "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+        "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+        "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+        "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+        "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql"
+      ],
+      "sourceReviewHolds": [
+        {
+          "path": "supabase/functions/_shared/tenbot-invoice.ts",
+          "reason": "historical-deployed-source-changed"
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-openai.ts",
+          "reason": "historical-deployed-source-changed"
+        },
+        {
+          "path": "supabase/functions/tenbot/index.ts",
+          "reason": "historical-deployed-source-changed"
+        }
+      ],
+      "newMigrationClassification": "Current verifier accepts infrastructure/historical classifications only; new unapplied migrations must not be represented as historically deployed."
+    },
+    "cleanupScheduling": "Accepted endpoint requires service-role bearer; existing pg_net queue is PUBLIC-readable. Never queue that credential. Reuse established short-lived signed single-use cleanup invocation pattern in a separately reviewed focused correction."
+  },
+  "currentHostedState": {
+    "recordedAt": "2026-10-30T16:09:42.240Z",
+    "readOnly": true,
+    "mutations": 0,
+    "inferenceCalls": 0,
+    "normalSessionRefresh": true,
+    "projects": [
+      {
+        "name": "tendev",
+        "productionBranch": "dev",
+        "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+        "deployment": "e89f6b3f-8e42-4054-aa00-ad88bb96fcaf",
+        "status": "success",
+        "configurationSha256": "18d2777c5819230ebdda9b0e65d8d40eca00dc5314cc614ca0d3063bb0135432"
+      },
+      {
+        "name": "tenops",
+        "productionBranch": "main",
+        "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+        "deployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+        "status": "success",
+        "configurationSha256": "f52ea907ffd36211ab1fdf4c71f9d75665506b841697f33fe533642a92155629"
+      }
+    ],
+    "edge": {
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 16,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "bundleSha256": "4d0dea56cb24f9f702208280812566ece63efc33012241cde5ad3672ce076221",
+      "metadataHash": "37b6e91a37417c05bf18abcdab0de5eaddfd9ffa2303485a14b91b89948c0789"
+    },
+    "provider": {
+      "keyPresent": true,
+      "secretValueRead": false,
+      "configurationMatches": {
+        "TENBOT_OPENAI_ENABLED": true,
+        "TENBOT_OPENAI_SPEND_AUTHORIZED": true,
+        "TENBOT_OPENAI_ALLOWED_ORIGINS": true,
+        "TENBOT_OPENAI_KEY_EXPIRES_AT": true,
+        "TENBOT_AI_ENABLED": true
+      }
+    },
+    "privateConfigFilesMode": "0600"
+  },
+  "newDeployment": null,
+  "newMigrationApplications": 0,
+  "receivalMigrationsRemainPending": 10,
+  "cleanupScheduleConfigured": false,
+  "canaryExecuted": false,
+  "employeeEnrollmentChanges": 0,
+  "operationalRowsRead": 0,
+  "operationalWrites": 0,
+  "inferenceCalls": 0,
+  "newInferenceCostUsd": 0,
+  "hostedProviderChanges": 0,
+  "productionDeployment": false,
+  "git": {
+    "head": "ffed10ac28736e48ecff8edf032a3b414254f307",
+    "privateIndexOnly": true,
+    "newCommitObjectOnly": true,
+    "branchOrWorktreeCreated": false,
+    "sharedIndexOrRefsChanged": false,
+    "push": false
+  },
+  "nextStep": "Accept focused release-proof/classification and signed-cleanup-auth corrections, retain the approved runtime business behavior and migration hashes, then resume existing disabled-first TenDev staging authorization. Exact write canary still requires separate Product approval."
+}

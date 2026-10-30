@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:26:24.079Z",
+  "sha": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "tree": "d7bb44ac068b28aca92461347a22f2b359189019",
+  "parent": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+  "ref": "refs/tenops/candidates/receival-blockers-preparation-20261030",
+  "source": "/private/tmp/tenops-tenbot-receival-blockers-20261030/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-receival-blockers-20261030/candidate-git",
+  "canonicalBase": "c63527cc2f270a5d8cdb41890bd871b489be467d",
+  "overlays": [
+    {
+      "path": "scripts/tenbot-knowledge/source-reviews.json",
+      "sha256": "26fc33a5c27bff523845490c233740a7e5433f9d58fce6eb333134b751a6ee2e"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/infrastructure-reviews.json",
+      "sha256": "49ee9ffc4734028dd034859e1f57c31f9c491ad57e9cafaf10e54b2030699c62"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "sha256": "586a8ff2c431d068e11f49b255186c8227ad91f15e37b6c4c29ec9d1fb4b8b95"
+    }
+  ],
+  "knowledgeEntriesUnchanged": true,
+  "structuredKnowledgeUnchanged": true,
+  "releasedAuthorityUnchanged": true,
+  "knowledgeEntryCount": 16,
+  "structuredPatchCount": 16,
+  "cleanCandidate": true,
+  "fullHistoryAvailable": true,
+  "sharedIndexHeadBranchesUnchanged": true,
+  "push": false,
+  "deployment": false,
+  "technicalAcceptancePending": true
+}

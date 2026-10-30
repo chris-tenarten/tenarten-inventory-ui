@@ -1,0 +1,54 @@
+{
+  "status": "Both local blockers corrected; awaiting renewed Product acceptance",
+  "recordedAt": "2026-10-30T16:31:50.041084+00:00",
+  "baseline": "ffed10ac",
+  "selectiveCandidate": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "rootCauses": {
+    "releaseProof": "Existing receipts could represent historical deployment or unchanged infrastructure, but could not honestly describe accepted-unapplied migrations/new candidate lifecycle. Reviews for different selected source variants also remained active against one another.",
+    "cleanup": "Service-role bearer authentication could not safely be sent through PUBLIC-readable pg_net HTTP headers."
+  },
+  "corrections": {
+    "releaseProof": "Exact committed candidate-source evidence separates product-accepted and technical-review runtime/unapplied migrations; preparation-only TenDev target. Historical/source review history retained, current-source dependency applicability exact. CleanHEAD/full-history/committed-artifact guards retained.",
+    "cleanup": "Short-lived purpose/run/expiry/limit HMAC plus private atomic single-use ledger; public anon gateway only, service key internal; default-OFF controls, cancellation/deadlines, immutable count-only terminal status and fresh-nonce retries."
+  },
+  "validation": {
+    "originalDatabaseGroupsReused": 28,
+    "newProofOfflineGroups": 18,
+    "actualCleanCandidateGuardRejections": 4,
+    "cleanupCryptoHttpGroups": 14,
+    "actualPostgreSQLRollbackGroups": 9,
+    "mandatoryCandidatePrebuildAndOptimizedBuild": true,
+    "typescript": true,
+    "targetedEslint": true,
+    "edgeTypesAndExplicitLint": true,
+    "diffCheck": true,
+    "independentFocusedReviews": 2,
+    "proofStatus": "candidate-preparation-reviewed",
+    "semanticHolds": 0,
+    "sourceHolds": 0,
+    "unclassifiedSensitivePaths": 0,
+    "originalTenMigrationHashesUnchanged": true,
+    "employeeKnowledgeAndStructuredFactsUnchanged": true
+  },
+  "unappliedMigrationCount": 11,
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "productionCalls": 0,
+  "hostedMutations": 0,
+  "migrationApplications": 0,
+  "deployments": 0,
+  "writesDisabled": true,
+  "remainingGates": [
+    "Renewed Product acceptance of technical correction and new unapplied cleanup migration.",
+    "Separately authorized shared application/disabled-first TenDev deployment and actual hosted Deno/JWT/Storage/approval compatibility smoke.",
+    "Private matching Edge/Vault cleanup wake secret + public anon gateway configuration, then inactive schedule and real signed no-op/replay check before enabling cleanup.",
+    "New cleanup ledger cross-connection concurrency and actual dispatcher/pg_net/Vault/HTTP integration not claimed by rollback-only SQL; validate at the separately authorized isolated/staging gate.",
+    "Exact employee/catalog/document/write/cancellation canary approval remains separate."
+  ],
+  "scopeLimits": [
+    "New PG tests use actual database roles and synthetic JWT-claim GUCs, not a fresh signed JWT transport campaign.",
+    "Rollback-only test omits dispatcher and pg_net/Vault preflight, performs no Storage deletion, and restores new object absence.",
+    "Existing 28 real JWT/RLS/source/retained-original/concurrency tests reused without rerun.",
+    "No invoice interpretation or model comparison repeated."
+  ]
+}

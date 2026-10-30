@@ -1,0 +1,38 @@
+{
+  "recordedAt": "2026-10-30T16:29:04.715Z",
+  "passed": true,
+  "groups": 18,
+  "verification": "Receipt of the already completed node scripts/verify-tenbot-candidate-source-proof.mjs run; tests were not rerun for capture.",
+  "detailedAssertions": "scripts/verify-tenbot-candidate-source-proof.mjs",
+  "checksScope": [
+    "Exact accepted-versus-technical candidate authority and unchanged deployed authority",
+    "Cleanup Edge entry sensitivity requires exact source proof",
+    "Strict proof shape, paths, scope, full revisions and committed receipt identity",
+    "Both source hashes, original Product authority revision, candidate membership and receipt tuple/claims",
+    "Strict exact TenDev URL and dev build branch; no Production preparation authority",
+    "Semantic and neighboring source holds remain enforced",
+    "Historical/runtime supersession preserves original evidence; applied migrations cannot be superseded",
+    "Record proof supersession follows the selected AFTER source and its own dependencies; active helper/content/authority drift remains held",
+    "Actual generator source-archive invocation refuses missing full reviewed Git history; existing HEAD/clean/artifact guards retained"
+  ],
+  "sources": [
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "sha256": "bf065d4c5d519b42a99d1b5ffa3382c589169f7d9cdaff69412eae2e5f1eb8b7"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-sync.mjs",
+      "sha256": "486a082400dd02923b700955f70039aac1f33926ff2caa8256620d98ecd93b39"
+    },
+    {
+      "path": "scripts/verify-tenbot-candidate-source-proof.mjs",
+      "sha256": "afb7461519302a0de5432a05bce9d4cbbfd8dca765d2d78446ac9869574c0983"
+    }
+  ],
+  "mode": "Offline exact-source proof callbacks plus actual generator source-archive rejection",
+  "sharedGitMutations": 0,
+  "hostedCalls": 0,
+  "databaseCalls": 0,
+  "inferenceCalls": 0,
+  "deploymentAuthority": false
+}

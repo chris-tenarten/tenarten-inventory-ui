@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:28:52.017Z",
+  "sha": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "groups": 4,
+  "checks": [
+    {
+      "name": "actual Production target cannot use TenDev candidate evidence",
+      "exitCode": 1,
+      "expectedRejection": true
+    },
+    {
+      "name": "actual nominated candidate must equal HEAD",
+      "exitCode": 1,
+      "expectedRejection": true
+    },
+    {
+      "name": "actual dirty tracked source cannot pass",
+      "exitCode": 1,
+      "expectedRejection": true
+    },
+    {
+      "name": "actual clean committed stale artifact cannot pass",
+      "exitCode": 1,
+      "expectedRejection": true
+    }
+  ],
+  "mode": "Actual generator and private clean full-history view; no callbacks replace the generator",
+  "candidateRestoredClean": true,
+  "sharedGitMutations": 0,
+  "hostedCalls": 0,
+  "inferenceCalls": 0
+}

@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:25:36.849Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "source": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+  "sourceSha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496",
+  "test": "scripts/fixtures/tenbot-receival-cleanup-rollback.sql",
+  "testSha256": "df6d10136a829a1e94244a98ab96417686376d4dfd27f3e0414cce7de5746620",
+  "durationMs": 1197,
+  "result": {
+    "mode": "isolated-real-postgresql-rollback-only",
+    "groups": [
+      "actual authenticated direct table/RPC denial",
+      "default OFF",
+      "exact binding, atomic consume/replay, bounded idempotent finish",
+      "expiry, queued cancellation and global revocation",
+      "failed/cancelled/uncertain nonce cannot replay; fresh retry",
+      "private tables and narrowly granted RPCs",
+      "server grant alone cannot bypass role-claim check",
+      "sources, bindings, originals, unrelated jobs and applied ledger unchanged",
+      "SQL HMAC matches real Node/WebCrypto vector"
+    ],
+    "fixture": "jltgxcfiprocydhbrahz",
+    "concurrency": "not-tested-cross-connection-DDL-uncommitted",
+    "groupsPassed": 9,
+    "newMigrationApplied": false,
+    "httpOrStorageDeletion": false
+  },
+  "before": {
+    "runsAbsent": true,
+    "consumeAbsent": true,
+    "controlAbsent": true,
+    "newMigrationAbsent": true
+  },
+  "after": {
+    "runsAbsent": true,
+    "consumeAbsent": true,
+    "controlAbsent": true,
+    "newMigrationAbsent": true
+  },
+  "actualPostgreSQL": true,
+  "fixtureMigrationLedgerPresent": false,
+  "rollbackOnly": true,
+  "newMigrationApplications": 0,
+  "dispatcherExecuted": false,
+  "storageDeletes": 0,
+  "cronChanges": 0,
+  "productionCalls": 0,
+  "inferenceCalls": 0,
+  "limitations": [
+    "Ledger/control/consume/finish/cancel SQL only; dispatcher and pg_net/Vault preflight omitted.",
+    "SET ROLE and synthetic claim GUCs exercise actual database privileges; not a new signed JWT/HTTP authentication test.",
+    "Cross-connection SQL concurrency and actual hosted scheduler transport remain staging checks."
+  ]
+}

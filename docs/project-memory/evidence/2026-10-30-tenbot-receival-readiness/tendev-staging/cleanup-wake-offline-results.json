@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-10-30T16:23:20.982162+00:00",
+  "mode": "real-local-crypto-http-with-ledger-doubles-only",
+  "command": "./node_modules/.bin/tsx scripts/verify-tenbot-receival-cleanup.mts",
+  "exitCode": 0,
+  "groupsPassed": 14,
+  "groups": [
+    "Node HMAC and WebCrypto agree on exact fixed-purpose v1 payload",
+    "default OFF, key misconfiguration and methods cannot invoke maintenance",
+    "strict bounded body rejects arbitrary targets and invalid signatures before RPC",
+    "streamed body timeout and cancellation are bounded before consumption",
+    "consume before fixed claim/delete/finalize, bounded limit and count-only response",
+    "same signed wake is one-use across concurrent local HTTP requests",
+    "cancelled queued wake and revoked global control fail closed",
+    "uncertain consumption never starts source work or permits same-wake retry",
+    "untrusted claim shape cannot choose bucket/path or exceed signed limit",
+    "delete failure never finalizes source; retry requires a fresh signed run",
+    "cancellation after consumption halts later calls and preserves one-use nonce",
+    "abort bounds a hung dependency; only count-only cancellation audit may follow",
+    "source/run finalization errors are sanitized and cannot replay consumed work",
+    "entry keeps service key internal; migration is private/default OFF with no scheduled work"
+  ],
+  "databaseValidation": "not-run; new migration unapplied",
+  "scopeLimitations": [
+    "No real PostgreSQL concurrency proof",
+    "No hosted Deno/gateway/scheduler verification",
+    "Storage retained-original guards reused unchanged; no claim of database validation from HTTP doubles"
+  ],
+  "staticChecks": {
+    "targetedStrictTypeScript": "PASS",
+    "targetedESLint": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "sources": {
+    "supabase/functions/_shared/tenbot-receival-cleanup.ts": "13a803362707e1729cd6d0590ead1b62fea52f26585f225c6575dc7f30c46d10",
+    "supabase/functions/tenbot-receival-cleanup/index.ts": "6a89f90d487ebc20c6ac971df8cfc2c7a6806234f830fca8ca7a1816bc6f2e74",
+    "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496",
+    "scripts/verify-tenbot-receival-cleanup.mts": "df19e26b1c5757b911b37d5e1eaf5f233a0b15667fc0d292028d9644263bd558"
+  }
+}

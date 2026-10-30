@@ -1,0 +1,161 @@
+{
+  "passed": true,
+  "checkedAt": "2026-10-30T16:06:20.919Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "readOnlyEndpoint": true,
+  "querySha256": "f3f811d0a27cc41a3b108f38cb0981385dc5c90013b41248fcdf221bdeb610f9",
+  "eligibility": {
+    "operator": "supabase_read_only_user",
+    "readOnly": "on",
+    "routines": [
+      {
+        "name": "alter_job",
+        "schema": "cron",
+        "arguments": "job_id bigint, schedule text, command text, database text, username text, active boolean",
+        "operatorCanExecute": false
+      },
+      {
+        "name": "schedule",
+        "schema": "cron",
+        "arguments": "job_name text, schedule text, command text",
+        "operatorCanExecute": true
+      },
+      {
+        "name": "schedule",
+        "schema": "cron",
+        "arguments": "schedule text, command text",
+        "operatorCanExecute": true
+      },
+      {
+        "name": "unschedule",
+        "schema": "cron",
+        "arguments": "job_id bigint",
+        "operatorCanExecute": true
+      },
+      {
+        "name": "unschedule",
+        "schema": "cron",
+        "arguments": "job_name text",
+        "operatorCanExecute": true
+      },
+      {
+        "name": "http_post",
+        "schema": "net",
+        "arguments": "url text, body jsonb, params jsonb, headers jsonb, timeout_milliseconds integer",
+        "operatorCanExecute": true
+      },
+      {
+        "name": "create_secret",
+        "schema": "vault",
+        "arguments": "new_secret text, new_name text, new_description text, new_key_id uuid",
+        "operatorCanExecute": false
+      },
+      {
+        "name": "update_secret",
+        "schema": "vault",
+        "arguments": "secret_id uuid, new_secret text, new_name text, new_description text, new_key_id uuid",
+        "operatorCanExecute": false
+      }
+    ],
+    "extensions": [
+      {
+        "name": "pg_cron",
+        "schema": "pg_catalog",
+        "version": "1.6.4"
+      },
+      {
+        "name": "pg_net",
+        "schema": "extensions",
+        "version": "0.20.0"
+      },
+      {
+        "name": "pgcrypto",
+        "schema": "extensions",
+        "version": "1.3"
+      },
+      {
+        "name": "supabase_vault",
+        "schema": "vault",
+        "version": "0.3.1"
+      }
+    ],
+    "sourceTable": false,
+    "cleanupClaim": false,
+    "cronJobTable": true,
+    "cronTimezone": "GMT",
+    "cleanupFinish": false,
+    "knownDispatchers": {
+      "messaging": true,
+      "tendevPush": true,
+      "tenopsPush": true
+    },
+    "requestQueueTable": true,
+    "vaultSecretsTable": true,
+    "requestQueueSelectPrivileges": {
+      "acl": [
+        "supabase_admin=arwdDxtm/supabase_admin",
+        "=arwdDxtm/supabase_admin"
+      ],
+      "anon": true,
+      "serviceRole": true,
+      "authenticated": true
+    }
+  },
+  "metadata": {
+    "jobs": [
+      {
+        "id": 1,
+        "name": "tenops-messaging-abandoned-drafts",
+        "owner": "postgres",
+        "active": true,
+        "database": "postgres",
+        "schedule": "17 * * * *"
+      },
+      {
+        "id": 2,
+        "name": "tenops-web-push",
+        "owner": "postgres",
+        "active": true,
+        "database": "postgres",
+        "schedule": "* * * * *"
+      }
+    ],
+    "readOnly": "on",
+    "vaultSecretNames": [
+      {
+        "name": "messaging_cleanup_gateway_jwt",
+        "createdAt": "2026-09-25T16:46:37.105542+00:00",
+        "updatedAt": "2026-09-25T16:46:37.105542+00:00"
+      },
+      {
+        "name": "messaging_cleanup_invocation",
+        "createdAt": "2026-09-25T16:46:37.105542+00:00",
+        "updatedAt": "2026-09-25T16:46:37.105542+00:00"
+      },
+      {
+        "name": "web_push_url_tendev",
+        "createdAt": "2026-10-20T21:23:04.585687+00:00",
+        "updatedAt": "2026-10-20T21:23:04.585687+00:00"
+      },
+      {
+        "name": "web_push_url_tenops",
+        "createdAt": "2026-10-21T14:11:18.625223+00:00",
+        "updatedAt": "2026-10-21T14:11:18.625223+00:00"
+      },
+      {
+        "name": "web_push_wake_tendev",
+        "createdAt": "2026-10-20T21:23:04.585687+00:00",
+        "updatedAt": "2026-10-20T21:23:04.585687+00:00"
+      },
+      {
+        "name": "web_push_wake_tenops",
+        "createdAt": "2026-10-21T14:11:18.625223+00:00",
+        "updatedAt": "2026-10-21T14:11:18.625223+00:00"
+      }
+    ]
+  },
+  "cronCommandsRead": false,
+  "vaultValuesRead": false,
+  "operationalRowsRead": 0,
+  "mutations": 0
+}

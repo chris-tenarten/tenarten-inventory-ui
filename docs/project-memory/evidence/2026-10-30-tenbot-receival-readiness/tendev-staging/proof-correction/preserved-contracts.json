@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "originalTenMigrationHashesUnchanged": true,
+  "acceptedBusinessSourcesUnchangedExceptAuthorizedCleanupAuth": true,
+  "expectedChangedAcceptedPaths": [
+    "scripts/verify-tenbot-receival-cleanup.mts",
+    "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+    "supabase/functions/tenbot-receival-cleanup/index.ts"
+  ],
+  "rollbackLedgerFunctionBodiesExact": [
+    "consume_invoice_receival_cleanup_run",
+    "finish_invoice_receival_cleanup_run",
+    "cancel_invoice_receival_cleanup_run"
+  ],
+  "devArtifactMatchesValidatedCandidate": true
+}

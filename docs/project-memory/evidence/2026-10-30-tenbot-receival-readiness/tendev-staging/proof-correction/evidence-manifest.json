@@ -1,0 +1,81 @@
+{
+  "status": "Local correction evidence; no secrets or operational data",
+  "artifacts": [
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/build-artifacts.json",
+      "sha256": "b06ac88bdbba527ca8b81d486691bf8e9518f15daf6f2dbd393703fd23f14c74"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/build.json",
+      "sha256": "daa6a8b2027635ad217bb28368f5b50b9ca1eec7f2d25d23641d933a584bd9b1"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/candidate-proof.json",
+      "sha256": "d5558702a635305dc7402f929d42981bcc9b7976f93b1ba708a9422c50433803"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/candidate.json",
+      "sha256": "0f90d945e174fd62229301367c5bb8e0ce52bc9a17bbed708dc53fe013fc7b84"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/clean-candidate-guard-results.json",
+      "sha256": "12551c76f19e7a35360e82ace3764c12d900067b2b383cec56830643b45337d7"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/cleanup-ledger-rollback-results.json",
+      "sha256": "ae3e9dd9e3247280bf1dee77b608b0ac908ab6b851c61a4f39c04a3d5ebba86f"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/cleanup-rollback-precheck-failure.json",
+      "sha256": "a5ed16bc2812ad74ae8b8e6399164276fd0b16c8635d8a840d9e1653fd8abc26"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/prepare-candidate.mjs.txt",
+      "sha256": "11bfd04bb153a1787a1b90c05a22a60d5988b1d6dd130c7103d10faf1b77077c"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/prepare-proof-candidate.mjs.txt",
+      "sha256": "13334941972ca307b23454ea978b50234cb3d2549dda738e34e1fe639cf27183"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/preserved-contracts.json",
+      "sha256": "b9ae683e06b30d9acab0252b2cbce672e7cb8e2be412e8f03d1f74a8891c1af5"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/proof-final-readonly-review.json",
+      "sha256": "f8919fd2cf2e60abb92eda79a4fa287c799fabe1503ac96bec5ede5370dd7eb0"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/proof-offline-results.json",
+      "sha256": "fc95fe0469c0f5affb366fd56313bfede57f619f866a0da3f4996364797356d7"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/release-scope.json",
+      "sha256": "688965b3277c5ba30ffa706e6a70f501f219a65e33d8470a5ef2985595de5f40"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/source-objects.json",
+      "sha256": "08ed936026092a19bb6936615b6e1ee94821bc13e7f1683a0136d1f0faee5fd2"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/summary.json",
+      "sha256": "92b176299ec0d492e4047f2ca38da1aaeac3ca68f5d429023ab5fe9a20b96620"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/validate-candidate.mjs.txt",
+      "sha256": "0717e345ba683d969ae29880e94704e4ad79261451ce2e2465b91ca5f84805ac"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proof-correction/verify-clean-candidate-guards.mjs.txt",
+      "sha256": "e611c00423474699764c61c4f1a65a2158a93065a33241974d841703b437b52c"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/cleanup-wake-offline-results.json",
+      "sha256": "29bbe5efbe770868f5e884dbc6ef1db833bb7adff38c0b3a6a38ce6d2ba0a92a"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/focused-source-review.json",
+      "sha256": "53f185ebf2de624006133cfc88d30984d9cd34390f038cf0d7c11af594b5a985"
+    }
+  ]
+}

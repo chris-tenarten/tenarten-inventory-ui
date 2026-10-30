@@ -1,0 +1,65 @@
+{
+  "status": "BLOCKED: accepted cleanup authentication must be corrected before safe pg_net scheduling",
+  "acceptedCandidate": "ffed10ac",
+  "readOnlyMetadata": "cleanup-scheduler-metadata.json",
+  "actualInfrastructure": {
+    "pgCron": "1.6.4",
+    "pgNet": "0.20.0",
+    "vault": "0.3.1",
+    "pgcrypto": "1.3",
+    "cronTimezone": "GMT",
+    "existingJobs": 2,
+    "newCleanupJob": false,
+    "newCleanupSecret": false,
+    "sharedSourceTablePresentAtInspection": false
+  },
+  "criticalProof": {
+    "requestQueuePublicAcl": "PUBLIC arwdDxtm",
+    "anonSelect": true,
+    "authenticatedSelect": true,
+    "acceptedCleanupRequires": "Authorization: Bearer SUPABASE_SERVICE_ROLE_KEY",
+    "unsafeActionNotPerformed": "No broad service-role credential was queued or installed"
+  },
+  "minimumCorrection": {
+    "preferred": "Reuse existing Web Push short-lived HMAC signed wake plus atomic single-use run ledger",
+    "payload": "version, fixed cleanup purpose, generated run UUID, expiry <=120 seconds, fixed limit<=20, HMAC signature",
+    "edgeChange": "Validate signed bounded request and consume its exact unexpired run once; keep service-role key internal for existing fixed source-metadata RPCs and private expired-object DELETE only",
+    "databaseChange": "Private dispatcher/short-lived run ledger with no public/authenticated EXECUTE; decrypt dedicated signing value only inside privileged dispatcher, never return or queue it",
+    "gateway": "Public anon gateway JWT if existing verify_jwt=true retained, or separately reviewed function-specific custom-auth gateway; never service-role key in request queue",
+    "secretEntry": "Dedicated matching Vault/Edge signing secret via established private owner entry, no secret values in Git/chat/cron text",
+    "narrowAlternative": "Dedicated capability-limited cleanup invocation secret, following existing Messaging convention, confines exposure to expired-original cleanup but remains replayable if queued headers are read; HMAC single-use is preferred"
+  },
+  "exactScheduleAfterCorrectionAndApproval": {
+    "name": "tenbot-invoice-original-expiry",
+    "expression": "23 * * * *",
+    "timezone": "existing GMT/UTC; do not alter global Cron timezone",
+    "command": "select public.dispatch_invoice_source_cleanup();",
+    "installation": "Create inactive in same transaction; verify exact owner/schedule/function identity; preserve other jobs",
+    "activation": "Only after default-off/authentication/no-op checks and source gates pass"
+  },
+  "safeFirstNoOpVerification": {
+    "currentCandidate": "Leave cleanup disabled; a private authenticated request must return503 cleanup_disabled without DB/Storage calls. No such request performed in this read-only pass.",
+    "afterCorrectedStaging": [
+      "Verify count-only eligible expired/unexecuted source count is0 while write gates remainOFF",
+      "Invoke one fresh signed limit1 request through private dispatcher with job stillinactive",
+      "Require HTTP200 removedCount0; consumed run recorded once, no object/record mutation",
+      "Replay same run and verify no second cleanup",
+      "Only then enable hourly job and check firstscheduled count-only result"
+    ]
+  },
+  "externalAlternative": {
+    "repository": "Known local TenBot Worker has no scheduled handler/cron triggers; no established external cleanup Cron convention found",
+    "liveCloudflareInventory": "One read-only GET returned401; no credential refresh or retry; external alternative remains unverified",
+    "evidence": "cleanup-cloudflare-alternative.json"
+  },
+  "performed": {
+    "cronCommandTextRead": false,
+    "vaultValuesRead": false,
+    "serviceKeyViewed": false,
+    "operationalRowsRead": 0,
+    "mutations": 0,
+    "deployments": 0,
+    "schedulesCreated": 0,
+    "paidInference": 0
+  }
+}

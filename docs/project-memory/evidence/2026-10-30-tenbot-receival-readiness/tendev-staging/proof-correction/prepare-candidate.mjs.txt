@@ -1,0 +1,26 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {execFileSync} from 'node:child_process';import {createHash} from 'node:crypto';
+const repo='/Users/chrisngo/source/repos/tenarten-inventory-ui',dir='/private/tmp/tenops-tenbot-receival-blockers-20261030',hash=b=>createHash('sha256').update(b).digest('hex');
+const action=process.argv[2];assert(action==='source-objects','Only fixed source-object preparation is enabled');
+const run=(args,env={},input)=>execFileSync('git',args,{cwd:repo,env:{...process.env,...env},input,timeout:15000,maxBuffer:5e6,encoding:input instanceof Uint8Array?undefined:'utf8'});
+assert.equal(String(run(['rev-parse','HEAD'])).trim(),'ffed10ac28736e48ecff8edf032a3b414254f307');assert.equal(String(run(['diff','--cached','--name-only'])).trim(),'');
+assert(!fs.existsSync(dir+'/source-objects.json'));
+const parent='f4998e1e7fb78d03cb6583d32da8226b3681af79',receipt='docs/project-memory/2026-10-30-tenbot-receival-release-proof.md';
+const technical=[
+ ['scripts/generate-tenbot-knowledge.mjs','bf065d4c5d519b42a99d1b5ffa3382c589169f7d9cdaff69412eae2e5f1eb8b7'],
+ ['scripts/tenbot-knowledge/release-sync.mjs','486a082400dd02923b700955f70039aac1f33926ff2caa8256620d98ecd93b39'],
+ ['supabase/functions/_shared/tenbot-receival-cleanup.ts','13a803362707e1729cd6d0590ead1b62fea52f26585f225c6575dc7f30c46d10'],
+ ['supabase/functions/tenbot-receival-cleanup/index.ts','6a89f90d487ebc20c6ac971df8cfc2c7a6806234f830fca8ca7a1816bc6f2e74'],
+ ['supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql','dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496']
+];
+assert.equal(hash(fs.readFileSync(repo+'/'+receipt)),'cf4bcd43e91fdbea33c5d68adf7283247797b78e3f29cb7183e6fe78042003ba');for(const[p,h]of technical)assert.equal(hash(fs.readFileSync(repo+'/'+p)),h,p);
+function make(label,base,paths){
+ const env={GIT_INDEX_FILE:dir+'/'+label+'.index'};assert(!fs.existsSync(env.GIT_INDEX_FILE));run(['read-tree',base],env);
+ for(const file of paths){const blob=String(run(['hash-object','-w','--stdin'],env,fs.readFileSync(repo+'/'+file))).trim();run(['update-index','--add','--cacheinfo','100644',blob,file],env);}
+ const tree=String(run(['write-tree'],env)).trim();const sha=String(run(['commit-tree',tree,'-p',base],env,'Prepare exact receival '+label+' evidence for TenDev review [CF-Pages-Skip] [CI Skip]\n')).trim();
+ const ref='refs/tenops/candidates/receival-blockers-'+label+'-20261030';let exists=false;try{run(['show-ref','--verify',ref]);exists=true;}catch{}assert(!exists);run(['update-ref',ref,sha,'0'.repeat(40)]);
+ return {sha,tree,parent:base,ref,paths};
+}
+const accepted=make('accepted-source',parent,[receipt,'docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/focused-source-review.json']);
+const correction=make('technical-source',accepted.sha,technical.map(([p])=>p));
+const result={recordedAt:new Date().toISOString(),accepted,correction,technical:technical.map(([path,sha256])=>({path,sha256})),originalTenMigrationHashesPreserved:true,branchOrWorktreeCreated:false,sharedIndexChanged:false,devHeadChanged:false,push:false,deployment:false};
+fs.writeFileSync(dir+'/source-objects.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({accepted:accepted.sha,technical:correction.sha,devUnchanged:true,privateIndexOnly:true,localEvidenceRefs:true}));

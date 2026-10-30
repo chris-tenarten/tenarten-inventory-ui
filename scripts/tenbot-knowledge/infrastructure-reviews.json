@@ -138,5 +138,25 @@
       "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
       "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
     }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "blob": "0b90dd83531e6b95363322f888b5637c530bca1c",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+      "heading": "## Accepted infrastructure review \u2014 selective knowledge preparation"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+    "blob": "c521fad047d387b226568f33a9213e9f4e564d3a",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+      "heading": "## Accepted infrastructure review \u2014 selective knowledge preparation"
+    }
   }
 ]

@@ -1,0 +1,71 @@
+{
+  "recordedAt": "2026-10-30T16:29:33.507Z",
+  "review": "Read-only final source diff and existing evidence review; no tests rerun",
+  "candidate": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "passed": true,
+  "sourceMatches": [
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "sha256": "bf065d4c5d519b42a99d1b5ffa3382c589169f7d9cdaff69412eae2e5f1eb8b7",
+      "candidateMatches": true
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-sync.mjs",
+      "sha256": "486a082400dd02923b700955f70039aac1f33926ff2caa8256620d98ecd93b39",
+      "candidateMatches": true
+    }
+  ],
+  "validationOnlyVerifier": "scripts/verify-tenbot-candidate-source-proof.mjs was not selected into the hosted runtime candidate.",
+  "findings": [],
+  "proof": {
+    "status": "candidate-preparation-reviewed",
+    "semanticHolds": 0,
+    "unclassified": 0,
+    "sourceHolds": 0,
+    "authority": {
+      "scope": "tendev-preparation",
+      "requiresProductAcceptance": true,
+      "hostedApplicationVerified": false,
+      "deploymentAuthorized": false
+    }
+  },
+  "actualPriorGuards": [
+    {
+      "name": "actual Production target cannot use TenDev candidate evidence",
+      "expectedRejection": true,
+      "exitCode": 1
+    },
+    {
+      "name": "actual nominated candidate must equal HEAD",
+      "expectedRejection": true,
+      "exitCode": 1
+    },
+    {
+      "name": "actual dirty tracked source cannot pass",
+      "expectedRejection": true,
+      "exitCode": 1
+    },
+    {
+      "name": "actual clean committed stale artifact cannot pass",
+      "expectedRejection": true,
+      "exitCode": 1
+    }
+  ],
+  "acceptedBuild": {
+    "mandatoryCleanCandidatePrebuild": true,
+    "fullHistory": true,
+    "committedArtifactUnchanged": true,
+    "sourceCleanAfterBuild": true,
+    "knowledgeEntriesUnchanged": true,
+    "structuredKnowledgeUnchanged": true,
+    "releasedAuthorityUnchanged": true
+  },
+  "limits": [
+    "Preparation-only; technical Product acceptance remains pending and deployment authorization remains false.",
+    "New cleanup SQL proof is isolated rollback-only; no hosted scheduler, cross-connection SQL concurrency or new signed-JWT transport certification claimed."
+  ],
+  "newTests": 0,
+  "hostedCalls": 0,
+  "inferenceCalls": 0,
+  "sharedGitMutations": 0
+}

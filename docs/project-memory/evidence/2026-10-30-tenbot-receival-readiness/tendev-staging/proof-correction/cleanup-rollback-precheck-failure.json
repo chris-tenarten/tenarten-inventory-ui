@@ -1,0 +1,8 @@
+{
+  "phase": "read-only object-absence precheck",
+  "code": "42P01",
+  "cause": "Standalone Free fixture has no supabase_migrations.schema_migrations relation; harness now records absence explicitly.",
+  "candidateDDLExecuted": false,
+  "sourceCorrection": false,
+  "newMigrationApplied": false
+}

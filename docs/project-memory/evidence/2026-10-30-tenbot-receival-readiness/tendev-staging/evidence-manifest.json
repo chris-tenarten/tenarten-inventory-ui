@@ -1,0 +1,61 @@
+{
+  "status": "Stopped preflight; no secret/operational data; no new deployment",
+  "artifacts": [
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/cleanup-cloudflare-alternative.json",
+      "sha256": "03f8d8eca285d51645a545ba9fca3c5af30cae18d2d4741c50e48b34be329e31"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/cleanup-scheduler-metadata.json",
+      "sha256": "7bd53d6641ab6a8c83badbb5248189b7c5afe57e3d609ecfb9a21f1e13cca803"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/cleanup-scheduler-readiness.json",
+      "sha256": "4766a3dea2874d409e2a72fbf0b2666c2425576000abd833a2ba02e5a347b786"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/deployment-metadata-readonly.json",
+      "sha256": "7cefde31bedce9f752f632c583df668d3cd814350795e35b5741e01be3431cd3"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/knowledge-release-impact.json",
+      "sha256": "446d14a692a062c1ece93cc36c5af00d3e7fa2004a111ec12741d7bbd8198de1"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/preapply-accepted-source-hashes.json",
+      "sha256": "bb1e0126e3a6c8ad06ce1c51cd4fedfe7a38e1cc3e7b56eb61f9c53e44773db7"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/preapply-compatibility-verdict.json",
+      "sha256": "139051335810a7b551078b2812122231ae845e2daaa4b5b979d2985dcec44a34"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/preapply-prerequisites-readonly.sql",
+      "sha256": "7ff22e9eb7c9e682ea2a85c9de59cc5c659fe8a94951a1485336feac1115f088"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/preapply-prerequisites.json",
+      "sha256": "70335d9d3677560427cea62e5e42ec0a9dc6dc2183534da53d002569a3cc6a8d"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/preapply-schema-drift.json",
+      "sha256": "d04f61d0611f29531d5ea53a639ad8a46bc7e267ddde6ae14525c2d37f53dbfc"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proposed-write-canary.json",
+      "sha256": "6e091421c4bee83a905b59f711cb5bbe41cd98942766c390e5de5ebd3c7bd701"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/source-object.json",
+      "sha256": "761b0fd8e7137889a834b0f4ff88818b5c185d4911cebc1ab1eae645800c6184"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/source-plan.json",
+      "sha256": "0f413ede4b7a73534a53c50ca5de38919b3c2c0754979e33983bf411a064fcd0"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/summary.json",
+      "sha256": "65d7e44892c9b5b9a92c841b914c9618798b4882a7c0a8a6c5aae8be42b3742b"
+    }
+  ]
+}

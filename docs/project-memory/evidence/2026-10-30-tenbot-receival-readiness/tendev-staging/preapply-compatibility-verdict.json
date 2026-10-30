@@ -1,0 +1,111 @@
+{
+  "source": "ffed10ac28736e48ecff8edf032a3b414254f307",
+  "tier": 3,
+  "testingLevel": 3,
+  "mode": "read-only-compatibility-preparation",
+  "sharedSchemaCompatibility": "PASS; affected metadata unchanged from real fixture compatibility evidence",
+  "sourceAndMigrationHashes": "PASS; all10migrations and24sources match exact accepted commit manifest",
+  "prerequisites": "PASS; existing canonical/RBAC/Auth/Storage functions and relations present; executor role and candidate object names absent",
+  "pendingMigrations": [
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "sharedApplied": false
+    }
+  ],
+  "currentlyRegisteredRelevantAssistantMigrations": [
+    {
+      "name": "tenbot_openai_metering",
+      "version": "20261029220000"
+    },
+    {
+      "name": "tenbot_agent_history",
+      "version": "20261029221000"
+    }
+  ],
+  "candidateMigrationsRegistered": 0,
+  "candidateMigrationsApplied": 0,
+  "newReceivalRelations": [],
+  "newReceivalRoutines": [],
+  "privateOriginalBucketPresent": false,
+  "schemaDriftSections": [],
+  "hostedOperationalRowsRead": 0,
+  "hostedMutations": 0,
+  "newInferenceCalls": 0,
+  "migrationApplyAllowedNow": false,
+  "stagingStatus": "HOLD per root exact selective source proof and cleanup scheduling blockers; this receipt does not override release proof",
+  "blockedGatesReportedByRoot": [
+    "Exact selective build release proof:6semanticrecords+18paths+3historical holds",
+    "Cleanup scheduling credential safety unresolved"
+  ],
+  "nextSafeStep": "Resolve release-proof holds and secure maintenance scheduling contract without weakening proof/security; then rerun only necessary changed gates. Do not apply any candidate migration meanwhile.",
+  "eventualApplyPlan": [
+    "Reverify exact accepted source/ten migration SHA256 hashes and fresh affected metadata if time/state changed.",
+    "Apply only the ten listed exact migration contents in chronological manifest order with their existing lock/statement timeouts, preserving append-only history and registering source hashes.",
+    "Verify defaults remain disabled: execution_control=false; pilot_policy=false; no enrolled employees; Edge execution/preparation flags OFF; cleanup defaultOFF.",
+    "Verify final callable/grant/RLS/Storage contracts and unchanged canonical receiving/stock behavior metadata before disabled-first TenDev deployment.",
+    "No canary, employee enrollment, operational execution, spending expansion or cleanup schedule activation without exact separate approval."
+  ],
+  "evidenceFiles": {
+    "preapply-accepted-source-hashes.json": "bb1e0126e3a6c8ad06ce1c51cd4fedfe7a38e1cc3e7b56eb61f9c53e44773db7",
+    "preapply-shared-schema-metadata.json": "85bb239c4ecca8133c25376a15df5df09f73925a11aa7bd92117f74de97207f8",
+    "preapply-schema-drift.json": "d04f61d0611f29531d5ea53a639ad8a46bc7e267ddde6ae14525c2d37f53dbfc",
+    "preapply-prerequisites-readonly.sql": "7ff22e9eb7c9e682ea2a85c9de59cc5c659fe8a94951a1485336feac1115f088",
+    "preapply-prerequisites.json": "70335d9d3677560427cea62e5e42ec0a9dc6dc2183534da53d002569a3cc6a8d"
+  }
+}
