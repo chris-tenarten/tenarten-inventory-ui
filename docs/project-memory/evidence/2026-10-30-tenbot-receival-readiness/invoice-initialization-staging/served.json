@@ -1,0 +1,193 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T22:09:55.099Z",
+  "sha": "ce157b99e31c227480c479169e0a480a6d509bf1",
+  "deployment": "5b73e5b1-3ea7-4ebd-b572-baeea36fe2fa",
+  "verifiedAssets": 36,
+  "rows": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "my-work.html",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "inventory.html",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "tenbot/canary.html",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "manifest.webmanifest",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "sw.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/css/15f74ee999edbd3d.css",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/css/7e85cdb03b2c44e3.css",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/webpack-9dc7fbcbd08378ca.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/c1b010ae-8cda3ade643e9bbb.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/3714-7946fb603a05859a.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/main-app-a4c21c96cc2bc032.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/47222212-23f239a5d73d6cfe.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/9384-0204748abe1fb3e0.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/4944-9effc5eca9ed4eed.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/537-7f637a9ccda78a65.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/3139-84b1c5c8a35a29d5.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/6873-ad2c34adfff528fa.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/2560-84b7131ff085d028.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/layout-9ab3aa98f7eecc27.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/926-34e9fa653e112405.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/434-3e9f1b911e1df5e9.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/5779-5546161c1fcb7c0d.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/4350-fe070c83536aab29.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/5971-04bd28b43a7f14be.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/9065-f17f0b18dceb7b02.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/4796-d94402c509cd22cd.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/3993-5ba342dd1ad2e0c8.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/5307-ac8741000ac28d3d.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/page-b64071de8eba79dc.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/css/9611c0b375fc73f6.css",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/8741-ce0a2dcbd1d9b41f.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/my-work/page-edb09a26ea3a49f8.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/inventory/page-a9e893794360fdca.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/tenbot/canary/page-298f1d94a8ada24e.js",
+      "status": 200,
+      "matches": true
+    }
+  ],
+  "prettyRoutes": true,
+  "allWritesOff": true,
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

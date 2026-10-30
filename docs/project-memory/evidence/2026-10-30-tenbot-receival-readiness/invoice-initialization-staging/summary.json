@@ -1,0 +1,156 @@
+{
+  "status": "TENDEV_DEPLOYED_DISABLED_ACTIVE_INVOICE_INITIALIZATION_GATE_REMAINS",
+  "recordedAt": "2026-10-30T22:18:26.190Z",
+  "authority": "Chris APPROVED INVOICE INITIALIZATION STAGING accepts c251eb8; selective UI/Edge TenDev deployment authorized, no migrations/secrets/grants/enrollment/operational writes. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "scope": "Release-only mandatory proof/build/served checks plus one genuine own-session help/history/status smoke; accepted local/database evidence reused.",
+  "acceptedImplementation": "c251eb8f911bc6d989b22afd11777604d77268ed",
+  "sourceSha": "ce157b99e31c227480c479169e0a480a6d509bf1",
+  "sourceTree": "3022e01ef5c659e99a54c6103e4717298bafe61b",
+  "tenDevDeployment": "5b73e5b1-3ea7-4ebd-b572-baeea36fe2fa",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 23,
+    "verifyJwt": true,
+    "exactRelativeModules": 31
+  },
+  "selective": {
+    "applicationFiles": 6,
+    "paths": [
+      {
+        "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "blob": "fe11936dbbc1368915f1bd3aa4d2bbbae59599ca",
+        "sha256": "fd9699a002edb633b79fa25ccb34a4bc1f80fc1103ff556c98fb3bd3a84b6e23"
+      },
+      {
+        "path": "src/modules/tenbot/initialization-failure.ts",
+        "blob": "4366fc53040738bf3beb99dfc543a91fd4358d7e",
+        "sha256": "aae36eb165ecbced9b455c53afa748aa4f2d56c1d2d920e977a2811580532ec4"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-invoice.ts",
+        "blob": "ee676eca7b2f5549cb7036d380c401addf7103de",
+        "sha256": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+        "blob": "1f2adbf697091197d4f5607874ea0c2b5a187b2b",
+        "sha256": "687d16b79a249e1b61edd0e469b5e060c90a7ad6fd2fab2e56ec7a12ad69360d"
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+        "blob": "8d5c07090caa1e06a47f14b3fc1b2ca081b555f5",
+        "sha256": "05294ec731f6be98bec1389190cf5958cd9093f610c812564dd0776752174766"
+      },
+      {
+        "path": "supabase/functions/tenbot/index.ts",
+        "blob": "f718336df8d2bbf82223285c6ac30105f063ef5f",
+        "sha256": "ce1fdec77b596cf6d6063fff3e0a1d4f631af3d708279205b410ba37fb6dc693"
+      }
+    ],
+    "proofOnlyChanges": [
+      "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "scripts/tenbot-knowledge/source-reviews.json",
+      "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+    ],
+    "acceptedEvidenceFiles": 3,
+    "newMigrations": 0,
+    "employeeKnowledgeEntriesUnchanged": true,
+    "structuredPatchesUnchanged": true,
+    "releasedAuthorityUnchanged": true,
+    "unrelatedDevSourceExcluded": true,
+    "privateRefs": [
+      "refs/tenops/candidates/invoice-init-source-20261030",
+      "refs/tenops/candidates/invoice-init-preparation-20261030"
+    ]
+  },
+  "gates": {
+    "mandatoryCleanFullHistoryExactCommittedProof": true,
+    "semanticHolds": 0,
+    "sourceHolds": 0,
+    "unclassifiedSensitivePaths": 0,
+    "buildPassed": true,
+    "buildDurationMs": 35343,
+    "servedAssetsMatched": 36,
+    "hostedDenoFunctionActive": true,
+    "jwtVerificationRetained": true,
+    "sourceClosureMatched": true,
+    "actualAuthenticatedMessagingAndCanaryStatusPassed": true,
+    "historyRestoredAfterFullReload": true,
+    "activeInvoiceInitializationPassed": false
+  },
+  "catalog": {
+    "verification": "Narrow authorized read-only Management SELECT, not caller-JWT invoice initialization",
+    "counts": {
+      "standard": 1951,
+      "activeSpecialty": 301
+    },
+    "target": {
+      "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+      "size": "#0",
+      "unit": "50lb bag",
+      "vendor": "T&M Supply",
+      "material": "Alaska White"
+    },
+    "accepted1951RowReaderEvidenceReused": true
+  },
+  "final": {
+    "allSqlAndEdgeWriteGatesOff": true,
+    "activeGrants": 0,
+    "enrollment": 0,
+    "permits": 0,
+    "historicalRevokedGrants": 1,
+    "retainedGrantAuditRows": 2,
+    "subjectSources": 0,
+    "subjectDrafts": 0,
+    "subjectApprovals": 0,
+    "subjectExecutions": 0,
+    "stockUnchanged": true,
+    "inventoryTransactionsUnchanged": true,
+    "providerPolicyAndAllSecretDigestsUnchanged": true,
+    "cleanupAndSchedulesUnchanged": true,
+    "migrationLedgerUnchanged": true,
+    "tenOpsPagesSource": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "tenOpsPagesDeployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+    "tenOpsPagesDeployed": false,
+    "sharedTenbotEdgeUpdatedWithinApprovedScope": true
+  },
+  "browserEvidence": "hosted-browser-smoke.json",
+  "spending": {
+    "fixedOperatorInferenceCalls": 0,
+    "browserHelpSubmissions": 1,
+    "observedAccountedMicrousdDelta": 6341,
+    "remainingHostedMicrousd": 3781332,
+    "uncertainReservations": 0,
+    "policyUnchanged": true,
+    "existingCutoff": "2026-10-30T23:00:00+00:00",
+    "scope": "inferenceCalls=0 in fixed operator receipts refers only to operator-issued calls. Browser help is separate; the metering delta is an aggregate observed change, not a captured per-response token trace."
+  },
+  "releaseOperatorCorrections": {
+    "existingCloudflareSessionRefreshedNormally": true,
+    "expiredSessionObserved": "2026-10-30T21:35:33.895Z",
+    "metadata429CapturedBeforeRefresh": true,
+    "noOwnerActionRequired": true,
+    "oldEdgeSource": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+    "oldEdgeVersion": 22,
+    "ffcfUiProofArtifactOnlyDifference": true,
+    "oldVsFfcfKnowledgePayloadAndAuthorityEqual": true,
+    "canonicalHtml308RedirectHandledByFetchingExactPrettyRoutes": true,
+    "noReleaseProofBypass": true
+  },
+  "blockers": [
+    "Positive hosted invoice initialization is not reachable with required pilot OFF, enrollment empty and grant inactive; no authorization bypass or grant was attempted.",
+    "A separately approved fresh finite canary-access window is needed to verify active initialization before upload/execution. Existing inference funding stops at 6 p.m. Chicago October30; no extension or increased spending is approved."
+  ],
+  "noNewWorkflowOrArchitecture": true,
+  "noPush": true,
+  "noMigrations": true,
+  "noHostedSecretOrProviderConfigChanges": true,
+  "noOperationalWrites": true,
+  "noTenOpsPagesDeployment": true,
+  "unrelatedDirtyWorkPreserved": true,
+  "localhost3000ProcessUntouched": true,
+  "stop": "Product acceptance before any grant/enrollment/write activation or canary."
+}

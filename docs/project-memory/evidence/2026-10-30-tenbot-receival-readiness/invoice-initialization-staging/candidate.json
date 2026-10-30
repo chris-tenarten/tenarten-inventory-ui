@@ -1,0 +1,195 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T22:04:52.574Z",
+  "sha": "ce157b99e31c227480c479169e0a480a6d509bf1",
+  "tree": "3022e01ef5c659e99a54c6103e4717298bafe61b",
+  "parent": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+  "baseline": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed",
+  "ref": "refs/tenops/candidates/invoice-init-preparation-20261030",
+  "sourceObject": {
+    "sha": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+    "tree": "cefd5ee2ba9332287dfcd67445a0186c854c7c74",
+    "parent": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+    "ref": "refs/tenops/candidates/invoice-init-source-20261030"
+  },
+  "source": "/private/tmp/tenops-tenbot-invoice-init-staging-20261030/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-invoice-init-staging-20261030/candidate-git",
+  "output": "/private/tmp/tenops-tenbot-invoice-init-staging-20261030/candidate/out",
+  "sourceHashes": [
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "blob": "fe11936dbbc1368915f1bd3aa4d2bbbae59599ca",
+      "sha256": "fd9699a002edb633b79fa25ccb34a4bc1f80fc1103ff556c98fb3bd3a84b6e23"
+    },
+    {
+      "path": "src/modules/tenbot/initialization-failure.ts",
+      "blob": "4366fc53040738bf3beb99dfc543a91fd4358d7e",
+      "sha256": "aae36eb165ecbced9b455c53afa748aa4f2d56c1d2d920e977a2811580532ec4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "blob": "ee676eca7b2f5549cb7036d380c401addf7103de",
+      "sha256": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "blob": "1f2adbf697091197d4f5607874ea0c2b5a187b2b",
+      "sha256": "687d16b79a249e1b61edd0e469b5e060c90a7ad6fd2fab2e56ec7a12ad69360d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "blob": "8d5c07090caa1e06a47f14b3fc1b2ca081b555f5",
+      "sha256": "05294ec731f6be98bec1389190cf5958cd9093f610c812564dd0776752174766"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "blob": "f718336df8d2bbf82223285c6ac30105f063ef5f",
+      "sha256": "ce1fdec77b596cf6d6063fff3e0a1d4f631af3d708279205b410ba37fb6dc693"
+    }
+  ],
+  "acceptedEvidence": [
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/summary.json",
+      "sha256": "8b566f12b34b6f657b05bd5855cb97600b9743709c3344634d3bda85a3ef6a16"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/source-manifest.json",
+      "sha256": "4859d90e9895f54572026c361eaf655a259e7d72e00ab45f53e4f76ed0b8fc98"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/validation.json",
+      "sha256": "1eca696a5f7304ef1b6c75c1558c364b888047a29405e3230f6e89e87ba1e1ad"
+    }
+  ],
+  "selectedApplicationFiles": 6,
+  "selectedEvidenceFiles": 3,
+  "sourcePaths": [
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/initialization-failure.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/tenbot/index.ts",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/summary.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/source-manifest.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/validation.json"
+  ],
+  "proofOnlyChanges": [
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+  ],
+  "changedPaths": [
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/source-manifest.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/summary.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/validation.json",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/initialization-failure.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "appendedSourceReviews": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "blob": "ee676eca7b2f5549cb7036d380c401addf7103de",
+      "sha256": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0",
+      "reviewedCandidate": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+        "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
+      },
+      "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "blob": "1f2adbf697091197d4f5607874ea0c2b5a187b2b",
+      "sha256": "687d16b79a249e1b61edd0e469b5e060c90a7ad6fd2fab2e56ec7a12ad69360d",
+      "reviewedCandidate": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+        "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
+      },
+      "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "blob": "8d5c07090caa1e06a47f14b3fc1b2ca081b555f5",
+      "sha256": "05294ec731f6be98bec1389190cf5958cd9093f610c812564dd0776752174766",
+      "reviewedCandidate": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+        "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
+      },
+      "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/tenbot/index.ts",
+      "blob": "f718336df8d2bbf82223285c6ac30105f063ef5f",
+      "sha256": "ce1fdec77b596cf6d6063fff3e0a1d4f631af3d708279205b410ba37fb6dc693",
+      "reviewedCandidate": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "a7cd48fbd67c4921833299db22d783802ce8fe76",
+        "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
+      },
+      "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
+    }
+  ],
+  "selectedKnowledgeDependencies": [],
+  "recordSourceReviewsAdded": 0,
+  "currentStateUnchanged": true,
+  "existingSourceReviewsPreserved": true,
+  "knowledgeEntriesUnchanged": true,
+  "structuredKnowledgeUnchanged": true,
+  "releasedAuthorityUnchanged": true,
+  "cleanCandidate": true,
+  "fullHistoryAvailable": true,
+  "sharedIndexHeadBranchesUnchanged": true,
+  "unrelatedDirtyWorkPreserved": true,
+  "predecessorMigrationsPreserved": true,
+  "newMigrations": [],
+  "newEdgeDeploymentRequired": true,
+  "edgeSlug": "tenbot",
+  "buildEnvironment": {
+    "NEXT_PUBLIC_TENBOT_CANARY_CONTROL_MODE": "enabled"
+  },
+  "hostedBaseline": {
+    "activeGrants": 0,
+    "historicalRevokedGrants": 1,
+    "retainedGrantAuditRows": 2,
+    "enrollment": 0,
+    "allReceivalWriteGatesOff": true
+  },
+  "proofGateRun": false,
+  "buildRun": false,
+  "deployed": false,
+  "grantActivated": false,
+  "operationalWrites": 0,
+  "paidInferenceCalls": 0,
+  "durationMs": 6352
+}

@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-10-30T22:18:26.188Z",
+  "mode": "Actual native Chrome UI via cua_repl; no console, copied credentials or HTTP-token extraction",
+  "caller": "Genuine own chris_dev / Developer session",
+  "url": "https://tendev.pages.dev/inventory",
+  "servedBuildVerifiedSeparately": true,
+  "hardReload": true,
+  "normalInventoryLoaded": true,
+  "pendingQueueCount": 0,
+  "help": {
+    "submittedQuestions": 1,
+    "question": "Where do I review pending receivals?",
+    "answer": "Go to Inventory → Pending Receivals (/inventory). The section opens collapsed with an attention-oriented count. Some related guidance is outside your current access.",
+    "completed": true,
+    "invoiceAttachmentAbsent": true,
+    "oldLocalExperimentErrorAbsent": true,
+    "providerOutputTraceCaptured": false,
+    "modelQualityOrToolBenchmarkClaimed": false
+  },
+  "history": {
+    "answerPresentAfterTabBlurFocus": true,
+    "answerPresentAfterConversationCloseReopen": true,
+    "answerPresentAfterFullHardReloadAndReopen": true,
+    "successfulRequestNotRepeated": true
+  },
+  "canaryStatus": {
+    "actualAuthenticatedSdkUi": true,
+    "developerBaselineVerified": true,
+    "databasePilot": false,
+    "databaseExecution": false,
+    "enrolled": 0,
+    "grantState": "Revoked",
+    "grantId": "9c71ec1f-43ca-4a23-a00f-fb855a3e9edd",
+    "noCompletedCanaryAvailableForCancellation": true,
+    "noActivationRevocationOrCancellationClicked": true
+  },
+  "invoiceInitialization": {
+    "result": "BLOCKED_BY_REQUIRED_DISABLED_AUTHORIZATION_STATE",
+    "activeInvoiceStatusRequestedByUi": false,
+    "positiveHostedCatalogInitializationVerified": false,
+    "actualDeniedWorkspaceHttpResponseCaptured": false,
+    "reason": "Existing normal status does not advertise invoice preparation while pilot/enrollment/grant are OFF. Direct workspace authorization also precedes catalog reads. No grant, enrollment, configuration change or bypass was authorized.",
+    "noInvoiceUpload": true
+  },
+  "safeFailureDiagnostics": {
+    "acceptedLocalBrowserAndHttpEvidenceReused": true,
+    "exactAcceptedUiAndEdgeSourceDeployed": true,
+    "rawHostedCatalogFailureNotInjected": true,
+    "originalFailedResponseStillUnavailable": true,
+    "noClaimOfNewHosted503DisplayVerification": true
+  },
+  "operatorCallsVsUi": {
+    "fixedOperatorInferenceCalls": 0,
+    "browserHelpSubmissions": 1,
+    "observedAccountedMicrousdDelta": 6341,
+    "remainingHostedMicrousd": 3781332,
+    "uncertainReservations": 0,
+    "policyUnchanged": true,
+    "existingCutoff": "2026-10-30T23:00:00+00:00",
+    "scope": "inferenceCalls=0 in fixed operator receipts refers only to operator-issued calls. Browser help is separate; the metering delta is an aggregate observed change, not a captured per-response token trace."
+  },
+  "operationalWrites": 0,
+  "uploads": 0,
+  "grantActivations": 0,
+  "enrollmentChanges": 0,
+  "canaryExecutions": 0,
+  "nativeControlReleased": true
+}

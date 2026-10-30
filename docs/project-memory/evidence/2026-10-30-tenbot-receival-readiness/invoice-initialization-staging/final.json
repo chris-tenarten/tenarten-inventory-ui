@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T22:10:55.810Z",
+  "sha": "ce157b99e31c227480c479169e0a480a6d509bf1",
+  "tenDevDeployment": "5b73e5b1-3ea7-4ebd-b572-baeea36fe2fa",
+  "tenOpsDeployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+  "edgeVersion": 23,
+  "completeRelativeClosureVerified": true,
+  "allSecretDigestsAndPagesConfigUnchanged": true,
+  "migrations": 0,
+  "allWriteGatesOff": true,
+  "activeGrants": 0,
+  "historicalRevokedGrants": 1,
+  "retainedAuditRows": 2,
+  "enrollment": 0,
+  "stockAndTransactionsUnchanged": true,
+  "providerPolicyUnchanged": true,
+  "cleanupUnchanged": true,
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "remainingHostedMicrousd": 3781332
+}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T22:09:10.369Z",
+  "sha": "ce157b99e31c227480c479169e0a480a6d509bf1",
+  "project": "tendev",
+  "deployment": "5b73e5b1-3ea7-4ebd-b572-baeea36fe2fa",
+  "url": "https://tendev.pages.dev",
+  "deploymentUrl": "https://5b73e5b1.tendev.pages.dev",
+  "canaryControlMode": "enabled",
+  "allWriteGatesOff": true,
+  "tenOpsUnchanged": "966ec1da-e537-4582-a82b-0c7a116daf58"
+}
