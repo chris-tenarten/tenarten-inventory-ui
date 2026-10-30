@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T15:56:08.190Z",
+  "origin": "http://localhost:3000",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "actualSignedJwt": true,
+  "actualPrivateOriginalUpload": true,
+  "sourceId": "4e170b58-d2e2-466e-a1fb-029919e0580c",
+  "actualPrivateDownloadHashMatches": true,
+  "sourceAbandonedAfterCheck": true,
+  "api": [
+    {
+      "action": "status",
+      "status": 200
+    },
+    {
+      "action": "upload",
+      "status": 200
+    },
+    {
+      "action": "ask",
+      "status": 503
+    }
+  ],
+  "expectedInferenceDisabled503": true,
+  "desktopMobile": true,
+  "mobileOverflow": false,
+  "pageErrors": [],
+  "blockedOrigins": [],
+  "inferenceCalls": 0,
+  "inferenceLedgerUnchanged": true,
+  "productionRequests": 0,
+  "productionMutations": 0,
+  "limitations": [
+    "No new whole-workflow UI execution; accepted a49 execution evidence and new real hosted-factory/database execution gates are reused."
+  ],
+  "cleanupReadbackState": "deleted"
+}

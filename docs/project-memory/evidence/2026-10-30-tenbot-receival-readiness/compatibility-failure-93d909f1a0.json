@@ -1,0 +1,33 @@
+{
+  "passed": false,
+  "run": "93d909f1a0",
+  "groupsPassed": 6,
+  "migrationApplied": true,
+  "checks": [
+    {
+      "name": "actual affected shared contracts and exact canonical implementations are installed without copying Production data",
+      "durationMs": 1915
+    },
+    {
+      "name": "real canonical and dependent writes reproduce shared category CHECK23514 before correction",
+      "durationMs": 689
+    },
+    {
+      "name": "forward-only correction admits canonical categories and preserves legacy signed client payloads",
+      "durationMs": 1490
+    },
+    {
+      "name": "the same exact approval commits dependent IDs with actual shared lineage defaults and PO reconciliation",
+      "durationMs": 257
+    },
+    {
+      "name": "non-unique legacy IDs require clarification while exactly one canonical identity remains valid",
+      "durationMs": 960
+    },
+    {
+      "name": "actual rollback and concurrent exact retries preserve the corrected dependent transaction",
+      "durationMs": 1558
+    }
+  ],
+  "error": "Unexpected rejection 22023"
+}

@@ -1,0 +1,15 @@
+{
+  "passed": false,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "run": "9b42fd2e06",
+  "groupsPassed": 1,
+  "checks": [
+    {
+      "name": "rollback-validated source migration is applied only to fixed isolated fixture and bucket is private",
+      "durationMs": 341
+    }
+  ],
+  "error": "invoice_source_download_unavailable",
+  "newInferenceCalls": 0,
+  "productionMutations": 0
+}

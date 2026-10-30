@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+  "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+  "rollbackParsePassed": true,
+  "applied": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "recordedAt": "2026-10-30T15:23:04.676970+00:00",
+  "productionMutations": 0,
+  "sourceFrozen": true
+}

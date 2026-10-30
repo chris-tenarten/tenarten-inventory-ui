@@ -1,0 +1,165 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "run": "20ddfdab68",
+  "groupsPassed": 11,
+  "checks": [
+    {
+      "name": "rollback-validated source migration is applied only to fixed isolated fixture and bucket is private",
+      "durationMs": 367
+    },
+    {
+      "name": "real employee uploads original PDF and PNG, deduplicates identical bytes, and cannot replace content",
+      "durationMs": 4696
+    },
+    {
+      "name": "signed other employee, Admin, anonymous and public URL cannot access private owner evidence",
+      "durationMs": 2115
+    },
+    {
+      "name": "server-only byte attestation, initial extraction persistence, CAS and immutable source rows are enforced",
+      "durationMs": 1698
+    },
+    {
+      "name": "exact source-bound canonical review rejects transplanted evidence and unbound approval",
+      "durationMs": 2295
+    },
+    {
+      "name": "real dependent creation atomically retains original, clears raw processing state and returns verified pending IDs",
+      "durationMs": 2358
+    },
+    {
+      "name": "permission revocation denies original download/state writes and cannot revive exact approval after regrant",
+      "durationMs": 13628
+    },
+    {
+      "name": "actual partial failure rolls back catalog, pending records and source retention together",
+      "durationMs": 3330
+    },
+    {
+      "name": "expired abandoned originals clean through actual Storage API even after owner revocation, never retained evidence",
+      "durationMs": 3149
+    },
+    {
+      "name": "per-owner pending source quota serializes concurrent metadata requests and does not count retained evidence",
+      "durationMs": 6934
+    },
+    {
+      "name": "stock, transactions and prior profile state remain unchanged; exact original/batch association is durable",
+      "durationMs": 402
+    }
+  ],
+  "proof": {
+    "reusedInitialGroups": {
+      "run": "20ddfdab68",
+      "groups": 6,
+      "actualRetainedSourceId": "d7af4352-b0ba-4da3-ac15-5bc3d34a5fd4",
+      "readbackVerified": true
+    },
+    "execution": {
+      "sourceId": "d7af4352-b0ba-4da3-ac15-5bc3d34a5fd4",
+      "draftId": "06b6b0f9-557b-45f2-b5d8-abec32111186",
+      "receipt": {
+        "hash": "1f7c9b71ea22f726834f07084cceca1ee1ea7f9a445673a0cf6a8fd77dd16410",
+        "draftId": "06b6b0f9-557b-45f2-b5d8-abec32111186",
+        "executedAt": "2026-10-30T15:35:16.936022+00:00",
+        "idempotent": true,
+        "createdRecordIds": [
+          "3cecef31-fb59-4af7-9244-a7329e4b404d",
+          "0627c9c2-fff7-42bc-ac4b-bc8e7474cde3"
+        ],
+        "createdCatalogRecords": [
+          {
+            "catalogId": "4e1f3c57-c2f9-499a-92f3-43875448f9be",
+            "sourceLineId": "d7af4352-b0ba-4da3-ac15-5bc3d34a5fd4:L3",
+            "catalogSource": "specialty"
+          }
+        ]
+      },
+      "retainedOriginal": true,
+      "processingStatePurged": true,
+      "reusedActualInitialSixChecks": true
+    },
+    "revocation": {
+      "downloadDenied": true,
+      "stateWriteDenied": true,
+      "regrantDidNotReviveApproval": true
+    },
+    "rollback": {
+      "catalog": 0,
+      "pending": 0,
+      "execution": 0,
+      "sourceState": "ready"
+    },
+    "cleanup": {
+      "expiredRawStateSelectDenied": true,
+      "expiredOriginalGetDenied": true,
+      "expiredSourceId": "afe9c936-ba20-4257-b4a4-5b8cb7a98286",
+      "serviceExpiredCleanupActual": true,
+      "revokedOwnerCovered": true,
+      "retainedExcluded": true,
+      "storageApiUsed": true,
+      "ageInjection": "Fixture-only transaction; source identity guard restored before commit"
+    },
+    "quota": {
+      "before": 3,
+      "concurrentAttempts": 19,
+      "accepted": 17,
+      "blocked": 2,
+      "pendingMaximum": 20,
+      "retainedReuseAllowed": true,
+      "temporaryManifestsCleaned": true
+    },
+    "preservation": {
+      "stock": "fd40258c7ba30c10250877be0e68bf93",
+      "guardEnabled": true,
+      "leadReadOnly": false,
+      "transactions": "d41d8cd98f00b204e9800998ecf8427e",
+      "stockSentinel": 17
+    }
+  },
+  "durationMs": 30463,
+  "metadataAndPostgrestCount": 16,
+  "newModelCalls": 0,
+  "productionMutations": 0,
+  "serviceRoleBusinessCalls": 0,
+  "serviceRoleScope": "Only source state attestation and exact expired source Storage DELETE",
+  "migrations": [
+    {
+      "passed": true,
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+      "rollbackParsePassed": true,
+      "applied": true,
+      "fixtureRef": "jltgxcfiprocydhbrahz",
+      "recordedAt": "2026-10-30T15:23:04.676970+00:00",
+      "productionMutations": 0,
+      "sourceFrozen": true
+    },
+    {
+      "passed": true,
+      "applied": true,
+      "fixtureRef": "jltgxcfiprocydhbrahz",
+      "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+      "rollbackParsePassed": true,
+      "sourceFrozen": true,
+      "recordedAt": "2026-10-30T15:34:18.950277+00:00",
+      "productionMutations": 0,
+      "reason": "Actual Storage permission probe is caller-authenticated; actual object persistence uses internal StorageAdmin session. Forward exception is exact owner/path/manifest/currentcap only; UPDATE and retained DELETE stay denied. Also expiry RLS and20pending source quota."
+    }
+  ],
+  "createdSourceIds": [
+    "799db530-92dd-4e1d-b732-59aa5bc00ac3",
+    "588db515-9621-4583-9c9d-3313ed1413ed",
+    "afe9c936-ba20-4257-b4a4-5b8cb7a98286"
+  ],
+  "limits": [
+    "New document extraction is NOT a live model test; known synthetic bytes/evidence are used for real database/storage gates.",
+    "Approved source object is retained for Product review; failed/abandoned objects are physically removed through Storage API.",
+    "Actual age expiry is fixture-only metadata aging under transactional guard lock, not 24 hours elapsed.",
+    "Maintenance implementation is prepared, not scheduled or activated."
+  ],
+  "instrumentationBoundary": "metadataAndPostgrestCount is a partial instrumentation counter for fixed service transport and explicit selected calls; first six groups reused after harness correction, not a total HTTP request claim.",
+  "supersedingHardening": "originals-hardening-validation.json proves adjacent Storage branches after180000; eleven groups remain actual170000 proof."
+}

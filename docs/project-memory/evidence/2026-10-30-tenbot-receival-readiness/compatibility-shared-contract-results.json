@@ -1,0 +1,313 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T15:21:44.226Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "groupsPassed": 8,
+  "checks": [
+    {
+      "name": "actual affected shared contracts and exact canonical implementations are installed without copying Production data",
+      "durationMs": 1915
+    },
+    {
+      "name": "real canonical and dependent writes reproduce shared category CHECK23514 before correction",
+      "durationMs": 689
+    },
+    {
+      "name": "forward-only correction admits canonical categories and preserves legacy signed client payloads",
+      "durationMs": 1490
+    },
+    {
+      "name": "the same exact approval commits dependent IDs with actual shared lineage defaults and PO reconciliation",
+      "durationMs": 257
+    },
+    {
+      "name": "non-unique legacy IDs require clarification while exactly one canonical identity remains valid",
+      "durationMs": 960
+    },
+    {
+      "name": "actual rollback and concurrent exact retries preserve the corrected dependent transaction",
+      "durationMs": 1558
+    },
+    {
+      "name": "current independent capabilities and permission epochs reject unauthorized, revoked and regranted approval",
+      "durationMs": 2563
+    },
+    {
+      "name": "tail preserves existing rows, capabilities and control, with accepted on-hand sentinel and zero transactions",
+      "durationMs": 591
+    }
+  ],
+  "proof": {
+    "authorization": {
+      "catalogAndReceivalCapsIndependent": true,
+      "anonymousDenied": true,
+      "earlyEpochInvalidationAccepted": true,
+      "freshUnauthorizedPrepareAndCatalogError": "42501",
+      "regrantedCapabilityCannotReviveApproval": true,
+      "invalidLineageForeignKeyError": "23503"
+    },
+    "preservation": {
+      "existingPendingRows": 18,
+      "tailRowsHashUnchanged": true,
+      "stockSentinel": {
+        "id": 901,
+        "quantity": 17,
+        "unit": "Bag"
+      },
+      "transactions": 0,
+      "canonicalCapabilitiesRestored": true,
+      "executionControlUnchanged": true
+    },
+    "recoveredPriorExecutions": [
+      {
+        "hash": "35d2ef3cdd19a14df4eafcdd68bcceb41cdab81805e16d22874a4748472120c9",
+        "lines": [
+          {
+            "size": "#2",
+            "unit": "Bag",
+            "vendor": "T&M Supply",
+            "category": "Chip / Aggregate",
+            "jobLabel": "Synthetic shared-contract compatibility 93d909f1a0",
+            "material": "Synthetic compatibility dependent 93d909f1a0",
+            "catalogId": null,
+            "sourceText": "Synthetic compatibility dependent 93d909f1a0 #2 150 LB (50 LB Bag)",
+            "newMaterial": {
+              "size": "#2",
+              "notes": "Synthetic dependent proposal",
+              "itemName": "Synthetic compatibility dependent 93d909f1a0",
+              "prepared": true,
+              "supplier": "T&M Supply",
+              "unitSize": "50",
+              "packaging": "Bag",
+              "priceUnit": "Bag",
+              "vendorSku": "COMPAT-93d909f1a0-dependent",
+              "unitSizeUom": "LB",
+              "materialType": "chip"
+            },
+            "sourceLineId": "new-dependent",
+            "catalogSource": null,
+            "quantityBasis": {
+              "reasons": [],
+              "perPackage": {
+                "unit": "LB",
+                "quantity": "50",
+                "container": "Bag"
+              },
+              "sourceKind": "material_total",
+              "calculation": "exact_catalog_package_conversion",
+              "packageCount": "3",
+              "receivalUnit": "Bag",
+              "totalMaterial": {
+                "unit": "LB",
+                "quantity": "150"
+              },
+              "receivalQuantity": "3",
+              "inventoryStockingUnit": null
+            },
+            "sourceQuantity": {
+              "unit": "LB",
+              "quantity": "150"
+            },
+            "vendorSnapshot": {
+              "id": "10302026-0000-4000-8000-000000000001",
+              "name": "T&M Supply",
+              "is_active": true
+            },
+            "catalogSnapshot": null,
+            "duplicateReview": {
+              "hasMore": false,
+              "matches": [],
+              "fingerprint": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0",
+              "acknowledged": false,
+              "matchedCount": 0,
+              "canAcknowledge": false
+            },
+            "productionJobId": "fa4a86f7-1ced-45db-9cf5-be3004368419",
+            "quantityExpected": "3",
+            "duplicateAcknowledgement": null
+          }
+        ],
+        "draftId": "6797b645-f9f9-45dc-9bbc-d3e1cdf16392",
+        "auditEvents": [
+          "prepared",
+          "approved",
+          "executed"
+        ],
+        "createdRecordIds": [
+          "37e23ed7-76d7-443f-ba72-494596fb9ae3"
+        ],
+        "createdCatalogRecords": [
+          {
+            "catalogId": "c1643560-7138-4252-9ccc-41b8ba99f9c0",
+            "sourceLineId": "new-dependent",
+            "catalogSource": "specialty"
+          }
+        ]
+      },
+      {
+        "hash": "865989ea8e73959cafdebc1375ef7b82ac9954de9d37e94a2f3886aa6e838601",
+        "lines": [
+          {
+            "size": "#2",
+            "unit": "Bag",
+            "vendor": "T&M Supply",
+            "category": "Chip / Aggregate",
+            "jobLabel": "Synthetic shared-contract compatibility 93d909f1a0",
+            "material": "Synthetic compatibility atomic 93d909f1a0",
+            "catalogId": null,
+            "sourceText": "Synthetic compatibility atomic 93d909f1a0 #2 150 LB (50 LB Bag)",
+            "newMaterial": {
+              "size": "#2",
+              "notes": "Synthetic dependent proposal",
+              "itemName": "Synthetic compatibility atomic 93d909f1a0",
+              "prepared": true,
+              "supplier": "T&M Supply",
+              "unitSize": "50",
+              "packaging": "Bag",
+              "priceUnit": "Bag",
+              "vendorSku": "COMPAT-93d909f1a0-atomic",
+              "unitSizeUom": "LB",
+              "materialType": "chip"
+            },
+            "sourceLineId": "new-atomic",
+            "catalogSource": null,
+            "quantityBasis": {
+              "reasons": [],
+              "perPackage": {
+                "unit": "LB",
+                "quantity": "50",
+                "container": "Bag"
+              },
+              "sourceKind": "material_total",
+              "calculation": "exact_catalog_package_conversion",
+              "packageCount": "3",
+              "receivalUnit": "Bag",
+              "totalMaterial": {
+                "unit": "LB",
+                "quantity": "150"
+              },
+              "receivalQuantity": "3",
+              "inventoryStockingUnit": null
+            },
+            "sourceQuantity": {
+              "unit": "LB",
+              "quantity": "150"
+            },
+            "vendorSnapshot": {
+              "id": "10302026-0000-4000-8000-000000000001",
+              "name": "T&M Supply",
+              "is_active": true
+            },
+            "catalogSnapshot": null,
+            "duplicateReview": {
+              "hasMore": false,
+              "matches": [],
+              "fingerprint": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0",
+              "acknowledged": false,
+              "matchedCount": 0,
+              "canAcknowledge": false
+            },
+            "productionJobId": "fa4a86f7-1ced-45db-9cf5-be3004368419",
+            "quantityExpected": "3",
+            "duplicateAcknowledgement": null
+          },
+          {
+            "size": "#1",
+            "unit": "Bag",
+            "vendor": "T&M Supply",
+            "category": "Aggregate",
+            "jobLabel": "Synthetic shared-contract compatibility 93d909f1a0",
+            "material": "Alaska White",
+            "catalogId": "10302026-0000-4000-8000-000000000101",
+            "sourceText": "Alaska White #1 150 LB (50 LB Bag)",
+            "newMaterial": null,
+            "sourceLineId": "standard",
+            "catalogSource": "standard",
+            "quantityBasis": {
+              "reasons": [],
+              "perPackage": {
+                "unit": "LB",
+                "quantity": "50",
+                "container": "Bag"
+              },
+              "sourceKind": "material_total",
+              "calculation": "exact_catalog_package_conversion",
+              "packageCount": "3",
+              "receivalUnit": "Bag",
+              "totalMaterial": {
+                "unit": "LB",
+                "quantity": "150"
+              },
+              "receivalQuantity": "3",
+              "inventoryStockingUnit": null
+            },
+            "sourceQuantity": {
+              "unit": "LB",
+              "quantity": "150"
+            },
+            "vendorSnapshot": null,
+            "catalogSnapshot": {
+              "id": "10302026-0000-4000-8000-000000000101",
+              "size": "#1",
+              "unit": "50 LB Bag",
+              "vendor": "T&M Supply",
+              "category": "Aggregate",
+              "item_name": "Alaska White",
+              "vendor_sku": "AW-1",
+              "material_class": "Marble chips"
+            },
+            "duplicateReview": {
+              "hasMore": false,
+              "matches": [],
+              "fingerprint": "bb6cdc377f35371bfaf9396cf1f5dd9348d615cfa418e9a5e600e5925e4253d0",
+              "acknowledged": false,
+              "matchedCount": 0,
+              "canAcknowledge": false
+            },
+            "productionJobId": "fa4a86f7-1ced-45db-9cf5-be3004368419",
+            "quantityExpected": "3",
+            "duplicateAcknowledgement": null
+          }
+        ],
+        "draftId": "92812635-40d3-45f7-99f6-0f5f9940edec",
+        "auditEvents": [
+          "prepared",
+          "approved",
+          "executed"
+        ],
+        "createdRecordIds": [
+          "a6b7b4a2-8fb7-4d88-8477-23be035d117c",
+          "b5123b0e-5919-4840-b9a8-01bf6f6a0ae4"
+        ],
+        "createdCatalogRecords": [
+          {
+            "catalogId": "b1b38e7e-dc98-4167-b52d-588baa37c87e",
+            "sourceLineId": "new-atomic",
+            "catalogSource": "specialty"
+          }
+        ]
+      }
+    ],
+    "migration": {
+      "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742"
+    }
+  },
+  "priorPassedRun": "93d909f1a0",
+  "tailRun": "855cd078e3",
+  "priorSixGroupsReused": true,
+  "sourceFailureRetained": "compatibility-failure-93d909f1a0.json",
+  "sourceFailureReason": "Permission-epoch invalidation returned22023 before catalog permission42501; harness expectation corrected, not application code",
+  "httpCallsInTail": 19,
+  "newModelCalls": 0,
+  "productionMutations": 0,
+  "serviceRoleBusinessCalls": 0,
+  "limitations": [
+    "Exact affected shared source contracts copied; canonical base body CRLF normalized toLF only, full normalized hash matches.",
+    "Empty PO/receiving FK target tables project referenced IDs/JSON only, not full purchasing lifecycle.",
+    "Six passed focused groups reused after harness failure; only two tail groups rerun. No migration/projection reapplication.",
+    "Initial category CHECK installedNOTVALID to preserve pre-existing synthetic modern rows; forward candidate widens and validates.",
+    "Existing source Jobs/RBAC foundations retained; no broad application audit.",
+    "Actual source tables retain legacy broad read policies; controlled agent access still explicitly checks capabilities."
+  ]
+}

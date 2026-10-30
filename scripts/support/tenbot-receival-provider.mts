@@ -7,14 +7,14 @@ import {execFileSync} from 'node:child_process';
 import sharp from 'sharp';
 import {AgentStepError,type AgentProvider,type AgentStepRequest} from '../../supabase/functions/_shared/tenbot-agent';
 import {buildOpenAIRequest,createOpenAIProvider,OPENAI_EXPERIMENT_PRICING} from '../../supabase/functions/_shared/tenbot-openai';
-import type {InvoiceImage} from './tenbot-invoice-attachment.mjs';
+import type {InvoiceImage} from '../../supabase/functions/_shared/tenbot-invoice-extraction';
 
 const MODEL='gpt-6.1-terra' as const;
 const EXPIRES='2026-10-30T23:00:00Z';
 const RESPONSES='https://api.openai.com/v1/responses',COUNT=RESPONSES+'/input_tokens';
 const PRICE=OPENAI_EXPERIMENT_PRICING[MODEL];
 type Ledger={version:1;authorizedMaximumUsd:.1;hostedMaximumUsd:4;legacyLocalUsd:number;overallMaximumUsd:5;expiresAt:typeof EXPIRES;reservedOrSpentUsd:number;attempts:number;settled:number;stopped:string|null};
-type Options={authorized:boolean;directory?:string;credentialFile?:string;legacyJournal?:string;fetcher?:typeof fetch;now?:()=>number;verifyGitIgnore?:boolean};
+type Options={authorized:boolean;originalDocuments?:boolean;directory?:string;credentialFile?:string;legacyJournal?:string;fetcher?:typeof fetch;now?:()=>number;verifyGitIgnore?:boolean};
 const object=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 function ownedFile(file:string){const s=lstatSync(file);if(!s.isFile()||s.isSymbolicLink()||s.uid!==process.getuid?.()||(s.mode&0o077)!==0)throw Error('Owned server-only configuration required.');return readFileSync(file,'utf8');}
 function frozen(file:string){const text=ownedFile(file),flags=text.split(/\r?\n/).filter(s=>s.startsWith('TENBOT_OPENAI_SPEND_AUTHORIZED='));if(flags.length!==1||flags[0].trim()!=='TENBOT_OPENAI_SPEND_AUTHORIZED=false')throw Error('Original localhost inference must remain frozen.');return text;}
@@ -59,14 +59,15 @@ export function createReceivalLiveProviders(options:Options){
    assertNoFatal();initialize();assertNoFatal();if(busy)throw new AgentStepError('local-provider-busy');if(ledger!.attempts!==ledger!.settled)throw new AgentStepError('unmeasured-charge-requires-review');if(request.maxOutputTokens*PRICE.outputPerMillion/1000000>remainingUsd())throw new AgentStepError('request-budget-unavailable');busy=true;
    const started=performance.now(),row:Record<string,unknown>={model:MODEL,label,startedAt:new Date(now()).toISOString()};receipts.push(row);
    try{
-    const body=buildOpenAIRequest(MODEL,request);let extraInputTokens=0;
-    if(image){
+    const body=buildOpenAIRequest(MODEL,request),native=Boolean(options.originalDocuments&&image);let extraInputTokens=0;
+    if(native&&image)row.attachment={sha256:createHash('sha256').update(image.bytes).digest('hex'),bytes:image.bytes.length,mediaType:image.mediaType,actualOriginal:true};
+    if(image&&!native){
      if(image.bytes.length>90000)throw new AgentStepError('oversized-image');
      const metadata=await sharp(image.bytes,{limitInputPixels:1048576}).metadata();
      if(!metadata.width||!metadata.height||metadata.width>1024||metadata.height>1024||metadata.pages&&metadata.pages>1||metadata.format!==(image.mediaType==='image/png'?'png':'jpeg'))throw new AgentStepError('invalid-bounded-image');
      const input=body.input as Record<string,unknown>[],last=input.filter(item=>item.role==='user').at(-1);
      if(!last||typeof last.content!=='string')throw new AgentStepError('invalid-image-prompt');
-     last.content=[{type:'input_text',text:last.content},{type:'input_image',image_url:`data:${image.mediaType};base64,${image.bytes.toString('base64')}`,detail:'high'}];
+     last.content=[{type:'input_text',text:last.content},{type:'input_image',image_url:`data:${image.mediaType};base64,${Buffer.from(image.bytes).toString('base64')}`,detail:'high'}];
      // Exact model token counting supports images. Count the whole visible
      // input, then ADD that conservative bound to the ordinary byte-based hold.
      // This deliberately double-counts text; it never guesses Terra's patch rate.
@@ -79,7 +80,7 @@ export function createReceivalLiveProviders(options:Options){
     }
     if(Buffer.byteLength(JSON.stringify(body))>180000)throw new AgentStepError('oversized-request');
     let held=0;
-    const provider=createOpenAIProvider({model:MODEL,apiKey:key!,spendingAuthorized:true,pricing:PRICE,requireResponseMetadata:true,timeoutMs:30000,
+    const provider=createOpenAIProvider({model:MODEL,apiKey:key!,spendingAuthorized:true,pricing:PRICE,requireResponseMetadata:true,timeoutMs:30000,...(native&&image?{originalAttachment:{filename:image.mediaType==='application/pdf'?'invoice.pdf':'invoice.'+(image.mediaType==='image/png'?'png':'jpg'),mediaType:image.mediaType,bytes:image.bytes}}:{}),
      async reserveBudget(usd){
       assertNoFatal();held=Math.ceil((usd+extraInputTokens*PRICE.cacheWritePerMillion/1000000)*1000000)/1000000;
       const heldMicro=Math.round(held*1000000),usedMicro=Math.round(ledger!.reservedOrSpentUsd*1000000);
@@ -88,8 +89,8 @@ export function createReceivalLiveProviders(options:Options){
       return {settle(actual?:number){if(settled)return;if(actual!==undefined){const actualMicro=Math.ceil(actual*1000000);if(!Number.isFinite(actual)||actual<0||actualMicro>heldMicro){stop('reservation-bound-failure');throw Error('Inference charge exceeded its reservation.');}ledger!.reservedOrSpentUsd=(Math.round(ledger!.reservedOrSpentUsd*1000000)-heldMicro+actualMicro)/1000000;ledger!.settled++;row.measuredCostUsd=actual;row.accountedUsd=actualMicro/1000000;row.costMeasured=true;}else{row.accountedUsd=held;row.costMeasured=false;}settled=true;save();publish();}};
      },
      async fetcher(url,init){
-      assertNoFatal();if(String(url)!==RESPONSES)throw new AgentStepError('unexpected-provider-endpoint');
-      const start=performance.now(),response=await fetcher(RESPONSES,{...init,body:JSON.stringify(body)});row.httpStatus=response.status;row.requestId=response.headers.get('x-request-id');row.fetchToHeadersMs=Math.round(performance.now()-start);
+      assertNoFatal();if(native&&String(url)===COUNT){const countStart=performance.now(),count=await fetcher(COUNT,init);row.tokenCountDurationMs=Math.round(performance.now()-countStart);row.tokenCountStatus=count.status;if(count.status>=400&&count.status<500)stop('token-count-http-'+count.status);return count;}if(String(url)!==RESPONSES)throw new AgentStepError('unexpected-provider-endpoint');
+      const start=performance.now(),response=await fetcher(RESPONSES,{...init,...(native?{}:{body:JSON.stringify(body)})});row.httpStatus=response.status;row.requestId=response.headers.get('x-request-id');row.fetchToHeadersMs=Math.round(performance.now()-start);
       if(response.status>=400&&response.status<500)stop('provider-http-'+response.status);
       return response;
      },

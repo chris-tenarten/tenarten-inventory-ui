@@ -1,0 +1,42 @@
+{
+  "scope": "Only shared-schema compatibility subset; parallel attachment/hosted evidence is separate",
+  "privacyScan": "pass: no secrets/JWT/user rows",
+  "files": [
+    {
+      "path": "compatibility-failure-93d909f1a0.json",
+      "sha256": "cf2080e7b0a82415bae8e31f3bdb7c75f42754dfc167c3a6781a5f8e716fbbd2"
+    },
+    {
+      "path": "compatibility-failure-f9a0969952.json",
+      "sha256": "b946c676b4acf38a247e9050577b80c5504d60a5b28374f6eccf3ffe5e95371e"
+    },
+    {
+      "path": "compatibility-shared-contract-results.json",
+      "sha256": "f8d8bc3b95e115e8612200296a889ed54f2c4d675dd76807ba88f463cc11072a"
+    },
+    {
+      "path": "fixture-schema-metadata.json",
+      "sha256": "093b390cec6542573d37b17a7941e7c7ba87d607e2f170cc0d32dd5dbccaffe2"
+    },
+    {
+      "path": "fixture-shared-contract-manifest.json",
+      "sha256": "153f12df9e4f26a21eede6f4a0ff30d12697bae04742746d99c7f142bcbdbc09"
+    },
+    {
+      "path": "fixture-shared-contract.sql",
+      "sha256": "5cdf056eb939cb243a343fd48202ff857ddeaa4d2dd27f636c19f6d385a684e8"
+    },
+    {
+      "path": "shared-compatibility-readonly.sql",
+      "sha256": "5a45e3e0e1b4389872dbd0b95988370101301a823b8ae857f6bcd6bbc4819f2d"
+    },
+    {
+      "path": "shared-compatibility-verdict.json",
+      "sha256": "456add3b929164adc3cc276c2dbed192d9fcae681f9f2e9e86c6bbd03a6a7262"
+    },
+    {
+      "path": "shared-schema-metadata.json",
+      "sha256": "15ba1e4f1206d5aeaabb537acf6b0ed1b14113f574c56ff8eab763ae090c8b94"
+    }
+  ]
+}

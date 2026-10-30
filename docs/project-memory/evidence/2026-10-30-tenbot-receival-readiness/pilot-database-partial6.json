@@ -1,0 +1,29 @@
+{
+  "groupsPassed": 6,
+  "checks": [
+    {
+      "name": "default OFF blocks direct employee execution and service permit without business mutation",
+      "durationMs": 2299
+    },
+    {
+      "name": "anonymous/employee cannot mint server permits; TenOps origin and wrong immutable hash fail",
+      "durationMs": 510
+    },
+    {
+      "name": "unenrolled employee and direct execution without server metadata permit are rejected",
+      "durationMs": 2055
+    },
+    {
+      "name": "one permit authorizes concurrent exact retries once; committed receipt and source are durable",
+      "durationMs": 795
+    },
+    {
+      "name": "new hosted runtime instances restore protected source state for real review then real approval without inference",
+      "durationMs": 3543
+    },
+    {
+      "name": "policy removal/re-enrollment invalidates existing permits despite the same final allowlist",
+      "durationMs": 2092
+    }
+  ]
+}

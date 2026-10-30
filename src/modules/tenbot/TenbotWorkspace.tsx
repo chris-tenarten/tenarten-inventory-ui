@@ -6,6 +6,7 @@ import {Info,MoreHorizontal,Paperclip,X} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {ReceivalDraftReview} from './ReceivalDraftReview';
+import {createInvoiceReceivalAttachmentService} from '../inventory/invoice-receival-attachments';
 import {clearHistoryLocator,historyAccessHash,readHistoryLocator,saveHistoryLocator,type HistoryBinding} from './conversation-history';
 import {invalidateReceivalApproval,localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,receivalReviewNotice,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
@@ -61,7 +62,8 @@ async function invoke<T>(body:Record<string,unknown>,owner:string):Promise<T>{
  const localFixture=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&sessionData.session?.access_token.endsWith('.local');
  // The owner-scoped controller selects this mode once. Route changes must not
  // silently send experimental questions to the ordinary Qwen adapter.
- const {localAgentExperiment,localReceivalExecution,...payload}=body;
+ const {localAgentExperiment,localReceivalExecution,hostedReceivalRequest,...payload}=body;
+ if(hostedReceivalRequest===true)payload.workspace='invoice-receivals.v1';
  const experiment=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&localAgentExperiment===true;
  const endpoint=experiment?(localReceivalExecution===true?'http://localhost:55596':'http://localhost:55595'):process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||(localFixture?'http://localhost:55593':undefined);
  if(endpoint&&typeof window!=='undefined'&&window.location.hostname==='localhost'){
@@ -109,6 +111,7 @@ export function useTenbotConversation():TenbotConversation{
  const [notice,setNotice]=useState(''),[showFeedback,setShowFeedback]=useState(false);
  const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
  const [usage,setUsage]=useState<Usage|null>(null),[usageError,setUsageError]=useState('');
+ const [hostedReceivals,setHostedReceivals]=useState(false);
  const [experiment,setExperiment]=useState(false),[authenticatedExperiment,setAuthenticatedExperiment]=useState(false),[developerDiagnostics,setDeveloperDiagnostics]=useState(false);
  const [orderDetails,setOrderDetails]=useState({orderedBy:'',orderDate:'',location:''});
  const [experimentStatus,setExperimentStatus]=useState<LocalDemoStatus|null>(null),[syntheticConfirmed,setSyntheticConfirmed]=useState(false);
@@ -116,8 +119,8 @@ export function useTenbotConversation():TenbotConversation{
  const [selectedAttachment,setSelectedAttachment]=useState<File|null>(null);
  const [attachmentOrigin,setAttachmentOrigin]=useState<{originalFilename:string;renderedPdf:boolean}|null>(null);
  const [receivalDraft,setReceivalDraft]=useState<LocalReceivalDraft|null>(null),[localApproval,setLocalApproval]=useState<LocalApproval|null>(null);
- const authenticatedReceivals=experiment&&authenticatedExperiment;
- const liveDemo=experiment&&(authenticatedExperiment||experimentStatus?.mode==='synthetic-live'||experimentStatus?.mode==='authenticated-receivals');
+ const authenticatedReceivals=experiment&&authenticatedExperiment||hostedReceivals;
+ const liveDemo=hostedReceivals||experiment&&(authenticatedExperiment||experimentStatus?.mode==='synthetic-live'||experimentStatus?.mode==='authenticated-receivals');
  const [notes,setNotes]=useState<Record<string,string>>({});
  const lock=useRef(false),sequence=useRef(0);
  const conversation=useRef<{owner:string;id?:string}>({owner});
@@ -144,7 +147,7 @@ export function useTenbotConversation():TenbotConversation{
   let current=true;const generation=++lifecycle.current;
   const active=()=>current&&generation===lifecycle.current&&currentOwner.current===owner&&currentAccess.current===accessFingerprint;
   historyBinding.current=null;conversation.current={owner};liveTurn.current=null;
-  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
+  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setHostedReceivals(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
   setHistoryLoading(available);
   if(!available){
    // Pending Auth is not a sign-out. Do not destroy the opaque locator while the
@@ -164,8 +167,9 @@ export function useTenbotConversation():TenbotConversation{
     }else{
      // An older/Qwen-only backend can reject status; normal conversation remains
      // available. Never send experimental flags or enable document controls.
-     const status=await invoke<{mode:string;historyAvailable:boolean}>({action:'status'},owner).catch(()=>null);
+     const status=await invoke<{mode:string;historyAvailable:boolean;receivalPilotAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
      if(!active()||status?.mode!=='assistant'||status.historyAvailable!==true)return;
+     if(status.receivalPilotAvailable===true){const candidate=await invoke<LocalDemoStatus>({action:'status',hostedReceivalRequest:true},owner);if(!active())return;if(candidate.mode==='authenticated-receivals'&&candidate.simulation===false&&candidate.requiresPrivateOriginal===true){setHostedReceivals(true);setExperimentStatus(candidate);}}
     }
     const binding:HistoryBinding={owner,accessHash:await historyAccessHash(accessFingerprint),mode:enabled?(receivals?'authenticated':'synthetic'):'hosted'};
     if(!active())return;historyBinding.current=binding;
@@ -219,8 +223,9 @@ export function useTenbotConversation():TenbotConversation{
   const chat=body.action==='ask'||body.action==='draft';
   const generation=lifecycle.current;
   try{
-   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&conversation.current.id?{conversationId:conversation.current.id}:{}),...(experiment?{localAgentExperiment:true,localReceivalExecution:authenticatedExperiment}:{})},owner);
-   if(chat&&generation===lifecycle.current&&conversation.current.owner===owner&&result.conversationId){
+   const receivalRequest=hostedReceivals&&(Boolean(body.attachmentId)||['upload','review','approve'].includes(String(body.action)));
+   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&!receivalRequest&&conversation.current.id?{conversationId:conversation.current.id}:{}),...(experiment?{localAgentExperiment:true,localReceivalExecution:authenticatedExperiment}:{}),...(receivalRequest?{hostedReceivalRequest:true}:{})},owner);
+   if(chat&&!receivalRequest&&generation===lifecycle.current&&conversation.current.owner===owner&&result.conversationId){
     conversation.current.id=result.conversationId;
     let binding=historyBinding.current;
     if(!binding&&!experiment&&'mode' in result&&result.mode==='assistant'){
@@ -319,12 +324,23 @@ export function useTenbotConversation():TenbotConversation{
   try{
    const prepared=await prepareInvoiceImage(file,experimentStatus.maxAttachmentBytes);
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
-   const uploaded=await request<LocalAttachment>({action:'upload',syntheticConfirmed:true,attachment:{filename:prepared.filename,mediaType:prepared.mediaType,dataBase64:prepared.dataBase64}});
+   const source=experimentStatus.requiresPrivateOriginal?await createInvoiceReceivalAttachmentService(supabase).upload(file,file.name):null;
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
+   const uploaded=await request<LocalAttachment>({action:'upload',syntheticConfirmed:true,...(source?{sourceId:source.id}:{attachment:{filename:prepared.filename,mediaType:prepared.mediaType,dataBase64:prepared.dataBase64}})});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
    setAttachment(uploaded);setSelectedAttachment(null);setAttachmentPreview(prepared.preview);setAttachmentOrigin({originalFilename:prepared.originalFilename,renderedPdf:prepared.renderedPdf});setReceivalDraft(null);setLocalApproval(null);setMessages([]);conversation.current={owner};clearHistoryLocator();
    setNotice(`${prepared.originalFilename} attached.`);
    return uploaded;
-  }catch(e){setError(e instanceof Error?e.message:'The attachment could not be uploaded.');}finally{finish();}
+  }catch(e){setError(e instanceof Error&&e.message==='invoice_source_rejected:42501'?'Your current permissions do not allow this private invoice upload.':e instanceof Error&&/^(invoice_source_|invalid_invoice_source_)/.test(e.message)?'The private original could not be stored or verified. Retry the same file; no receivals were created.':e instanceof Error?e.message:'The attachment could not be uploaded.');}finally{finish();}
+ }
+ async function downloadOriginal(){
+  if(!attachment?.sourceId||!begin())return;
+  const requestAccess=currentAccess.current;
+  try{
+   const {source,original}=await createInvoiceReceivalAttachmentService(supabase).download(attachment.sourceId);
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
+   const url=URL.createObjectURL(original),link=document.createElement('a');link.href=url;link.download=source.filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch{setError('The private original is unavailable or no longer authorized.');}finally{finish();}
  }
  async function saveReceivalReview(edits:LocalRowEdit[],details:LocalOrderDetails){
   if(!liveDemo||!receivalDraft||receivalDraft.status!=='review_required'||!begin())return;
@@ -397,7 +413,7 @@ export function useTenbotConversation():TenbotConversation{
   <summary aria-label="About TenBot AI" title="About TenBot AI" className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:ring-2 focus-visible:ring-blue-500 [&::-webkit-details-marker]:hidden"><Info className="h-4 w-4" aria-hidden="true"/></summary>
   <div role="note" aria-label="TenBot AI privacy" className="absolute right-0 top-full z-40 mt-1 max-h-[min(24rem,60dvh)] w-72 max-w-[calc(100vw-3rem)] overflow-y-auto rounded-md border border-slate-200 bg-white p-3 text-xs leading-relaxed text-slate-600 shadow-lg">
    <p>TenBot uses AI to help answer questions and process attachments. Submitted content may be processed by OpenAI. Your TenOps permissions still apply.</p>
-   <details className="mt-2"><summary className="min-h-9 cursor-pointer py-2 text-slate-500">More privacy details</summary><p>{authenticatedReceivals?<>This local candidate sends only the approved test attachment image, submitted questions and narrowly authorized catalog/Job tool results to OpenAI. Documents are untrusted input and cannot grant permissions or approve actions. A one-page PDF is rendered locally without OCR or text extraction. Reads use your authenticated TenOps access. {experimentStatus?.executionEnabled===true?'Explicit approval submits the exact server-reviewed operations through authenticated TenOps services. Catalog and receival permissions are checked independently.':'Review and explicit approval are separate from model reasoning; execution is currently disabled by the server.'} No personal ChatGPT context is connected.</>:liveDemo?'This local demo sends the approved synthetic attachment image and questions you submit to OpenAI for actual inference. A one-page PDF is rendered locally into an image without offline OCR or text extraction. Operational records, catalog matches and approved pending entries are simulated locally. No Production records are read or written, and real database authorization/RLS is not validated by this demonstration.':'When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live answers are refreshed for each request and are not saved in assistant history. TenBot does not independently read private messages, personal tasks or financial information. Eligible private workflow guidance expires automatically: Terra history after one hour without a new turn, and Qwen context after eight hours.'}</p></details>
+   <details className="mt-2"><summary className="min-h-9 cursor-pointer py-2 text-slate-500">More privacy details</summary><p>{authenticatedReceivals?<>This restricted candidate sends only the approved original test document, submitted questions and narrowly authorized catalog/Job tool results to OpenAI. Documents are untrusted input and cannot grant permissions or approve actions. Original invoices are stored privately as batch evidence. Previews may be rendered locally; the server processes verified original bytes. Reads use your authenticated TenOps access. {experimentStatus?.executionEnabled===true?'Explicit approval submits the exact server-reviewed operations through authenticated TenOps services. Catalog and receival permissions are checked independently.':'Review and explicit approval are separate from model reasoning; execution is currently disabled by the server.'} No personal ChatGPT context is connected.</>:liveDemo?'This local demo sends the approved synthetic attachment image and questions you submit to OpenAI for actual inference. A one-page PDF is rendered locally into an image without offline OCR or text extraction. Operational records, catalog matches and approved pending entries are simulated locally. No Production records are read or written, and real database authorization/RLS is not validated by this demonstration.':'When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live answers are refreshed for each request and are not saved in assistant history. TenBot does not independently read private messages, personal tasks or financial information. Eligible private workflow guidance expires automatically: Terra history after one hour without a new turn, and Qwen context after eight hours.'}</p></details>
   </div>
  </details>;
  const attachmentControl=available&&liveDemo?<>
@@ -418,10 +434,10 @@ export function useTenbotConversation():TenbotConversation{
  const controls=():ReactNode=>{
   if(!available)return null;
   return <div className="space-y-3" data-tenbot-controls>
-   {authenticatedReceivals&&experimentStatus?.executionEnabled!==true?<p role="status" className="text-xs text-slate-600">Real pending-receival creation is disabled in this local review.</p>:null}
+   {authenticatedReceivals&&experimentStatus?.executionEnabled!==true?<p role="status" className="text-xs text-slate-600">Real pending-receival creation is disabled for this review.</p>:null}
    {experiment&&developerDiagnostics?<section aria-label="TenBot developer diagnostics" className="rounded border border-slate-200 p-2 text-xs text-slate-500"><p>{authenticatedReceivals?'Authenticated local candidate':'Local agent candidate'} · {experimentStatus?.mode||'Checking status'}</p>{experimentStatus?.blockedReason?<p>{experimentStatus.blockedReason}</p>:null}</section>:null}
    {liveDemo?<>
-     {attachment?<details className="rounded border border-slate-200 bg-white p-2"><summary className="min-h-11 cursor-pointer py-2">Attachment preview · {attachmentOrigin?.originalFilename||attachment.filename}</summary>{attachmentOrigin?.renderedPdf?<p className="mb-2 text-xs text-slate-600">PDF page rendered for actual OpenAI vision; no offline OCR.</p>:null}{attachmentPreview?<>
+     {attachment?<details className="rounded border border-slate-200 bg-white p-2"><summary className="min-h-11 cursor-pointer py-2">Attachment preview · {attachmentOrigin?.originalFilename||attachment.filename}</summary>{attachmentOrigin?.renderedPdf?<p className="mb-2 text-xs text-slate-600">{experimentStatus?.requiresPrivateOriginal?'Local preview. The server processes the verified private original.':'PDF page rendered for actual OpenAI vision; no offline OCR.'}</p>:null}{attachment.sourceId?<button type="button" disabled={busy} onClick={()=>void downloadOriginal()} className="min-h-11 py-2 text-xs text-blue-800 underline disabled:opacity-50">Download private original</button>:null}{attachmentPreview?<>
       {/* Native image preserves an owner-local data URL without remote optimization. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={attachmentPreview} alt={`Uploaded test invoice: ${attachment.filename}`} className="mx-auto max-h-[32rem] max-w-full object-contain"/>

@@ -1,0 +1,44 @@
+{
+  "status": "All focused gates ultimately passed; prior failures retained",
+  "migration160InitialAttempt": {
+    "result": "42501, fully rolled back",
+    "beforeOwnerTransferCorrectionSha256": "68b70b796507b59786fd169a0e8cd7a81b890978680ae4112fd05347ac89102c",
+    "readback": {
+      "policyAbsent": true,
+      "permitsAbsent": true,
+      "privateCoreAbsent": true
+    },
+    "correction": "Same temporary namespace CREATE -> ALTER OWNER -> REVOKE pattern as canonical base; privilege revoked before commit"
+  },
+  "actualPositivePermitFailure": {
+    "result": "42501 private policy SELECT FOR SHARE",
+    "exactDiagnostic": "permit-lock-diagnostic.json",
+    "businessExecutions": 0,
+    "correction": "Append-only190000 fixed private metadata lock helper; no executor policy UPDATE/CREATE grant"
+  },
+  "harnessPermissionSetupFailure": {
+    "result": "23514 app_users_read_only_guest",
+    "cause": "Harness attempted read_only=true on Lead; actual schema intentionally permits read_only only for guest",
+    "applicationDefect": false,
+    "correction": "Use guest+read_only revocation and restore original role/flag",
+    "passedCheckpoint": "pilot-database-partial6.json",
+    "reusedPassedGroups": 6,
+    "newResumedGroups": 3
+  },
+  "appliedMigrations": [
+    {
+      "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "productionApplied": false
+    },
+    {
+      "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+      "appliedOnlyTo": "jltgxcfiprocydhbrahz",
+      "productionApplied": false
+    }
+  ],
+  "noInferenceCalls": true,
+  "noProductionMutations": true
+}

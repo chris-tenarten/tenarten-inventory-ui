@@ -1,0 +1,91 @@
+{
+  "recordedAt": "2026-10-30T15:40:54.874314+00:00",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "passed": true,
+  "realSourceStorageDatabaseGroups": 11,
+  "actualDependentCreation": {
+    "pendingReceivals": 2,
+    "catalogItems": 1,
+    "returnedIds": "originals-validation.json proof.execution.receipt",
+    "originalPhysicallyRetained": true,
+    "rawProcessingStatePurged": true
+  },
+  "postHardeningAdjacentChecks": "originals-hardening-validation.json",
+  "offlineByteAndClientContractGroups": 12,
+  "newModelCalls": 0,
+  "productionCalls": 0,
+  "serviceRoleBusinessCalls": 0,
+  "serviceRoleScope": "Fixed source attestation/cleanup metadata and actual Storage DELETE of expired originals; unauthorized no-owner upload and retained-delete attempts were rejected. No Inventory/catalog business writes use service role.",
+  "migrationApplications": [
+    {
+      "passed": true,
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+      "rollbackParsePassed": true,
+      "applied": true,
+      "fixtureRef": "jltgxcfiprocydhbrahz",
+      "recordedAt": "2026-10-30T15:23:04.676970+00:00",
+      "productionMutations": 0,
+      "sourceFrozen": true
+    },
+    {
+      "passed": true,
+      "applied": true,
+      "fixtureRef": "jltgxcfiprocydhbrahz",
+      "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+      "rollbackParsePassed": true,
+      "sourceFrozen": true,
+      "recordedAt": "2026-10-30T15:34:18.950277+00:00",
+      "productionMutations": 0,
+      "reason": "Actual Storage permission probe is caller-authenticated; actual object persistence uses internal StorageAdmin session. Forward exception is exact owner/path/manifest/currentcap only; UPDATE and retained DELETE stay denied. Also expiry RLS and20pending source quota."
+    },
+    {
+      "passed": true,
+      "applied": true,
+      "fixtureRef": "jltgxcfiprocydhbrahz",
+      "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+      "rollbackParsePassed": true,
+      "sourceFrozen": true,
+      "recordedAt": "2026-10-30T15:38:13.113526+00:00",
+      "productionMutations": 0,
+      "reason": "Strict boolean authorization: missing role claims cannot pass NULL backend conditions."
+    }
+  ],
+  "storageBackendFinding": {
+    "callerPermissionProbe": "auth.role authenticated, caller uid and all required capabilities; guard allowed",
+    "actualPersistence": "session_user supabase_storage_admin, auth.role service_role, auth.uid NULL, owner_id caller uid",
+    "correction": "170000 admits only exact backend session + manifest owner/path/size/MIME and current active capabilities; UPDATE denied.180000 handles NULL authorization fail-closed.",
+    "diagnosticTriggersRemoved": true
+  },
+  "retention": {
+    "originalsBucket": "invoice-receival-originals",
+    "private": true,
+    "access": "Owner plus fresh readOperationalData/writeBusinessData/adjustInventory; authenticated Blob download only, no signed/public URL",
+    "abandonedTtlHours": 24,
+    "expiredDirectSourceStateSelectDenied": true,
+    "expiredOriginalGetDenied": true,
+    "cleanup": "Fixed bounded20 metadata claim, actual StorageAPI DELETE, then metadata acknowledgement; source approval revoked on explicit abandon",
+    "revokedOwnerExpiredCleanupVerified": true,
+    "retainedOriginal": "Immutable business evidence associated with execution; not automatically expired/deleted",
+    "scheduling": "Prepared helper only; no scheduler/deployment/activation. Before pilot, owner must configure approved bounded hourly cleanup invocation."
+  },
+  "boundaries": [
+    "Actual new document extraction is not tested here; synthetic evidence fixtures test real Auth/Storage/PostgreSQL only. Prior actual Terra invoice evidence is reused separately.",
+    "Six initial groups reused after harness tried invalid Lead read_only update; production CHECK correctly rejected23514, changed harness to is_active revocation.",
+    "Source150000 failure kept;170000 corrected actual Storage session behavior; applied files were not edited.",
+    "Expiry used fixture-only age injection with identity guard restored transactionally, not elapsed24hours.",
+    "Shared Storage policy conventions inspected; no shared/Production bucket/schema/record mutation."
+  ],
+  "filesInThisSubset": [
+    "originals-application.json",
+    "originals-forward-application.json",
+    "originals-hardening-application.json",
+    "originals-initial-six-pass.json",
+    "originals-validation.json",
+    "originals-hardening-validation.json",
+    "originals-validation-failure-20ddfdab68.json",
+    "originals-validation-failure-9b42fd2e06.json"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "httpStatus": 400,
+  "diagnosticOnly": true,
+  "businessTablesReadOrMutated": false,
+  "query": "Private policy SELECT FOR SHARE as non-bypass executor; rollback only",
+  "errorCode": null,
+  "message": "Failed to run sql query: ERROR:  42501: permission denied for table tenbot_receival_pilot_policy\n"
+}

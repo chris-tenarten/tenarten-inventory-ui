@@ -1,0 +1,28 @@
+{
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "sharedRef": "vxdxjhazkqhpkwdqtobp",
+  "sharedReadOnlyMetadataSha256": "15ba1e4f1206d5aeaabb537acf6b0ed1b14113f574c56ff8eab763ae090c8b94",
+  "sqlSha256": "5cdf056eb939cb243a343fd48202ff857ddeaa4d2dd27f636c19f6d385a684e8",
+  "sourceTables": [
+    "vendor_catalog",
+    "vendor_catalog_v2",
+    "vendors",
+    "pending_receivals"
+  ],
+  "exactContractElements": [
+    "column types/defaults/nullability",
+    "actual catalog category CHECK (initially NOT VALID for pre-existing modern synthetic rows)",
+    "actual source RLS and business guards",
+    "actual canonical catalog implementations underneath existing wrappers",
+    "actual pending lineage FKs/default/unique indexes/deferred PO reconciliation"
+  ],
+  "limits": [
+    "Empty PO/receiving target tables project only IDs and referenced JSON columns; not full purchasing lifecycle",
+    "No Production records/Auth users/Storage objects copied",
+    "Inventory stock/posting services not modified or executed",
+    "Existing fixture app roles and source Job/RBAC foundations are reused; no broad role policy rewrite",
+    "Existing synthetic rows preserved; category CHECK NOT VALID applies to newly written rows, then widened/validated by forward migration"
+  ],
+  "gateChanged": false,
+  "productionMutations": 0
+}

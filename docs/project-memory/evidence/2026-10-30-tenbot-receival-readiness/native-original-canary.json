@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T15:52:56.838Z",
+  "model": "gpt-6.1-terra",
+  "actualOriginalPdf": true,
+  "sourceId": "d7af4352-b0ba-4da3-ac15-5bc3d34a5fd4",
+  "sourceSha256": "29102b12e61a7b2b848b07680ce2861f0ad96bfb6b7c21651f2ef8c0b7c06c96",
+  "sourceBytes": 1011,
+  "originalDownloadedUsingEmployeeJwt": true,
+  "rawLines": [
+    "T&M Supply | Invoice SRC-20ddfdab68-retained",
+    "Alaska White #1 150 LB (50 LB Bag)",
+    "Source Violet 20ddfdab68 retained #2 4 Bag"
+  ],
+  "extraction": {
+    "mode": "openai-original",
+    "model": "gpt-6.1-terra",
+    "sourceMediaType": "application/pdf",
+    "sha256": "29102b12e61a7b2b848b07680ce2861f0ad96bfb6b7c21651f2ef8c0b7c06c96"
+  },
+  "receipts": [
+    {
+      "model": "gpt-6.1-terra",
+      "label": "native-original-pdf-canary",
+      "startedAt": "2026-10-30T15:52:52.558Z",
+      "attachment": {
+        "sha256": "29102b12e61a7b2b848b07680ce2861f0ad96bfb6b7c21651f2ef8c0b7c06c96",
+        "bytes": 1011,
+        "mediaType": "application/pdf",
+        "actualOriginal": true
+      },
+      "tokenCountDurationMs": 1647,
+      "tokenCountStatus": 200,
+      "reservedUsd": 0.013124,
+      "httpStatus": 200,
+      "requestId": "req_9882011a6bb84fdcb88e272e58efbfdd",
+      "fetchToHeadersMs": 2619,
+      "measuredCostUsd": 0.000595,
+      "accountedUsd": 0.000595,
+      "costMeasured": true,
+      "calls": [],
+      "final": {
+        "raw_lines": [
+          "T&M Supply | Invoice SRC-20ddfdab68-retained",
+          "Alaska White #1 150 LB (50 LB Bag)",
+          "Source Violet 20ddfdab68 retained #2 4 Bag"
+        ]
+      },
+      "usage": {
+        "inputTokens": 195,
+        "cachedInputTokens": 0,
+        "outputTokens": 80,
+        "costUsd": 0.000595,
+        "reservedUsd": 0.01312375
+      },
+      "durationMs": 4278
+    }
+  ],
+  "budgetBefore": {
+    "version": 1,
+    "authorizedMaximumUsd": 0.1,
+    "hostedMaximumUsd": 4,
+    "legacyLocalUsd": 0.5399555000000006,
+    "overallMaximumUsd": 5,
+    "expiresAt": "2026-10-30T23:00:00Z",
+    "reservedOrSpentUsd": 0.024396,
+    "attempts": 11,
+    "settled": 11,
+    "stopped": null
+  },
+  "budgetAfter": {
+    "version": 1,
+    "authorizedMaximumUsd": 0.1,
+    "hostedMaximumUsd": 4,
+    "legacyLocalUsd": 0.5399555000000006,
+    "overallMaximumUsd": 5,
+    "expiresAt": "2026-10-30T23:00:00Z",
+    "reservedOrSpentUsd": 0.024991,
+    "attempts": 12,
+    "settled": 12,
+    "stopped": null
+  },
+  "durationMs": 4314,
+  "newModelCalls": 1,
+  "operationalWrites": 0,
+  "hostedInference": 0,
+  "legacySpendAuthorized": false
+}

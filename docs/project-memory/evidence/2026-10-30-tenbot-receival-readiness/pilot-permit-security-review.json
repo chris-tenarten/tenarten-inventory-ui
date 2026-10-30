@@ -1,0 +1,17 @@
+{
+  "status": "No concrete independent source-review blocker",
+  "reviewerIndependentOfPermitImplementation": true,
+  "migration160Sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+  "migration190Sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+  "temporaryOwnershipTransferDeltaReviewed": true,
+  "reviewed": [
+    "Fixed service-only metadata permit, no privileged business gateway",
+    "Default-off finite pilot and empty employee allowlist",
+    "Exact draft/hash/approval, current actor/capability epochs and policy version",
+    "NOBYPASSRLS caller canonical execution and private core ACL",
+    "Single-use transactional consumption, rollback and exact idempotency",
+    "Fixed executor-only policy-lock helper, no mutable policy grant"
+  ],
+  "actualDatabaseTestsRepeatedForReview": false,
+  "scopeLimit": "Source review is not Production deployment/JWT proof; real isolated evidence is separate"
+}

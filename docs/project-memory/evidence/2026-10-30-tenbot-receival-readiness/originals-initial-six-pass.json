@@ -1,0 +1,31 @@
+{
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "run": "20ddfdab68",
+  "groupsPassed": 6,
+  "checks": [
+    {
+      "name": "rollback-validated source migration is applied only to fixed isolated fixture and bucket is private",
+      "durationMs": 367
+    },
+    {
+      "name": "real employee uploads original PDF and PNG, deduplicates identical bytes, and cannot replace content",
+      "durationMs": 4696
+    },
+    {
+      "name": "signed other employee, Admin, anonymous and public URL cannot access private owner evidence",
+      "durationMs": 2115
+    },
+    {
+      "name": "server-only byte attestation, initial extraction persistence, CAS and immutable source rows are enforced",
+      "durationMs": 1698
+    },
+    {
+      "name": "exact source-bound canonical review rejects transplanted evidence and unbound approval",
+      "durationMs": 2295
+    },
+    {
+      "name": "real dependent creation atomically retains original, clears raw processing state and returns verified pending IDs",
+      "durationMs": 2358
+    }
+  ]
+}

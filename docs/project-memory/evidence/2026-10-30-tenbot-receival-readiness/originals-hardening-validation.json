@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "actualStorageBackendUpload": true,
+  "crossEmployeeUpsertDenied": true,
+  "serviceRoleWithoutOwnerDenied": true,
+  "retainedServiceDeleteDenied": true,
+  "retainedOriginalDownloadStillMatches": true,
+  "temporaryObjectsAbandoned": true,
+  "inferenceCalls": 0,
+  "productionMutations": 0,
+  "migration": {
+    "passed": true,
+    "applied": true,
+    "fixtureRef": "jltgxcfiprocydhbrahz",
+    "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+    "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+    "rollbackParsePassed": true,
+    "sourceFrozen": true,
+    "recordedAt": "2026-10-30T15:38:13.113526+00:00",
+    "productionMutations": 0,
+    "reason": "Strict boolean authorization: missing role claims cannot pass NULL backend conditions."
+  }
+}

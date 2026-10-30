@@ -1,0 +1,158 @@
+{
+  "recordedAt": "2026-10-30T15:58:26.291Z",
+  "scope": "Synthetic metadata/results and private-original localhost screenshots; no secrets/Auth users/Production business data",
+  "artifacts": [
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/attachment-evidence-manifest.json",
+      "sha256": "a8044d91142d9ad155a9f5568841ed72fa70e489b9097182b1be92018ac0f3b8"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/attachment-validation-index.json",
+      "sha256": "54404cda06d202ceaf979201573d58742df689f40472375cb0e24d42bfd34b0d"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/compatibility-failure-93d909f1a0.json",
+      "sha256": "cf2080e7b0a82415bae8e31f3bdb7c75f42754dfc167c3a6781a5f8e716fbbd2"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/compatibility-failure-f9a0969952.json",
+      "sha256": "b946c676b4acf38a247e9050577b80c5504d60a5b28374f6eccf3ffe5e95371e"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/compatibility-shared-contract-results.json",
+      "sha256": "f8d8bc3b95e115e8612200296a889ed54f2c4d675dd76807ba88f463cc11072a"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/fixture-schema-metadata.json",
+      "sha256": "093b390cec6542573d37b17a7941e7c7ba87d607e2f170cc0d32dd5dbccaffe2"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/fixture-shared-contract-manifest.json",
+      "sha256": "153f12df9e4f26a21eede6f4a0ff30d12697bae04742746d99c7f142bcbdbc09"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/fixture-shared-contract.sql",
+      "sha256": "5cdf056eb939cb243a343fd48202ff857ddeaa4d2dd27f636c19f6d385a684e8"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-contract-offline.json",
+      "sha256": "2b3807f3387f56f323ff14f826a4c8307bee0b337889ea7639e52252d65f5dc4"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-edge-readonly.json",
+      "sha256": "f7abdb23246454dbccecd2a0f47aa0a9ca38d34f4dd83ede63c883ca3a4c08a2"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/native-original-canary.json",
+      "sha256": "c8c33866dbc82c31d9f96a9010dab5be0b1ec005b00fb4085fdcdb7f0342642f"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/originals-application.json",
+      "sha256": "cfcddfffca842baf83baa7d88ebd5a22663ebc4c02c13f54ae70f03d066079f2"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/originals-forward-application.json",
+      "sha256": "3b0bf4795451d4b18a8b697d27961971844c2427c7aa3dd13783db831e9a67c2"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/originals-hardening-application.json",
+      "sha256": "55abd26de70fc03f4b5681c16a332aa3fed49e281a4cc2bfb453d1808fd1aacc"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/originals-hardening-validation.json",
+      "sha256": "e4968f8fcb02a96dc0950c897f8b5444b0aeaa3510d2e5a852496f88e8ae79ac"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/originals-initial-six-pass.json",
+      "sha256": "57f816c09eaee3efb7894a799ddcdf295785943c407d01263c92621a479039b8"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/originals-validation-failure-20ddfdab68.json",
+      "sha256": "67dfeb002452074ac1a8620d4a1a9303af287129758418dbfb84841373fdbffe"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/originals-validation-failure-9b42fd2e06.json",
+      "sha256": "8487f1843186c52ad48f5dca3081e0dceccdce96599d551f028d752ca9219ce0"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/originals-validation.json",
+      "sha256": "24a51f8f102a3e76e241be55cfe4842be3f97c5e52d651969324b7df499c2f94"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/permit-lock-diagnostic.json",
+      "sha256": "63316797bdab942d55557b8860a01fd5b00e7513b5cefa411971373536670560"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/permit-row-lock-diagnostic.json",
+      "sha256": "647371e59d90efb69e55e237089b01efc37d9031a25fe05e8a6b241fccef8ca7"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/pilot-database-partial6.json",
+      "sha256": "8ff9df8a0db3e29d55be4c31fd4e2afc5eaeed001df528ca2e68147b1d8f689f"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/pilot-database-results.json",
+      "sha256": "760894d710697a617cc39dc5cf327ff247fe4a4ba46221d8008ab95248269f84"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/pilot-final-proof.json",
+      "sha256": "34b6f3b6b48fc93d3e9ea4f135802d4a1f992dca1f00ad9ce0c2b2a3d852b93a"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/pilot-permit-evidence-manifest.json",
+      "sha256": "077c488bd30eb9ee606ca8107cc33bd74f146cc40f742d33e83fbec00732c393"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/pilot-permit-security-review.json",
+      "sha256": "ca168266489d7326b34fcf938870d5bf2395df65e2338595b578602c11ff3491"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/pilot-validation-checkpoints.json",
+      "sha256": "02c75200a15833c98a7a3aaacce3f32659c0206d00d826795e47836677522186"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/private-original-browser.json",
+      "sha256": "57f2724d47a00e876747fffe3847f5444b887a4e589c233c74539524e65ed5a8"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/private-original-desktop.png",
+      "sha256": "2bb4fd39b89a25103982a5564413c82e0efc7e53945e54026c7eae2536710050"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/private-original-mobile.png",
+      "sha256": "1d8f55ca349c774137d9e6baf6b778a294d16da24e280554a4e08f193d781202"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/release-scope.json",
+      "sha256": "aa70f9561c62053c9e663d56b211d7f298977ddd6590b39d3102ef272b470d7e"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/selective-edge-readonly.json",
+      "sha256": "2212565afdd24dabd9178aab85e9f61a2bccf3ea4adaa8714d1de4c4090cb285"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/selective-review-build.json",
+      "sha256": "fca81611297dd0e4ac63b06bd8a65a9fa7c89d5ac4fc778e09cd677b3e3deb72"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/shared-compatibility-evidence-manifest.json",
+      "sha256": "c5ba61967738f6a59559b5fb334ddcd6c6e9410ba8bcf6737fbeda5a47817c7e"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/shared-compatibility-readonly.sql",
+      "sha256": "5a45e3e0e1b4389872dbd0b95988370101301a823b8ae857f6bcd6bbc4819f2d"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/shared-compatibility-verdict.json",
+      "sha256": "456add3b929164adc3cc276c2dbed192d9fcae681f9f2e9e86c6bbd03a6a7262"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/shared-schema-metadata.json",
+      "sha256": "15ba1e4f1206d5aeaabb537acf6b0ed1b14113f574c56ff8eab763ae090c8b94"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/validation-summary.json",
+      "sha256": "cce2ad5251d05dff778710b4a4fb906d63cdb517b92c97ccd154b1db4e69cfa2"
+    }
+  ]
+}

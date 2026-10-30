@@ -1,0 +1,9 @@
+{
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "httpStatus": 201,
+  "diagnosticOnly": true,
+  "businessTablesReadOrMutated": false,
+  "query": "Private permit SELECT FOR UPDATE as non-bypass executor; rollback only",
+  "errorCode": null,
+  "message": null
+}

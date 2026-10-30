@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "groups": 9,
+  "checks": [
+    {
+      "name": "default OFF blocks direct employee execution and service permit without business mutation",
+      "durationMs": 2299
+    },
+    {
+      "name": "anonymous/employee cannot mint server permits; TenOps origin and wrong immutable hash fail",
+      "durationMs": 510
+    },
+    {
+      "name": "unenrolled employee and direct execution without server metadata permit are rejected",
+      "durationMs": 2055
+    },
+    {
+      "name": "one permit authorizes concurrent exact retries once; committed receipt and source are durable",
+      "durationMs": 795
+    },
+    {
+      "name": "new hosted runtime instances restore protected source state for real review then real approval without inference",
+      "durationMs": 3543
+    },
+    {
+      "name": "policy removal/re-enrollment invalidates existing permits despite the same final allowlist",
+      "durationMs": 2092
+    },
+    {
+      "name": "employee permission revocation and regrant cannot resurrect an approved permit",
+      "durationMs": 2962
+    },
+    {
+      "name": "expired metadata permit fails even while the employee approval remains valid",
+      "durationMs": 2227
+    },
+    {
+      "name": "partial canonical failure rolls back permit consumption; exact retry commits once after fault removal",
+      "durationMs": 3224
+    }
+  ],
+  "durationMs": 12168,
+  "actualSignedJwt": true,
+  "actualStorage": true,
+  "actualPostgreSQL": true,
+  "transcription": "Deterministic synthetic source fixture; no new multimodal inference claim",
+  "metadataServiceRpcs": [
+    "record_invoice_receival_source_state",
+    "tenbot_receival_mint_execution_permit"
+  ],
+  "metadataCallsThisPhase": 7,
+  "serviceRoleBusinessCalls": 0,
+  "createdRecordIdsThisPhase": [
+    "91e29c97-4e9c-49f5-b3e4-e590d8760004"
+  ],
+  "sourceCountThisPhase": 3,
+  "previousPassedGroupsReused": 6,
+  "abandonedSourceCleanupFailedIds": [],
+  "finalPolicyOff": true,
+  "finalEmployeeAllowlistEmpty": true,
+  "onHandAndTransactionsUnchanged": true,
+  "inferenceCalls": 0,
+  "productionRequests": 0,
+  "productionMutations": 0
+}

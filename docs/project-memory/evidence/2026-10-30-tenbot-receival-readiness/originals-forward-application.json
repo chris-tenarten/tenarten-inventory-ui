@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "applied": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+  "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+  "rollbackParsePassed": true,
+  "sourceFrozen": true,
+  "recordedAt": "2026-10-30T15:34:18.950277+00:00",
+  "productionMutations": 0,
+  "reason": "Actual Storage permission probe is caller-authenticated; actual object persistence uses internal StorageAdmin session. Forward exception is exact owner/path/manifest/currentcap only; UPDATE and retained DELETE stay denied. Also expiry RLS and20pending source quota."
+}

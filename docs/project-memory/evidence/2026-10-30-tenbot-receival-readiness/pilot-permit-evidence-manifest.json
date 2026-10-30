@@ -1,0 +1,45 @@
+{
+  "scope": "Hosted and pilot-permit subset only; root combines other Storage/shared-schema evidence separately",
+  "passed": true,
+  "credentialValuesIncluded": false,
+  "privateRawLogsCopied": false,
+  "syntheticOnly": true,
+  "files": [
+    {
+      "file": "hosted-contract-offline.json",
+      "sha256": "2b3807f3387f56f323ff14f826a4c8307bee0b337889ea7639e52252d65f5dc4"
+    },
+    {
+      "file": "pilot-database-results.json",
+      "sha256": "760894d710697a617cc39dc5cf327ff247fe4a4ba46221d8008ab95248269f84"
+    },
+    {
+      "file": "pilot-database-partial6.json",
+      "sha256": "8ff9df8a0db3e29d55be4c31fd4e2afc5eaeed001df528ca2e68147b1d8f689f"
+    },
+    {
+      "file": "pilot-final-proof.json",
+      "sha256": "34b6f3b6b48fc93d3e9ea4f135802d4a1f992dca1f00ad9ce0c2b2a3d852b93a"
+    },
+    {
+      "file": "permit-lock-diagnostic.json",
+      "sha256": "63316797bdab942d55557b8860a01fd5b00e7513b5cefa411971373536670560"
+    },
+    {
+      "file": "permit-row-lock-diagnostic.json",
+      "sha256": "647371e59d90efb69e55e237089b01efc37d9031a25fe05e8a6b241fccef8ca7"
+    },
+    {
+      "file": "hosted-edge-readonly.json",
+      "sha256": "f7abdb23246454dbccecd2a0f47aa0a9ca38d34f4dd83ede63c883ca3a4c08a2"
+    },
+    {
+      "file": "pilot-validation-checkpoints.json",
+      "sha256": "02c75200a15833c98a7a3aaacce3f32659c0206d00d826795e47836677522186"
+    },
+    {
+      "file": "pilot-permit-security-review.json",
+      "sha256": "ca168266489d7326b34fcf938870d5bf2395df65e2338595b578602c11ff3491"
+    }
+  ]
+}

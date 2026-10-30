@@ -1,0 +1,72 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T15:58:26.289Z",
+  "realDatabase": {
+    "fixtureRef": "jltgxcfiprocydhbrahz",
+    "compatibilityGroups": 8,
+    "attachmentGroups": 11,
+    "pilotPermitGroups": 9,
+    "totalFocusedGroups": 28,
+    "checkpointReuse": "Previously passed groups retained through harness-only corrections, explicitly marked in phase receipts; not 28 newly repeated groups.",
+    "baseline14Groups": "Accepted a49 evidence reused, not rerun",
+    "signedJwt": true,
+    "storage": true,
+    "postgreSQL": true,
+    "stockSentinel": 17,
+    "stockUnchanged": true,
+    "policyFinallyOff": true,
+    "employeeAllowlistFinallyEmpty": true
+  },
+  "offline": {
+    "canonicalController": 18,
+    "client": 25,
+    "canonicalService": 19,
+    "localMeter": 10,
+    "attachment": 12,
+    "nativeProvider": 7,
+    "hostedAdapter": 14,
+    "cleanup": 6,
+    "edgeEntryHarness": 24,
+    "classification": "Deterministic offline checks and transport doubles, not live database/inference proof."
+  },
+  "build": {
+    "passed": true,
+    "canonicalSelectiveBuild": true,
+    "sourceHashMatch": true,
+    "productionExport": true,
+    "typescript": true,
+    "serverCredentialPatternScan": true
+  },
+  "finalChecks": {
+    "typescriptNoEmit": true,
+    "targetedEslint": true,
+    "edgeLintAndTypes": true,
+    "diffCheck": true,
+    "independentFocusedReview": true,
+    "canonicalSelectiveEdgeEntryChecks": 24
+  },
+  "nativeOriginal": {
+    "model": "gpt-6.1-terra",
+    "calls": 1,
+    "inputTokens": 195,
+    "outputTokens": 80,
+    "measuredCostUsd": 0.000595,
+    "durationMs": 4314,
+    "accountedLocalSliceUsd": 0.024991,
+    "allowanceUsd": 0.1,
+    "settled": 12,
+    "attempts": 12,
+    "uncertain": 0,
+    "hostedPolicyChanged": false
+  },
+  "browser": {
+    "actualPrivateUploadDownload": true,
+    "desktopMobile": true,
+    "inferenceCalls": 0,
+    "originalAbandonReadback": "deleted"
+  },
+  "productionOperationalRowsRead": 0,
+  "productionMutations": 0,
+  "productionMigrationsApplied": 0,
+  "newServices": 0
+}

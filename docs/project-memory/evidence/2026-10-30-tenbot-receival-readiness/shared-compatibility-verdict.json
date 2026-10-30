@@ -1,0 +1,52 @@
+{
+  "checkedAt": "2026-10-30T15:23:05.764250+00:00",
+  "status": "Compatible after focused forward correction; not ready for hosted application before separate Product approval and complete attachment/adapter gates",
+  "sharedRef": "vxdxjhazkqhpkwdqtobp",
+  "actualSharedReadOnlyInspection": true,
+  "operationalRowsRead": 0,
+  "productionMutations": 0,
+  "sharedMetadataQuerySha256": "5a45e3e0e1b4389872dbd0b95988370101301a823b8ae857f6bcd6bbc4819f2d",
+  "tablesInspected": 10,
+  "routinesInspected": 26,
+  "gates": {
+    "catalogIdentitiesAndUnits": "Actual legacy nullable/non-unique UUID catalog ID requires exactly-one visible row;140000 implements this. V2 retains UUIDPK and vendor/SKUunique index. Unit/package rules unchanged.",
+    "canonicalCatalogCreation": "Actual deployed lowercase category CHECK conflicts with current canonical title-case outputs. Reproduced real23514 in isolated fixture;140000 preserves all legacy categories and admits exact existing service outputs without recategorizing rows.",
+    "pendingQueueCreation": "Actual pending columns/defaults/FKs/PO reconciliation trigger compatible: invoice creation keeps nullPO/receiving lineage and source_allocation_key legacy, statuspending/receivedquantity0.",
+    "suppliers": "Configured active vendors and v2 vendor_id relationship preserved; canonical save resolves existing supplier. No new vendor creation scope.",
+    "optionalJobs": "Canonical public.jobs UUID FK and reservation-identity contract unchanged; exact approved optional association rechecked at execution.",
+    "permissions": "Separate current manageVendorsCatalog and adjustInventory with writeBusinessData/readOperationalData retained. Role configuration and legacy broad source reads are not silently changed in Production.",
+    "receiptAndStock": "No pending INSERT trigger updates stock; actual receiving RPCs alone post stock after separate receiveInventory permission. Tests leave stock17Bag and transactions0.",
+    "legacyClients": "Both current public catalog save names/payloads retained. Signed authorized legacy misc category/create/price-update path passes; source capabilities intentionally reject unauthorized/anonymous writes. No captured receiving RPC calls either catalog save.",
+    "privateAttachments": "Existing receiving-documents is private but policies allow anyadjustInventory user bucket-wide read/delete. It is unsuitable for owner-isolated drafts without new scoped policy/bucket; attachment agent owns final contract."
+  },
+  "migration": {
+    "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+    "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742"
+  },
+  "actualFocusedDatabaseGroupsPassed": 8,
+  "initialSixGroupsReused": true,
+  "tailGroupsRerun": 2,
+  "noProjectionOrMigrationReapply": true,
+  "focusedFailureReconciliation": [
+    "Initial projection canonical body hash differed only dueCRLF->LF normalization; complete normalized deployed body hash matched.",
+    "Permission revoke returned22023 earlier via exact approval epoch, not expected42501. Corrected harness also proves fresh catalog/prepare42501; code remained failclosed."
+  ],
+  "proofLimits": [
+    "Exact affected shared source contracts copied; canonical base body CRLF normalized toLF only, full normalized hash matches.",
+    "Empty PO/receiving FK target tables project referenced IDs/JSON only, not full purchasing lifecycle.",
+    "Six passed focused groups reused after harness failure; only two tail groups rerun. No migration/projection reapplication.",
+    "Initial category CHECK installedNOTVALID to preserve pre-existing synthetic modern rows; forward candidate widens and validates.",
+    "Existing source Jobs/RBAC foundations retained; no broad application audit.",
+    "Actual source tables retain legacy broad read policies; controlled agent access still explicitly checks capabilities."
+  ],
+  "fixtureProjectionNote": "Four empty ID/JSON-only PO/receiving target tables support exact existing FKs/deferred trigger; this is not a full PO/import/receiving lifecycle replica. Existing synthetic data/capabilities/control preserved; no Production Auth, customer/employee data or credentials copied.",
+  "knownSharedBaselineOutsideThisScope": [
+    "vendor_catalog/vendor_catalog_v2 and inventory_transactions haveRLSdisabled, source pending/Inventory reads include legacy permissive policies. No global privacy/RBAC redesign performed; controlled agent reads/writes still require actual authenticated current capabilities."
+  ],
+  "remainingGates": [
+    "Independent review and Product acceptance of forward compatibility candidate",
+    "Final private attachment retention/authorization/provenance and hosted adapter tests from parallel work",
+    "Separate narrow Production/shared migration approval and disabled-first TenDev staging",
+    "Explicit restricted TenDev write activation; TenOpsProduction writes remain disabled"
+  ]
+}

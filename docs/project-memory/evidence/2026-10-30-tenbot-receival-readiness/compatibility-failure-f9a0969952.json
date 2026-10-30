@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "run": "f9a0969952",
+  "groupsPassed": 0,
+  "migrationApplied": false,
+  "checks": [],
+  "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'ed301adcc85c8ca0deec8d606019e83d'\n- 'e46955cb3fc0dfd0441cc21b470b3477'\n"
+}

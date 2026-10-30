@@ -138,8 +138,9 @@ export function createInvoiceReceivalService(caller: InvoiceReceivalCaller, opti
       if (result.id !== input.draftId) throw Error('invalid_receival_service_response');
       return draftResponse(result);
     },
-    async prepare(input: { document: InvoiceReceivalDocument; lines: InvoiceReceivalLine[]; metadata: InvoiceReceivalMetadata; provenance: InvoiceReceivalProvenance }): Promise<InvoiceReceivalDraft> {
-      const result = await call('prepare_invoice_receival_draft', { p_document: input.document, p_lines: input.lines, p_metadata: input.metadata, p_provenance: input.provenance });
+    async prepare(input: { sourceId?: string; document: InvoiceReceivalDocument; lines: InvoiceReceivalLine[]; metadata: InvoiceReceivalMetadata; provenance: InvoiceReceivalProvenance }): Promise<InvoiceReceivalDraft> {
+      if (input.sourceId !== undefined && !uuid.test(input.sourceId)) throw Error('invalid_invoice_source_identity');
+      const result = await call(input.sourceId ? 'prepare_invoice_receival_draft_with_source' : 'prepare_invoice_receival_draft', { ...(input.sourceId ? {p_source_id:input.sourceId} : {}), p_document: input.document, p_lines: input.lines, p_metadata: input.metadata, p_provenance: input.provenance });
       return draftResponse(result);
     },
     async approve(input: { draftId: string; hash: string; confirmation: typeof INVOICE_RECEIVAL_APPROVAL }): Promise<InvoiceReceivalApproval> {
