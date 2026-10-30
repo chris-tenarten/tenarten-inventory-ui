@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T14:02:13.150Z",
+  "startedAt": "2026-10-30T14:02:10.034Z",
+  "target": "tenops",
+  "action": "qwen",
+  "question": "Where do I start a new group conversation in Messaging?",
+  "mode": "ai",
+  "contentScope": null,
+  "conversationId": "dfb6c6ca-94b0-4962-aa36-532b2b6bd9fe",
+  "message": "To start a new group conversation in Messaging: Open Messaging from the app header. Choose 'New group', enter a group name, select at least one other participant, then choose 'Create group'. Only the creator can manage the group.",
+  "staticHistoryTurns": null,
+  "durationMs": 3115,
+  "origin": null,
+  "signedOwnerVerified": true,
+  "actorIdentitySha256": "6399f4498702b7e6409880527be1bbd1539d52621dc12412b9df5b99af35c37b",
+  "credentialsLogged": false,
+  "operationalWrites": 0,
+  "forcedProviderConfiguration": false
+}

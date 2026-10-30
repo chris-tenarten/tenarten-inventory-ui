@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-30T14:00:11.287Z",
+  "rows": [
+    {
+      "capability": "readOperationalData",
+      "status": 200,
+      "granted": true,
+      "durationMs": 451
+    },
+    {
+      "capability": "writeBusinessData",
+      "status": 200,
+      "granted": true,
+      "durationMs": 204
+    },
+    {
+      "capability": "adjustInventory",
+      "status": 200,
+      "granted": true,
+      "durationMs": 145
+    },
+    {
+      "capability": "receiveInventory",
+      "status": 200,
+      "granted": true,
+      "durationMs": 139
+    }
+  ],
+  "permissionChanges": false,
+  "inferenceCalls": 0,
+  "operationalReads": 0
+}

@@ -1,0 +1,139 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:22:50.441Z",
+  "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+  "previousVersion": 15,
+  "version": 16,
+  "verifyJwt": true,
+  "status": "ACTIVE",
+  "bundleSha256": "4d0dea56cb24f9f702208280812566ece63efc33012241cde5ad3672ce076221",
+  "exactOwnedModules": [
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "a11b20273b1aad77b542a6729ff7cf3a2bb37cde0e6f2c01938df7bba593314c",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "87a74d6712e2f01f367d6e9f6216ea6412e7a30b79c5adc51fd253daeb86a315",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "b145b092f1f54c367a0cf03ba0d3543cefa46290da356320a84027869f67599e",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "sha256": "8ba0e7c2787dc667e4506284af49a4641dcd5fcf2d395312431cd12a3bcc5d3d",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "sha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-models.ts",
+      "sha256": "cbf127a0692b07053021e72e4331ced03ecf820e35b12a851a18554d813e915f",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+      "sha256": "77f842f86f247de59104b0b8b6849df9daf4fd30a50d9eb374936b91acc7e5a1",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/production-job-facts.mjs",
+      "sha256": "ef01a0c8b341fca3c2762128f08fad3598678de007573abded12b8bc00b47f39",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/labor-hours.mjs",
+      "sha256": "fe42f91ba1e2610e4e771adc8f29721222dd9662919849df15088cd5c99261ab",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "sha256": "483362833b15de5fe985dcbdc3e1d07e57a2bb7576d8447d3be07530ebd3118b",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "9451ce566cbd11446eaf5af983981842101c13252363ca3e0c42805eb1312f3c",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "6c3b802f94a4ed8fd605d66eba21ab728570cd3aabcecc5611fe5e338304d4f8",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "bc637d02e84e2e7d2fc760899c7bb46453883ca9b60de071f2fde6c19d372d46",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "sha256": "cf16874ea61a2ddc637561699826f4e37e024829c2b7beb450afcf3ddd8ef027",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "14fa64872bf9e581903735c41804da0fff011b9ae5bca790a4c671098b640af4",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "src/modules/purchasing/catalog-records.ts",
+      "sha256": "7190bf30a6a1649f645c617ffdb897e58fc30973896f30eff330a219584a76b6",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "src/modules/inventory/invoice-quantity.ts",
+      "sha256": "6e694e30d1ad871568bf47a215e52b495fc504bb2de9c376f4b35eff70a5d92c",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "sha256": "88cb319df74eebb8d745904415527f01559dc329de4780c915b7a62ca74e2a20",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "sha256": "ba11e374ee20e639a60992f32224695c82dc004eaa802224f21630057e6f17b3",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "c4987a87fa128ba1b544909190bcc1c0b5159c56e7726b034e2d360163c7191f",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "c6b3fc9fabf4e5d741de42e592a15b7175dfab1995b14c3bb9b1951a2c2ce984",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "sha256": "e5eb34ee5b80ed41b2997026bad0d5f5b92f2abdfc96d945563a558272dc040b",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "sha256": "55913c591c2104865d7bc2f563cd187da7988c9bd8d3752663864e1a0e3d65b7",
+      "sourceMapOrRawExact": true
+    }
+  ],
+  "unrelatedFunctionsUnchanged": true,
+  "settingsAndPolicyUnchanged": true,
+  "sharedTenOpsBackendUpdated": true,
+  "operationalWrites": false,
+  "migrationsApplied": false,
+  "reconciliation": "Original CLI deployment succeeded; verifier followed a type-only import. Runtime-only source closure corrected; no deployment repeated."
+}

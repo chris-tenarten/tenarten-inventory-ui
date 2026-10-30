@@ -1,0 +1,39 @@
+{
+  "status": "deployed",
+  "date": "2026-10-30",
+  "servedSha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "baseline": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "tenDevDeployment": "e89f6b3f-8e42-4054-aa00-ad88bb96fcaf",
+  "tenOpsDeployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+  "sourceScope": "Exactly5accepted runtime files+8maintenance paths; canonical proof records only beyondthat",
+  "sharedEdge": {
+    "version": 16,
+    "verifyJwt": true,
+    "bundleSha256": "4d0dea56cb24f9f702208280812566ece63efc33012241cde5ad3672ce076221",
+    "exactOwnedModules": 24
+  },
+  "testingLevel": 2,
+  "buildsPerTarget": 1,
+  "verifiedAssetsPerTarget": 32,
+  "smoke": {
+    "tenDevTerraUsage": true,
+    "ownerStaticHistory": true,
+    "normalMessagingBothTargetsUnsent": true,
+    "tenOpsMaterialUsageSingleRetry": true,
+    "tenOpsPoAllocationReceiptInventory": true,
+    "authorizedTestJobRead": true,
+    "directLegacyQwenDispatch": true,
+    "injectedTerraFailure": false,
+    "priorFailureFallbackEvidenceReused": true
+  },
+  "remainingReleaseBlockers": [],
+  "knownVerificationEvent": "One Production MaterialUsage turn failed closed on authorization verification, returned no facts;4capability checks passedand one same-question retry succeeded. Cause not established;no runtime/configfix made.",
+  "verifierReconciliation": "EdgeCLI succeeded; type-onlyimport mistakenlycounted byinitialclosurechecker. Corrected verificationonly; no redeploy.",
+  "configurationPermissionsPolicyAndMigrationsUnchanged": true,
+  "invoiceApprovalMigrationExcludedAndUnapplied": true,
+  "operationalWritesEnabled": false,
+  "newModelQuestionTurns": 6,
+  "privateSessionHandoffRemoved": true,
+  "unrelatedConcurrentDevWorkPreserved": true,
+  "proofHistoryRef": "refs/tenops/proofs/knowledge-20261030/3bf04ef3f712"
+}

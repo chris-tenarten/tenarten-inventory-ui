@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T14:02:14.808Z",
+  "startedAt": "2026-10-30T14:01:51.721Z",
+  "target": "tenops",
+  "action": "job",
+  "question": "Show the saved status and planned start/end dates for internal test Job DEV-20260803. State missing information. Do not make changes.",
+  "mode": "assistant",
+  "contentScope": "volatile",
+  "conversationId": "0719c527-b7c1-4cc0-92f5-0069efb0583d",
+  "message": "Job DEV-20260803 (chris-dev-test) has saved status In Production, a planned start of August 3, 2026, and a planned end of September 7, 2026. No planning fields are listed as missing; material status is unknown. These are saved dates, not a forecast. No changes were made.",
+  "staticHistoryTurns": null,
+  "durationMs": 23086,
+  "origin": "https://tenops.pages.dev",
+  "signedOwnerVerified": true,
+  "actorIdentitySha256": "6399f4498702b7e6409880527be1bbd1539d52621dc12412b9df5b99af35c37b",
+  "credentialsLogged": false,
+  "operationalWrites": 0,
+  "forcedProviderConfiguration": false
+}

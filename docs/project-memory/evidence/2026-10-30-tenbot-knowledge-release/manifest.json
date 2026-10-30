@@ -1,0 +1,108 @@
+{
+  "recordedAt": "2026-10-30T14:06:44.913902+00:00",
+  "runtime": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "baseline": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "files": [
+    {
+      "path": "preflight.json",
+      "sha256": "31ca86a9356ad71fc8ec7bc572c9a6984bd152b3f54acdd402df083df51d8efc"
+    },
+    {
+      "path": "edge-deployment.json",
+      "sha256": "8364da1aea77491e890f4a80c486e36ff54e950fc12b8ae59099936c39418e40"
+    },
+    {
+      "path": "caller-capability-check.json",
+      "sha256": "8ec82110ff3eca0f66a21354c5950a608679a8b4f388349b7f0df57d39213782"
+    },
+    {
+      "path": "final-hosted-state.json",
+      "sha256": "a3c99836b29a03cd8ef2162cc1ba8f1a123761c46f7855d5efa8a6868d2e4a91"
+    },
+    {
+      "path": "proof-history-publication.json",
+      "sha256": "63f06e15553f1cecfe0e16aa5b6925ebdaec44be46ac929b508182c3dfa5d785"
+    },
+    {
+      "path": "tendev/build.json",
+      "sha256": "0f47254ef66583aeaf9dae1d295e0e0784f53f0f4d22b59811f86aa15966da57"
+    },
+    {
+      "path": "tendev/publication.json",
+      "sha256": "dce31703acbe6ffbcaae962ef86ad56008ab7fd2914badc0c6f92911676e989b"
+    },
+    {
+      "path": "tendev/pages-deployment.json",
+      "sha256": "a86ebeb92f7f43c4e65e604e04dc55dac2e544dd778475a13d9180f61550b241"
+    },
+    {
+      "path": "tendev/served.json",
+      "sha256": "9c41135eacf370bb759973d686e96c8a11aa115d1f01dca6936e98fbfac4f7f3"
+    },
+    {
+      "path": "tendev/status-smoke.json",
+      "sha256": "60deafe08c92e350f2c147802e0c57a50292a60c5ca634a84dd58fbb8ab589f9"
+    },
+    {
+      "path": "tendev/smoke-accepted.json",
+      "sha256": "b0dd0e23a4891374b745ed23634ce7adff959c0d7d7a1c2b8029909c9b8c2726"
+    },
+    {
+      "path": "tenops/build.json",
+      "sha256": "1691592440e5cdcdd0b0e3b6020ab178d672ab4a14b695925056a1f0348e8540"
+    },
+    {
+      "path": "tenops/publication.json",
+      "sha256": "b6043a268d898c3f8fc1ff56a6c30e49de187f5cdcea619f922691d3cb479509"
+    },
+    {
+      "path": "tenops/pages-deployment.json",
+      "sha256": "56871912221eab8e01cdcc0dc6abc6f2581ec1f2889ac1c3913a5be46b41b492"
+    },
+    {
+      "path": "tenops/served.json",
+      "sha256": "b8b97eb0990e8307e592c7561a2cf81071c85936d61b78c7c00d26c556bfdffa"
+    },
+    {
+      "path": "tenops/status-smoke.json",
+      "sha256": "e8e56fe789e2b86f90bc6d35cc3ab898987ee409e33a92b17404832abd06d099"
+    },
+    {
+      "path": "tenops/smoke-accepted.json",
+      "sha256": "aec319952dcf2b0100628e14d49640bfea43e6148a6b1a0444420d21462d623e"
+    },
+    {
+      "path": "tendev/usage-smoke.json",
+      "sha256": "1f959e441ff96756e0ea86967be70776d3c47399745cf4cf9dd78c5606623e44"
+    },
+    {
+      "path": "tendev/history-smoke.json",
+      "sha256": "0b2e5770268a37f001afe8f673d08d6d86636cd81fbf3d70a13cf5acfd75d8d1"
+    },
+    {
+      "path": "tenops/usage-initial-fallback.json",
+      "sha256": "9940b801792105e8f0693c43a9a2d222d371a45dbc09c3a8a6ec42e97dfc9913"
+    },
+    {
+      "path": "tenops/usage-retry-smoke.json",
+      "sha256": "ddfc295ff28853a8d6ef5c905a557dadd5abc99b714c5886a69d4787af02a9d5"
+    },
+    {
+      "path": "tenops/po-smoke.json",
+      "sha256": "ecce71c71f510aecbb8656895502a05565d7c31d0d45b8f051476b67e09e89aa"
+    },
+    {
+      "path": "tenops/job-smoke.json",
+      "sha256": "b7ef752bafb0e549a9f10382b465baed4d06e8720f486973b2e7f79694cb1cbc"
+    },
+    {
+      "path": "tenops/qwen-smoke.json",
+      "sha256": "0cfb5b071d13467ef2ae2f4de949e7cb905eeb4848c40a69a64480af38f35720"
+    },
+    {
+      "path": "tenops/normal-messaging-smoke.json",
+      "sha256": "c0aaf32f6a5a6a8f1799451ffbf580d08639dc776591a7db1eff479f82095846"
+    }
+  ],
+  "excluded": "All credentials, raw Auth, private browser previews, private configuration/bundle/log files and unrelated dirty work."
+}

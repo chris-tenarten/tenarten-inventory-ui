@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:56:44.450Z",
+  "startedAt": "2026-10-30T13:56:21.633Z",
+  "target": "tenops",
+  "action": "po",
+  "question": "A PO line has portions for two Jobs and general stock. Explain allocation, Pending Receival, partial receipt and on-hand Inventory, and when reservations exist. Do not make changes.",
+  "mode": "assistant",
+  "contentScope": "workflow",
+  "conversationId": "b17455cc-6076-4aa3-b473-792a1d83a474",
+  "message": "A PO line can allocate portions to two Jobs, with the remainder for general stock. Allocation is an incoming intent, not on-hand stock or an existing on-hand reservation. After the PO is issued and its permanent PDF generated, Pending Receivals must be created explicitly; they preserve the allocation context but do not add stock.\n\nA partial receipt puts only the quantity actually received into on-hand Inventory; the balance remains pending. Received Job-allocated units become reserved for their respective Jobs, while received general-stock units remain general stock. Reservations can also be made later against existing general-stock lots. A pending allocation alone does not establish supplier arrival or Job readiness.\n\nNo changes were made.",
+  "staticHistoryTurns": null,
+  "durationMs": 22815,
+  "origin": "https://tenops.pages.dev",
+  "signedOwnerVerified": true,
+  "actorIdentitySha256": "6399f4498702b7e6409880527be1bbd1539d52621dc12412b9df5b99af35c37b",
+  "credentialsLogged": false,
+  "operationalWrites": 0,
+  "forcedProviderConfiguration": false
+}

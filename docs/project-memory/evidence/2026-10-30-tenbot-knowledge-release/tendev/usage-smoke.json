@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:41:06.029Z",
+  "startedAt": "2026-10-30T13:40:36.592Z",
+  "target": "tendev",
+  "action": "usage",
+  "question": "When I save Material Usage for a Job, does TenOps deduct Inventory automatically? Explain what must happen separately.",
+  "mode": "assistant",
+  "contentScope": "workflow",
+  "conversationId": "9e2738c4-2e3c-4d94-b31d-3b4571454739",
+  "message": "No. Saving Material Usage records the report, but does not automatically deduct Inventory or consume a reservation.\n\nTo deduct stock, an employee with business-write access must separately record an Outtake in Inventory → Current Inventory → Record Stock. Enter their name and the material lines with positive quantities, units and matching lot details, then choose Record Outtake Lines. The outtake cannot exceed available matching stock; each recorded line updates Inventory and creates an Activity transaction.",
+  "staticHistoryTurns": null,
+  "durationMs": 29432,
+  "origin": "https://tendev.pages.dev",
+  "signedOwnerVerified": true,
+  "actorIdentitySha256": "6399f4498702b7e6409880527be1bbd1539d52621dc12412b9df5b99af35c37b",
+  "credentialsLogged": false,
+  "operationalWrites": 0,
+  "forcedProviderConfiguration": false
+}
