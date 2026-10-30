@@ -1,0 +1,39 @@
+{
+  "status": "DEPLOYED \u2014 approved finite read-only Terra pilot",
+  "recordedAt": "2026-10-30T02:14:56.246206+00:00",
+  "servedSha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "deployment": "2019c461-3dab-422f-b750-64a17fcdcc2e",
+  "target": "https://tenops.pages.dev",
+  "newTerraTurns": 2,
+  "newTerraSteps": 7,
+  "newAccountedMicrousd": 11666,
+  "allHostedAccountedMicrousd": 32283,
+  "remainingHostedAllowanceMicrousd": 3967717,
+  "pilotTotalHostedMicrousd": 4000000,
+  "allChargesMeasured": true,
+  "uncertainReservations": 0,
+  "keyValueRead": false,
+  "inventoryCatalogReceivalWrites": false,
+  "migrationsAppliedThisPass": 0,
+  "personalChatGPTContextConnected": false,
+  "uncommittedLatencyCorrectionReleased": false,
+  "deferredKnowledgeReleased": false,
+  "localDevUnchanged": true,
+  "normalMessaging": true,
+  "historySmokePassed": true,
+  "jobSmokePassed": true,
+  "initialQwenTurnPassed": true,
+  "nestedFallback": "Actual Qwen attempted; generated answer not published; verified guide safely displayed. Exact provider/answer failure cause not captured.",
+  "limitations": [
+    "Pilot ends 2026-10-30T23:00:00Z; no future funding assumed.",
+    "Existing Qwen answer handling may fall through to verified guidance.",
+    "Hosted employee responses omit raw tool sequences and token breakdown; costs use actual provider usage processed by accepted server meter.",
+    "New smoke uses the existing Admin owner and internal test Job; employee/RLS/revocation/concurrency proof reuses completed isolated and TenDev evidence.",
+    "Live operational Job evidence is intentionally excluded from durable history."
+  ],
+  "reconciledCheckpoints": [
+    "Preflight initially compared initial v11 receipt; final accepted v13 receipt and exact bundle confirmed no drift.",
+    "Policy transaction committed once; Management API last-SELECT-only receipt mismatch resolved through read-only comparison, no mutation retry.",
+    "Cloudflare access token expired during final metadata check; one normal Wrangler session refresh restored read-only metadata, no deployment retry."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "baseline": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "accepted": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc",
+  "retainedRecordComparisons": 23,
+  "omittedInapplicableComparisons": 12,
+  "reboundDocumentComparisons": 3,
+  "retainedHistoricalMigrations": 4,
+  "reviewedCandidateAndReceiptRevision": "Both references bind to this same receipt/source tree commit in the final review manifest.",
+  "receiptPath": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+  "receiptHeading": "## Accepted record source review \u2014 selective knowledge preparation",
+  "omitted": [
+    {
+      "recordId": "inventory-activity",
+      "path": "src/app/client-layout-shell.tsx"
+    },
+    {
+      "recordId": "inventory-pending-create",
+      "path": "src/app/inventory/page.tsx"
+    },
+    {
+      "recordId": "inventory-pending-receive",
+      "path": "src/app/inventory/page.tsx"
+    },
+    {
+      "recordId": "inventory-stock-movement",
+      "path": "src/app/inventory/page.tsx"
+    },
+    {
+      "recordId": "inventory-stock-reservation",
+      "path": "src/app/inventory/page.tsx"
+    },
+    {
+      "recordId": "inventory-stock-search",
+      "path": "src/app/inventory/page.tsx"
+    },
+    {
+      "recordId": "inventory-stock-search",
+      "path": "src/app/client-layout-shell.tsx"
+    },
+    {
+      "recordId": "knowledge-intake",
+      "path": "docs/project/PROJECT_MANIFEST.md"
+    },
+    {
+      "recordId": "knowledge-inventory",
+      "path": "src/app/inventory/page.tsx"
+    },
+    {
+      "recordId": "knowledge-manpower",
+      "path": "docs/project/PROJECT_MANIFEST.md"
+    },
+    {
+      "recordId": "manpower-job-filter",
+      "path": "src/app/client-layout-shell.tsx"
+    },
+    {
+      "recordId": "workflow-intake-bid",
+      "path": "src/app/client-layout-shell.tsx"
+    }
+  ],
+  "additionalHistoricalEntries": "Root adds nine separately supported deployed-source classifications.",
+  "instruction": "Preserve23 original comparison objects byte-for-byte; omit12 baseline/no-delta entries; only3 source comparisons are rebound."
+}

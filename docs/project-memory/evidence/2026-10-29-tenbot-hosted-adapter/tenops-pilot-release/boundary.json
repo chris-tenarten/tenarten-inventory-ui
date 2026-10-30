@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-10-30T02:02:56.062Z",
+  "acceptedSha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "tree": "c294d3314f6171a8899b11bfd5e58c9a6c843ccf",
+  "localHead": "1ce2091c099baf11bcf31e5a3f57a78e88eee5f8",
+  "branch": "dev",
+  "source": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/tenops-pilot-release/source",
+  "latencyCorrectionExcluded": true,
+  "deferredKnowledgeExcluded": true,
+  "unrelatedWorkExcluded": true,
+  "changedPaths": [
+    "src/modules/inventory/invoice-quantity.ts",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/my-work/inbox.ts",
+    "src/modules/tenbot/ReceivalDraftReview.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/conversation-history.ts",
+    "src/modules/tenbot/live-review.ts",
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-openai-metering.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+    "supabase/migrations/20261029221000_tenbot_agent_history.sql"
+  ],
+  "migrationHashes": {
+    "20261029220000_tenbot_openai_metering.sql": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+    "20261029221000_tenbot_agent_history.sql": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31"
+  }
+}
