@@ -6,7 +6,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {createTenbotAgentSessions} from './tenbot-agent-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge requires explicit extensions.
-import {createCallerInvoiceReader,type TenbotInvoiceDocument} from './tenbot-invoice.ts';
+import {createCallerInvoiceReader,InvoiceReadError,type TenbotInvoiceDocument,type InvoiceCatalogIdentity} from './tenbot-invoice.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge requires explicit extensions.
 import {createTenbotJobTools,type JobToolCaller,type JobToolQuery} from './tenbot-job-tools.ts';
@@ -40,7 +40,7 @@ export type ReceivalRuntimeSourceStore={get(id:string):Promise<InvoiceReceivalSo
 type Row=Record<string,unknown>;
 type SourceDraftRow=LocalDraftRow&{sourceQuantity:InvoiceSourceQuantity|null;quantityBasis:InvoiceQuantityBasis};
 export type ReceivalAgentCaller=JobToolCaller&InvoiceReceivalCaller;
-export type ReceivalRuntimeDependencies={model:string;sourceStore?(caller:ReceivalAgentCaller,owner:string):ReceivalRuntimeSourceStore;decodeAttachment(value:unknown):Promise<InvoiceImage&{filename:string;sha256:string}>;extractDocument(input:{id:string;filename:string;image:InvoiceImage;model:string;provider:AgentProvider;remainingUsd:number;assertNoFatal():void}):Promise<TenbotInvoiceDocument>;createProvider(label:string,image?:InvoiceImage):AgentProvider;remainingUsd():number;assertNoFatal():void;now?:()=>number;execution?:{enabled:boolean;databaseEnvironment:'isolated-test'|'restricted-tendev'};beforeExecute?(input:{owner:string;draftId:string;hash:string;approvalId:string}):Promise<unknown>};
+export type ReceivalRuntimeDependencies={model:string;sourceStore?(caller:ReceivalAgentCaller,owner:string):ReceivalRuntimeSourceStore;/** Host-verified picker restriction only; never supplied by body/model. */catalogScope?(owner:string):readonly InvoiceCatalogIdentity[]|undefined;decodeAttachment(value:unknown):Promise<InvoiceImage&{filename:string;sha256:string}>;extractDocument(input:{id:string;filename:string;image:InvoiceImage;model:string;provider:AgentProvider;remainingUsd:number;assertNoFatal():void}):Promise<TenbotInvoiceDocument>;createProvider(label:string,image?:InvoiceImage):AgentProvider;remainingUsd():number;assertNoFatal():void;now?:()=>number;execution?:{enabled:boolean;databaseEnvironment:'isolated-test'|'restricted-tendev'};beforeExecute?(input:{owner:string;draftId:string;hash:string;approvalId:string}):Promise<unknown>};
 type Attachment={id:string;owner:string;filename:string;image:InvoiceImage;sha256:string;expires:number;document?:TenbotInvoiceDocument;session?:ReturnType<typeof createTenbotAgentSessions>;source?:InvoiceReceivalSource};
 type Review={owner:string;attachmentId:string;expires:number;draft:LocalReceivalDraft;supplier:string;reference:string;traceHash:string;durable?:InvoiceReceivalDraft};
 const record=(v:unknown):v is Row=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -50,6 +50,11 @@ const digest=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest(
 const clone=<T,>(v:T):T=>structuredClone(v);
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 function fail(message:string,status=400):never{throw new TenbotError(message,status);}
+function initializationUnavailable(stage:'catalog'|'jobs',error?:unknown):never{
+ const code=stage==='catalog'?'invoice_catalog_unavailable':'invoice_jobs_unavailable';
+ console.warn('tenbot_invoice_initialization_failed',{stage,code,reason:error instanceof InvoiceReadError?error.reason:'unavailable'});
+ throw Object.assign(new TenbotError(stage==='catalog'?'Authorized material catalog choices are unavailable. Please try again.':'Authorized Job choices are unavailable. Please try again.',503),{code});
+}
 const BLOCKED='Real execution is disabled until database-backed release gates pass.';
 function keys(value:Row,allowed:string[]){if(Object.keys(value).some(key=>!allowed.includes(key)))fail('Invalid receival request fields.');}
 function details(value:unknown):LocalOrderDetails{if(!record(value))fail('Review the order details.');keys(value,['orderedBy','orderDate','location']);for(const v of Object.values(value))if(typeof v!=='string'||v.length>120||/[\u0000-\u001f\u007f]/.test(v))fail('Invalid order details.');return {orderedBy:text(value.orderedBy).trim(),orderDate:text(value.orderDate).trim(),location:text(value.location).trim()};}
@@ -116,12 +121,13 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
     keys(body,['action','conversationId']);const history=await helpSession(body,owner);await authorize(owner);return history;
    }
    if(action==='status'){
-    keys(body,['action']);const reader=createCallerInvoiceReader(caller),catalog=await reader.readCatalog!(AbortSignal.timeout(4000));
+    keys(body,['action']);const reader=createCallerInvoiceReader(caller),scope=deps.catalogScope?.(owner);
+    const catalog=await reader.readCatalog!(AbortSignal.timeout(4000),scope).catch(error=>initializationUnavailable('catalog',error));
     // Same canonical Job identity picker as Inventory. Invoice preparation does
     // not require unrelated Rework/Labor modules just to offer a Job association.
     const jobQuery=caller.from('jobs') as {select(columns:string,options:{count:'exact'}):JobToolQuery};
-    const found=await jobQuery.select('id,name,job_number',{count:'exact'}).is('archived_at',null).order('job_number').limit(21).abortSignal(AbortSignal.timeout(4000));
-    if(found.error||!Array.isArray(found.data))fail('Authorized Job choices are unavailable.',503);
+    const found=owner===TENBOT_CANARY_OWNER&&scope!==undefined?{data:[],error:null}:await Promise.resolve(jobQuery.select('id,name,job_number',{count:'exact'}).is('archived_at',null).order('job_number').limit(21).abortSignal(AbortSignal.timeout(4000))).catch(()=>initializationUnavailable('jobs'));
+    if(found.error||!Array.isArray(found.data))initializationUnavailable('jobs');
     await authorize(owner);
     return {mode:'authenticated-receivals',simulation:false,databaseEnvironment:deps.execution?.databaseEnvironment,canPrepare:await can(owner,'writeBusinessData')&&await can(owner,'adjustInventory'),canCreateCatalog:await can(owner,'writeBusinessData')&&await can(owner,'manageVendorsCatalog'),executionEnabled,blockedReason:executionEnabled?undefined:BLOCKED,model:deps.model,recordSource:executionEnabled?'Real isolated test records / caller JWT, existing TenOps RBAC and RLS':'Caller JWT / existing TenOps RBAC and RLS; execution disabled',catalog:combinePurchasingCatalogRecords(catalog.standard,catalog.specialty).map(c=>({id:`${c.source}:${c.id}`,materialName:c.materialName,size:c.chipSize,unit:c.orderUnit||c.containerType,supplier:c.vendor,packageQuantity:c.packageQuantity,packageMeasure:c.packageMeasure,containerType:c.containerType,packageLabel:c.packageEvidence?.label||''})),jobs:array(found.data).slice(0,20).map(j=>({id:j.id,label:[j.job_number,j.name].filter(Boolean).join(' — ')})),jobsLimited:Array.isArray(found.data)&&found.data.length>20,requiresPrivateOriginal:Boolean(store),maxOriginalBytes:12000000,maxAttachmentBytes:90000,mediaTypes:['image/png','image/jpeg']};
    }
@@ -165,7 +171,9 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
      if(ack&&(!row.duplicateReview?.canAcknowledge||row.duplicateReview.fingerprint!==ack))fail('Duplicate evidence changed. Save the review and inspect the current matching records before acknowledging a separate order.',409);
      Object.assign(row,{materialId:edit.materialId,jobId:edit.jobId,quantity:edit.quantity.trim(),unit:edit.unit.trim(),excluded:edit.excluded,catalogRequest,duplicateAcknowledgement:ack});}
     next.orderDetails=details(body.orderDetails);
-    const catalog=await createCallerInvoiceReader(caller).readCatalog!(AbortSignal.timeout(4000)),offers=new Map(combinePurchasingCatalogRecords(catalog.standard,catalog.specialty).map(c=>[`${c.source}:${c.id}`,c]));
+    const identities=new Map<string,InvoiceCatalogIdentity>();
+    for(const row of next.rows){if(row.excluded||row.materialId===null)continue;const match=row.materialId.match(/^(standard|specialty):(.+)$/);if(!match)fail(`Invoice line ${row.lineId}: choose a current authorized catalog offer or complete its new-material proposal.`);identities.set(row.materialId,{source:match[1] as 'standard'|'specialty',id:match[2]});}
+    const catalog=await createCallerInvoiceReader(caller).readCatalog!(AbortSignal.timeout(4000),[...identities.values()]),offers=new Map(combinePurchasingCatalogRecords(catalog.standard,catalog.specialty).map(c=>[`${c.source}:${c.id}`,c]));
     for(const row of next.rows as SourceDraftRow[]){if(row.excluded)continue;const offer=row.materialId?offers.get(row.materialId):undefined,proposed=row.catalogRequest;
      if(!offer&&!proposed)fail(`Invoice line ${row.lineId}: choose a current authorized catalog offer or complete its new-material proposal.`);
      if(proposed&&!await can(owner,'manageVendorsCatalog'))fail('Your new-material request is retained for review. An employee with Manage vendors and catalog permission must approve the dependent catalog creation.',403);

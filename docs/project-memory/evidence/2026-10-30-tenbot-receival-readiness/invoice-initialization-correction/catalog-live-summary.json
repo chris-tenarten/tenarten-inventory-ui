@@ -1,0 +1,192 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T21:38:54.141Z",
+  "sharedRef": "vxdxjhazkqhpkwdqtobp",
+  "sharedMetadataReadOnly": true,
+  "expectedCounts": {
+    "standard": 1951,
+    "specialty": 301
+  },
+  "capturedCounts": {
+    "standard": 1951,
+    "specialty": 301
+  },
+  "privateFixtureSha256": "c22b94aabb78406446d45d8f3b9868dcc95082967f94da7c8790ce4e3c109307",
+  "sourceHashes": {
+    "reader": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0",
+    "mapper": "7190bf30a6a1649f645c617ffdb897e58fc30973896f30eff330a219584a76b6"
+  },
+  "replay": {
+    "passed": true,
+    "scope": "Actual shared rows replayed through the new reader; no live JWT/RLS or hosted runtime proof",
+    "counts": {
+      "standard": 1951,
+      "specialty": 301,
+      "mapped": 2252
+    },
+    "fullPages": [
+      {
+        "table": "vendor_catalog",
+        "from": 0,
+        "to": 249,
+        "returned": 250,
+        "count": 1951,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog_v2",
+        "from": 0,
+        "to": 249,
+        "returned": 250,
+        "count": 301,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog",
+        "from": 250,
+        "to": 499,
+        "returned": 250,
+        "count": 1951,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog_v2",
+        "from": 250,
+        "to": 499,
+        "returned": 51,
+        "count": 301,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog",
+        "from": 500,
+        "to": 749,
+        "returned": 250,
+        "count": 1951,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog",
+        "from": 750,
+        "to": 999,
+        "returned": 250,
+        "count": 1951,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog",
+        "from": 1000,
+        "to": 1249,
+        "returned": 250,
+        "count": 1951,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog",
+        "from": 1250,
+        "to": 1499,
+        "returned": 250,
+        "count": 1951,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog",
+        "from": 1500,
+        "to": 1749,
+        "returned": 250,
+        "count": 1951,
+        "scope": "all"
+      },
+      {
+        "table": "vendor_catalog",
+        "from": 1750,
+        "to": 1999,
+        "returned": 201,
+        "count": 1951,
+        "scope": "all"
+      }
+    ],
+    "selectedPages": [
+      {
+        "table": "vendor_catalog",
+        "from": 0,
+        "to": 249,
+        "returned": 1,
+        "count": 1,
+        "scope": "ids"
+      }
+    ],
+    "searchPages": [
+      {
+        "table": "vendor_catalog",
+        "from": 0,
+        "to": 249,
+        "returned": 3,
+        "count": 3,
+        "scope": "search"
+      },
+      {
+        "table": "vendor_catalog_v2",
+        "from": 0,
+        "to": 249,
+        "returned": 0,
+        "count": 0,
+        "scope": "search"
+      }
+    ],
+    "lateRowPosition": 1001,
+    "lateIdentitySha256": "0f05b75b8f8822fcb9349fb20ccab0aa3c33267974abb02d83aebb9fce67e2fc",
+    "searchTermSha256": "d9f69d88bbac728bbfed834ea5d81e20fd05aed1492ea07b6ea6ad020edf2bee",
+    "mapperSha256": "764dcfcf0b0c5e807b43a86e76eda3cc810529b977a81cbea9c80f3b9727ccd7"
+  },
+  "signedFixture": {
+    "passed": true,
+    "fixtureRef": "jltgxcfiprocydhbrahz",
+    "actualSignedJwt": true,
+    "verifiedUserSha256": "38417b6a238aec52cab91c630aa9e3d12b646efb84a715e26b84471b30ae4c79",
+    "counts": {
+      "standard": 6,
+      "specialty": 13,
+      "mapped": 19
+    },
+    "catalogSha256": "d34cce035bd4b3d62a2f8a351646fcdfe2d33331c9fb911835b9fb74a8fb906d",
+    "httpCalls": 5,
+    "scope": "Actual existing synthetic Auth/PostgREST SELECT only. Its smaller record count is not a live 1951-row caller test.",
+    "setupCalls": 0,
+    "fixtureSqlCalls": 0,
+    "businessMutations": 0,
+    "modelCalls": 0
+  },
+  "sharedTableMetadata": [
+    {
+      "rls": false,
+      "table": "vendor_catalog",
+      "forceRls": false,
+      "anonSelect": true,
+      "serviceRoleSelect": true,
+      "authenticatedSelect": true
+    },
+    {
+      "rls": false,
+      "table": "vendor_catalog_v2",
+      "forceRls": false,
+      "anonSelect": true,
+      "serviceRoleSelect": true,
+      "authenticatedSelect": true
+    }
+  ],
+  "failedHostedRequestReproduced": false,
+  "limitations": [
+    "The original failed hosted request status/body/request ID was not captured.",
+    "Pilot-OFF 403 is authorization evidence, not reproduction of the catalog branch.",
+    "Management data replay verifies the actual catalog shape through the reader; it does not prove shared caller authorization/RLS or PostgREST search semantics.",
+    "The genuine synthetic JWT read uses existing fixture rows only, with no setup or record writes; cardinality may be much smaller than shared data.",
+    "No hosted invoice upload, model call, grant activation, enrollment, approval or execution is attempted."
+  ],
+  "businessMutations": 0,
+  "grantMutations": 0,
+  "modelCalls": 0,
+  "managementCalls": 5,
+  "sharedPrePostSha256": "33007ece9ced9af033228464c79bff940746e96f992c9ba658678c82e7a2642c",
+  "sharedDormantStatePreserved": true
+}

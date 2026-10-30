@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "tenbot-engineering-validation-receipt.v1",
+  "recordedAt": "2026-10-30T21:43:12.849Z",
+  "recordType": "Engineering receipt of observed executions; not a raw stdout capture",
+  "result": "PASS",
+  "totalGroups": 72,
+  "verifiers": [
+    {
+      "command": "./node_modules/.bin/tsx scripts/verify-tenbot-catalog-pagination.mts",
+      "groups": 13,
+      "result": "PASS",
+      "exitCode": 0,
+      "mode": "offline deterministic doubles and contract checks"
+    },
+    {
+      "command": "./node_modules/.bin/tsx scripts/verify-tenbot-invoice.mts",
+      "groups": 20,
+      "result": "PASS",
+      "exitCode": 0,
+      "mode": "offline deterministic doubles and contract checks"
+    },
+    {
+      "command": "./node_modules/.bin/tsx scripts/verify-tenbot-receival-agent.mts",
+      "groups": 18,
+      "result": "PASS",
+      "exitCode": 0,
+      "mode": "offline deterministic doubles and contract checks"
+    },
+    {
+      "command": "./node_modules/.bin/tsx scripts/verify-tenbot-receival-hosted.mts",
+      "groups": 14,
+      "result": "PASS",
+      "exitCode": 0,
+      "mode": "offline deterministic doubles and contract checks"
+    },
+    {
+      "command": "./node_modules/.bin/tsx scripts/verify-tenbot-canary-runtime.mts",
+      "groups": 7,
+      "result": "PASS",
+      "exitCode": 0,
+      "mode": "offline deterministic doubles and contract checks"
+    }
+  ],
+  "checks": [
+    {
+      "command": "./node_modules/.bin/tsc --noEmit --strict --skipLibCheck --target ES2022 --lib ES2022,DOM --module esnext --moduleResolution bundler --esModuleInterop --allowImportingTsExtensions --allowJs scripts/verify-tenbot-catalog-pagination.mts scripts/verify-tenbot-receival-agent.mts supabase/functions/_shared/tenbot-invoice.ts supabase/functions/_shared/tenbot-receival-runtime.ts supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "result": "PASS",
+      "exitCode": 0
+    },
+    {
+      "command": "./node_modules/.bin/eslint --no-ignore scripts/verify-tenbot-catalog-pagination.mts scripts/verify-tenbot-receival-agent.mts supabase/functions/_shared/tenbot-invoice.ts supabase/functions/_shared/tenbot-receival-runtime.ts supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "result": "PASS",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check -- supabase/functions/_shared/tenbot-invoice.ts supabase/functions/_shared/tenbot-receival-runtime.ts supabase/functions/_shared/tenbot-receival-hosted.ts scripts/verify-tenbot-receival-agent.mts scripts/verify-tenbot-catalog-pagination.mts",
+      "result": "PASS",
+      "exitCode": 0
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "687d16b79a249e1b61edd0e469b5e060c90a7ad6fd2fab2e56ec7a12ad69360d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "05294ec731f6be98bec1389190cf5958cd9093f610c812564dd0776752174766"
+    },
+    {
+      "path": "scripts/verify-tenbot-receival-agent.mts",
+      "sha256": "d5d3a31da1aeeca665a5d827c3a608c2690f0ae724dcdbfa9d6874adecb67832"
+    },
+    {
+      "path": "scripts/verify-tenbot-catalog-pagination.mts",
+      "sha256": "a89a5170e0a674da349028302cf09c8858679af2e9e5fede7d86dcdebd66ad5c"
+    }
+  ],
+  "coverage": [
+    "1951 standard plus 301 active specialty picker records using stable exact counts, unique IDs and 250-row paging.",
+    "Ordinary complete picker, host-verified one-offer canary scope and no canary Job SELECT.",
+    "Fresh review reads only included selected catalog IDs; missing, hidden, inactive, unexpected or duplicate identities fail closed.",
+    "5000/source host picker cap; 1000 model-search and duplicate-read caps retained.",
+    "Safe catalog and Job initialization 503 codes/messages; fixed stage/code/reason logging without raw database errors.",
+    "Adjacent source evidence, canonical quantity mapping, permission checks, exact approvals, revocation and idempotent receipt contracts using offline doubles."
+  ],
+  "limitations": [
+    "This receipt records checks already observed by the implementation agent. No validation was rerun to create it.",
+    "Final focused verifier fixture typing was corrected to the canonical ready-source shape, then its 13 groups and focused TypeScript/ESLint were rerun successfully.",
+    "No actual model, caller JWT, hosted RLS, database transaction, network, deployment or browser behavior is certified by these offline executions.",
+    "Root-owned whole-application and live read-only results are separate evidence and are not included as executions by this agent."
+  ],
+  "actualModelCalls": 0,
+  "networkCalls": 0,
+  "grantActivations": 0,
+  "databaseWrites": 0,
+  "migrations": 0,
+  "commits": 0
+}

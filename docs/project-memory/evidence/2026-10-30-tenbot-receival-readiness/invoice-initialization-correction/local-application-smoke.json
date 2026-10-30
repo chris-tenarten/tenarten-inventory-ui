@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T21:42:42.099Z",
+  "actualOrigin": "http://localhost:3000",
+  "http": [
+    {
+      "route": "inventory",
+      "status": 200,
+      "matchingAssets": 16
+    },
+    {
+      "route": "my-work",
+      "status": 200,
+      "matchingAssets": 17
+    }
+  ],
+  "actualBrowser": true,
+  "unauthenticatedBoundary": true,
+  "pageErrors": 0,
+  "hostedDataRequestsForwarded": 0,
+  "normalInventoryImplementationUnchanged": true,
+  "limitation": "Actual application shell/sign-in and compiled assets only; focused authenticated component behavior is separately verified with synthetic intercepted transport.",
+  "modelCalls": 0,
+  "businessMutations": 0
+}

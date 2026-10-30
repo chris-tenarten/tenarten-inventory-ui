@@ -28,14 +28,15 @@ function setup(options:{rawLines?:unknown;providerFailure?:boolean;prepareOwner?
  function callerFor(who:string):ReceivalAgentCaller{
   return {from(table:string){
    assert(['vendor_catalog','vendor_catalog_v2','pending_receivals','jobs','production_rework_cycles'].includes(table),'fixed read table');
-   let columns='',start=0,end=249,term='';
+   let columns='',start=0,end=249,term='',selectedIds:readonly string[]|undefined;
    const query={
     select(value:string){columns=value;reads.push({table,columns});assert(!value.includes('*'),'fixed bounded projection');return query;},
-    eq(){return query;},is(){return query;},not(){return query;},in(){return query;},gte(){return query;},lte(){return query;},or(filter:string){const pattern=filter.match(/\.ilike\.("(?:\\.|[^"])*")/);if(pattern)term=String(JSON.parse(pattern[1])).replace(/^%|%$/g,'').toLowerCase();return query;},order(){return query;},limit(){return query;},
+    eq(){return query;},is(){return query;},not(){return query;},in(column:string,ids:readonly string[]){if(column==='id')selectedIds=ids;return query;},gte(){return query;},lte(){return query;},or(filter:string){const pattern=filter.match(/\.ilike\.("(?:\\.|[^"])*")/);if(pattern)term=String(JSON.parse(pattern[1])).replace(/^%|%$/g,'').toLowerCase();return query;},order(){return query;},limit(){return query;},
     range(first:number,last:number){start=first;end=last;return query;},abortSignal(signal:AbortSignal){assert(!signal.aborted);return query;},
     then(resolve:(value:{data:Row[];count:number;error:null})=>unknown,reject?:(error:unknown)=>unknown){
      const source:Row[]=table==='vendor_catalog'?standard:table==='pending_receivals'?(options.receivals??fixture.receivals.rows):[];
-     const rows=term?source.filter(row=>Object.values(row).some(value=>typeof value==='string'&&value.toLowerCase().includes(term))):source;
+     const selection=selectedIds,visible=selection?source.filter(row=>selection.includes(String(row.id))):source;
+     const rows=term?visible.filter(row=>Object.values(row).some(value=>typeof value==='string'&&value.toLowerCase().includes(term))):visible;
      const projected=rows.slice(start,end+1).map(row=>Object.fromEntries(columns.split(',').map(key=>[key,row[key]??null])));
      return Promise.resolve({data:clone(projected),count:rows.length,error:null}).then(resolve,reject);
     },

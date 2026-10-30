@@ -9,6 +9,7 @@ import {ReceivalDraftReview} from './ReceivalDraftReview';
 import {createInvoiceReceivalAttachmentService,invoiceOriginalSha256} from '../inventory/invoice-receival-attachments';
 import {parseTenbotCanaryAccess,tenbotCanaryRemainingMs} from '../inventory/tenbot-canary-access';
 import {clearHistoryLocator,historyAccessHash,readHistoryLocator,saveHistoryLocator,type HistoryBinding} from './conversation-history';
+import {tenbotFailureMetadata,tenbotFailureTimedOut,tenbotInitializationFailure,type TenbotInitializationStage} from './initialization-failure';
 import {invalidateReceivalApproval,localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,receivalReviewNotice,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
 type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean;operational?:{observedAt:string|null;complete:boolean;truncated:boolean;facts:{id:string;text:string}[];refreshable:boolean}};
@@ -68,10 +69,10 @@ async function invoke<T>(body:Record<string,unknown>,owner:string):Promise<T>{
  const experiment=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&localAgentExperiment===true;
  const endpoint=experiment?(localReceivalExecution===true?'http://localhost:55596':'http://localhost:55595'):process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||(localFixture?'http://localhost:55593':undefined);
  if(endpoint&&typeof window!=='undefined'&&window.location.hostname==='localhost'){
- const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(payload),signal:AbortSignal.timeout(experiment?100000:payload.action==='ask'?125000:35000)});const value=await r.json();if(!r.ok)throw Object.assign(new Error(value.error||'TenBot unavailable.'),{status:r.status});return value;
+ const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(payload),signal:AbortSignal.timeout(experiment?100000:payload.action==='ask'?125000:35000)});const value=await r.json().catch(()=>null);if(!r.ok)throw Object.assign(new Error(typeof value?.error==='string'?value.error:'TenBot unavailable.'),tenbotFailureMetadata(r.status,value,r.headers.get('sb-request-id')||r.headers.get('x-request-id')));return value;
  }
  const {data,error}=await supabase.functions.invoke('tenbot',{body:payload,headers:{Authorization:`Bearer ${sessionData.session.access_token}`},signal:AbortSignal.timeout(payload.action==='ask'?125000:35000)});
- if(error){const response='context' in error&&error.context instanceof Response?error.context:null;const detail=response?await response.json().catch(()=>null):null;throw Object.assign(new Error(detail?.error||'TenBot is unavailable. The rest of TenOps remains available.'),{status:response?.status});}return data;
+ if(error){const response='context' in error&&error.context instanceof Response?error.context:null;const detail=response?await response.json().catch(()=>null):null;throw Object.assign(new Error(typeof detail?.error==='string'?detail.error:'TenBot is unavailable. The rest of TenOps remains available.'),tenbotFailureMetadata(response?.status,detail,response?.headers.get('sb-request-id')||response?.headers.get('x-request-id')),{name:tenbotFailureTimedOut(error)?'TimeoutError':'Error'});}return data;
 }
 type ModuleContext={label:string;module:string};
 function moduleContext(pathname:string):ModuleContext{
@@ -192,13 +193,14 @@ export function useTenbotConversation():TenbotConversation{
    // same account is being hydrated during an ordinary component remount.
    if(auth.ready&&auth.accessStatus!=='pending')clearHistoryLocator();
   }else void (async()=>{
-   let receivals=false;
+   let receivals=false,initializationStage:TenbotInitializationStage='hosted-status';
    try{
     const {data}=await supabase.auth.getSession();if(!active()||data.session?.user.id!==owner)return;
     const authenticated=Boolean(data.session.access_token),enabled=localAgentExperimentRequested(window.location.origin,window.location.search,authenticated);
     receivals=localReceivalCandidateRequested(window.location.origin,window.location.search,authenticated);
     setExperiment(enabled);setAuthenticatedExperiment(receivals);
     if(enabled){
+     initializationStage='local-status';
      const status=await invoke<LocalDemoStatus>({action:'status',localAgentExperiment:true,localReceivalExecution:receivals},owner);
      if(receivals&&(status.mode!=='authenticated-receivals'||status.simulation!==false))throw new Error('The authenticated receivals server returned an incompatible mode.');
      if(!active())return;receiveExperimentStatus(status);
@@ -207,7 +209,19 @@ export function useTenbotConversation():TenbotConversation{
      // available. Never send experimental flags or enable document controls.
      const status=await invoke<{mode:string;historyAvailable:boolean;receivalPilotAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
      if(!active()||status?.mode!=='assistant'||status.historyAvailable!==true)return;
-     if(status.receivalPilotAvailable===true){const candidate=await invoke<LocalDemoStatus>({action:'status',hostedReceivalRequest:true},owner);if(!active())return;if(candidate.mode==='authenticated-receivals'&&candidate.simulation===false&&candidate.requiresPrivateOriginal===true){receiveExperimentStatus(candidate);setHostedReceivals(true);}}
+     if(status.receivalPilotAvailable===true){
+      try{
+       const candidate=await invoke<LocalDemoStatus>({action:'status',hostedReceivalRequest:true},owner);if(!active())return;
+       if(candidate.mode!=='authenticated-receivals'||candidate.simulation!==false||candidate.requiresPrivateOriginal!==true)throw new Error('Incompatible invoice workspace status.');
+       receiveExperimentStatus(candidate);setHostedReceivals(true);
+      }catch(caught){
+       if(!active())return;
+       const failure=tenbotInitializationFailure(caught,'hosted-invoice-status');
+       setError(failure.message);console.warn('TenBot workspace initialization failed',failure.diagnostic);
+       // Invoice setup must not prevent ordinary help or owner-authorized
+       // history hydration. No attachment or receival controls were enabled.
+      }
+     }
     }
     const binding:HistoryBinding={owner,accessHash:await historyAccessHash(accessFingerprint),mode:enabled?(receivals?'authenticated':'synthetic'):'hosted'};
     if(!active())return;historyBinding.current=binding;
@@ -225,7 +239,7 @@ export function useTenbotConversation():TenbotConversation{
       else{conversation.current={owner,id};setError('Saved TenBot history is temporarily unavailable. Reopen TenBot to restore it. No AI request was repeated.');}
      }
     }
-   }catch(caught){if(active())setError(receivals?`Authenticated database unavailable; writes disabled. ${caught instanceof Error?caught.message:'Reopen TenBot after the isolated database is available.'}`:'The local experiment is unavailable. Reopen TenBot after its server is ready.');}
+   }catch(caught){if(active()){const failure=tenbotInitializationFailure(caught,initializationStage);setError(failure.message);console.warn('TenBot workspace initialization failed',failure.diagnostic);}}
    finally{if(active())setHistoryLoading(false);}
   })();
   return()=>{current=false;lifecycle.current=generation+1;};

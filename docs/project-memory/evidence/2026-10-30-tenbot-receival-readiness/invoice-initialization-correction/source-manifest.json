@@ -1,0 +1,55 @@
+{
+  "baseDevSha": "75b0b9be9dc82e04a33297e2d4e797d9605f5166",
+  "files": [
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "fd9699a002edb633b79fa25ccb34a4bc1f80fc1103ff556c98fb3bd3a84b6e23"
+    },
+    {
+      "path": "src/modules/tenbot/initialization-failure.ts",
+      "sha256": "aae36eb165ecbced9b455c53afa748aa4f2d56c1d2d920e977a2811580532ec4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "687d16b79a249e1b61edd0e469b5e060c90a7ad6fd2fab2e56ec7a12ad69360d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "05294ec731f6be98bec1389190cf5958cd9093f610c812564dd0776752174766"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "ce1fdec77b596cf6d6063fff3e0a1d4f631af3d708279205b410ba37fb6dc693"
+    },
+    {
+      "path": "scripts/verify-tenbot-receival-agent.mts",
+      "sha256": "d5d3a31da1aeeca665a5d827c3a608c2690f0ae724dcdbfa9d6874adecb67832"
+    },
+    {
+      "path": "scripts/verify-tenbot-catalog-pagination.mts",
+      "sha256": "a89a5170e0a674da349028302cf09c8858679af2e9e5fede7d86dcdebd66ad5c"
+    },
+    {
+      "path": "scripts/verify-tenbot-initialization-failure.mts",
+      "sha256": "d49b67c6c5bd901c7213a98c66b841ca81e1f07420c769b0bf6f5094a77de7f8"
+    },
+    {
+      "path": "scripts/verify-tenbot-initialization-browser.mjs",
+      "sha256": "cf25c3bbea4c2a3af8daa78d81d2c9055efaaebe71871c6823eabd5fb224ebd7"
+    },
+    {
+      "path": "scripts/verify-tenbot-initialization-http.mts",
+      "sha256": "839611069302815217aa90cd68bf2e48e13b1cecffc3827843576e03c4b8d036"
+    },
+    {
+      "path": "scripts/verify-tenbot-invoice-catalog-live.mts",
+      "sha256": "e734ec06b41b20935dddcfbd5ca3e4805a14fc4fbc62510cf95d24575dbaf37f"
+    }
+  ],
+  "canonicalInventoryAndPurchasingFilesChanged": false,
+  "knowledgeArtifactUnchanged": true
+}

@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T21:40:57.724Z",
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "durationMs": 22766,
+  "command": "npm run build -- --webpack",
+  "mandatoryKnowledgePrebuildRetained": true,
+  "knowledgeArtifactUnchanged": true,
+  "knowledgeSha256": "18f2fe94caa69c85292ea91290a3a26ddb085a9757aed65730c437e8d01946b9",
+  "localReviewControlMode": "review",
+  "releaseCandidateProofClaimed": false,
+  "productionDeployment": false,
+  "modelCalls": 0
+}

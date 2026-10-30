@@ -1,0 +1,348 @@
+{
+  "passed": true,
+  "groups": 4,
+  "checks": [
+    "Catalog/Jobs 503 failures preserve history hydration; explicit ordinary Send retains the owner conversation and sends no invoice context",
+    "401/403 display sign-in/permission guidance, restore normal history, and never enable attachments or repeat AI requests",
+    "503 and synthetic transport timeout remain safely classified with no raw error/body logging",
+    "Malformed projection and unknown structured code fail closed with generic guidance; secret markers never reach employee text or diagnostics"
+  ],
+  "cases": [
+    {
+      "scenario": "catalog503",
+      "calls": [
+        {
+          "action": "status",
+          "workspace": null
+        },
+        {
+          "action": "status",
+          "workspace": "invoice-receivals.v1"
+        },
+        {
+          "action": "history",
+          "workspace": null
+        },
+        {
+          "action": "ask",
+          "workspace": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "stage": "hosted-invoice-status",
+          "status": 503,
+          "code": "invoice_catalog_unavailable",
+          "requestId": "10302026-0000-4000-8000-000000000002"
+        }
+      ]
+    },
+    {
+      "scenario": "jobs503",
+      "calls": [
+        {
+          "action": "status",
+          "workspace": null
+        },
+        {
+          "action": "status",
+          "workspace": "invoice-receivals.v1"
+        },
+        {
+          "action": "history",
+          "workspace": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "stage": "hosted-invoice-status",
+          "status": 503,
+          "code": "invoice_jobs_unavailable",
+          "requestId": "10302026-0000-4000-8000-000000000002"
+        }
+      ]
+    },
+    {
+      "scenario": "auth401",
+      "calls": [
+        {
+          "action": "status",
+          "workspace": null
+        },
+        {
+          "action": "status",
+          "workspace": "invoice-receivals.v1"
+        },
+        {
+          "action": "history",
+          "workspace": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "stage": "hosted-invoice-status",
+          "status": 401,
+          "code": null,
+          "requestId": "10302026-0000-4000-8000-000000000002"
+        }
+      ]
+    },
+    {
+      "scenario": "auth403",
+      "calls": [
+        {
+          "action": "status",
+          "workspace": null
+        },
+        {
+          "action": "status",
+          "workspace": "invoice-receivals.v1"
+        },
+        {
+          "action": "history",
+          "workspace": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "stage": "hosted-invoice-status",
+          "status": 403,
+          "code": null,
+          "requestId": "10302026-0000-4000-8000-000000000002"
+        }
+      ]
+    },
+    {
+      "scenario": "service503",
+      "calls": [
+        {
+          "action": "status",
+          "workspace": null
+        },
+        {
+          "action": "status",
+          "workspace": "invoice-receivals.v1"
+        },
+        {
+          "action": "history",
+          "workspace": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "stage": "hosted-invoice-status",
+          "status": 503,
+          "code": null,
+          "requestId": "10302026-0000-4000-8000-000000000002"
+        }
+      ]
+    },
+    {
+      "scenario": "timeout",
+      "calls": [
+        {
+          "action": "status",
+          "workspace": null
+        },
+        {
+          "action": "history",
+          "workspace": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "stage": "hosted-invoice-status",
+          "status": null,
+          "code": null,
+          "requestId": null
+        }
+      ]
+    },
+    {
+      "scenario": "projection",
+      "calls": [
+        {
+          "action": "status",
+          "workspace": null
+        },
+        {
+          "action": "status",
+          "workspace": "invoice-receivals.v1"
+        },
+        {
+          "action": "history",
+          "workspace": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "stage": "hosted-invoice-status",
+          "status": null,
+          "code": null,
+          "requestId": null
+        }
+      ]
+    },
+    {
+      "scenario": "unknown-code",
+      "calls": [
+        {
+          "action": "status",
+          "workspace": null
+        },
+        {
+          "action": "status",
+          "workspace": "invoice-receivals.v1"
+        },
+        {
+          "action": "history",
+          "workspace": null
+        }
+      ],
+      "diagnostics": [
+        {
+          "stage": "hosted-invoice-status",
+          "status": 500,
+          "code": null,
+          "requestId": "10302026-0000-4000-8000-000000000002"
+        }
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "src/modules/tenbot/TenbotWorkspace.tsx": "fd9699a002edb633b79fa25ccb34a4bc1f80fc1103ff556c98fb3bd3a84b6e23",
+    "src/modules/tenbot/initialization-failure.ts": "aae36eb165ecbced9b455c53afa748aa4f2d56c1d2d920e977a2811580532ec4"
+  },
+  "bundleSha256": "cd085ca5da858b6a9288d98d7a3aa72f1e154438e282a77623ae72fe00cbfc44",
+  "cssSha256": "ef1bec81b3066ab8bd12ecd63c7c493291c2d528a7fe59e600ed1eae152f113c",
+  "mode": "Real source hook and Supabase SDK with synthetic Auth/intercepted HTTP; timeout injected as a synthetic SDK error. Not hosted Auth/RPC/RLS/deployment evidence.",
+  "actualInference": false,
+  "operationalWrites": 0,
+  "grantMutations": 0,
+  "externalRequestsForwarded": 0,
+  "portsUsed": [],
+  "errors": [],
+  "blocked": [],
+  "traces": [
+    {
+      "scenario": "catalog503",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "catalog503",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "catalog503",
+      "action": "history",
+      "workspace": null
+    },
+    {
+      "scenario": "catalog503",
+      "action": "ask",
+      "workspace": null
+    },
+    {
+      "scenario": "jobs503",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "jobs503",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "jobs503",
+      "action": "history",
+      "workspace": null
+    },
+    {
+      "scenario": "auth401",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "auth401",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "auth401",
+      "action": "history",
+      "workspace": null
+    },
+    {
+      "scenario": "auth403",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "auth403",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "auth403",
+      "action": "history",
+      "workspace": null
+    },
+    {
+      "scenario": "service503",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "service503",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "service503",
+      "action": "history",
+      "workspace": null
+    },
+    {
+      "scenario": "timeout",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "timeout",
+      "action": "history",
+      "workspace": null
+    },
+    {
+      "scenario": "projection",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "projection",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "projection",
+      "action": "history",
+      "workspace": null
+    },
+    {
+      "scenario": "unknown-code",
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "scenario": "unknown-code",
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "scenario": "unknown-code",
+      "action": "history",
+      "workspace": null
+    }
+  ]
+}

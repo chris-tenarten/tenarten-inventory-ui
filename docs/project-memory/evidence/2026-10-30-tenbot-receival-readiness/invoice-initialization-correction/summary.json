@@ -1,0 +1,154 @@
+{
+  "status": "IMPLEMENTED_LOCALLY_VALIDATED_PENDING_PRODUCT_ACCEPTANCE",
+  "recordedAt": "2026-10-30T21:51:32.745Z",
+  "authority": "Chris FIX HOSTED INVOICE INITIALIZATION, October30 2026; implement/commit on dev only. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "baseDevSha": "75b0b9be9dc82e04a33297e2d4e797d9605f5166",
+  "source": [
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "fd9699a002edb633b79fa25ccb34a4bc1f80fc1103ff556c98fb3bd3a84b6e23"
+    },
+    {
+      "path": "src/modules/tenbot/initialization-failure.ts",
+      "sha256": "aae36eb165ecbced9b455c53afa748aa4f2d56c1d2d920e977a2811580532ec4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "687d16b79a249e1b61edd0e469b5e060c90a7ad6fd2fab2e56ec7a12ad69360d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "05294ec731f6be98bec1389190cf5958cd9093f610c812564dd0776752174766"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "ce1fdec77b596cf6d6063fff3e0a1d4f631af3d708279205b410ba37fb6dc693"
+    },
+    {
+      "path": "scripts/verify-tenbot-receival-agent.mts",
+      "sha256": "d5d3a31da1aeeca665a5d827c3a608c2690f0ae724dcdbfa9d6874adecb67832"
+    },
+    {
+      "path": "scripts/verify-tenbot-catalog-pagination.mts",
+      "sha256": "a89a5170e0a674da349028302cf09c8858679af2e9e5fede7d86dcdebd66ad5c"
+    },
+    {
+      "path": "scripts/verify-tenbot-initialization-failure.mts",
+      "sha256": "d49b67c6c5bd901c7213a98c66b841ca81e1f07420c769b0bf6f5094a77de7f8"
+    },
+    {
+      "path": "scripts/verify-tenbot-initialization-browser.mjs",
+      "sha256": "cf25c3bbea4c2a3af8daa78d81d2c9055efaaebe71871c6823eabd5fb224ebd7"
+    },
+    {
+      "path": "scripts/verify-tenbot-initialization-http.mts",
+      "sha256": "839611069302815217aa90cd68bf2e48e13b1cecffc3827843576e03c4b8d036"
+    },
+    {
+      "path": "scripts/verify-tenbot-invoice-catalog-live.mts",
+      "sha256": "e734ec06b41b20935dddcfbd5ca3e4805a14fc4fbc62510cf95d24575dbaf37f"
+    }
+  ],
+  "confirmedDefects": [
+    {
+      "name": "Catalog cardinality contract",
+      "evidence": "Actual shared standard catalog1951rows plus301active specialty. Reader already paginated250 but one MAX_ROWS1000 was reused for the full host picker, causing fail-closed invoice_read_incomplete. Active hosted status loaded the whole catalog before canary filtering."
+    },
+    {
+      "name": "Hosted startup error/history control flow",
+      "evidence": "Local-mode boolean selected the generic local-experiment catch for hosted failures; the same catch aborted ordinary hosted history hydration. Both corrected without changing conversation ownership or history filters."
+    }
+  ],
+  "strategy": {
+    "canaryStatus": "Server-verified current grant supplies one fixed catalog identity before any full read; no Job query for its forbidden Job association.",
+    "review": "Fetch only included selected source/ID pairs (<=60), validate completeness/visibility/activity; new-material-only or excluded lines do not trigger full catalog reads. Canonical preparation/execution still revalidates permissions, identity, quantity, units and duplicates.",
+    "ordinaryPicker": "Existing editable material and supplier selectors require complete choices. Keep250-row pages with exact/stable counts, unique IDs and a separate5000-per-source finite cap.",
+    "modelSearchAndDuplicateReads": "Existing1000-row bound and full-result checks unchanged; query failures/clipping/drift/missing identities/timeout fail closed.",
+    "domainSemantics": "Existing mapper, supplier aliases, category/classification, quantity/package evidence and canonical Inventory services unchanged."
+  },
+  "failureHandling": {
+    "employee": "Invoice-specific catalog/Job/auth/timeout/unavailable messages. Ordinary help and eligible owner-scoped history continue; attachments remain disabled on initialization failure.",
+    "developer": "Fixed stage/status/allowlisted code/validated request UUID only; server logs fixed stage/code/safe reason. No raw error/DB/provider/request/record data.",
+    "http": "Two setup codes serialized with fixed employee-safe messages; unknown errors/codes do not leak raw exceptions.",
+    "activeHostedFailureCapture": "Original rejected HTTP response remains unavailable. PilotOFF/grantrevoked prevents safe replay of active workspace; no new grant or enrollment was used. Source/data blocker is confirmed, exclusive historical causality is not claimed."
+  },
+  "validation": {
+    "backendOfflineGroups": 72,
+    "initializationPrivacyGroups": 6,
+    "browserGroups": 4,
+    "browserCases": 8,
+    "httpGroups": 8,
+    "httpCases": 20,
+    "typesPassed": true,
+    "targetedLintPassed": true,
+    "productionBuildPassed": true,
+    "knowledgeArtifactUnchanged": true,
+    "realCatalogCaptureAndReplayPassed": true,
+    "actualSignedExistingFixtureReadPassed": true,
+    "realHostedStartupSuccessClaimed": false
+  },
+  "security": {
+    "callerJwtClientUnchanged": true,
+    "noServiceRoleBusinessClient": true,
+    "noNewReadPermissions": true,
+    "existingTableVisibilityUnchanged": true,
+    "allSharedAndEdgeWriteGatesOffPrePost": true,
+    "enrollment": 0,
+    "activeGrants": 0,
+    "historicalRevokedGrant": 1,
+    "retainedGrantAuditRows": 2,
+    "permits": 0,
+    "noInvoiceUpload": true,
+    "noModelInference": true,
+    "noOperationalWrites": true,
+    "noMigrations": true,
+    "noHostedConfigurationChanges": true,
+    "noDeployment": true,
+    "noPush": true,
+    "noPersonalContext": true
+  },
+  "privateEvidence": {
+    "rawCatalogPath": "/private/tmp/tenops-tenbot-invoice-init-fix-20261030/catalog-live.private.json",
+    "ownerOnlyFile": true,
+    "ownerOnlyDirectory": true,
+    "rawCatalogCommitted": false
+  },
+  "localReview": {
+    "url": "http://localhost:3000",
+    "inventoryRoute": "http://localhost:3000/inventory",
+    "pid": 79102,
+    "command": "node tests/support/static-server.mjs",
+    "serverReplaced": false,
+    "actualApplicationAndAssetsChecked": true,
+    "sourceHookScreenshotsSynthetic": true
+  },
+  "release": {
+    "acceptedHostedRuntimeUnchanged": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+    "acceptedTenDevDeploymentUnchanged": "09c6a4c4-7f66-46ec-a8bd-c5d8b49be410",
+    "tenOpsUnchanged": true,
+    "requiredMigrations": [],
+    "requiredSecretChanges": [],
+    "smallestStaging": [
+      "Product accepts this focused local commit.",
+      "Select only its task source/tests/docs/evidence onto current TenDev FFCF; preserve/exclude unrelated latency and architecture work.",
+      "Run mandatory exact clean-candidate knowledge/source proof; acknowledge changed runtime sources and any record-scoped no-impact dependencies honestly. No deployed-source claim from local tests.",
+      "Build/deploy matching TenDev UI and tenbot Edge only after separate release approval, with every receival gate OFF, no enrollment/grant and existing Terra/Qwen controls unchanged.",
+      "Run focused Deno/HTTP/ordinary help/history and permission-denial checks. Active invoice-startup confirmation requires separately approved canary access; OFF-state denial is not success proof.",
+      "Only after accepted staging and separate Product authorization attempt a fresh one-row canary/window."
+    ],
+    "remainingGates": [
+      "Product acceptance",
+      "Selective release proof / approved TenDev staging",
+      "Actual hosted active invoice initialization and one-row write lifecycle remain untested with this undeployed correction."
+    ]
+  },
+  "unrelatedDirtyWorkPreserved": true,
+  "newFrameworks": 0,
+  "sourceCommit": "Containing Git commit, reported separately after local commit; exact hashes above avoid self-reference."
+}

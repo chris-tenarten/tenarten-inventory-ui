@@ -49,5 +49,14 @@ Deno.serve(async(request:Request)=>{
   if(!write.error&&write.data===true&&!receival.error&&receival.data===true)return reply({...result,receivalPilotAvailable:true});
  }
  return reply(result);
- }catch(e){return reply({error:e instanceof TenbotError?e.message:'TenBot is temporarily unavailable.'},e instanceof TenbotError?e.status:503);}
+ }catch(e){
+  // Only these fixed, employee-safe setup codes cross the HTTP boundary. Never
+  // serialize a database/provider exception, query, request body or credential.
+  const code=e instanceof TenbotError&&'code' in e&&typeof e.code==='string'&&
+   ['invoice_catalog_unavailable','invoice_jobs_unavailable'].includes(e.code)?e.code:undefined;
+  const message=code==='invoice_catalog_unavailable'?'Authorized material catalog choices are unavailable. Please try again.':
+   code==='invoice_jobs_unavailable'?'Authorized Job choices are unavailable. Please try again.':
+   e instanceof TenbotError?e.message:'TenBot is temporarily unavailable.';
+  return reply({error:message,...(code?{code}:{})},e instanceof TenbotError?e.status:503);
+ }
 });

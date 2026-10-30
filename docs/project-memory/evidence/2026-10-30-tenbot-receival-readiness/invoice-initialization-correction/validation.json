@@ -1,0 +1,108 @@
+{
+  "recordedAt": "2026-10-30T21:51:32.744Z",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "rootWholeTypescript": {
+    "passed": true,
+    "command": "npx tsc --noEmit --incremental false",
+    "scope": "Combined final source and HTTP verifier; after fixing live-test helper import suffix only."
+  },
+  "targetedLint": {
+    "passed": true,
+    "scope": [
+      "src/modules/tenbot/TenbotWorkspace.tsx",
+      "src/modules/tenbot/initialization-failure.ts",
+      "supabase/functions/_shared/tenbot-invoice.ts",
+      "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "supabase/functions/tenbot/index.ts",
+      "scripts/verify-tenbot-receival-agent.mts",
+      "scripts/verify-tenbot-catalog-pagination.mts",
+      "scripts/verify-tenbot-initialization-failure.mts",
+      "scripts/verify-tenbot-initialization-browser.mjs",
+      "scripts/verify-tenbot-initialization-http.mts",
+      "scripts/verify-tenbot-invoice-catalog-live.mts"
+    ],
+    "mode": "ESLint --no-ignore; final index/live/HTTP edits checked."
+  },
+  "diffCheck": true,
+  "build": {
+    "passed": true,
+    "recordedAt": "2026-10-30T21:40:57.724Z",
+    "status": 0,
+    "signal": null,
+    "error": null,
+    "durationMs": 22766,
+    "command": "npm run build -- --webpack",
+    "mandatoryKnowledgePrebuildRetained": true,
+    "knowledgeArtifactUnchanged": true,
+    "knowledgeSha256": "18f2fe94caa69c85292ea91290a3a26ddb085a9757aed65730c437e8d01946b9",
+    "localReviewControlMode": "review",
+    "releaseCandidateProofClaimed": false,
+    "productionDeployment": false,
+    "modelCalls": 0
+  },
+  "backend": {
+    "groups": 72,
+    "mode": "Actual offline verifier executions; engineering receipt, not raw stdout."
+  },
+  "ui": {
+    "classificationGroups": 6,
+    "browserGroups": 4,
+    "browserCases": 8,
+    "mode": "Source hook + SDK with intercepted synthetic transport; no external forwards."
+  },
+  "http": {
+    "groups": 8,
+    "cases": 20,
+    "mode": "Actual Edge entry Request/Response in closed VM; no network or real JWT proof."
+  },
+  "actualReferenceData": {
+    "standard": 1951,
+    "specialty": 301,
+    "readerMapped": 2252,
+    "firstBeyondOldLimitPosition": 1001,
+    "scopedIdentityQuery": true,
+    "targetedSearch": true,
+    "canonicalMapperOutputUnchanged": true,
+    "transport": "Authorized Management READ ONLY capture replay; raw records kept private, not committed."
+  },
+  "actualSignedFixture": {
+    "fixtureRef": "jltgxcfiprocydhbrahz",
+    "standard": 6,
+    "specialty": 13,
+    "actualAuthAndPostgrestSelect": true,
+    "noSetupOrBusinessWrites": true,
+    "notShared1951RowJwtProof": true
+  },
+  "applicationBrowser": {
+    "passed": true,
+    "recordedAt": "2026-10-30T21:42:42.099Z",
+    "actualOrigin": "http://localhost:3000",
+    "http": [
+      {
+        "route": "inventory",
+        "status": 200,
+        "matchingAssets": 16
+      },
+      {
+        "route": "my-work",
+        "status": 200,
+        "matchingAssets": 17
+      }
+    ],
+    "actualBrowser": true,
+    "unauthenticatedBoundary": true,
+    "pageErrors": 0,
+    "hostedDataRequestsForwarded": 0,
+    "normalInventoryImplementationUnchanged": true,
+    "limitation": "Actual application shell/sign-in and compiled assets only; focused authenticated component behavior is separately verified with synthetic intercepted transport.",
+    "modelCalls": 0,
+    "businessMutations": 0
+  },
+  "actualHostedFailureReproduced": false,
+  "originalFailedResponseAvailable": false,
+  "modelCalls": 0,
+  "grants": 0,
+  "operationalWrites": 0
+}
