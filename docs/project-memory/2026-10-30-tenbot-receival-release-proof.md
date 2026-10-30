@@ -190,3 +190,33 @@ The exact unchanged source claims are:
 The existing adjacent dependencies remain byte-identical: `src/lib/rbac.ts`, `src/components/BusinessWriteControls.tsx`, `src/app/my-work/page.tsx`, `src/modules/proposals/ProposalPanel.tsx`, `src/app/proposals/page.tsx`. No additional dependency is introduced. Preserve all earlier reviews and their original receipt commits. These two replacements match only the same record ID, semantic path, original before blob and unchanged record digest. Different source bytes, changed claims or another record remain held. The reviewed source and receipt belong to the same exact selective commit containing after blob `853411b850fe19751b9b813992b288a898ff9157`; both reviewedCandidate and receipt revision must name that commit.
 
 No grant, operational write, inference, shared migration application or deployed knowledge authority is asserted by this comparison. Regenerated proof metadata must retain identical employee knowledge, structured patches and released authority. All clean/full-history/exact-committed-artifact and TenDev-target checks remain mandatory.
+
+
+## Accepted candidate source review — bounded hosted invoice initialization
+
+Chris accepts source authority revision c251eb8f911bc6d989b22afd11777604d77268ed for the focused bounded catalog-read and safe hosted invoice-startup correction. This is exact candidate-source acceptance. The current separate Product staging instruction authorizes only the reviewed TenDev UI/tenbot release with inactive grants, empty enrollment and every receival write gate OFF; this source-review receipt is not itself that execution authorization.
+
+Scope: tendev-preparation.
+
+This review is not evidence of hosted application or deployment.
+
+This review grants no migration application, write activation, push or deployment authority.
+
+The six selected application files are byte-identical to the accepted commit. The fixed-canary status reads only its current server-authorized source/ID; ordinary pickers retain complete stable-count paging with a finite per-source bound. Selected review identities remain caller-scoped and fail closed. Employee-safe startup classification/diagnostics cannot expose caught database/provider/request content. Existing caller JWT, RBAC/RLS, private original, approval, permit, idempotency, canonical Inventory, quantity/unit, Job, catalog-creation and spending contracts remain enforced. This correction changes read/startup behavior, not business-write authority.
+
+| Path | Git blob | SHA256 | Authority | Kind | Accepted authority revision |
+|---|---|---|---|---|---|
+| supabase/functions/_shared/tenbot-invoice.ts | ee676eca7b2f5549cb7036d380c401addf7103de | 4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0 | product-accepted | runtime | c251eb8f911bc6d989b22afd11777604d77268ed |
+| supabase/functions/_shared/tenbot-receival-runtime.ts | 1f2adbf697091197d4f5607874ea0c2b5a187b2b | 687d16b79a249e1b61edd0e469b5e060c90a7ad6fd2fab2e56ec7a12ad69360d | product-accepted | runtime | c251eb8f911bc6d989b22afd11777604d77268ed |
+| supabase/functions/_shared/tenbot-receival-hosted.ts | 8d5c07090caa1e06a47f14b3fc1b2ca081b555f5 | 05294ec731f6be98bec1389190cf5958cd9093f610c812564dd0776752174766 | product-accepted | runtime | c251eb8f911bc6d989b22afd11777604d77268ed |
+| supabase/functions/tenbot/index.ts | f718336df8d2bbf82223285c6ac30105f063ef5f | ce1fdec77b596cf6d6063fff3e0a1d4f631af3d708279205b410ba37fb6dc693 | product-accepted | runtime | c251eb8f911bc6d989b22afd11777604d77268ed |
+
+Accepted UI: `src/modules/tenbot/TenbotWorkspace.tsx`, blob `fe11936dbbc1368915f1bd3aa4d2bbbae59599ca`, SHA256 `fd9699a002edb633b79fa25ccb34a4bc1f80fc1103ff556c98fb3bd3a84b6e23`; `src/modules/tenbot/initialization-failure.ts`, blob `4366fc53040738bf3beb99dfc543a91fd4358d7e`, SHA256 `aae36eb165ecbced9b455c53afa748aa4f2d56c1d2d920e977a2811580532ec4`.
+
+Original accepted evidence is retained without rewriting its historical pending-acceptance status: [implementation and validation summary](evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/summary.json), source commit `c251eb8f911bc6d989b22afd11777604d77268ed`, SHA256 `8b566f12b34b6f657b05bd5855cb97600b9743709c3344634d3bda85a3ef6a16`; [exact source manifest](evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/source-manifest.json), same source commit, SHA256 `4859d90e9895f54572026c361eaf655a259e7d72e00ab45f53e4f76ed0b8fc98`. The [accepted validation detail](evidence/2026-10-30-tenbot-receival-readiness/invoice-initialization-correction/validation.json), SHA256 `1eca696a5f7304ef1b6c75c1558c364b888047a29405e3230f6e89e87ba1e1ad`, is retained from the same source commit. This preparation copies those three small JSON receipts; other tests/screenshots/raw private catalog evidence stay in their original accepted commit and local protected evidence. Offline Request/Response and synthetic browser checks are not deployed Edge, genuine JWT, RLS or hosted business-lifecycle proof.
+
+The six source paths are absent from the released knowledge sourceFiles/provenance/dependency bindings. Current State, Product Manifest and all previous proof/semantic dependencies remain byte-identical to served ffcff23854fa1140dda6053092f7316f10c82dbe. No new record-no-claim-impact acknowledgement is invented. Preserve every prior runtime/migration/record review; the four new exact runtime tuples supersede only matching older runtime byte holds. They cannot clear any unrelated semantic, permission, applied-migration or current-helper hold. Knowledge entries, structured patches and released authority remain unchanged; only source-review generation metadata may change.
+
+Mandatory full-history, clean-current-candidate, exact committed artifact, zero-hold proof, secret-free build and served-source checks remain required. No migration, secret/config/provider/funding/cleanup update is included. TenOps Pages remains outside this release. Historical revoked grant1 and audit2 remain retained; active grants0/enrollment0/all receival gatesOFF are the required hosted baseline.
+
+An active hosted invoice-init success cannot be claimed under that OFF baseline: existing pilot authorization precedes runtime and chris_dev requires a current grant. An authenticated OFF-state denial is a permission check, not positive invoice initialization; a later active check requires its own explicit authorization. Original rejected HTTP response remains uncaptured and historical exclusive causality is not claimed.

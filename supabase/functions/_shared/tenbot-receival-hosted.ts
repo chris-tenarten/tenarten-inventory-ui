@@ -109,6 +109,11 @@ export function createHostedReceivalRuntime(options:{owner:string;origin:string;
   return {...transport,async step(request){assertNoFatal();if(image?.mediaType==='application/pdf')await validatePdf(image.bytes);return transport.step({...request,remainingUsd:Math.min(request.remainingUsd,Math.max(0,maximumMicros-accountedMicros)/1000000)});}};
  }
  const runtime=createAuthenticatedReceivalAgent({model:'gpt-6.1-terra',now,remainingUsd:()=>Math.max(0,maximumMicros-accountedMicros)/1000000,assertNoFatal,createProvider:provider,extractDocument:extractOriginalInvoiceDocument,
+  catalogScope(owner){
+   if(owner!==TENBOT_CANARY_OWNER)return undefined;
+   if(owner!==options.owner||!canaryAccess||Date.parse(canaryAccess.expiresAt)<=now())throw new TenbotError('This temporary canary is unavailable.',403);
+   return [{source:canaryAccess.catalogSource,id:canaryAccess.catalogId}];
+  },
   async decodeAttachment(){throw new TenbotError('Upload the original privately; inline attachment derivatives are not accepted.');},
   sourceStore(_caller,owner){if(owner!==options.owner)throw new TenbotError('Private invoice owner changed.',403);return {...source,async record(input){if(input.actorId!==options.owner)throw new TenbotError('Private invoice owner changed.',403);return writer.record(input);}};},
   execution:{enabled:options.pilot.executionEnabled,databaseEnvironment:'restricted-tendev'},

@@ -12,12 +12,19 @@ import { deriveInvoiceQuantity, type InvoiceSourceQuantity } from '../../../src/
 export type TenbotInvoiceDocument = { id: string; filename: string; mediaType: 'text/plain'; synthetic: boolean; recordSource?: 'simulated' | 'caller-authorized'; text: string; extraction?: {mode:'openai-vision'|'openai-original';model:string;sourceMediaType:'application/pdf'|'image/png'|'image/jpeg';sha256:string} };
 type Row = Record<string, unknown>;
 export type InvoiceCatalogRead = { complete: boolean; standard: Row[]; specialty: Row[] };
+export type InvoiceCatalogIdentity = { source: 'standard' | 'specialty'; id: string };
+export type InvoiceReadReason = 'timeout' | 'query_failed' | 'missing_count' | 'count_limit' | 'count_drift' | 'missing_identity' | 'duplicate_id' | 'unexpected_rows' | 'incomplete';
+/** Safe diagnostics only: never retains a database error, query or returned row. */
+export class InvoiceReadError extends Error {
+  constructor(readonly reason: InvoiceReadReason) { super('invoice_read_incomplete'); this.name = 'InvoiceReadError'; }
+}
 export type InvoiceReceivalRead = { complete: boolean; rows: Row[] };
 export type TenbotInvoiceReader = {
   searchCatalog(query: string, signal: AbortSignal): Promise<InvoiceCatalogRead>;
   readReceivals(signal: AbortSignal): Promise<InvoiceReceivalRead>;
-  /** Host-only bounded picker data; never a model-selected projection/table. */
-  readCatalog?(signal: AbortSignal): Promise<InvoiceCatalogRead>;
+  /** Host-only picker or exact reviewed identities; never a model-selected
+   * projection/table. Missing requested identities fail closed. */
+  readCatalog?(signal: AbortSignal, identities?: readonly InvoiceCatalogIdentity[]): Promise<InvoiceCatalogRead>;
 };
 /** Supplied by the authenticated owner/session, never by a tool argument. These
  * are explicit employee confirmations, not defaults inferred from an invoice. */
@@ -28,6 +35,8 @@ const CATALOG_COLUMNS = 'id,vendor,vendor_sku,item_name,size,category,material_c
 const SPECIALTY_COLUMNS = 'id,vendor_name,vendor_sku,item_name,canonical_item_name,size,canonical_size,category,material_type,packaging,unit_size,unit_size_uom,price_unit,is_active';
 const RECEIVAL_COLUMNS = 'id,vendor,material_name,size,quantity_expected,quantity_received,unit,status';
 const MAX_ROWS = 1000;
+const MAX_PICKER_ROWS = 5000;
+const MAX_REVIEW_IDENTITIES = 60;
 const standardKeys = CATALOG_COLUMNS.split(',');
 const specialtyKeys = SPECIALTY_COLUMNS.split(',');
 const receivalKeys = RECEIVAL_COLUMNS.split(',');
@@ -62,39 +71,53 @@ function checkedRows(value: unknown, allowed: string[]): Row[] {
  * that a catalog match or a duplicate is absent. Runtime RBAC still wraps tools. */
 export function createCallerInvoiceReader(caller: JobToolCaller): TenbotInvoiceReader {
   const db = caller as unknown as { from(table: string): { select(columns: string, options: { count: 'exact' }): JobToolQuery } };
-  const read = async (table: 'vendor_catalog' | 'vendor_catalog_v2' | 'pending_receivals', signal: AbortSignal, term?: string): Promise<Row[]> => {
+  const read = async (table: 'vendor_catalog' | 'vendor_catalog_v2' | 'pending_receivals', signal: AbortSignal, options: {term?: string; ids?: readonly string[]; maxRows?: number} = {}): Promise<Row[]> => {
+    const {term, ids, maxRows = MAX_ROWS} = options;
+    if (ids?.length === 0) return [];
     let expected: number | null = null;
     const rows: Row[] = [];
     const seen = new Set<string>();
     for (;;) {
+      if (signal.aborted) throw new InvoiceReadError('timeout');
       let query = db.from(table).select(table === 'vendor_catalog' ? CATALOG_COLUMNS : table === 'vendor_catalog_v2' ? SPECIALTY_COLUMNS : RECEIVAL_COLUMNS, { count: 'exact' });
       if (table === 'vendor_catalog_v2') query = query.eq('is_active', true);
       if (table === 'pending_receivals') query = query.in('status', ['pending', 'partially_received', 'received']);
+      if (ids) query = query.in('id', ids);
       if (term !== undefined) {
         const pattern = JSON.stringify(`%${term.replace(/[\\%_]/g, '\\$&')}%`);
         const columns = table === 'vendor_catalog_v2' ? ['item_name', 'canonical_item_name', 'vendor_sku', 'vendor_name', 'size', 'canonical_size'] : ['item_name', 'vendor_sku', 'vendor', 'size'];
         query = query.or(columns.map(column => `${column}.ilike.${pattern}`).join(','));
       }
-      const result = await query.order('id').range(rows.length, Math.min(rows.length + 249, MAX_ROWS - 1)).abortSignal(signal);
-      if (result.error || !Number.isSafeInteger(result.count) || result.count === null || result.count === undefined || result.count < 0 || result.count > MAX_ROWS || expected !== null && result.count !== expected || !Array.isArray(result.data)) return fail('invoice_read_incomplete');
+      const result = await Promise.resolve(query.order('id').range(rows.length, Math.min(rows.length + 249, maxRows - 1)).abortSignal(signal)).catch(() => { throw new InvoiceReadError(signal.aborted ? 'timeout' : 'query_failed'); });
+      if (signal.aborted) throw new InvoiceReadError('timeout');
+      if (result.error) throw new InvoiceReadError('query_failed');
+      if (!Number.isSafeInteger(result.count) || result.count === null || result.count === undefined || result.count < 0) throw new InvoiceReadError('missing_count');
+      if (result.count > maxRows) throw new InvoiceReadError('count_limit');
+      if (ids && result.count !== ids.length) throw new InvoiceReadError('missing_identity');
+      if (expected !== null && result.count !== expected) throw new InvoiceReadError('count_drift');
+      if (!Array.isArray(result.data) || result.data.length > 250) throw new InvoiceReadError('unexpected_rows');
       expected = result.count;
       for (const row of result.data) {
-        if (!object(row) || !strings(row.id) || seen.has(String(row.id))) return fail('invoice_read_incomplete');
+        if (!object(row) || !strings(row.id) || ids && !ids.includes(String(row.id))) throw new InvoiceReadError('unexpected_rows');
+        if (seen.has(String(row.id))) throw new InvoiceReadError('duplicate_id');
         seen.add(String(row.id)); rows.push(row);
       }
       if (rows.length === expected) return rows;
-      if (!result.data.length || rows.length >= MAX_ROWS || rows.length > expected) return fail('invoice_read_incomplete');
+      if (!result.data.length || rows.length >= maxRows || rows.length > expected) throw new InvoiceReadError('incomplete');
     }
   };
   return {
-    async readCatalog(signal) {
-      const [standard, specialty] = await Promise.all([read('vendor_catalog', signal), read('vendor_catalog_v2', signal)]);
+    async readCatalog(signal, identities) {
+      if (identities !== undefined && (!Array.isArray(identities) || identities.length > MAX_REVIEW_IDENTITIES || identities.some(item => !object(item) || Object.keys(item).some(key => !['source', 'id'].includes(key)) || item.source !== 'standard' && item.source !== 'specialty' || typeof item.id !== 'string' || !item.id.trim() || item.id.length > 160 || /[\u0000-\u001f\u007f]/.test(item.id)) || new Set(identities.map(item => item.source + ':' + item.id)).size !== identities.length)) return fail('invalid_invoice_catalog_identities');
+      const standardIds = identities?.filter(item => item.source === 'standard').map(item => item.id);
+      const specialtyIds = identities?.filter(item => item.source === 'specialty').map(item => item.id);
+      const [standard, specialty] = await Promise.all([read('vendor_catalog', signal, {ids: standardIds, maxRows: MAX_PICKER_ROWS}), read('vendor_catalog_v2', signal, {ids: specialtyIds, maxRows: MAX_PICKER_ROWS})]);
       return { complete: true, standard, specialty };
     },
     async searchCatalog(term, signal) {
       const query = plain(term, 160);
       if (query.length < 2) return fail('invalid_invoice_argument');
-      const [standard, specialty] = await Promise.all([read('vendor_catalog', signal, query), read('vendor_catalog_v2', signal, query)]);
+      const [standard, specialty] = await Promise.all([read('vendor_catalog', signal, {term: query}), read('vendor_catalog_v2', signal, {term: query})]);
       return { complete: true, standard, specialty };
     },
     async readReceivals(signal) { return { complete: true, rows: await read('pending_receivals', signal) }; },
