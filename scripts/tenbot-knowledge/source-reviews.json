@@ -29,16 +29,192 @@
   },
   {
     "classification": "record-no-claim-impact",
+    "recordId": "inventory-activity",
+    "path": "src/app/client-layout-shell.tsx",
+    "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+    "afterBlob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+    "recordDigest": "40628496c5ba32a1eea471262593f20502117e2629e604af970dd5168be60436",
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-pending-create",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+    "recordDigest": "240867443b00f8f12d50578963ff6337c5a38701c9d5833f7ea0f2a384c70a00",
+    "additionalDependencies": [
+      {
+        "path": "src/modules/inventory/pending-receival-contract.ts",
+        "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+      }
+    ],
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-pending-receive",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+    "recordDigest": "53015734080f00d2a16f67984ef72f44b1de3a4695be5bfd831f423704e1257f",
+    "additionalDependencies": [
+      {
+        "path": "src/modules/inventory/pending-receival-contract.ts",
+        "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+      }
+    ],
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-movement",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+    "recordDigest": "2b74456d88bd763a77940da9ff284938b21aa4288bd834465677bae46dfc1f36",
+    "additionalDependencies": [
+      {
+        "path": "src/modules/inventory/pending-receival-contract.ts",
+        "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+      }
+    ],
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-reservation",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+    "recordDigest": "1d52c259c505a87b45313a6fcd635126f64e40c375a6dcd906fb8f4b9893fdd0",
+    "additionalDependencies": [
+      {
+        "path": "src/modules/inventory/pending-receival-contract.ts",
+        "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+      }
+    ],
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-search",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+    "recordDigest": "44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a",
+    "additionalDependencies": [
+      {
+        "path": "src/modules/inventory/pending-receival-contract.ts",
+        "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+      }
+    ],
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-search",
+    "path": "src/app/client-layout-shell.tsx",
+    "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+    "afterBlob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+    "recordDigest": "44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a",
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-intake",
+    "path": "docs/project/PROJECT_MANIFEST.md",
+    "beforeBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+    "afterBlob": "6a9d628b69c4d63efe54eaeb7e856ccaee514ce1",
+    "recordDigest": "6eebc3395a57b2b125424104a692d384e305f72b3508c9202f6fa0883eaa2c75",
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
     "recordId": "knowledge-inventory",
     "path": "docs/project/PROJECT_MANIFEST.md",
     "beforeBlob": "f60d776dca6f9fbf40888b6cb55b5a5dc4fbd9a3",
-    "afterBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+    "afterBlob": "6a9d628b69c4d63efe54eaeb7e856ccaee514ce1",
     "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb",
-    "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
     "receipt": {
       "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
-      "heading": "## Accepted record source review \u2014 selective knowledge preparation"
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-inventory",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+    "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb",
+    "additionalDependencies": [
+      {
+        "path": "src/modules/inventory/pending-receival-contract.ts",
+        "blob": "51fd2c3668dda59facb07d00612ce09eb24c9b27"
+      }
+    ],
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-manpower",
+    "path": "docs/project/PROJECT_MANIFEST.md",
+    "beforeBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+    "afterBlob": "6a9d628b69c4d63efe54eaeb7e856ccaee514ce1",
+    "recordDigest": "6d557cf15630455f3739be6975e8ac8b35052deeda56bb44f0688afc6bb83389",
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
     }
   },
   {
@@ -60,13 +236,13 @@
     "recordId": "knowledge-messaging",
     "path": "docs/project-memory/CURRENT_STATE.md",
     "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
-    "afterBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+    "afterBlob": "1d91b7de380c2d149c58aacaaf37d86ddd9de5ee",
     "recordDigest": "868e7190ae61c7e32e9963edf4669636cddd31a1cdb9a670af98713e8eb33a9c",
-    "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
     "receipt": {
       "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
-      "heading": "## Accepted record source review \u2014 selective knowledge preparation"
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
     }
   },
   {
@@ -114,13 +290,13 @@
     "recordId": "knowledge-proposals",
     "path": "docs/project-memory/CURRENT_STATE.md",
     "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
-    "afterBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+    "afterBlob": "1d91b7de380c2d149c58aacaaf37d86ddd9de5ee",
     "recordDigest": "64bc5848f3e589dea04a8aab52b77794bfba2379db835c1e8731746d262bb792",
-    "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
     "receipt": {
       "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
-      "heading": "## Accepted record source review \u2014 selective knowledge preparation"
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
     }
   },
   {
@@ -140,6 +316,20 @@
         "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d"
       }
     ],
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "manpower-job-filter",
+    "path": "src/app/client-layout-shell.tsx",
+    "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+    "afterBlob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+    "recordDigest": "1287c0fb1b17e84a4df57887b7b1570dc460849bb4593330f25583afe26b430f",
     "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
     "receipt": {
       "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
@@ -344,6 +534,20 @@
   {
     "classification": "record-no-claim-impact",
     "recordId": "workflow-intake-bid",
+    "path": "src/app/client-layout-shell.tsx",
+    "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+    "afterBlob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+    "recordDigest": "8c83d76ba135c143b4afe613e9c7aa72f10997692cb350a9571e20fbef2dc5f7",
+    "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted record source review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "workflow-intake-bid",
     "path": "src/modules/pre-production/BidWorkspace.tsx",
     "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
     "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
@@ -496,6 +700,48 @@
     }
   },
   {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-inventory",
+    "path": "docs/project/PROJECT_MANIFEST.md",
+    "beforeBlob": "f60d776dca6f9fbf40888b6cb55b5a5dc4fbd9a3",
+    "afterBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+    "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb",
+    "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+      "heading": "## Accepted record source review \u2014 selective knowledge preparation"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-messaging",
+    "path": "docs/project-memory/CURRENT_STATE.md",
+    "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+    "afterBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+    "recordDigest": "868e7190ae61c7e32e9963edf4669636cddd31a1cdb9a670af98713e8eb33a9c",
+    "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+      "heading": "## Accepted record source review \u2014 selective knowledge preparation"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-proposals",
+    "path": "docs/project-memory/CURRENT_STATE.md",
+    "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+    "afterBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+    "recordDigest": "64bc5848f3e589dea04a8aab52b77794bfba2379db835c1e8731746d262bb792",
+    "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+      "heading": "## Accepted record source review \u2014 selective knowledge preparation"
+    }
+  },
+  {
     "classification": "historical-deployed",
     "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
     "blob": "a0888e92a05ec479571b7c93ee5486429685cbd4",
@@ -610,6 +856,453 @@
         "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
         "heading": "## Executed Terra release evidence reconciliation \u2014 October 29, 2026"
       }
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-pending-create",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "240867443b00f8f12d50578963ff6337c5a38701c9d5833f7ea0f2a384c70a00",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Accepted record source review \u2014 Inventory completion refresh"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-pending-receive",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "53015734080f00d2a16f67984ef72f44b1de3a4695be5bfd831f423704e1257f",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Accepted record source review \u2014 Inventory completion refresh"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-movement",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "2b74456d88bd763a77940da9ff284938b21aa4288bd834465677bae46dfc1f36",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Accepted record source review \u2014 Inventory completion refresh"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-reservation",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "1d52c259c505a87b45313a6fcd635126f64e40c375a6dcd906fb8f4b9893fdd0",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Accepted record source review \u2014 Inventory completion refresh"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-search",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Accepted record source review \u2014 Inventory completion refresh"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-inventory",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Accepted record source review \u2014 Inventory completion refresh"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+    "blob": "e25dc58ba1edac7488f4ead934ce2a227856365a",
+    "sha256": "37911acdadc696ab28672b66112d6b25ddf6568570a8de13d393343a0996668b",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+    "blob": "eeb1e886c17f88c23a3bcd5ea7ea89387be7865d",
+    "sha256": "53e7a45ff333652e0ff62787a06d85d2f58851c0562cac8a243d78d232bf06c2",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-invoice.ts",
+    "blob": "a29a491925002f37dfa231b72002f0423186ca93",
+    "sha256": "70aacad48a2897061aa71c70cb6d9fa6f3436620cbca2ce3dfcb39d93c2fe6cc",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-openai.ts",
+    "blob": "9eee1e6256f5e88168eeafea1be1f93e7f50f53d",
+    "sha256": "15beeaa80b55725f6984616d58fbc9253834ecc12939991250d20934327f846a",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+    "blob": "703247d7ef77bba67a96c71f65491dde99ceb0ad",
+    "sha256": "ddfb957d32f1be4f3b2f89e730d6f0333542d6c736d099d99db6d281f1a10187",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "blob": "8d57402b8a4cb074f1b7a1eebd9eb1660432b48f",
+    "sha256": "c8107501bd40f67a5f77131987ad2a29a6717ee258656b99b7b5138a86123ceb",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "blob": "b2f234e5fa404212f2c4c4bca6ea623bbb3e0836",
+    "sha256": "39f72d7feca6af85264eac7e431aa6e2f86ee3a063612cb5a7a4517e7c36e359",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/tenbot/index.ts",
+    "blob": "5d285780d3540e9babd0956af346c9dc139dda9a",
+    "sha256": "faaf952fc5bada2a396b43b8a40e46a36bba5209c784431d93bd03f8967b557b",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+    "blob": "b2ac2c70af9eb8711578f40e57039f3d606be3d9",
+    "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+    "blob": "f041b370519383d13a3f13bfe12c28d93f00a856",
+    "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+    "blob": "aced236d65b7e547c3ee036e779e01196a6c5d2b",
+    "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+    "blob": "4a4114a4f3dbaa81869776e1298b555bcac3371c",
+    "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+    "blob": "4c21e082ef4c30a2db43a2b24e07018e7a9ff1f2",
+    "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+    "blob": "73f3b70a149ea807f32022ce587caa87220e2e91",
+    "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+    "blob": "2f34c5972127b70c9b4dc776aba6f3f90535d1fa",
+    "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+    "blob": "a13b7303520d4ce178c1eb795513ceccdf410746",
+    "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+    "blob": "1eb5003f7d00e400550ce3e5c79b99c5ba1a02ee",
+    "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+    "blob": "3db080d20d22d18e996bd7dc226a055825e0bf72",
+    "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "heading": "## Accepted candidate source review \u2014 restricted TenDev preparation"
+    },
+    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "scripts/generate-tenbot-knowledge.mjs",
+    "blob": "4b9e2fed0ac623a07a479b7f54998df53c9f9741",
+    "sha256": "bf065d4c5d519b42a99d1b5ffa3382c589169f7d9cdaff69412eae2e5f1eb8b7",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Candidate technical source review \u2014 preparation and cleanup corrections"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "scripts/tenbot-knowledge/release-sync.mjs",
+    "blob": "c4186f970015348173e6a893d27adb0116b4e34e",
+    "sha256": "486a082400dd02923b700955f70039aac1f33926ff2caa8256620d98ecd93b39",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Candidate technical source review \u2014 preparation and cleanup corrections"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+    "blob": "b9b659a8944aa1d4f13ea9407c4938fb4ed32815",
+    "sha256": "13a803362707e1729cd6d0590ead1b62fea52f26585f225c6575dc7f30c46d10",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Candidate technical source review \u2014 preparation and cleanup corrections"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/tenbot-receival-cleanup/index.ts",
+    "blob": "5c4f7e99842fcb920000f39ad42747ab7c0110fb",
+    "sha256": "6a89f90d487ebc20c6ac971df8cfc2c7a6806234f830fca8ca7a1816bc6f2e74",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Candidate technical source review \u2014 preparation and cleanup corrections"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+    "blob": "23bb3f091583762e72dc98ddf981668f733b7e63",
+    "sha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496",
+    "reviewedCandidate": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "16dc7e92883ba89347a4082dd7b7d597a437e05c",
+      "heading": "## Candidate technical source review \u2014 preparation and cleanup corrections"
     }
   }
 ]
