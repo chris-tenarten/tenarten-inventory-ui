@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3000",
+  "route": "/tenbot/canary",
+  "httpStatus": 200,
+  "reviewModeSerialized": true,
+  "pageSha256": "7fb0cb94a8d9c7057c46340a164029321fa8a1b13050b685ead7fb580edd03fd",
+  "assetFilesPresent": 16,
+  "scope": "Final rebuilt actual route HTTP200; referenced compiled files exist. Full16-asset HTTP smoke was performed on the prior build; final UI label also passed rebuild and8browsergroups.",
+  "databaseRequests": 0,
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

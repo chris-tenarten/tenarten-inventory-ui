@@ -1,0 +1,94 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3000",
+  "route": "/tenbot/canary",
+  "httpStatus": 200,
+  "reviewModeSerialized": true,
+  "pageSha256": "f67634b0b152392fea2bcb74b68ff5244dabd51c010a226252bc3d36b61a250f",
+  "assets": [
+    {
+      "path": "/_next/static/chunks/133-44defca6067317c8.js",
+      "bytes": 16177,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/1855-05fd2e72d895c73d.js",
+      "bytes": 10182,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/3794-9ffa06e59c1b6f5c.js",
+      "bytes": 222389,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/44530001-f17eb3e5d513c546.js",
+      "bytes": 52989,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/4508-678095592b72f6f2.js",
+      "bytes": 161441,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/4bd1b696-e356ca5ba0218e27.js",
+      "bytes": 199870,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/6653-3e03ecbda3cd6809.js",
+      "bytes": 20675,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/8437-f59c6bc63dc76521.js",
+      "bytes": 14069,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/8500-f62a38ff68ab7f42.js",
+      "bytes": 8734,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/app/layout-50464a3c726ca513.js",
+      "bytes": 90644,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/app/tenbot/canary/page-95f9e71f48e4150b.js",
+      "bytes": 38729,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/main-app-5e5e095768961c2f.js",
+      "bytes": 529,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "bytes": 112594,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/chunks/webpack-35bee06307c1d4a9.js",
+      "bytes": 5290,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/css/15f74ee999edbd3d.css",
+      "bytes": 430,
+      "status": 200
+    },
+    {
+      "path": "/_next/static/css/7fff52451dadd398.css",
+      "bytes": 157251,
+      "status": 200
+    }
+  ],
+  "claim": "Actual newly compiled static route and assets load; not authenticated RPC or mutation proof.",
+  "databaseRequests": 0,
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "groups": 12,
+  "checks": [
+    "default/review/wrong-origin actions fail before caller access; review status is read-only",
+    "strict status rejects cross-viewer evidence, widened fields, invalid lifetime and conflicting grant metadata",
+    "fresh identity/capability checks prevent account-switch, revoked Admin permission and malformed status",
+    "activation validates exact explicit confirmation, positive 15-minute lifetime and funded cutoff",
+    "Admin requires only canonical manageRolesPermissions, without unrelated business capabilities",
+    "durable Admin status recovers the exact expired grant for revocation without reading invoice content",
+    "revocation and cancellation confirmations cannot silently retarget a newer durable operation",
+    "read-only recovery preserves grant, exact record and actual edited/received state while blocking cancellation",
+    "owner durable execution recovery and canonical evidence yield exactly one fixed guarded cancellation",
+    "expired grant, SQL gates, foreign execution/source, altered received quantity and pre-CAS revocation deny updates",
+    "uncertain actions require durable reconciliation and cancellation is never automatically retried",
+    "concurrent UI requests are locked and no constructor performs caller access"
+  ],
+  "mode": "Offline synthetic client contract only; not live Auth/JWT/RLS/browser or database evidence",
+  "actualNetworkCalls": 0,
+  "operationalWrites": 0,
+  "realGrantMutations": 0,
+  "inferenceCalls": 0
+}

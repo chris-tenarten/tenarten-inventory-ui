@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "groups": [
+    "Fresh existing synthetic Auth JWTs verified without credential export.",
+    "Actual PostgreSQL migration syntax/predecessor pins and least-privilege function/table ACLs; transaction rolled back.",
+    "Existing authorized Admin sees only fixed grant lifecycle metadata.",
+    "Fixed self caller recovers its existing closed execution identity without another grant.",
+    "Unrelated Developer and employee are denied by the actual function.",
+    "Status is read-only; permission/profile/gate/grant/audit/stock/pending/canonical hashes unchanged, function absent after rollback."
+  ],
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "migration": "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+  "migrationSha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040",
+  "authHttpCalls": 8,
+  "validationMode": "Real PostgreSQL role-context simulation using Auth-verified synthetic role/sub. Not HTTP access to the unapplied RPC.",
+  "adminProjection": {
+    "grant": {
+      "id": "41fa750e-8d0e-4f3c-bdcc-d696a423232e",
+      "active": false,
+      "startsAt": "2026-10-30T18:03:27.997677+00:00",
+      "expiresAt": "2026-10-30T18:04:57.963+00:00",
+      "revokedAt": "2026-10-30T18:03:30.173823+00:00",
+      "activatedBy": "90bc324c-3c1c-4c85-bbfd-2075fd972488",
+      "hasApproval": true,
+      "hasExecution": true
+    },
+    "viewer": "admin",
+    "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "database": {
+      "pilotEnabled": false,
+      "enrollmentCount": 0,
+      "subjectEnrolled": false,
+      "executionEnabled": false
+    },
+    "serverNow": "2026-10-30T20:03:58.340487+00:00",
+    "grantConflict": false,
+    "schemaVersion": "tenbot-canary-control.v1",
+    "activationBlock": "completed-canary",
+    "completedCanary": true,
+    "subjectEligible": true
+  },
+  "ownerProjection": {
+    "grant": {
+      "id": "41fa750e-8d0e-4f3c-bdcc-d696a423232e",
+      "active": false,
+      "startsAt": "2026-10-30T18:03:27.997677+00:00",
+      "expiresAt": "2026-10-30T18:04:57.963+00:00",
+      "revokedAt": "2026-10-30T18:03:30.173823+00:00",
+      "hasApproval": true,
+      "hasExecution": true,
+      "executedDraftId": "7a56f39d-a7ee-48bc-befd-6dd58a4258e7"
+    },
+    "viewer": "owner",
+    "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "database": {
+      "pilotEnabled": false,
+      "enrollmentCount": 0,
+      "subjectEnrolled": false,
+      "executionEnabled": false
+    },
+    "serverNow": "2026-10-30T20:03:58.347361+00:00",
+    "grantConflict": false,
+    "schemaVersion": "tenbot-canary-control.v1",
+    "activationBlock": "admin-required",
+    "completedCanary": true,
+    "subjectEligible": true
+  },
+  "acl": {
+    "serviceExecute": false,
+    "anonymousExecute": false,
+    "privateAuditSelect": false,
+    "privateGrantSelect": false,
+    "authenticatedExecute": true
+  },
+  "prePostStateUnchanged": true,
+  "ddlRolledBack": true,
+  "committedSchemaChanges": 0,
+  "permissionDataChanges": 0,
+  "grantActivations": 0,
+  "operationalWrites": 0,
+  "inferenceCalls": 0,
+  "productionRequests": 0,
+  "remainingGate": "Apply the accepted status migration at separately approved staging, then verify its actual authenticated RPC/UI transport without activating a grant."
+}
