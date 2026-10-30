@@ -76,6 +76,18 @@ export function createTenbotAgentKnowledgeTools(can:Capability,registeredTools:(
 }
 
 /** Deterministic ranking and one-hop dependencies over the existing registry. */
+function equivalentKnowledgeKey(entry:CapabilityEntry){
+ // Aliases may have different IDs, titles, search terms and identity-derived
+ // digests. Every other field remains significant, including unpublished
+ // source authority, grants, release bindings, related records and tool names.
+ // Equal prose alone must never erase independent structured evidence.
+ const content:Record<string,unknown>={...entry};
+ for(const key of ['id','title','terms','requiredTerms','examples','recordDigest'])delete content[key];
+ content.guidance=entry.guidance.replace(/\s+/g,' ').trim();
+ const canonical=(value:unknown):unknown=>Array.isArray(value)?value.map(canonical)
+  :value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,canonical(item)])):value;
+ return JSON.stringify(canonical(content));
+}
 export async function searchPublishedKnowledge(query:string,entries:CapabilityEntry[],allowed:(entry:CapabilityEntry)=>Promise<boolean>,tools:readonly Pick<AgentTool,'name'|'kind'>[]=[]){
  if(query.length<2||query.length>160)throw new Error('Invalid knowledge query.');
  const words=(text:string)=>[...new Set((text.toLocaleLowerCase('en-US').match(/[\p{L}\p{N}]+/gu)??[]).map(word=>word.length>4&&word.endsWith('s')?word.slice(0,-1):word))];
@@ -93,9 +105,12 @@ export async function searchPublishedKnowledge(query:string,entries:CapabilityEn
   if(!authorized.get(entry.id))accessLimited=true;
   return authorized.get(entry.id)===true;
  };
- const direct:typeof scored=[];
+ const direct:typeof scored=[],directKeys=new Set<string>();
  for(const item of scored.slice(0,24)){
-  if(await permit(item.entry))direct.push(item);
+  if(!await permit(item.entry))continue;
+  const key=equivalentKnowledgeKey(item.entry);
+  if(directKeys.has(key))continue;
+  directKeys.add(key);direct.push(item);
   if(direct.length===4)break;
  }
  const byId=new Map(entries.map(entry=>[entry.id,entry]));
@@ -107,12 +122,14 @@ export async function searchPublishedKnowledge(query:string,entries:CapabilityEn
   related.set(id,{entry,score:(scored.find(item=>item.entry.id===id)?.score??0)+1});
  }
  const ordered=[...direct.slice(0,2),...[...related.values()].sort((a,b)=>b.score-a.score||a.entry.id.localeCompare(b.entry.id)),...direct.slice(2)];
- const sources:ReturnType<typeof publishedKnowledgeSource>[]=[],selected:CapabilityEntry[]=[],visited=new Set<string>();
+ const sources:ReturnType<typeof publishedKnowledgeSource>[]=[],selected:CapabilityEntry[]=[],visited=new Set<string>(),selectedKeys=new Set<string>();
  for(const {entry} of ordered){
   if(visited.has(entry.id))continue;visited.add(entry.id);
+  const key=equivalentKnowledgeKey(entry);
+  if(selectedKeys.has(key))continue;
   const source=publishedKnowledgeSource(entry);
   if(new TextEncoder().encode(JSON.stringify([...sources,source])).byteLength>16000){contextLimited=true;continue;}
-  sources.push(source);selected.push(entry);
+  sources.push(source);selected.push(entry);selectedKeys.add(key);
   if(sources.length===4)break;
  }
  const registered=new Map(tools.filter(tool=>tool.kind==='read'||tool.kind==='prepare').map(tool=>[tool.name,tool]));
