@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:46:20.543Z",
+  "sha": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "project": "tendev",
+  "deployment": "449f88eb-8a85-46fb-952d-8307736375d1",
+  "url": "https://tendev.pages.dev",
+  "deploymentUrl": "https://449f88eb.tendev.pages.dev",
+  "allSecretDigestsUnchanged": true,
+  "allAgentWriteGatesOff": true,
+  "noGrantActivated": true,
+  "noEnrollment": true,
+  "tenOpsPagesUnchanged": "966ec1da-e537-4582-a82b-0c7a116daf58"
+}

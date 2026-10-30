@@ -1,0 +1,34 @@
+{
+  "candidateRevision": "105d96919e5ba341f1a7bbeff3d8cdc58fa1b18c",
+  "status": "review-required",
+  "reviewRequired": true,
+  "semanticRecordIds": [
+    "knowledge-messaging",
+    "knowledge-proposals"
+  ],
+  "sourceReviewHolds": [
+    {
+      "recordId": "knowledge-messaging",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "reason": "candidate-source-changed"
+    },
+    {
+      "recordId": "knowledge-proposals",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "reason": "candidate-source-changed"
+    },
+    {
+      "recordId": "knowledge-messaging",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "reason": "candidate-source-changed"
+    },
+    {
+      "recordId": "knowledge-proposals",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "reason": "candidate-source-changed"
+    }
+  ],
+  "unclassifiedSensitivePaths": [],
+  "supersededBy": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "correction": "Exact record-specific no-claim-impact acknowledgements for only the scoped Current State appendix; verifier unchanged."
+}

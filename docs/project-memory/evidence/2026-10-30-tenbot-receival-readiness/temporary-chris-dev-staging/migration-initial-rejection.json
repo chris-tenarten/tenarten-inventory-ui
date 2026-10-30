@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-30T18:52:31.658Z",
+  "priorAttempt": {
+    "startedAt": "2026-10-30T18:35:22.690Z",
+    "ref": "vxdxjhazkqhpkwdqtobp",
+    "candidate": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+    "sourceAuthority": "596b33c5682edf24cfaf3d613b23569e1ea42801",
+    "migration": {
+      "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+    },
+    "sqlSha256": "c49c07ff7234935ef24ddde6b158e230ab96c45f7a8ebc8211eb4507a61d3c65",
+    "onlyOneMigration": true,
+    "atomic": true,
+    "noActivation": true
+  },
+  "sqlstate": "P0001",
+  "matchingError": [
+    {
+      "timestamp": "2026-10-30T18:35:23.329000",
+      "message": "New helper/RPC execute privilege mismatch: get_my_tenbot_receival_canary_access()",
+      "sqlstate": "P0001",
+      "context": "PL/pgSQL function inline_code_block line 67 at RAISE"
+    }
+  ],
+  "confirmedFullRollback": true,
+  "reconciliation": "apply-readonly-reconciliation.json",
+  "cause": "Initial wrapper incorrectly denied inherited authenticated execution on the three caller RPCs; existing canonical executor inherits authenticated.",
+  "correction": "V2 pins existing membership, forbids direct executor grants, denies all eight private helpers and preserves internal JWT/Admin checks. Frozen migration and application bytes unchanged.",
+  "review": "operator-v2-review.json",
+  "successfulRetry": "migration-application.json"
+}

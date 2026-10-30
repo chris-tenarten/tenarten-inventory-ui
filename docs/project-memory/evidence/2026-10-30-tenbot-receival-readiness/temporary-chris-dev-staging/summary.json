@@ -1,0 +1,70 @@
+{
+  "status": "DEPLOYED_TENDEV_DORMANT_NO_CANARY",
+  "recordedAt": "2026-10-30T18:52:31.677Z",
+  "riskTier": 3,
+  "validationLevel": 3,
+  "implementationCommit": "596b33c5682edf24cfaf3d613b23569e1ea42801",
+  "servedRuntime": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "tenDevDeploymentId": "449f88eb-8a85-46fb-952d-8307736375d1",
+  "edgeVersion": 20,
+  "edgeJwtVerification": true,
+  "onlyAppliedMigration": {
+    "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+    "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+  },
+  "releaseProof": {
+    "status": "candidate-preparation-reviewed",
+    "semanticHolds": 0,
+    "sourceHolds": 0,
+    "unclassifiedPaths": 0,
+    "mandatoryCleanBuild": true
+  },
+  "hostedChecks": {
+    "exactServedAssets": 34,
+    "privateGrantTables": 2,
+    "newFunctions": 11,
+    "triggers": 13,
+    "deferredCommitGuards": 5,
+    "anonymousDenialChecks": 5,
+    "actualSignedInMessagingInventoryAndTerraSmoke": true,
+    "roleAndGlobalPermissionsPreserved": true,
+    "grantRows": 0,
+    "grantAuditRows": 0,
+    "enrolled": 0,
+    "allAgentWriteGatesOff": true,
+    "secretDigestsUnchanged": true,
+    "cleanupUnchanged": true,
+    "tenOpsPagesUnchanged": true
+  },
+  "reusedEvidence": {
+    "realIsolatedDatabaseGroups": 8,
+    "offlineRuntimeGroups": 7,
+    "syntheticBrowserGroups": 4,
+    "liveHostedGrantActivationOrExpiryTest": false
+  },
+  "inference": {
+    "actualRequests": 1,
+    "steps": 2,
+    "costUsd": 0.004257,
+    "remainingHostedAllowanceUsd": 3.787673,
+    "cutoff": "2026-10-30T23:00:00Z",
+    "policyChanged": false
+  },
+  "operationalWrites": 0,
+  "grantActivationRpcCalls": 0,
+  "sourceUploads": 0,
+  "approvalRequests": 0,
+  "remainingGates": [
+    "Separate Product approval naming newly confirmed <=15-minute execution window and unchanged funded allowance",
+    "Genuine chris_dev session; no substitute identity or borrowed credentials",
+    "Owner Admin own-JWT exact activation and chris_dev-only finite Edge/SQL enrollment/gates",
+    "One frozen original/exact immutable approval/one 1 Bag pending result then guarded cancellation before expiry and exact grant revocation"
+  ],
+  "newStagingBlockers": [],
+  "knownLimitations": [
+    "Active grant lifetime/revocation/concurrency behavior is actual isolated evidence, not newly exercised against shared Production; no hosted canary authorized.",
+    "Existing adjustInventory retains broader manual pending/Undo rights during a future grant; only TenBot is pinned to one document/material/Bag."
+  ],
+  "push": false,
+  "tenOpsApplicationRelease": false
+}

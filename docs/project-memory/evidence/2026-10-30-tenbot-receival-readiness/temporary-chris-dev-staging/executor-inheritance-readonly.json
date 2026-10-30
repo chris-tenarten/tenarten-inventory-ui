@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-10-30T18:39:27.958Z",
+  "readOnly": true,
+  "rows": [
+    {
+      "current_user": "postgres",
+      "session_user": "postgres",
+      "executor_authenticated_usage": true,
+      "executor_authenticated_member": true,
+      "memberships": [
+        {
+          "role": "authenticated",
+          "member": "tenbot_invoice_executor",
+          "setOption": true,
+          "adminOption": false,
+          "inheritOption": true
+        }
+      ],
+      "capability_md5": "7e83083b79c3ba2a1b1b3e01c690386d",
+      "new_ledger_rows": 0
+    }
+  ],
+  "mutations": 0
+}

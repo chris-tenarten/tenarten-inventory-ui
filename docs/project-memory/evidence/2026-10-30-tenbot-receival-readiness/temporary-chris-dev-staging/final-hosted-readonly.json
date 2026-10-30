@@ -1,0 +1,90 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:50:51.812Z",
+  "sha": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "readOnlyTransaction": true,
+  "allHostedSecretsUnchanged": true,
+  "spendingPolicyUnchanged": true,
+  "cleanupUnchanged": true,
+  "noRealGrantActivated": true,
+  "noCanaryExecuted": true,
+  "operationalWrites": 0,
+  "grantActivationRpcCalls": 0,
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 752283,
+      "remainingMicrousd": 3787673,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "cleanup": {
+      "cron": "0a4a3810e6736eeb8330e5a937a08886",
+      "control": "f112bce8e0c78d2178dd72a825aed742"
+    },
+    "profile": {
+      "role": "developer",
+      "active": true,
+      "readOnly": false
+    },
+    "controls": {
+      "pilot": false,
+      "enrolled": 0,
+      "execution": false,
+      "subjectDrafts": 0,
+      "subjectSources": 0,
+      "subjectApprovals": 0,
+      "subjectExecutions": 0
+    },
+    "readOnly": "on",
+    "grantRows": 0,
+    "smokeUsage": {
+      "steps": 2,
+      "models": [
+        "gpt-6.1-terra"
+      ],
+      "measured": 2,
+      "requests": 1,
+      "reserved": 0,
+      "uncertain": 0,
+      "actualMicrousd": 4257,
+      "reservationToSettlementMs": 5419.127
+    },
+    "meterPolicy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "activeGrants": 0,
+    "grantAuditRows": 0,
+    "developerAdjust": 0,
+    "matchingOwnProfileCount": 1
+  },
+  "costAttribution": "One measured request for the uniquely matched currently signed-in Chris/Admin profile within the exact UI smoke interval; no request text, token or private Job evidence read."
+}

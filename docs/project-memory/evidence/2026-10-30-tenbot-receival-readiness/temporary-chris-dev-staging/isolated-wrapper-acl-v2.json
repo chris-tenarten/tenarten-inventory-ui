@@ -1,0 +1,319 @@
+{
+  "recordedAt": "2026-10-30T18:40:13.303Z",
+  "isolatedRef": "jltgxcfiprocydhbrahz",
+  "readOnly": true,
+  "row": {
+    "read_only": "on",
+    "new_objects": {
+      "tables": [
+        {
+          "acl": "{postgres=arwdDxtm/postgres}",
+          "rls": true,
+          "name": "tenbot_chris_dev_canary_grant_audit",
+          "owner": "postgres",
+          "forceRls": false,
+          "policyCount": 0
+        },
+        {
+          "acl": "{postgres=arwdDxtm/postgres}",
+          "rls": true,
+          "name": "tenbot_chris_dev_canary_grants",
+          "owner": "postgres",
+          "forceRls": false,
+          "policyCount": 0
+        }
+      ],
+      "triggers": [
+        {
+          "name": "invoice_chris_dev_canary_approval",
+          "table": "invoice_receival_approvals",
+          "enabled": "O",
+          "function": "tenbot_guard_chris_dev_canary_operation",
+          "deferrable": false,
+          "initiallyDeferred": false
+        },
+        {
+          "name": "invoice_chris_dev_canary_approval_commit",
+          "table": "invoice_receival_approvals",
+          "enabled": "O",
+          "function": "tenbot_chris_dev_canary_commit_authorized",
+          "deferrable": true,
+          "initiallyDeferred": true
+        },
+        {
+          "name": "invoice_chris_dev_canary_binding",
+          "table": "invoice_receival_source_bindings",
+          "enabled": "O",
+          "function": "tenbot_guard_chris_dev_canary_operation",
+          "deferrable": false,
+          "initiallyDeferred": false
+        },
+        {
+          "name": "invoice_chris_dev_canary_draft",
+          "table": "invoice_receival_drafts",
+          "enabled": "O",
+          "function": "tenbot_guard_chris_dev_canary_operation",
+          "deferrable": false,
+          "initiallyDeferred": false
+        },
+        {
+          "name": "invoice_chris_dev_canary_draft_commit",
+          "table": "invoice_receival_drafts",
+          "enabled": "O",
+          "function": "tenbot_chris_dev_canary_commit_authorized",
+          "deferrable": true,
+          "initiallyDeferred": true
+        },
+        {
+          "name": "invoice_chris_dev_canary_execution",
+          "table": "invoice_receival_executions",
+          "enabled": "O",
+          "function": "tenbot_guard_chris_dev_canary_operation",
+          "deferrable": false,
+          "initiallyDeferred": false
+        },
+        {
+          "name": "invoice_chris_dev_canary_execution_commit",
+          "table": "invoice_receival_executions",
+          "enabled": "O",
+          "function": "tenbot_chris_dev_canary_commit_authorized",
+          "deferrable": true,
+          "initiallyDeferred": true
+        },
+        {
+          "name": "invoice_chris_dev_canary_permit",
+          "table": "invoice_receival_execution_permits",
+          "enabled": "O",
+          "function": "tenbot_guard_chris_dev_canary_operation",
+          "deferrable": false,
+          "initiallyDeferred": false
+        },
+        {
+          "name": "invoice_chris_dev_canary_permit_commit",
+          "table": "invoice_receival_execution_permits",
+          "enabled": "O",
+          "function": "tenbot_chris_dev_canary_commit_authorized",
+          "deferrable": true,
+          "initiallyDeferred": true
+        },
+        {
+          "name": "invoice_chris_dev_canary_source",
+          "table": "invoice_receival_sources",
+          "enabled": "O",
+          "function": "tenbot_guard_chris_dev_canary_source",
+          "deferrable": false,
+          "initiallyDeferred": false
+        },
+        {
+          "name": "invoice_chris_dev_canary_source_commit",
+          "table": "invoice_receival_sources",
+          "enabled": "O",
+          "function": "tenbot_chris_dev_canary_commit_authorized",
+          "deferrable": true,
+          "initiallyDeferred": true
+        },
+        {
+          "name": "tenbot_canary_grant_audit_immutable",
+          "table": "tenbot_chris_dev_canary_grant_audit",
+          "enabled": "O",
+          "function": "tenbot_invoice_immutable",
+          "deferrable": false,
+          "initiallyDeferred": false
+        },
+        {
+          "name": "tenbot_canary_grants_immutable",
+          "table": "tenbot_chris_dev_canary_grants",
+          "enabled": "O",
+          "function": "tenbot_canary_grant_immutable",
+          "deferrable": false,
+          "initiallyDeferred": false
+        }
+      ],
+      "auditRows": 17,
+      "functions": [
+        {
+          "oid": "19312",
+          "kind": "caller",
+          "owner": "postgres",
+          "bodyMd5": "c2d6f546fad823a7a4ffdf8dd6cc9b1f",
+          "signature": "activate_tenbot_chris_dev_canary_grant(timestamp with time zone,text)",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public",
+            "lock_timeout=3s",
+            "statement_timeout=10s"
+          ],
+          "serviceExecute": false,
+          "executorExecute": true,
+          "securityDefiner": true,
+          "authenticatedExecute": true,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19311",
+          "kind": "caller",
+          "owner": "postgres",
+          "bodyMd5": "1619d46658263452ddc66fcc91de88e3",
+          "signature": "get_my_tenbot_receival_canary_access()",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": true,
+          "securityDefiner": true,
+          "authenticatedExecute": true,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19314",
+          "kind": "caller",
+          "owner": "postgres",
+          "bodyMd5": "07f4bc465c8db61d4df67cc0896a8f96",
+          "signature": "revoke_tenbot_chris_dev_canary_grant(uuid,text)",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public",
+            "lock_timeout=3s",
+            "statement_timeout=10s"
+          ],
+          "serviceExecute": false,
+          "executorExecute": true,
+          "securityDefiner": true,
+          "authenticatedExecute": true,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19309",
+          "kind": "private",
+          "owner": "postgres",
+          "bodyMd5": "dd87ba2333ed04ab8c6ce360bb53e54e",
+          "signature": "tenbot_active_chris_dev_canary_grant(uuid)",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": false,
+          "securityDefiner": true,
+          "authenticatedExecute": false,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19318",
+          "kind": "private",
+          "owner": "postgres",
+          "bodyMd5": "a617e6994416a5b2f0cdd03450cd1012",
+          "signature": "tenbot_assert_chris_dev_canary_payload(uuid,jsonb)",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": false,
+          "securityDefiner": true,
+          "authenticatedExecute": false,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19315",
+          "kind": "private",
+          "owner": "postgres",
+          "bodyMd5": "33f7ae89887fb520c34368e36d7f4522",
+          "signature": "tenbot_canary_expiry_limit(uuid)",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": false,
+          "securityDefiner": true,
+          "authenticatedExecute": false,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19306",
+          "kind": "private",
+          "owner": "postgres",
+          "bodyMd5": "799ad9f31314bbbc8540d6f1847564d5",
+          "signature": "tenbot_canary_grant_immutable()",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": false,
+          "securityDefiner": false,
+          "authenticatedExecute": false,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19310",
+          "kind": "private",
+          "owner": "postgres",
+          "bodyMd5": "eef780e5df099e10a2574f91a4197186",
+          "signature": "tenbot_canary_user_has_capability(uuid,text)",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": false,
+          "securityDefiner": true,
+          "authenticatedExecute": false,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19327",
+          "kind": "private",
+          "owner": "postgres",
+          "bodyMd5": "5a36467c6d12a5e0b734ff4735962aaa",
+          "signature": "tenbot_chris_dev_canary_commit_authorized()",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": false,
+          "securityDefiner": true,
+          "authenticatedExecute": false,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19321",
+          "kind": "private",
+          "owner": "postgres",
+          "bodyMd5": "71d19465a71f9c1a8bee26eddf482120",
+          "signature": "tenbot_guard_chris_dev_canary_operation()",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": false,
+          "securityDefiner": true,
+          "authenticatedExecute": false,
+          "directExecutorExecute": false
+        },
+        {
+          "oid": "19319",
+          "kind": "private",
+          "owner": "postgres",
+          "bodyMd5": "699a5a9d40d3307246b56711e27f16ab",
+          "signature": "tenbot_guard_chris_dev_canary_source()",
+          "anonExecute": false,
+          "configuration": [
+            "search_path=pg_catalog, public"
+          ],
+          "serviceExecute": false,
+          "executorExecute": false,
+          "securityDefiner": true,
+          "authenticatedExecute": false,
+          "directExecutorExecute": false
+        }
+      ],
+      "grantRows": 6
+    }
+  },
+  "mutations": 0
+}

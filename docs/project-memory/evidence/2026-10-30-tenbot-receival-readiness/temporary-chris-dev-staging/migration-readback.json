@@ -1,0 +1,545 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:42:31.877Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "candidate": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "readOnlyTransaction": true,
+  "querySha256": "0deaa89cb0b319a33aced95ef9045b1073c10da3c17796bbca559d45f40597fd",
+  "noGrantActivated": true,
+  "allAgentWriteGatesOff": true,
+  "providerSecretsUnchanged": true,
+  "spendingPolicyUnchanged": true,
+  "cleanupUnchanged": true,
+  "developerRolePreserved": true,
+  "noGlobalInventoryPermissionChange": true,
+  "operationalWrites": 0,
+  "inferenceCalls": 0,
+  "read_only": "on",
+  "state": {
+    "usage": {
+      "rows": 75,
+      "uncertain": 0,
+      "fingerprint": "892def16bde1973bf950c872074b1cf2"
+    },
+    "ledger": [
+      {
+        "name": "invoice_pending_receival_approval",
+        "version": "20261029210000",
+        "sourceSha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc"
+      },
+      {
+        "name": "catalog_write_authorization",
+        "version": "20261030110000",
+        "sourceSha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7"
+      },
+      {
+        "name": "invoice_dependent_pending_receivals",
+        "version": "20261030120000",
+        "sourceSha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63"
+      },
+      {
+        "name": "invoice_receival_runtime_validation",
+        "version": "20261030130000",
+        "sourceSha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441"
+      },
+      {
+        "name": "invoice_receival_shared_compatibility",
+        "version": "20261030140000",
+        "sourceSha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742"
+      },
+      {
+        "name": "invoice_receival_originals",
+        "version": "20261030150000",
+        "sourceSha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00"
+      },
+      {
+        "name": "invoice_receival_pilot_permits",
+        "version": "20261030160000",
+        "sourceSha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d"
+      },
+      {
+        "name": "invoice_original_storage_compatibility",
+        "version": "20261030170000",
+        "sourceSha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284"
+      },
+      {
+        "name": "invoice_original_backend_fail_closed",
+        "version": "20261030180000",
+        "sourceSha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03"
+      },
+      {
+        "name": "invoice_receival_pilot_policy_lock",
+        "version": "20261030190000",
+        "sourceSha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3"
+      },
+      {
+        "name": "tenbot_receival_cleanup_wakes",
+        "version": "20261030200000",
+        "sourceSha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496"
+      },
+      {
+        "name": "tenbot_chris_dev_canary_grant",
+        "version": "20261030210000",
+        "sourceSha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+      }
+    ],
+    "cleanup": {
+      "cron": "0a4a3810e6736eeb8330e5a937a08886",
+      "control": "f112bce8e0c78d2178dd72a825aed742"
+    },
+    "profile": {
+      "role": "developer",
+      "active": true,
+      "readOnly": false
+    },
+    "controls": {
+      "pilot": false,
+      "enrolled": 0,
+      "execution": false,
+      "subjectDrafts": 0,
+      "subjectSources": 0,
+      "subjectApprovals": 0,
+      "subjectExecutions": 0
+    },
+    "executor": {
+      "oid": "37834",
+      "rolname": "tenbot_invoice_executor",
+      "rolsuper": false,
+      "rolconfig": null,
+      "rolinherit": true,
+      "rolcanlogin": false,
+      "rolcreatedb": false,
+      "rolbypassrls": false,
+      "rolconnlimit": -1,
+      "rolcreaterole": false,
+      "rolreplication": false
+    },
+    "functions": [
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38172",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "e9e3509b2c992f25b5b640f9634b623b",
+        "signature": "guard_invoice_receival_original_object()"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "oid": "32176",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "73a05dba3f0241702880f29129c70b1e",
+        "signature": "has_app_capability(text)"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres}",
+        "oid": "38164",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "a726b7cc254a1cd5d03100449abe03ad",
+        "signature": "invoice_receival_original_allowed(text,text)"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "oid": "38150",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public, storage"
+        ],
+        "bodyMd5": "11a16948c94741f7be2d59a510f8aa23",
+        "signature": "record_invoice_receival_source_state(uuid,uuid,integer,text,jsonb)"
+      },
+      {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "oid": "38237",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=10s"
+        ],
+        "bodyMd5": "ffa7f58ac78b2d913f3bcb83b8718024",
+        "signature": "tenbot_receival_mint_execution_permit(uuid,uuid,text,uuid,text)"
+      }
+    ],
+    "meterPolicy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "fingerprints": {
+      "epochs": "d41d8cd98f00b204e9800998ecf8427e",
+      "subject": "aca6fc04be8fee555fe5a8d5612881e9",
+      "capabilities": "59a88b1342b040b0f54edf49a2a53495",
+      "otherProfiles": "2207abaadef69377b16b0ca5ba813710"
+    },
+    "publicCreate": {
+      "anon": false,
+      "authenticated": false,
+      "tenbot_invoice_executor": false
+    },
+    "sourcePolicies": [
+      {
+        "name": "invoice_source_bindings_owner_read",
+        "check": null,
+        "roles": [
+          "16485"
+        ],
+        "table": "invoice_receival_source_bindings",
+        "using": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('adjustInventory'::text) AND ((owner_user_id <> '3785f6b9-742e-452f-af6c-31613a983633'::uuid) OR (original_sha256 = 'c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a'::text)))"
+      },
+      {
+        "name": "invoice_sources_owner_read",
+        "check": null,
+        "roles": [
+          "16485"
+        ],
+        "table": "invoice_receival_sources",
+        "using": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('adjustInventory'::text) AND ((lifecycle_state = 'retained'::text) OR (expires_at > clock_timestamp())) AND ((owner_user_id <> '3785f6b9-742e-452f-af6c-31613a983633'::uuid) OR ((sha256 = 'c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a'::text) AND (content_type = 'application/pdf'::text) AND (byte_size = 2877))))"
+      }
+    ],
+    "developerAdjust": 0,
+    "executorMemberships": [
+      {
+        "role": "authenticated",
+        "admin": false
+      }
+    ],
+    "executorAuthenticatedUsage": true
+  },
+  "new_objects": {
+    "tables": [
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "name": "tenbot_chris_dev_canary_grant_audit",
+        "owner": "postgres",
+        "forceRls": false,
+        "policyCount": 0
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "rls": true,
+        "name": "tenbot_chris_dev_canary_grants",
+        "owner": "postgres",
+        "forceRls": false,
+        "policyCount": 0
+      }
+    ],
+    "triggers": [
+      {
+        "name": "invoice_chris_dev_canary_approval",
+        "table": "invoice_receival_approvals",
+        "enabled": "O",
+        "function": "tenbot_guard_chris_dev_canary_operation",
+        "deferrable": false,
+        "initiallyDeferred": false
+      },
+      {
+        "name": "invoice_chris_dev_canary_approval_commit",
+        "table": "invoice_receival_approvals",
+        "enabled": "O",
+        "function": "tenbot_chris_dev_canary_commit_authorized",
+        "deferrable": true,
+        "initiallyDeferred": true
+      },
+      {
+        "name": "invoice_chris_dev_canary_binding",
+        "table": "invoice_receival_source_bindings",
+        "enabled": "O",
+        "function": "tenbot_guard_chris_dev_canary_operation",
+        "deferrable": false,
+        "initiallyDeferred": false
+      },
+      {
+        "name": "invoice_chris_dev_canary_draft",
+        "table": "invoice_receival_drafts",
+        "enabled": "O",
+        "function": "tenbot_guard_chris_dev_canary_operation",
+        "deferrable": false,
+        "initiallyDeferred": false
+      },
+      {
+        "name": "invoice_chris_dev_canary_draft_commit",
+        "table": "invoice_receival_drafts",
+        "enabled": "O",
+        "function": "tenbot_chris_dev_canary_commit_authorized",
+        "deferrable": true,
+        "initiallyDeferred": true
+      },
+      {
+        "name": "invoice_chris_dev_canary_execution",
+        "table": "invoice_receival_executions",
+        "enabled": "O",
+        "function": "tenbot_guard_chris_dev_canary_operation",
+        "deferrable": false,
+        "initiallyDeferred": false
+      },
+      {
+        "name": "invoice_chris_dev_canary_execution_commit",
+        "table": "invoice_receival_executions",
+        "enabled": "O",
+        "function": "tenbot_chris_dev_canary_commit_authorized",
+        "deferrable": true,
+        "initiallyDeferred": true
+      },
+      {
+        "name": "invoice_chris_dev_canary_permit",
+        "table": "invoice_receival_execution_permits",
+        "enabled": "O",
+        "function": "tenbot_guard_chris_dev_canary_operation",
+        "deferrable": false,
+        "initiallyDeferred": false
+      },
+      {
+        "name": "invoice_chris_dev_canary_permit_commit",
+        "table": "invoice_receival_execution_permits",
+        "enabled": "O",
+        "function": "tenbot_chris_dev_canary_commit_authorized",
+        "deferrable": true,
+        "initiallyDeferred": true
+      },
+      {
+        "name": "invoice_chris_dev_canary_source",
+        "table": "invoice_receival_sources",
+        "enabled": "O",
+        "function": "tenbot_guard_chris_dev_canary_source",
+        "deferrable": false,
+        "initiallyDeferred": false
+      },
+      {
+        "name": "invoice_chris_dev_canary_source_commit",
+        "table": "invoice_receival_sources",
+        "enabled": "O",
+        "function": "tenbot_chris_dev_canary_commit_authorized",
+        "deferrable": true,
+        "initiallyDeferred": true
+      },
+      {
+        "name": "tenbot_canary_grant_audit_immutable",
+        "table": "tenbot_chris_dev_canary_grant_audit",
+        "enabled": "O",
+        "function": "tenbot_invoice_immutable",
+        "deferrable": false,
+        "initiallyDeferred": false
+      },
+      {
+        "name": "tenbot_canary_grants_immutable",
+        "table": "tenbot_chris_dev_canary_grants",
+        "enabled": "O",
+        "function": "tenbot_canary_grant_immutable",
+        "deferrable": false,
+        "initiallyDeferred": false
+      }
+    ],
+    "auditRows": 0,
+    "functions": [
+      {
+        "oid": "38471",
+        "kind": "caller",
+        "owner": "postgres",
+        "bodyMd5": "c2d6f546fad823a7a4ffdf8dd6cc9b1f",
+        "signature": "activate_tenbot_chris_dev_canary_grant(timestamp with time zone,text)",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=10s"
+        ],
+        "serviceExecute": false,
+        "executorExecute": true,
+        "securityDefiner": true,
+        "authenticatedExecute": true,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38470",
+        "kind": "caller",
+        "owner": "postgres",
+        "bodyMd5": "1619d46658263452ddc66fcc91de88e3",
+        "signature": "get_my_tenbot_receival_canary_access()",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": true,
+        "securityDefiner": true,
+        "authenticatedExecute": true,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38473",
+        "kind": "caller",
+        "owner": "postgres",
+        "bodyMd5": "07f4bc465c8db61d4df67cc0896a8f96",
+        "signature": "revoke_tenbot_chris_dev_canary_grant(uuid,text)",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=10s"
+        ],
+        "serviceExecute": false,
+        "executorExecute": true,
+        "securityDefiner": true,
+        "authenticatedExecute": true,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38468",
+        "kind": "private",
+        "owner": "postgres",
+        "bodyMd5": "dd87ba2333ed04ab8c6ce360bb53e54e",
+        "signature": "tenbot_active_chris_dev_canary_grant(uuid)",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": false,
+        "securityDefiner": true,
+        "authenticatedExecute": false,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38477",
+        "kind": "private",
+        "owner": "postgres",
+        "bodyMd5": "a617e6994416a5b2f0cdd03450cd1012",
+        "signature": "tenbot_assert_chris_dev_canary_payload(uuid,jsonb)",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": false,
+        "securityDefiner": true,
+        "authenticatedExecute": false,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38474",
+        "kind": "private",
+        "owner": "postgres",
+        "bodyMd5": "33f7ae89887fb520c34368e36d7f4522",
+        "signature": "tenbot_canary_expiry_limit(uuid)",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": false,
+        "securityDefiner": true,
+        "authenticatedExecute": false,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38465",
+        "kind": "private",
+        "owner": "postgres",
+        "bodyMd5": "799ad9f31314bbbc8540d6f1847564d5",
+        "signature": "tenbot_canary_grant_immutable()",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": false,
+        "securityDefiner": false,
+        "authenticatedExecute": false,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38469",
+        "kind": "private",
+        "owner": "postgres",
+        "bodyMd5": "eef780e5df099e10a2574f91a4197186",
+        "signature": "tenbot_canary_user_has_capability(uuid,text)",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": false,
+        "securityDefiner": true,
+        "authenticatedExecute": false,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38486",
+        "kind": "private",
+        "owner": "postgres",
+        "bodyMd5": "5a36467c6d12a5e0b734ff4735962aaa",
+        "signature": "tenbot_chris_dev_canary_commit_authorized()",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": false,
+        "securityDefiner": true,
+        "authenticatedExecute": false,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38480",
+        "kind": "private",
+        "owner": "postgres",
+        "bodyMd5": "71d19465a71f9c1a8bee26eddf482120",
+        "signature": "tenbot_guard_chris_dev_canary_operation()",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": false,
+        "securityDefiner": true,
+        "authenticatedExecute": false,
+        "directExecutorExecute": false
+      },
+      {
+        "oid": "38478",
+        "kind": "private",
+        "owner": "postgres",
+        "bodyMd5": "699a5a9d40d3307246b56711e27f16ab",
+        "signature": "tenbot_guard_chris_dev_canary_source()",
+        "anonExecute": false,
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "serviceExecute": false,
+        "executorExecute": false,
+        "securityDefiner": true,
+        "authenticatedExecute": false,
+        "directExecutorExecute": false
+      }
+    ],
+    "grantRows": 0
+  }
+}

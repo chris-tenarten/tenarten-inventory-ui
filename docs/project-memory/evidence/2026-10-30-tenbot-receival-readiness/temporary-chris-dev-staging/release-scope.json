@@ -1,0 +1,107 @@
+{
+  "recordedAt": "2026-10-30T18:52:31.659Z",
+  "baseline": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "implementationCommit": "596b33c5682edf24cfaf3d613b23569e1ea42801",
+  "formalSourceReceiptCommit": "413e3d44a109f7240cd16e31beda3b66267f567b",
+  "devProofMetadataCommit": "8295bd0ab6dcb95e4798cf9672cc0cffbb1c8566",
+  "servedRuntime": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "changedPaths": [
+    "docs/project-memory/2026-10-28-tenbot-openai-agent-poc.md",
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "docs/project-memory/CURRENT_STATE.md",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/browser/completed-receipt-after-expiry.png",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/browser/expired-mobile.png",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/browser/focus-revoked-desktop.png",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/browser/report.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/evidence-manifest.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/fixture-initial-preflight-stop.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/fixture-migration-application.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/fixture-paused.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/fixture-preparation.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/grant-created-proof.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/grant-database-results.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/grant-database-stop-history-725afcb498ad9803d8ce.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/independent-grant-review-final.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/independent-grant-review.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/runtime-offline-results.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/shared-off-verification.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/source-validation-manifest.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/sql-implementation-notes.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01-page-1.png",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01-receipt.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.txt",
+    "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+    "scripts/support/tenbot-receival-fixture.mts",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "scripts/verify-tenbot-canary-browser.mjs",
+    "scripts/verify-tenbot-canary-grant-database.mts",
+    "scripts/verify-tenbot-canary-runtime.mts",
+    "src/modules/inventory/tenbot-canary-access.ts",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/live-review.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql"
+  ],
+  "inheritedTestSupport": [
+    {
+      "path": "scripts/support/tenbot-receival-fixture.mts",
+      "blob": "10e0bb633669f823f3537d2a2401e8567d6468f0",
+      "sha256": "2f82b2e1092dcfe0c0231e0a084a10304b78933b8d24434e05f028170646ccd2",
+      "sourceAuthority": "596b33c5682edf24cfaf3d613b23569e1ea42801",
+      "introducedRevision": "a49ae7b49cc49a97788a6db5cc72335caf76f9b2",
+      "reason": "Unchanged fixed-Free-project test harness required by accepted database verifier; not hosted runtime or new task implementation."
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-access.ts",
+      "sha256": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "fd1606337a660ea9a4f79565e2798eb1491a3a9ab86a513e4280e6a4f560d050"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "60370a8df95b638fefd8d00086e51c3859deda4bd457c21417f9056dcd0ddcb5"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "b63cc99e4b79d648b42318b4f73ad1db3af314ad202fb80002dee7acbf133383"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "9998a17fe7bb212cafab1a554d55bae33b34ba1360329f044d24fc5d51af5846"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-runtime.mts",
+      "sha256": "c1509fe6b5f2d3ae75131f34125f41757cfd6a2a2568de3e87c2f1d949534e9d"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-grant-database.mts",
+      "sha256": "9013bea39a7fd1e59e41861f7f8f9e1e69a2f07a8da547c3d99cde70a1faece4"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-browser.mjs",
+      "sha256": "6d22937c9885b277d4e2ce03317520d069d7166bc2520eaf4553d4954261cdb7"
+    }
+  ],
+  "onlyNewMigration": {
+    "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+    "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+  },
+  "elevenExistingMigrationsUnchanged": true,
+  "unrelatedLatencyChangesExcluded": [
+    "scripts/verify-tenbot-agent.mts",
+    "supabase/functions/_shared/tenbot-agent.ts"
+  ],
+  "tenOpsPagesUnchanged": "966ec1da-e537-4582-a82b-0c7a116daf58",
+  "pushed": false
+}

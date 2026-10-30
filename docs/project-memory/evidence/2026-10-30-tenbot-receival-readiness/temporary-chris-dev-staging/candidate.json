@@ -1,0 +1,199 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:29:28.044Z",
+  "sha": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "tree": "fb2f0ece72d6b1f1db4f4a154508243d2688b8aa",
+  "parent": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+  "baseline": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "acceptedAuthorityRevision": "596b33c5682edf24cfaf3d613b23569e1ea42801",
+  "receiptRevision": "413e3d44a109f7240cd16e31beda3b66267f567b",
+  "ref": "refs/tenops/candidates/chris-dev-canary-preparation-20261030",
+  "sourceObject": {
+    "sha": "4ed9b5fa3b9000cd84960974b3644d19e2352dc8",
+    "tree": "4638649cc521463f7f4a1d8ba14f4cac6dda9482",
+    "parent": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+    "ref": "refs/tenops/candidates/chris-dev-canary-source-20261030"
+  },
+  "source": "/private/tmp/tenops-tenbot-chris-dev-staging-20261030/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-chris-dev-staging-20261030/candidate-git",
+  "output": "/private/tmp/tenops-tenbot-chris-dev-staging-20261030/candidate/out",
+  "selectedAuthorityPaths": 34,
+  "inheritedTestSupport": [
+    {
+      "path": "scripts/support/tenbot-receival-fixture.mts",
+      "blob": "10e0bb633669f823f3537d2a2401e8567d6468f0",
+      "sha256": "2f82b2e1092dcfe0c0231e0a084a10304b78933b8d24434e05f028170646ccd2",
+      "sourceAuthority": "596b33c5682edf24cfaf3d613b23569e1ea42801",
+      "introducedRevision": "a49ae7b49cc49a97788a6db5cc72335caf76f9b2",
+      "reason": "Unchanged fixed-Free-project test harness required by accepted database verifier; not hosted runtime or new task implementation."
+    }
+  ],
+  "selectiveSourcePaths": 35,
+  "documentation": [
+    {
+      "path": "docs/project-memory/2026-10-28-tenbot-openai-agent-poc.md",
+      "marker": "## Temporary chris_dev canary permission — implemented and isolated-validated, October 30, 2026",
+      "baseRevision": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+      "baseDocumentAbsent": true,
+      "onlyTaskSuffix": true,
+      "suffixSha256": "d6a5789b37ca9f72212b554ebb6093bfbb1561c8d91f825ff6ced6c972851e04"
+    },
+    {
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "marker": "### TenBot temporary chris_dev canary permission — local implementation validated, October 30, 2026",
+      "baseRevision": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+      "baseDocumentAbsent": false,
+      "onlyTaskSuffix": true,
+      "suffixSha256": "6dd9ca20eee3e46e73b36c6120db5628a94bed03654e41ad69ad9fcc30f43e39"
+    },
+    {
+      "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+      "marker": "### Scoped handoff — temporary chris_dev canary permission, October 30, 2026",
+      "baseRevision": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+      "baseDocumentAbsent": false,
+      "onlyTaskSuffix": true,
+      "suffixSha256": "6061b35898d9e714e35ec641c6a9f1f8dc4bf3848539356553387fedd821a504"
+    }
+  ],
+  "proofOnlyChanges": [
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+  ],
+  "changedPaths": [
+    "docs/project-memory/2026-10-28-tenbot-openai-agent-poc.md",
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "docs/project-memory/CURRENT_STATE.md",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/browser/completed-receipt-after-expiry.png",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/browser/expired-mobile.png",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/browser/focus-revoked-desktop.png",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/browser/report.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/evidence-manifest.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/fixture-initial-preflight-stop.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/fixture-migration-application.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/fixture-paused.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/fixture-preparation.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/grant-created-proof.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/grant-database-results.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/grant-database-stop-history-725afcb498ad9803d8ce.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/independent-grant-review-final.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/independent-grant-review.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/runtime-offline-results.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/shared-off-verification.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/source-validation-manifest.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/sql-implementation-notes.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01-page-1.png",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01-receipt.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.txt",
+    "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+    "scripts/support/tenbot-receival-fixture.mts",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "scripts/verify-tenbot-canary-browser.mjs",
+    "scripts/verify-tenbot-canary-grant-database.mts",
+    "scripts/verify-tenbot-canary-runtime.mts",
+    "src/modules/inventory/tenbot-canary-access.ts",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/live-review.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql"
+  ],
+  "sourceHashes": [
+    {
+      "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-access.ts",
+      "sha256": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "fd1606337a660ea9a4f79565e2798eb1491a3a9ab86a513e4280e6a4f560d050"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "60370a8df95b638fefd8d00086e51c3859deda4bd457c21417f9056dcd0ddcb5"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "b63cc99e4b79d648b42318b4f73ad1db3af314ad202fb80002dee7acbf133383"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "9998a17fe7bb212cafab1a554d55bae33b34ba1360329f044d24fc5d51af5846"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-runtime.mts",
+      "sha256": "c1509fe6b5f2d3ae75131f34125f41757cfd6a2a2568de3e87c2f1d949534e9d"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-grant-database.mts",
+      "sha256": "9013bea39a7fd1e59e41861f7f8f9e1e69a2f07a8da547c3d99cde70a1faece4"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-browser.mjs",
+      "sha256": "6d22937c9885b277d4e2ce03317520d069d7166bc2520eaf4553d4954261cdb7"
+    }
+  ],
+  "existingSourceReviewCount": 83,
+  "appendedSourceReviewCount": 3,
+  "previousSourceReviewsPreserved": true,
+  "knowledgeEntriesUnchanged": true,
+  "structuredKnowledgeUnchanged": true,
+  "releasedAuthorityUnchanged": true,
+  "knowledgeEntryCount": 16,
+  "structuredPatchCount": 16,
+  "cleanCandidate": true,
+  "fullHistoryAvailable": true,
+  "sharedIndexHeadBranchesUnchanged": true,
+  "unrelatedDirtyWorkPreserved": true,
+  "noEnvironmentFiles": true,
+  "durationMs": 5743,
+  "proofGateRun": false,
+  "buildRun": false,
+  "migrationApplied": false,
+  "deployment": false,
+  "grantActivated": false,
+  "paidInferenceCalls": 0,
+  "recordReceiptObject": {
+    "sha": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+    "tree": "cd3cad6e41453d1c4287ac91b2d88b80e989b933",
+    "parent": "105d96919e5ba341f1a7bbeff3d8cdc58fa1b18c"
+  },
+  "recordSpecificReviewCount": 2,
+  "previousCandidate": "105d96919e5ba341f1a7bbeff3d8cdc58fa1b18c",
+  "recordSourceReviews": [
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-messaging",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+      "afterBlob": "f6b905fb369c253902fa6883ee957a8e898aed93",
+      "recordDigest": "868e7190ae61c7e32e9963edf4669636cddd31a1cdb9a670af98713e8eb33a9c",
+      "reviewedCandidate": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+        "heading": "## Accepted record source review — dormant canary status appendix"
+      }
+    },
+    {
+      "classification": "record-no-claim-impact",
+      "recordId": "knowledge-proposals",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+      "afterBlob": "f6b905fb369c253902fa6883ee957a8e898aed93",
+      "recordDigest": "64bc5848f3e589dea04a8aab52b77794bfba2379db835c1e8731746d262bb792",
+      "reviewedCandidate": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "255c0c288ac7f7d286f93a885c3fa7ec3e799993",
+        "heading": "## Accepted record source review — dormant canary status appendix"
+      }
+    }
+  ],
+  "recordProofCorrectionRecordedAt": "2026-10-30T18:34:14.599Z"
+}

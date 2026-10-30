@@ -1,0 +1,99 @@
+{
+  "recordedAt": "2026-10-30T18:54:45.128Z",
+  "secretScanPassed": true,
+  "privateCredentialsSessionsRawLogsAndBundlesExcluded": true,
+  "files": [
+    {
+      "path": "anonymous-hosted-smoke.json",
+      "sha256": "fb3063a4c487f4a1a188102d141e744198422380c706150e9f9ec74f570fd1cb"
+    },
+    {
+      "path": "apply-readonly-reconciliation.json",
+      "sha256": "7f257c4b7f1f56b06a285660db0626b2f73f30f37f605425271a414f8469633a"
+    },
+    {
+      "path": "build-artifacts.json",
+      "sha256": "86976423996832e5f22f29d30995efa294444401592fa81f8ae799c9c931f6cc"
+    },
+    {
+      "path": "build.json",
+      "sha256": "2e7f3a462c9a692eddc4d201ded562b9adff057b32097bbda800832e8326abe8"
+    },
+    {
+      "path": "candidate-proof.json",
+      "sha256": "a60b42aae252532a0536d87f234f413ee08c6d7aa934181dfe26aa37dca86794"
+    },
+    {
+      "path": "candidate.json",
+      "sha256": "2d219498074b4733bb22a89000df5a8fd68618867b7c72a5cceb06001ee54228"
+    },
+    {
+      "path": "edge-deployment.json",
+      "sha256": "a2711b7fe4cc2c74ad29b6cace8031ffdfb5c85c76295295f39503f6d2571fbc"
+    },
+    {
+      "path": "executor-inheritance-readonly.json",
+      "sha256": "ced82df8e3c8d38c613d7e0412b3ddb5160fac9eb1e89293ed14abf9db809e59"
+    },
+    {
+      "path": "final-hosted-readonly.json",
+      "sha256": "31a9ee7b0a2e1e1569ddc46fed00e3ac042ab49afbc5497d5efd2cdcd2b7df2d"
+    },
+    {
+      "path": "first-proof-hold.json",
+      "sha256": "651a45a8f793e069a4fe5202a2ce958e7c4cd128b50a84ef110ace6e884cfa0d"
+    },
+    {
+      "path": "independent-final-review.json",
+      "sha256": "70be5d2550f3ea0ce0140e1cae0e1825bd563a244b2b6a77eaacc427b1986230"
+    },
+    {
+      "path": "isolated-wrapper-acl-v2.json",
+      "sha256": "f06171c50f7fe0c00617c1b682f341f179f08065ca11ebce8ecf7557c61f9f7a"
+    },
+    {
+      "path": "migration-application.json",
+      "sha256": "fa0ca6dc8e11441f1e60a09a17c86354686616fcaebd34e622fc69c848754ac5"
+    },
+    {
+      "path": "migration-initial-rejection.json",
+      "sha256": "e895cef33c5513094bbeaac41a42dcff4fdcf47bec4834ce3840f5b80ef09367"
+    },
+    {
+      "path": "migration-readback.json",
+      "sha256": "0cf91c97695a4af418d79bea92afb5da90e2ae69a2e7c9544348a0f0ef822d1b"
+    },
+    {
+      "path": "native-messaging-inventory-smoke.json",
+      "sha256": "ccf80ac5cabd5a6d51a41d7be1ba596c0154b0159295cd958d90640832503e5e"
+    },
+    {
+      "path": "operator-v2-review.json",
+      "sha256": "b911416e706faec733ab9018d870f0fc5b5c45a74b47dd407f07971de3a4732a"
+    },
+    {
+      "path": "pages-deployment.json",
+      "sha256": "d9d0028a491a954f2ba7c48e3caeba07456df5bdb60bd955feaa89325fb6c65b"
+    },
+    {
+      "path": "prepared-grant-sql.v2.json",
+      "sha256": "aa59bfed069d675232c1873d5a7f31d5c77d6f4c2de05892eb4db9440c9ca010"
+    },
+    {
+      "path": "release-scope.json",
+      "sha256": "afcbd5a5543b5e3c84d0ddd943c14fc3406d000d65a20dac1996ed441d331a8b"
+    },
+    {
+      "path": "served.json",
+      "sha256": "85c9777a43f049b58a7c3ec980b0161c3f5af17c7b19bb2a9db46a99c46c0ad9"
+    },
+    {
+      "path": "shared-preflight.json",
+      "sha256": "6abacdf45158a8c6b2e75f60e09d74f59492265b4014522902f77f36c6172003"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "fc43ffce53b39538410eb00db02f427b3fee61007de140f2843419ca6cabae38"
+    }
+  ]
+}

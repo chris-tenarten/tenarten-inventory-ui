@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:40:56.535Z",
+  "reviewer": "/root/canary_staging_review",
+  "scope": "Exact v2 wrapper correction only; no application or migration source changes",
+  "atomicSqlSha256": "99fc47ee39d28c44e6da77a2e0fada5c724590572ed904224efcc0ee43fce015",
+  "readbackSqlSha256": "0deaa89cb0b319a33aced95ef9045b1073c10da3c17796bbca559d45f40597fd",
+  "actualSharedInheritanceVerified": true,
+  "actualIsolatedAllElevenPrivilegeChecksPassed": true,
+  "priorApplyFullyRolledBack": true,
+  "privateHelpersStillDenied": true,
+  "directExecutorAclStillForbidden": true,
+  "internalJwtAdminChecksUnchanged": true,
+  "activationAuthorized": false
+}

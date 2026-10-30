@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:52:31.656Z",
+  "sha": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "origin": "https://tendev.pages.dev",
+  "surface": "Existing Chrome work window via native AX; browser extension unavailable",
+  "caller": "Chris own signed-in Admin account; not a canary identity",
+  "checks": [
+    "Hard reload preserved normal signed-in application access",
+    "Inventory navigation and Pending Receivals expansion succeeded",
+    "Normal Messaging opened TenBot with existing composer and disclosure; no experimental write controls presented while pilot OFF",
+    "One direct read-only help question completed with no operation executed"
+  ],
+  "question": "Where can I view pending receivals? Answer directly; do not perform any action.",
+  "answer": "You can view pending receivals in the Inventory module under 'Pending Receivals'. This section shows incoming material expectations before they are received into inventory.",
+  "questionSubmittedAt": "2026-10-30T18:49:03.778Z",
+  "completedObservedWithinMs": 37721,
+  "latencyNote": "This is an observation bound including independent work between UI reads, not provider latency. Ledger reservation-to-settlement interval is reported separately.",
+  "meteredRequest": {
+    "steps": 2,
+    "models": [
+      "gpt-6.1-terra"
+    ],
+    "measured": 2,
+    "requests": 1,
+    "reserved": 0,
+    "uncertain": 0,
+    "actualMicrousd": 4257,
+    "reservationToSettlementMs": 5419.127
+  },
+  "rawSessionAccessed": false,
+  "otherEmployeeSessionAccessed": false,
+  "sensitiveJobEvidenceRetained": false,
+  "existingDirectMessagesOpened": false,
+  "grantActivationRpcCalls": 0,
+  "sourceUploads": 0,
+  "approvalRequests": 0,
+  "operationalWrites": 0,
+  "nativeControlReleased": true
+}

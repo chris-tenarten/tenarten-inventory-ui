@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T18:47:59.416Z",
+  "sha": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "checks": [
+    {
+      "label": "TenDev unauthenticated assistant denied",
+      "status": 401,
+      "code": null,
+      "durationMs": 1294
+    },
+    {
+      "label": "TenOps unauthenticated assistant denied",
+      "status": 401,
+      "code": null,
+      "durationMs": 178
+    },
+    {
+      "label": "Unauthenticated invoice workspace denied",
+      "status": 401,
+      "code": null,
+      "durationMs": 204
+    },
+    {
+      "label": "Private grant metadata unavailable to anon",
+      "status": 401,
+      "code": "42501",
+      "durationMs": 453
+    },
+    {
+      "label": "Self-projection RPC unavailable to anon",
+      "status": 401,
+      "code": "42501",
+      "durationMs": 106
+    }
+  ],
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "grantActivationRpcCalls": 0,
+  "revocationRpcCalls": 0,
+  "sourceUploads": 0,
+  "approvalRequests": 0,
+  "employeeSessionAccessed": false,
+  "scope": "Actual hosted anonymous-denial smoke only; genuine employee lifecycle/expiry/concurrency proof reused from isolated fixture."
+}

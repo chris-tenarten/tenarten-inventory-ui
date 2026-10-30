@@ -1,0 +1,58 @@
+{
+  "status": "PASS_FOCUSED_INDEPENDENT_RELEASE_EVIDENCE_REVIEW",
+  "recordedAt": "2026-10-30T18:54:45.121Z",
+  "reviewer": "/root/canary_staging_review",
+  "reviewed": [
+    {
+      "path": "candidate.json",
+      "sha256": "2d219498074b4733bb22a89000df5a8fd68618867b7c72a5cceb06001ee54228"
+    },
+    {
+      "path": "candidate-proof.json",
+      "sha256": "a60b42aae252532a0536d87f234f413ee08c6d7aa934181dfe26aa37dca86794"
+    },
+    {
+      "path": "build.json",
+      "sha256": "2e7f3a462c9a692eddc4d201ded562b9adff057b32097bbda800832e8326abe8"
+    },
+    {
+      "path": "migration-application.json",
+      "sha256": "fa0ca6dc8e11441f1e60a09a17c86354686616fcaebd34e622fc69c848754ac5"
+    },
+    {
+      "path": "migration-readback.json",
+      "sha256": "0cf91c97695a4af418d79bea92afb5da90e2ae69a2e7c9544348a0f0ef822d1b"
+    },
+    {
+      "path": "edge-deployment.json",
+      "sha256": "a2711b7fe4cc2c74ad29b6cace8031ffdfb5c85c76295295f39503f6d2571fbc"
+    },
+    {
+      "path": "pages-deployment.json",
+      "sha256": "d9d0028a491a954f2ba7c48e3caeba07456df5bdb60bd955feaa89325fb6c65b"
+    },
+    {
+      "path": "served.json",
+      "sha256": "85c9777a43f049b58a7c3ec980b0161c3f5af17c7b19bb2a9db46a99c46c0ad9"
+    },
+    {
+      "path": "final-hosted-readonly.json",
+      "sha256": "31a9ee7b0a2e1e1569ddc46fed00e3ac042ab49afbc5497d5efd2cdcd2b7df2d"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "fc43ffce53b39538410eb00db02f427b3fee61007de140f2843419ca6cabae38"
+    }
+  ],
+  "verdict": "Actual receipts support dormant TenDev staging with zero grants/enrollment, preserved Developer/global permissions, JWT ON, unchanged provider/funding/cleanup and unchanged TenOps Pages. Shared dormant backend/schema were updated. No staging blockers found.",
+  "limitations": [
+    "Active shared chris_dev grant/expiry/revocation/canary was not exercised or approved; actual isolated evidence is reused."
+  ],
+  "reviewerActions": {
+    "network": 0,
+    "tests": 0,
+    "mutations": 0,
+    "gitOperations": 0
+  },
+  "activationAuthorized": false
+}
