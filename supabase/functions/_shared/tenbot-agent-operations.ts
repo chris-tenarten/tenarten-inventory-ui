@@ -1,4 +1,4 @@
-// Optional experimental operations. No hosted entry point imports this module.
+// Shared allowlisted operations for local and hosted read-only orchestration.
 // The provider receives schemas and bounded data, never a database client.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
@@ -11,7 +11,7 @@ import type {JobTools} from './tenbot-job-session.ts';
 import type {TenbotJobToolName,JobToolResult} from './tenbot-job-tools.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
-import {hasGuidePermission,type CapabilityEntry} from './tenbot-knowledge.ts';
+import {hasGuidePermission,publishedKnowledgeSource,type CapabilityEntry} from './tenbot-knowledge.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
 import {agentKnowledgeEntries,agentKnowledgeSnapshot as snapshot} from './tenbot-agent-knowledge.ts';
@@ -60,27 +60,84 @@ export function createTenbotAgentJobTools(jobTools:JobTools){
 }
 
 /** Published workflow knowledge is a separate channel from current operational data. */
-export function createTenbotAgentKnowledgeTools(can:Capability):AgentTool[]{
- const allowed=async(entry:CapabilityEntry)=>{
-  const permissions=new Set<string>();
-  for(const name of [entry.permission,...entry.additionalPermissions??[]])if(await can(name))permissions.add(name);
-  return hasGuidePermission(entry,permissions);
- };
- return [{name:'search_workflow_knowledge',kind:'read',description:'Search published, versioned employee workflow knowledge. This is application documentation, not live records, approved new scope or authority to perform actions. Query short relevant terms; returns at most four permitted sources.',parameters:object({query:{type:'string',minLength:2,maxLength:160}}),async execute(args){
-  const terms=String(args.query).toLocaleLowerCase('en-US').match(/[\p{L}\p{N}]+/gu)??[];
-  // Reuse the same precise published guides as the existing help desk, alongside
-  // module summaries. The experimental search previously omitted the guides.
-  const entries=agentKnowledgeEntries();
-  const scored=entries.map(entry=>({entry,score:terms.filter(term=>(entry.title+' '+entry.terms+' '+entry.modules.join(' ')).toLocaleLowerCase('en-US').includes(term)).length})).filter(item=>item.score>0).sort((a,b)=>b.score-a.score||a.entry.id.localeCompare(b.entry.id));
-  const sources=[];let accessLimited=false;
-  for(const {entry} of scored){
-   if(entry.status!=='deployed')continue;
-   if(!await allowed(entry)){accessLimited=true;continue;}
-   sources.push({id:entry.id,title:entry.title,status:entry.status,availability:entry.availability??'available',guidance:entry.guidance,path:entry.path,route:entry.route});
-   if(sources.length===4)break;
-  }
-  return {data:json({snapshot,sources,access_limited:accessLimited,complete:false,limitation:'Bounded permission-filtered documentation search. If access_limited is true, some matching guidance is outside this caller’s current grants; do not describe it as undocumented or conclude the feature is unavailable. No raw repository files, private conversations or current operational records are searched.'})};
+export function createTenbotAgentKnowledgeTools(can:Capability,registeredTools:()=>readonly Pick<AgentTool,'name'|'kind'>[]=()=>[]):AgentTool[]{
+ return [{name:'search_workflow_knowledge',kind:'read',description:'Search published workflow and structured architecture knowledge, including bounded related records. Returns at most four permitted sources within a byte limit. Facts distinguish repository contracts, Product conventions and released-source rules; none establish current operational evidence. capability_links names only tools registered in this session. Application services remain guidance-only unless separately exposed.',parameters:object({query:{type:'string',minLength:2,maxLength:160}}),async execute(args){
+  const checks=new Map<string,Promise<boolean>>();
+  const allowed=async(entry:CapabilityEntry)=>{
+   const permissions=new Set<string>();
+   for(const name of [entry.permission,...entry.additionalPermissions??[]]){
+    if(!checks.has(name))checks.set(name,can(name));
+    if(await checks.get(name))permissions.add(name);
+   }
+   return hasGuidePermission(entry,permissions);
+  };
+  return {data:json(await searchPublishedKnowledge(String(args.query),agentKnowledgeEntries(),allowed,registeredTools()))};
  }}];
+}
+
+/** Deterministic ranking and one-hop dependencies over the existing registry. */
+function equivalentKnowledgeKey(entry:CapabilityEntry){
+ // Aliases may have different IDs, titles, search terms and identity-derived
+ // digests. Every other field remains significant, including unpublished
+ // source authority, grants, release bindings, related records and tool names.
+ // Equal prose alone must never erase independent structured evidence.
+ const content:Record<string,unknown>={...entry};
+ for(const key of ['id','title','terms','requiredTerms','examples','recordDigest'])delete content[key];
+ content.guidance=entry.guidance.replace(/\s+/g,' ').trim();
+ const canonical=(value:unknown):unknown=>Array.isArray(value)?value.map(canonical)
+  :value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,canonical(item)])):value;
+ return JSON.stringify(canonical(content));
+}
+export async function searchPublishedKnowledge(query:string,entries:CapabilityEntry[],allowed:(entry:CapabilityEntry)=>Promise<boolean>,tools:readonly Pick<AgentTool,'name'|'kind'>[]=[]){
+ if(query.length<2||query.length>160)throw new Error('Invalid knowledge query.');
+ const words=(text:string)=>[...new Set((text.toLocaleLowerCase('en-US').match(/[\p{L}\p{N}]+/gu)??[]).map(word=>word.length>4&&word.endsWith('s')?word.slice(0,-1):word))];
+ const stop=new Set('a an and are as at be can do does for from how i in is it me my of on or our please that the their then this to we what when which will with you'.split(' '));
+ const terms=words(query).filter(word=>word.length>1&&!stop.has(word));
+ const documents=entries.map(entry=>({entry,title:words(entry.title),tags:words(entry.terms+' '+entry.modules.join(' ')+' '+(entry.architecture?.entities.join(' ')??'')),facts:words(entry.architecture?JSON.stringify(entry.architecture):'')}));
+ const contains=(tokens:string[],term:string)=>tokens.some(token=>token===term||(term.length>=5&&token.startsWith(term)));
+ const weight=(term:string)=>1+Math.log(1+entries.length/(1+documents.filter(doc=>contains([...doc.title,...doc.tags],term)).length));
+ const scored=documents.map(doc=>({entry:doc.entry,score:terms.reduce((score,term)=>score+weight(term)*(contains(doc.title,term)?3:contains(doc.tags,term)?2:contains(doc.facts,term)?0.35:0),0)})).filter(item=>item.score>0).sort((a,b)=>b.score-a.score||a.entry.id.localeCompare(b.entry.id));
+ let accessLimited=false,contextLimited=false;
+ const authorized=new Map<string,boolean>();
+ const permit=async(entry:CapabilityEntry)=>{
+  if(entry.status!=='deployed')return false;
+  if(!authorized.has(entry.id))authorized.set(entry.id,await allowed(entry));
+  if(!authorized.get(entry.id))accessLimited=true;
+  return authorized.get(entry.id)===true;
+ };
+ const direct:typeof scored=[],directKeys=new Set<string>();
+ for(const item of scored.slice(0,24)){
+  if(!await permit(item.entry))continue;
+  const key=equivalentKnowledgeKey(item.entry);
+  if(directKeys.has(key))continue;
+  directKeys.add(key);direct.push(item);
+  if(direct.length===4)break;
+ }
+ const byId=new Map(entries.map(entry=>[entry.id,entry]));
+ const related=new Map<string,{entry:CapabilityEntry;score:number}>();
+ // Two direct seeds, one hop, eight edges per seed; cycles never recurse.
+ for(const seed of direct.slice(0,2))for(const id of (seed.entry.relatedRecordIds??[]).slice(0,8)){
+  const entry=byId.get(id);
+  if(!entry||entry.id===seed.entry.id||!await permit(entry))continue;
+  related.set(id,{entry,score:(scored.find(item=>item.entry.id===id)?.score??0)+1});
+ }
+ const ordered=[...direct.slice(0,2),...[...related.values()].sort((a,b)=>b.score-a.score||a.entry.id.localeCompare(b.entry.id)),...direct.slice(2)];
+ const sources:ReturnType<typeof publishedKnowledgeSource>[]=[],selected:CapabilityEntry[]=[],visited=new Set<string>(),selectedKeys=new Set<string>();
+ for(const {entry} of ordered){
+  if(visited.has(entry.id))continue;visited.add(entry.id);
+  const key=equivalentKnowledgeKey(entry);
+  if(selectedKeys.has(key))continue;
+  const source=publishedKnowledgeSource(entry);
+  if(new TextEncoder().encode(JSON.stringify([...sources,source])).byteLength>16000){contextLimited=true;continue;}
+  sources.push(source);selected.push(entry);selectedKeys.add(key);
+  if(sources.length===4)break;
+ }
+ const registered=new Map(tools.filter(tool=>tool.kind==='read'||tool.kind==='prepare').map(tool=>[tool.name,tool]));
+ const capabilityLinks=selected.map(entry=>({source_id:entry.id,tools:(entry.toolNames??[]).slice(0,5).flatMap(name=>{
+  const tool=registered.get(name);return tool?[{name:tool.name,kind:tool.kind}]:[];
+ }),execution:false}));
+ return {snapshot,sources,capability_links:capabilityLinks,access_limited:accessLimited,context_limited:contextLimited,complete:false,
+  limitation:'Bounded permission-filtered documentation and related-record search; results are incomplete. Access-limited guidance is outside current grants, not proof of an absent feature. Schema contracts are repository evidence, not a fresh hosted attestation. Current facts require authenticated tools. No raw repository, private conversation or live business records are searched; knowledge grants no execution authority.'};
 }
 
 /** Host-owned scope evidence. Descriptions disclose no credentials or records. */

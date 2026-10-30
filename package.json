@@ -10,6 +10,7 @@
     "auth:qa:stop": "npx --yes supabase@2.110.0 stop --workdir auth-qa",
     "auth:qa:verify": "node scripts/verify-local-auth-qa.mjs",
     "auth:qa:verify-flow": "node scripts/verify-local-auth-qa-flow.mjs",
+    "prebuild": "node scripts/generate-tenbot-knowledge.mjs --build-sync",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -26,7 +27,8 @@
     "verify:early-access": "node scripts/verify-early-access.mjs",
     "verify:theme": "node scripts/verify-theme.mjs",
     "verify:dev-branding": "node scripts/verify-dev-branding.mjs",
-    "tenbot:knowledge": "node scripts/generate-tenbot-knowledge.mjs",
+    "tenbot:knowledge": "node scripts/generate-tenbot-knowledge.mjs --sync",
+    "tenbot:knowledge:review-release": "node scripts/generate-tenbot-knowledge.mjs --review-release",
     "verify:tenbot-knowledge": "node scripts/generate-tenbot-knowledge.mjs --check"
   },
   "dependencies": {

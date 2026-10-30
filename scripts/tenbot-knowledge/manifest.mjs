@@ -1,12 +1,38 @@
 // Module-level release contract. Source text and controls are extracted, not copied here.
 // Updating the release requires checking the executed receipt and deployed feature flags.
-export const release = {
+export const releases = {intake: {
  revision: 'bc628bdafea374f6a5fd446d7e924ff9d65918bf',
  verifiedAt: '2026-10-27',
  receiptRevision: '493b55d',
  receipt: 'docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md',
  receiptAnchor: 'executed-intake-release--october-27-2026',
-};
+ receiptHeading: '## Executed Intake release — October 27, 2026',
+},bidPreparation: {
+ revision: '5e28d254b8d674ec64ce2ba347c83108366af936',
+ verifiedAt: '2026-10-28',
+ receiptRevision: 'd3f42a76eaa3bc4d9bfe9fbd048d8ef61355efb8',
+ receipt: 'docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md',
+ receiptAnchor: 'executed-bid-preparation-release--october-28-2026',
+ receiptHeading: '## Executed Bid Preparation release — October 28, 2026',
+},manpower: {
+ revision: 'ae50e0fc55a7a6d9e454016c5d73a58e792aff79',
+ verifiedAt: '2026-10-29',
+ receipt: 'docs/project-memory/2026-10-29-manpower-default-restoration.md',
+ receiptAnchor: 'executed-approved-priority-release--october-29-2026',
+ receiptHeading: '## Executed approved priority release — October 29, 2026',
+ receiptCapture: 'scripts/tenbot-knowledge/release-evidence/manpower-20261029.json',
+ receiptCaptureSha256: '683ff3132cc63820e85e016822b3fdae07937cf4e90e61810709fe2e64e2d421',
+}};
+// The base extraction remains at its reviewed release; newer scoped facts use
+// explicit per-record releases below instead of advancing deployed knowledge to HEAD.
+export const release = releases.intake;
+// Future infrastructure-only reviews are separate from executed business releases.
+// Each exact path/blob requires Chris's committed acceptance and an explicit
+// unchanged business-meaning/permission/lifecycle/effects declaration. These can
+// never acknowledge migrations, permission paths or bound semantic dependencies.
+// Keep acknowledgments outside the reviewed source so an exact source blob can
+// be accepted without a self-referential hash inside that same file.
+export const infrastructureReviewsPath='scripts/tenbot-knowledge/infrastructure-reviews.json';
 const manifest='docs/project/PROJECT_MANIFEST.md',state='docs/project-memory/CURRENT_STATE.md';
 const doc=(path,...paragraphs)=>({path,paragraphs});
 export const modules=[
@@ -62,3 +88,22 @@ export const modules=[
  {id:'material-assessment',title:'Material requirements, supply evidence and lead-time boundaries',modules:['intake','samples','inventory','purchasing'],terms:'material materials requirements estimate lead time times blend sheet supplier package catalog shortage availability stock incoming eta readiness assessment',permission:'viewIntake',additionalPermissions:['readOperationalData','proposal.access'],route:null,path:'',availability:'partial',docs:[],ui:[],contracts:['src/modules/intake-materials/requirements.ts','src/modules/intake-materials/data.ts','src/modules/pre-production/BidWorkspace.tsx','supabase/migrations/20261026110000_bid_accepted_scope.sql'],
   boundary:'Current Bid Inspector does not mount a material-assessment editor or Refresh read-only availability control. A Blend Sheet does not automatically predict supplier delivery or promise a Production date. Other employee-facing estimator controls cannot be verified from these sources; this does not declare every assessment workflow absent. Released retained scope/material services can calculate requirements from exact saved Sample/issued Blend authority and reviewed quantity/unit mappings. Useful supplier/catalog lead-time evidence or documented manual estimates may support assessment; missing evidence remains unknown. Available stock, own-Job reservations, reservations elsewhere, incoming supply and on-hand shortages remain distinct. No stock, reservation, order or material-status mutation occurs through read-only assessment. Formulations and Blend Sheets are authored in Samples; ask Product about an employee-facing assessment workflow.'},
 ];
+
+// Reviewed prose formerly maintained only in the optional agent overlay. These
+// patches retain the existing IDs and permissions and now carry real source pins
+// for every consumer of the published registry, including Qwen fallback.
+export const refreshes=[{
+ ids:['sample-bid','knowledge-sample-bid','knowledge-intake'],release:'bidPreparation',
+ sourceFiles:['src/modules/pre-production/BidWorkspace.tsx','src/modules/pre-production/BidTools.tsx','src/modules/samples/queries.ts'],
+ appendTerms:'overview bid preparation create proposal sample',
+ path:'Intake → Bid → Overview → Bid Preparation',
+ guidance:'Open Intake and select the Bid, then open Overview. Bid Preparation contains Create Proposal, Create Sample, Open related Proposals and Open related Samples; there is no Tools tab. Create Sample starts a new canonical Sample in the established generator with this Bid, Customer and Project context. Save the Sample there. Open related Samples opens Bid-context Samples, where Existing standalone Sample → Link Sample links an existing standalone Sample. A Sample linked to another Bid cannot be reassigned by this action. Creating or linking Samples requires the existing Intake, operational-read and business-write permissions. Create Proposal opens the established Proposal Generator with this Bid attached; Proposal access is independently required in addition to Intake and business-write permission. A Proposal can exist and be issued without a Production Job. Existing generated documents retain their historical contents.',
+ source:'TenOps released Bid Preparation · October 28, 2026',
+},{
+ ids:['knowledge-manpower','workflow-manpower-history'],release:'manpower',
+ sourceFiles:['src/modules/manpower/ManpowerWorkspace.tsx','src/modules/manpower/group-presentation.ts','src/modules/manpower/progressive-history.ts'],
+ appendTerms:'default order sort groups reporting date job name newest alphabetical',
+ path:'Manpower Reporting → Sort groups',
+ guidance:'Manpower Reporting defaults Sort groups to Reporting date, newest first. Groups with a leading reporting date in their name are ordered by that date, newest first; groups without a valid leading date follow, with creation time, name and ID as stable fallbacks. Editing a Job or labor entry does not move its group by modification time. Groups start collapsed. Rows in an expanded group are ordered by Work Date, newest first. To sort by Job name, use Sort groups → Job name, A–Z. Work date, newest first is the other alternative and uses the latest work date in each group. Mixed-Job groups use their alphabetically first Job or work label; empty groups follow. Sorting applies to loaded complete groups, and the order can change while older groups load. Analytics use the selected period; expanded groups retain complete membership across all dates. Wait for All available history loaded before treating search as exhaustive. Search and Product Category filters change displayed rows and totals without changing saved data. Reporting groups are not Jobs.',
+ source:'TenOps released Manpower ordering · October 29, 2026',
+}];

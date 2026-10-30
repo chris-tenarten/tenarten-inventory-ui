@@ -1,0 +1,162 @@
+[
+  {
+    "classification": "infrastructure-only",
+    "path": "scripts/generate-tenbot-knowledge.mjs",
+    "blob": "b3f76af6014524a9fa7abdc351e15058ee13e39f",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "scripts/tenbot-knowledge/architecture.mjs",
+    "blob": "f87090d98ff61914fb99844513246f37b2865b97",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "scripts/tenbot-knowledge/manifest.mjs",
+    "blob": "f9695bb04977b26f72f8da35f291a9dffc258ba9",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "scripts/tenbot-knowledge/release-sync.mjs",
+    "blob": "14d42bc8a657c107af68200c8ab7f272b7ac2230",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-core.ts",
+    "blob": "eaa9f9c108c10a72801602c1c87ca19bc84d5973",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+    "blob": "4bfd5f350e783118bb1d3bc043c242e920d74464",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-job-session.ts",
+    "blob": "7a3b25454b1d0790cbd05f234e02c7e540920de4",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+    "blob": "d7ae05f56ff991dc0c267a5d2f96a7d8bd96b1d6",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-models.ts",
+    "blob": "286c1971e1c7f527c0cdf398c55eff628aeee8f9",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-privacy.ts",
+    "blob": "bdd4ec1ddeb90994f5ad6a24cf09c1713c519066",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+    "blob": "66c8b1f7186923b9ccf5a973b5ee03a2bd323f60",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+    "blob": "d0baddb6724515063567da43370437c886e60a84",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+    "blob": "16a59ae220abcab962fc971597aa864b46b2ae70",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-handler.ts",
+    "blob": "c9e0d8c80ad936c7e62b046fba991c8bb3580eac",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+      "heading": "## Accepted infrastructure review \u2014 October 29, 2026"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "blob": "0b90dd83531e6b95363322f888b5637c530bca1c",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+      "heading": "## Accepted infrastructure review \u2014 selective knowledge preparation"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+    "blob": "c521fad047d387b226568f33a9213e9f4e564d3a",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+      "heading": "## Accepted infrastructure review \u2014 selective knowledge preparation"
+    }
+  }
+]

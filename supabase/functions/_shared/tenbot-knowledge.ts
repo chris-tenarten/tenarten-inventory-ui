@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
-import {generatedKnowledge,knowledgeSnapshot} from './tenbot-knowledge-snapshot.ts';
+import {generatedKnowledge,generatedKnowledgePatches,knowledgeSnapshot} from './tenbot-knowledge-snapshot.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
 import {workflowSupplement} from './tenbot-workflow-supplement.ts';
@@ -9,7 +9,8 @@ export {knowledgeSnapshot};
 // Employee-safe workflow excerpts only. Never import this server registry into the client bundle.
 // Release evidence, sourceFiles and examples are internal maintenance checks.
 export const snapshot = {
- revision: 'bc628bd', verifiedAt: '2026-10-27',
+ revision: ['bc628bd',...new Set((generatedKnowledgePatches as unknown as {releaseBoundary?:{revision:string}}[]).flatMap(entry=>entry.releaseBoundary?[entry.releaseBoundary.revision.slice(0,8)]:[])),knowledgeSnapshot.architectureDigest.slice(0,12)].join('+'),
+ verifiedAt: (generatedKnowledgePatches as unknown as {releaseBoundary?:{verifiedAt:string}}[]).reduce((date,entry)=>entry.releaseBoundary&&entry.releaseBoundary.verifiedAt>date?entry.releaseBoundary.verifiedAt:date,'2026-10-27'),
  receipt: 'docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md#executed-intake-release--october-27-2026',
 };
 export type CapabilityEntry = {
@@ -17,8 +18,19 @@ export type CapabilityEntry = {
  status:'deployed'|'local'|'planned'|'unknown'; availability?:'unavailable'|'partial';
  permission:string; additionalPermissions?:string[]; route:string|null; path:string;
  guidance:string; source:string; evidence:string; sourceFiles:string[]; examples:string[];
+ architecture?:KnowledgeArchitecture;
+ capabilityAvailability?:{application:'released'|'partial'|'unverified';assistant:'guidance-only'|'read-if-registered'};
+ // Maintenance-only: never spread these bindings into employee/model responses.
+ relatedRecordIds?:string[]; toolNames?:string[]; recordDigest?:string;
+ releaseBoundary?:{id:string;revision:string;verifiedAt:string;receipt:string;receiptKind:string};
 };
-export const registry:CapabilityEntry[] = [
+export type KnowledgeArchitecture={
+ entities:string[];
+ relationships:{from:string;relation:string;to:string;cardinality?:string}[];
+ facts:{text:string;classification:'schema-contract'|'product-convention'|'operational-rule';verification:'repository-contract'|'released-source'}[];
+ preconditions:string[];effects:string[];approvalRequirements:string[];limitations:string[];
+};
+const authoredRegistry:CapabilityEntry[] = [
  {
   "id": "group",
   "modules": [
@@ -1501,7 +1513,46 @@ export const registry:CapabilityEntry[] = [
  },
  ...workflowSupplement,
 ];
-export const knowledgeEntries=generatedKnowledge as CapabilityEntry[];
+const patches=new Map((generatedKnowledgePatches as unknown as (Partial<CapabilityEntry>&{id:string})[]).map(patch=>[patch.id,patch]));
+const applyKnowledgePatch=(entry:CapabilityEntry):CapabilityEntry=>({...entry,...patches.get(entry.id)});
+export const registry=authoredRegistry.map(applyKnowledgePatch);
+export const knowledgeEntries=(generatedKnowledge as CapabilityEntry[]).map(applyKnowledgePatch);
+
+/** One allowlisted projection for tool results and retained-source freshness checks. */
+export function publishedKnowledgeSource(entry:CapabilityEntry){
+ const {id,title,status,guidance,path,route}=entry;
+ if(entry.capabilityAvailability&&(!['released','partial','unverified'].includes(entry.capabilityAvailability.application)||!['guidance-only','read-if-registered'].includes(entry.capabilityAvailability.assistant)))throw new Error('Invalid published capability availability.');
+ return {id,title,status,availability:entry.availability??'available',guidance,path,route,
+  ...(entry.capabilityAvailability?{capabilityAvailability:{application:entry.capabilityAvailability.application,assistant:entry.capabilityAvailability.assistant}}:{}),
+  ...(entry.architecture?{architecture:employeeArchitecture(entry.architecture)}:{})};
+}
+/** Authority is hashed internally, never sent to the model or employee. */
+export function knowledgeProofValue(entry:CapabilityEntry,source:unknown=publishedKnowledgeSource(entry)){
+ return {source,authority:{permission:entry.permission,additionalPermissions:entry.additionalPermissions??[],recordDigest:entry.recordDigest??'',releaseBoundary:entry.releaseBoundary??null,relatedRecordIds:entry.relatedRecordIds??[],toolNames:entry.toolNames??[]}};
+}
+function employeeArchitecture(value:KnowledgeArchitecture):KnowledgeArchitecture{
+ const fail=()=>{throw new Error('Invalid published architecture knowledge.');};
+ const text=(item:unknown,max=500):string=>{
+  if(typeof item!=='string'||!item.trim()||item.length>max||/NEXT_PUBLIC_|SUPABASE_|CLOUDFLARE_|Bearer\s|\b[a-z]+_[a-z_]+\b|\b(?:RLS|JWT|SECURITY DEFINER)\b|\b(?:public|auth|storage)\.[a-z_]+|https?:\/\/|\b[a-f0-9]{40,64}\b|\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(item))return fail();
+  return item;
+ };
+ const list=<T>(items:unknown,convert:(item:unknown)=>T):T[]=>Array.isArray(items)&&items.length<=8?items.map(convert):fail();
+ const object=(item:unknown,keys:string[])=>{
+  if(!item||typeof item!=='object'||Array.isArray(item)||Object.keys(item).some(key=>!keys.includes(key)))return fail();
+  return item as Record<string,unknown>;
+ };
+ const input=object(value,['entities','relationships','facts','preconditions','effects','approvalRequirements','limitations']);
+ const result={entities:list(input.entities,item=>text(item,80)),relationships:list(input.relationships,item=>{
+  const relation=object(item,['from','relation','to','cardinality']);
+  return {from:text(relation.from,80),relation:text(relation.relation,120),to:text(relation.to,80),...(relation.cardinality===undefined?{}:{cardinality:text(relation.cardinality,80)})};
+ }),facts:list(input.facts,item=>{
+  const fact=object(item,['text','classification','verification']);
+  if(!['schema-contract','product-convention','operational-rule'].includes(String(fact.classification))||!['repository-contract','released-source'].includes(String(fact.verification)))return fail();
+  return {text:text(fact.text),classification:fact.classification as KnowledgeArchitecture['facts'][number]['classification'],verification:fact.verification as KnowledgeArchitecture['facts'][number]['verification']};
+ }),preconditions:list(input.preconditions,item=>text(item)),effects:list(input.effects,item=>text(item)),approvalRequirements:list(input.approvalRequirements,item=>text(item)),limitations:list(input.limitations,item=>text(item))};
+ if(new TextEncoder().encode(JSON.stringify(result)).byteLength>3000)return fail();
+ return result;
+}
 
 const stop=new Set('how do i can a an the to in is it my on of for me you someone'.split(' '));
 // Explicit module names constrain guide relevance. Current-route context does
