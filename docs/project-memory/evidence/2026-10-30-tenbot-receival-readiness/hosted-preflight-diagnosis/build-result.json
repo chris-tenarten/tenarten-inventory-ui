@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "errorCode": null,
+  "durationMs": 28028,
+  "knowledgeArtifactUnchanged": true,
+  "knowledgeSha256": "18f2fe94caa69c85292ea91290a3a26ddb085a9757aed65730c437e8d01946b9",
+  "command": "npm run build -- --webpack",
+  "mandatoryPrebuild": true,
+  "localOnlySyntheticApi": true,
+  "hostedDeployment": false,
+  "releaseProofClaimed": false,
+  "inferenceCalls": 0
+}

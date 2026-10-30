@@ -1,0 +1,176 @@
+{
+  "recordedAt": "2026-10-30T22:39:49.112Z",
+  "scope": "One bounded tagged replay of original five read-only endpoints plus Auth health and public page; no original response reconstruction claimed.",
+  "requests": [
+    {
+      "name": "supabase-management-readonly-query",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+      "method": "POST",
+      "startedAt": "2026-10-30T22:39:33.754Z",
+      "timeoutMs": 20000,
+      "automaticRetries": 0,
+      "readOnlySql": true,
+      "querySha256": "805e87baf109418d112528cb9a4662e10aa337b6633d223bdf5319a5ebbb5dd2",
+      "status": 544,
+      "statusText": "<none>",
+      "headersMs": 15348,
+      "totalMs": 15349,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 22:39:49 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52deaad8e10b172-IAH",
+        "cf-cache-status": "DYNAMIC",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "bodyBytes": 86,
+      "bodySha256": "caae185f80a243cbdcc0c3560a6fec6901c65e0060831dd9c7da0d68597e12cb",
+      "diagnostics": {
+        "message": "Failed to run sql query: Connection terminated due to connection timeout"
+      },
+      "bodyRetained": false
+    },
+    {
+      "name": "supabase-management-secrets-metadata",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/secrets",
+      "method": "GET",
+      "startedAt": "2026-10-30T22:39:33.795Z",
+      "timeoutMs": 20000,
+      "automaticRetries": 0,
+      "status": 200,
+      "statusText": "OK",
+      "headersMs": 225,
+      "totalMs": 227,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 22:39:34 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52deaacf9afc2f1-IAH",
+        "cf-cache-status": "DYNAMIC",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "bodyBytes": 5571,
+      "bodySha256": "8abbafb9b43c186056cd87a4b68daeeb1d83ef641a8fc470946cfa5c6e42e4e6",
+      "diagnostics": {
+        "rows": 37,
+        "digestOnlyVerified": true
+      },
+      "bodyRetained": false
+    },
+    {
+      "name": "supabase-management-functions-metadata",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/functions",
+      "method": "GET",
+      "startedAt": "2026-10-30T22:39:33.811Z",
+      "timeoutMs": 20000,
+      "automaticRetries": 0,
+      "status": 200,
+      "statusText": "OK",
+      "headersMs": 216,
+      "totalMs": 216,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 22:39:34 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52deaacfae38bef-DFW",
+        "cf-cache-status": "DYNAMIC",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "bodyBytes": 6635,
+      "bodySha256": "8e6577f39bcf66a45f404d881a00ba66621296825c3c5a8282bc8418fd80c9dc",
+      "diagnostics": {
+        "rows": 12,
+        "tenbotVersion": 23
+      },
+      "bodyRetained": false
+    },
+    {
+      "name": "cloudflare-pages-tendev",
+      "endpoint": "https://api.cloudflare.com/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tendev",
+      "method": "GET",
+      "startedAt": "2026-10-30T22:39:33.812Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "statusText": "OK",
+      "headersMs": 436,
+      "totalMs": 436,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 22:39:34 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52deaad2b49dd07-DFW",
+        "cf-cache-status": "DYNAMIC",
+        "content-type": "application/json; charset=UTF-8"
+      },
+      "bodyBytes": 9944,
+      "bodySha256": "8b24d505b9e3062b5b299aa716a38e6e6949bccb8d7f28e3e08b93ffc6f47cea",
+      "diagnostics": {
+        "apiSuccess": true,
+        "servedSha": "ce157b99e31c227480c479169e0a480a6d509bf1"
+      },
+      "bodyRetained": false
+    },
+    {
+      "name": "cloudflare-pages-tenops",
+      "endpoint": "https://api.cloudflare.com/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tenops",
+      "method": "GET",
+      "startedAt": "2026-10-30T22:39:33.812Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "statusText": "OK",
+      "headersMs": 378,
+      "totalMs": 379,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 22:39:34 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52deaad3a1748f7-IAH",
+        "cf-cache-status": "DYNAMIC",
+        "content-type": "application/json; charset=UTF-8"
+      },
+      "bodyBytes": 9087,
+      "bodySha256": "dd274f1c9e906d63d43e701ec87166b363680f628f813ab36941e359efc209a3",
+      "diagnostics": {
+        "apiSuccess": true,
+        "servedSha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2"
+      },
+      "bodyRetained": false
+    },
+    {
+      "name": "supabase-project-auth-health",
+      "endpoint": "https://vxdxjhazkqhpkwdqtobp.supabase.co/auth/v1/health",
+      "method": "GET",
+      "startedAt": "2026-10-30T22:39:33.812Z",
+      "timeoutMs": 12000,
+      "automaticRetries": 0,
+      "status": null,
+      "totalMs": 12003,
+      "failure": "timeout",
+      "causeCode": null,
+      "bodyRetained": false
+    },
+    {
+      "name": "tendev-public-page",
+      "endpoint": "https://tendev.pages.dev/tenbot/canary",
+      "method": "GET",
+      "startedAt": "2026-10-30T22:39:33.813Z",
+      "timeoutMs": 12000,
+      "automaticRetries": 0,
+      "status": 200,
+      "statusText": "OK",
+      "headersMs": 258,
+      "totalMs": 259,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 22:39:34 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52deaad8c710c24-DFW",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "bodyBytes": 17531,
+      "bodySha256": "7fb5fa293b5033af9266dc4b4fe89da018957e890a8552137ef76c237f36fc41",
+      "diagnostics": {},
+      "bodyRetained": false
+    }
+  ],
+  "mutations": 0,
+  "modelCalls": 0,
+  "credentialValuesStored": false,
+  "noAuthUserSessionReadOrRefresh": true
+}

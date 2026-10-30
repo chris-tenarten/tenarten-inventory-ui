@@ -1,0 +1,96 @@
+{
+  "passed": true,
+  "kind": "Source-driven engineering diagnosis, not hosted/browser evidence",
+  "sourceSha256": "d8b42e21255414bd0f17ec1eae13921738c90e7ea35faaa7265fd907b52886ec",
+  "installedAuthSdk": "2.101.1",
+  "observations": [
+    {
+      "case": "bootstrap-promise-never-settles",
+      "afterVirtual120Seconds": {
+        "ready": false,
+        "accessStatus": "pending",
+        "isAuthenticated": false,
+        "accessAllowed": false,
+        "profileError": ""
+      },
+      "applicationResolutionWatchdogTimers": 0
+    },
+    {
+      "case": "profile-promise-never-settles",
+      "afterVirtual120Seconds": {
+        "ready": true,
+        "accessStatus": "pending",
+        "isAuthenticated": true,
+        "accessAllowed": false,
+        "profileError": ""
+      },
+      "applicationResolutionWatchdogTimers": 0
+    },
+    {
+      "case": "bootstrap-error",
+      "afterVirtual120Seconds": {
+        "ready": true,
+        "accessStatus": "failed",
+        "isAuthenticated": false,
+        "accessAllowed": false,
+        "profileError": "Unable to restore your TenOps session. Please refresh and retry."
+      },
+      "applicationResolutionWatchdogTimers": 0
+    },
+    {
+      "case": "profile-error",
+      "afterVirtual120Seconds": {
+        "ready": true,
+        "accessStatus": "failed",
+        "isAuthenticated": true,
+        "accessAllowed": false,
+        "profileError": "Unable to verify your TenOps account access. OFFLINE simulated profile rejection"
+      },
+      "applicationResolutionWatchdogTimers": 0
+    },
+    {
+      "case": "no-persisted-session",
+      "afterVirtual120Seconds": {
+        "ready": true,
+        "accessStatus": "denied",
+        "isAuthenticated": false,
+        "accessAllowed": false,
+        "profileError": ""
+      },
+      "applicationResolutionWatchdogTimers": 0
+    },
+    {
+      "case": "normal-success",
+      "afterVirtual120Seconds": {
+        "ready": true,
+        "accessStatus": "allowed",
+        "isAuthenticated": true,
+        "accessAllowed": true,
+        "profileError": ""
+      },
+      "applicationResolutionWatchdogTimers": 0
+    },
+    {
+      "case": "installed-SDK-expired-synthetic-session-with-pending-custom-refresh-fetch",
+      "injectedFetchCalls": 1,
+      "getSessionSettled": false,
+      "afterVirtual120Seconds": {
+        "ready": false,
+        "accessStatus": "pending",
+        "isAuthenticated": false,
+        "accessAllowed": false,
+        "profileError": ""
+      }
+    }
+  ],
+  "limits": [
+    "Virtual time advanced only application timers; this does not claim 120 real seconds elapsed or reproduce Safari network behavior.",
+    "Confirmed application has no resolution deadline for pending getSession or get_my_app_access.",
+    "A later rejected bootstrap reaches the observed safe restore error; this does not identify its live cause.",
+    "No auth callback deadlock is established by these cases."
+  ],
+  "networkRequests": 0,
+  "realCredentials": 0,
+  "sourceEdits": 0,
+  "mutations": 0
+}

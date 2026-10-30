@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-10-30T22:51:00.899Z",
+  "evidence": "Actual existing Safari Web Inspector errors read through cua_repl; no console commands, new sign-in, token inspection, request replay or HAR export.",
+  "page": "https://tendev.pages.dev/tenbot/canary",
+  "uiInitiallyObserved": "Restoring your TenOps session…",
+  "laterUiObserved": "Sign-in form: Unable to restore your TenOps session. Please refresh and retry.",
+  "endpoint": "https://vxdxjhazkqhpkwdqtobp.supabase.co/auth/v1/token?grant_type=refresh_token",
+  "method": "POST per installed SDK refresh contract; console captured URL/status rather than request headers.",
+  "responseStatus": 522,
+  "errors": [
+    "Origin is not allowed by Access-Control-Allow-Origin. Status code:522",
+    "TypeError: Load failed",
+    "AuthRetryableFetchError: Load failed"
+  ],
+  "invalidCredential400or401Observed": false,
+  "requestTimingCaptured": false,
+  "requestCountNotClaimed": true,
+  "networkInspectorOpenedAfterLoad": true,
+  "meaningOfDashesNotInferred": true,
+  "requestOrResponseTokenBodiesRead": false,
+  "credentialsCopied": false,
+  "consoleCommandsExecuted": false,
+  "inspectorClosed": true,
+  "nativeControlReleased": true
+}

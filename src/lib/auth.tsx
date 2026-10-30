@@ -49,6 +49,8 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+const SESSION_RESTORE_TIMEOUT_MS = 20_000;
+const PROFILE_VERIFY_TIMEOUT_MS = 15_000;
 
 function normalizeProfile(value: unknown): AppUserProfile | null {
   const row = Array.isArray(value) ? value[0] : value;
@@ -97,12 +99,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifiedSession = useRef<Session | null>(null);
   const generation = useRef(0);
   const mounted = useRef(false);
+  const profileRequest = useRef<{ request: number; controller: AbortController; timer: number } | null>(null);
+
+  const cancelProfileRequest = useCallback(() => {
+    const pending = profileRequest.current;
+    profileRequest.current = null;
+    if (!pending) return;
+    window.clearTimeout(pending.timer);
+    pending.controller.abort();
+  }, []);
+
+  const expireResolution = useCallback((request: number, phase: "session" | "profile") => {
+    if (!mounted.current || generation.current !== request) return;
+    // SDK initialization cannot be aborted through getSession. Invalidate this
+    // application request before cancellation so its late result has no access.
+    generation.current++;
+    cancelProfileRequest();
+    if (phase === "session") {
+      currentSession.current = null;
+      setSession(null);
+    }
+    verifiedSession.current = null;
+    suspendPushAccount();
+    setProfile(null);
+    setProfileError(phase === "session"
+      ? "Unable to restore your TenOps session in time. Check your connection, then refresh and retry."
+      : "Unable to verify your TenOps account access in time. Check your connection, then refresh and retry.");
+    setAccessStatus("failed");
+    setReady(true);
+  }, [cancelProfileRequest]);
 
   const loadProfile = useCallback(async (nextSession: Session, request: number) => {
     const current = () => mounted.current && generation.current === request && currentSession.current === nextSession;
     if (!current()) return;
+    cancelProfileRequest();
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => expireResolution(request, "profile"), PROFILE_VERIFY_TIMEOUT_MS);
+    profileRequest.current = { request, controller, timer };
+    const finish = () => {
+      if (profileRequest.current?.request !== request) return;
+      window.clearTimeout(profileRequest.current.timer);
+      profileRequest.current = null;
+    };
     try {
-      const { data, error } = await supabase.rpc("get_my_app_access");
+      const { data, error } = await supabase.rpc("get_my_app_access").abortSignal(controller.signal);
+      // Welcome notifications are independent of access verification. Their
+      // latency must not consume the profile deadline after access is known.
+      finish();
       if (!current()) return;
       if (error) throw error;
       const nextProfile = normalizeProfile(data);
@@ -130,11 +173,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const detail = cause && typeof cause === "object" && "message" in cause && typeof cause.message === "string" ? cause.message : "Please refresh and retry.";
       setProfileError(`Unable to verify your TenOps account access. ${detail}`);
       setAccessStatus("failed");
+    } finally {
+      finish();
     }
-  }, []);
+  }, [cancelProfileRequest, expireResolution]);
 
   // Invalidate old requests immediately, before deferring any authenticated RPC.
   const beginResolution = useCallback((nextSession: Session | null, continuing = false, preservePendingPushSession = false, revokePush = false) => {
+    cancelProfileRequest();
     if (revokePush || !nextSession || (currentSession.current && currentSession.current.user.id !== nextSession.user.id)) setPushAccount(null);
     else if (!continuing && !preservePendingPushSession) suspendPushAccount();
     const request = ++generation.current;
@@ -148,14 +194,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setReady(true);
     return request;
-  }, []);
+  }, [cancelProfileRequest]);
 
   useEffect(() => {
     mounted.current = true;
     let initialAuthSnapshotReceived = false;
     let authChangeProfileTimer: number | null = null;
     const bootstrap = generation.current;
+    let bootstrapTimer: number | null = window.setTimeout(() => expireResolution(bootstrap, "session"), SESSION_RESTORE_TIMEOUT_MS);
+    const finishBootstrap = () => {
+      if (bootstrapTimer !== null) window.clearTimeout(bootstrapTimer);
+      bootstrapTimer = null;
+    };
     void supabase.auth.getSession().then(async ({ data, error }) => {
+      finishBootstrap();
       if (!mounted.current || generation.current !== bootstrap) return;
       if (error) throw error;
       const accountFlow = new URLSearchParams(window.location.search).get("account");
@@ -163,6 +215,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const request = beginResolution(data.session);
       if (data.session) await loadProfile(data.session, request);
     }).catch(() => {
+      finishBootstrap();
       if (!mounted.current || generation.current !== bootstrap) return;
       setProfile(null);
       suspendPushAccount();
@@ -175,6 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Deduplicate only an already accepted bootstrap snapshot. A different
       // identity/session event must invalidate bootstrap even before INITIAL_SESSION.
       if (event === "SIGNED_IN" && !initialAuthSnapshotReceived && currentSession.current?.user.id === nextSession?.user.id && currentSession.current?.access_token === nextSession?.access_token) return;
+      finishBootstrap();
       const accountFlow = new URLSearchParams(window.location.search).get("account");
       const callbackFlow = accountFlow === "setup" || accountFlow === "recovery";
       setRequiresPasswordSetup(Boolean(nextSession) && (event === "PASSWORD_RECOVERY" || callbackFlow));
@@ -197,10 +251,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // This is a generation counter, not a DOM ref: invalidate all current work.
       // eslint-disable-next-line react-hooks/exhaustive-deps
       generation.current++;
+      finishBootstrap();
+      cancelProfileRequest();
       if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
       data.subscription.unsubscribe();
     };
-  }, [beginResolution, loadProfile]);
+  }, [beginResolution, cancelProfileRequest, expireResolution, loadProfile]);
 
   const refreshProfile = useCallback(async () => {
     const nextSession = currentSession.current;

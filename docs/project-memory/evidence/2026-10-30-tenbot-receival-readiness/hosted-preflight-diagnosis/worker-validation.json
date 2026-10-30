@@ -1,0 +1,88 @@
+{
+  "kind": "Engineering receipt of observed executions; not raw stdout",
+  "recordedAt": "2026-10-30T22:44:32.925Z",
+  "passed": true,
+  "groups": 9,
+  "checks": [
+    "bootstrap waits below20seconds, then fails closed without clearing persisted auth",
+    "profile waits below15seconds, aborts atdeadline and ignores late successful access",
+    "later genuine auth event recovers after bootstrap timeout without accepting late bootstrap",
+    "new identity aborts earlier profile and stale reply cannot restore oldaccount",
+    "same-login refresh times out failclosed and subsequent refresh revalidates without device revocation",
+    "unmount clears bootstrap/profile timers and cancels pending access without late state writes",
+    "successful verification cancels deadline before independent welcome notification settles",
+    "existing bootstrap errors, missing session and profile failures retain their correct states",
+    "installed SDK pending expired-session refresh is bounded by actual provider20second watchdog"
+  ],
+  "commands": [
+    {
+      "command": "node scripts/verify-auth-resolution-deadlines.mjs",
+      "result": "PASS",
+      "exitCode": 0
+    },
+    {
+      "command": "./node_modules/.bin/tsc -p /private/tmp/tenops-tenbot-auth-diagnosis-20261030/tsconfig.auth-check.json --noEmit",
+      "result": "PASS",
+      "exitCode": 0
+    },
+    {
+      "command": "./node_modules/.bin/eslint src/lib/auth.tsx scripts/verify-auth-resolution-deadlines.mjs scripts/verify-auth-startup-resolution.mjs",
+      "result": "PASS",
+      "exitCode": 0
+    },
+    {
+      "command": "node --check scripts/verify-auth-startup-resolution.mjs",
+      "result": "PASS",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check -- src/lib/auth.tsx scripts/verify-auth-resolution-deadlines.mjs scripts/verify-auth-startup-resolution.mjs",
+      "result": "PASS",
+      "exitCode": 0
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "src/lib/auth.tsx",
+      "sha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527"
+    },
+    {
+      "path": "scripts/verify-auth-resolution-deadlines.mjs",
+      "sha256": "0813dbaca210dfd14d8a6a53d1c24478e48397f4b4011e8725c3b898daca9ea6"
+    },
+    {
+      "path": "scripts/verify-auth-startup-resolution.mjs",
+      "sha256": "10ff9fce77f9fcb12eea17a7816a5acbdae1f00cf6d10420b817615a154ee73d"
+    }
+  ],
+  "scope": "Actual AuthProvider source and installed auth-js SDK; synthetic storage/injected fetch/virtual application clock. Browser verifier helper only syntax/lint checked here; root runs actual browser separately.",
+  "boundaries": {
+    "sessionDeadlineMs": 20000,
+    "profileDeadlineMs": 15000,
+    "lateGenerationResultsRejected": true,
+    "profileSignalAborted": true,
+    "persistedSessionPreserved": true,
+    "sdkLocksUnchanged": true,
+    "noSignOutOrStorageClear": true,
+    "welcomeNotificationIndependent": true
+  },
+  "networkRequests": 0,
+  "credentialsAccessed": 0,
+  "hostedMutations": 0,
+  "appBrowserClaim": false,
+  "upstreamRepairClaim": false,
+  "browserPreparation": {
+    "existingGroups": 18,
+    "addedGroups": 2,
+    "totalGroups": 20,
+    "newCases": [
+      "held profile hits real15second deadline, ignores late reply and recovers on genuine refresh",
+      "held expired-session refresh hits real20second bootstrap deadline without clearing storage or binding"
+    ],
+    "syntaxChecked": true,
+    "targetedLintPassed": true,
+    "diffCheckPassed": true,
+    "executed": false,
+    "actualApplicationSourceUnchangedSinceNineGroupPass": true
+  }
+}

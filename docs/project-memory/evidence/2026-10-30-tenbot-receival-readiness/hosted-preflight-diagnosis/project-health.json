@@ -1,0 +1,20 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=db,auth&timeout_ms=3000",
+  "method": "GET",
+  "startedAt": "2026-10-30T22:42:45.837Z",
+  "status": 400,
+  "headersMs": 218,
+  "totalMs": 222,
+  "responseHeaders": {
+    "date": "Fri, 30 Oct 2026 22:42:46 GMT",
+    "server": "cloudflare",
+    "cf-ray": "a52def5d4954c303-IAH",
+    "content-type": "application/json; charset=utf-8"
+  },
+  "bodyBytes": 73,
+  "bodySha256": "152afe6e4b3cb8a0cb379aee024293221746a55c56d9943d167aeea35c2504e2",
+  "services": [],
+  "rawBodyRetained": false,
+  "automaticRetries": 0,
+  "mutations": 0
+}

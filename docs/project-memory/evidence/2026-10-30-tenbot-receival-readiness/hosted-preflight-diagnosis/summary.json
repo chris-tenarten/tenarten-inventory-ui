@@ -1,0 +1,211 @@
+{
+  "status": "CONFIRMED_HOSTED_DB_AUTH_FAILURE_LOCAL_LIVENESS_FIX_PENDING_PRODUCT_ACCEPTANCE",
+  "recordedAt": "2026-10-30T22:51:00.900Z",
+  "authority": "Chris DIAGNOSE HOSTED PREFLIGHT FAILURE: bounded diagnostics, implement/validate/commit only demonstrated narrow app fixes locally; no canary, permissions, enrollment, operational writes, push or deployment. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "baseDevSha": "9a03fd0ed054fb5880aeff079b0b8f48d8a8fd9d",
+  "source": [
+    {
+      "path": "src/lib/auth.tsx",
+      "sha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527"
+    },
+    {
+      "path": "scripts/verify-auth-resolution-deadlines.mjs",
+      "sha256": "0813dbaca210dfd14d8a6a53d1c24478e48397f4b4011e8725c3b898daca9ea6"
+    },
+    {
+      "path": "scripts/verify-auth-startup-resolution.mjs",
+      "sha256": "10ff9fce77f9fcb12eea17a7816a5acbdae1f00cf6d10420b817615a154ee73d"
+    }
+  ],
+  "hostedObserved": {
+    "failedRequest": {
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+      "method": "POST",
+      "startedAt": "2026-10-30T22:39:33.754Z",
+      "status": 544,
+      "totalMs": 15349,
+      "message": "Failed to run sql query: Connection terminated due to connection timeout",
+      "cfRay": "a52deaad8e10b172-IAH"
+    },
+    "otherOriginalEndpoints": [
+      {
+        "name": "supabase-management-secrets-metadata",
+        "status": 200,
+        "totalMs": 227
+      },
+      {
+        "name": "supabase-management-functions-metadata",
+        "status": 200,
+        "totalMs": 216
+      },
+      {
+        "name": "cloudflare-pages-tendev",
+        "status": 200,
+        "totalMs": 436
+      },
+      {
+        "name": "cloudflare-pages-tenops",
+        "status": 200,
+        "totalMs": 379
+      }
+    ],
+    "authHealth": {
+      "name": "supabase-project-auth-health",
+      "endpoint": "https://vxdxjhazkqhpkwdqtobp.supabase.co/auth/v1/health",
+      "method": "GET",
+      "startedAt": "2026-10-30T22:39:33.812Z",
+      "timeoutMs": 12000,
+      "automaticRetries": 0,
+      "status": null,
+      "totalMs": 12003,
+      "failure": "timeout",
+      "causeCode": null,
+      "bodyRetained": false
+    },
+    "projectHealth": {
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "status": 200,
+      "totalMs": 11180,
+      "services": [
+        {
+          "name": "auth",
+          "healthy": false,
+          "status": "UNHEALTHY",
+          "errorMarkers": {
+            "databaseConnection": false,
+            "authHealth": false,
+            "timeout": false
+          }
+        },
+        {
+          "name": "db",
+          "healthy": false,
+          "status": "UNHEALTHY",
+          "errorMarkers": {
+            "databaseConnection": false,
+            "authHealth": false,
+            "timeout": false
+          }
+        }
+      ]
+    },
+    "runtimeUnchanged": "ce157b99e31c227480c479169e0a480a6d509bf1",
+    "tenDevDeploymentUnchanged": "5b73e5b1-3ea7-4ebd-b572-baeea36fe2fa",
+    "tenbotEdgeVersionUnchanged": 23
+  },
+  "confirmedCauses": [
+    {
+      "cause": "Preflight lacked endpoint attribution",
+      "evidence": "Original five concurrent HTTP operations shared one generic failure handler and discarded endpoint/status/timing/body details. The historical exact failed request remains unrecoverable; a new bounded replay reproduced544 on the database-query endpoint."
+    },
+    {
+      "cause": "Supabase project DB/Auth availability failure",
+      "evidence": "Supabase Management returned JSON544 with database connection timeout after15.349s; project Auth health timed out12.003s; project health then reported both auth and db UNHEALTHY. Four other vendor metadata endpoints and static Pages returned200. No Edge invocation was made by the failing preflight."
+    },
+    {
+      "cause": "Safari session refresh transport failure",
+      "evidence": "Existing genuine Safari console reports the project refresh-token endpoint522 and AuthRetryableFetchError. Bootstrap catch renders the observed restore error. No invalid-credential4xx or successful Auth response was observed."
+    },
+    {
+      "cause": "Application did not bound auth-resolution waits",
+      "evidence": "Before-fix actual provider plus installed SDK with synthetic pending refresh remained pending at virtual120seconds with zero app watchdogs. The separate profile wait also lacked a deadline. The observed live long wait is consistent with this exposure; precise browser request latency was not captured."
+    }
+  ],
+  "relationship": {
+    "assessment": "Both failing paths depend on the same unhealthy Supabase project; a shared project-side availability incident is strongly supported. The missing application deadline separately prolonged failure UX.",
+    "physicalInfrastructureCause": "UNRESOLVED: no proof of CPU, memory, connection saturation, firewall, host failure or another specific mechanism. No resource/configuration repair was attempted.",
+    "notEstablished": [
+      "Bad password or invalid refresh token",
+      "Application-level refresh loop",
+      "Auth callback deadlock",
+      "TenDev CORS configuration defect",
+      "Global Cloudflare outage",
+      "TenBot invoice-catalog defect causing these preflight/Auth failures"
+    ]
+  },
+  "correction": {
+    "implementedLocally": true,
+    "sessionRestoreDeadlineMs": 20000,
+    "profileVerifyDeadlineMs": 15000,
+    "profileRequestAbortedOnTimeout": true,
+    "generationInvalidatedBeforeCancellation": true,
+    "lateResultsCannotAuthorize": true,
+    "neutralPhaseSpecificFailureMessages": true,
+    "persistedSdkSessionAndLocksPreserved": true,
+    "noAutomaticSignOutOrStorageClear": true,
+    "pushBindingPreserved": true,
+    "welcomeNotificationIndependent": true,
+    "noNewAuthContextOrFramework": true,
+    "hostedServiceRepair": false
+  },
+  "validation": {
+    "beforeFixDiagnosticCases": 7,
+    "offlineActualProviderAndInstalledSdkGroups": 9,
+    "actualLocalAppSyntheticTransportBrowserGroups": 20,
+    "realBrowserTimerDeadlineCases": 2,
+    "lateIdentityAndRevocationRecoveryCoverage": true,
+    "externalBrowserRequests": [],
+    "hostedBrowserWrites": 0,
+    "wholeTypescriptPassed": true,
+    "targetedLintPassed": true,
+    "diffCheckPassed": true,
+    "optimizedBuildPassed": true,
+    "knowledgeArtifactUnchanged": true,
+    "independentEmReviewPassed": true,
+    "liveSafariRecoveryClaimed": false,
+    "realDatabaseSecurityRetestClaimed": false,
+    "acceptedRlsEvidenceReused": true
+  },
+  "diagnosticLimits": {
+    "originalHistorical544ResponseStillUnavailable": true,
+    "onlyOneQueryAndOneDirectAuthHealthReplay": true,
+    "originalEndpointBatchNoAutomaticRetries": true,
+    "projectHealthInputCorrections": "Two fast400 validation replies occurred because optional timeout_ms was rejected as a string. A final request omitting that optional parameter returned200 UNHEALTHY. All three receipts retained; no restart/config change.",
+    "globalStatusPageNotUsedToOverrideProjectHealth": true,
+    "sandboxBrowserLaunch": "Initial Chromium launch was denied by macOS sandbox before test execution; bounded approved outside-sandbox local run passed20groups.",
+    "noFurtherUnresponsiveHostedProbes": true
+  },
+  "prerequisitesForAnotherCanary": [
+    "Supabase owner/support restores this shared project DB and Auth to responsive healthy service; inspect the captured project/time/request IDs and resource reports. Restart, resize, pause/resume or other infrastructure mutation needs separate Product authorization.",
+    "Verify successful genuine Safari Admin restoration and Chrome chris_dev Developer access without credential borrowing or changing permissions.",
+    "A fresh endpoint-tagged bounded read-only preflight must pass funding, duplicate, stock and OFF-state checks. Do not treat the old preflight or public Pages success as this proof.",
+    "Obtain Product acceptance of this local application fix and separate staging authorization if it is to be deployed. No deployment is included here.",
+    "Before any future canary, reconfirm an explicit <=15minute execution window and adequate server-enforced funding. Existing pilot stops2026-10-30T23:00:00Z (6p.m.Chicago); no extension or new spending is authorized by this diagnosis."
+  ],
+  "boundaries": {
+    "grantActivations": 0,
+    "permissionChanges": 0,
+    "enrollmentChanges": 0,
+    "agentGateChanges": 0,
+    "invoiceUploads": 0,
+    "approvals": 0,
+    "canaryAttempts": 0,
+    "operationalMutations": 0,
+    "modelCalls": 0,
+    "paidInferenceCostUsd": 0,
+    "migrations": 0,
+    "hostedSecretOrProviderChanges": 0,
+    "deployments": 0,
+    "pushes": 0,
+    "dockerActions": 0,
+    "completeFreshDatabaseGateReadbackAvailable": false,
+    "lastKnownCanaryControlsOffUnchangedByThisTask": true
+  },
+  "localWorkspace": {
+    "reviewUrl": "http://localhost:3000",
+    "existingStaticServerPid": 79102,
+    "serverReplaced": false,
+    "buildUsesSyntheticLoopbackApi": "http://127.0.0.1:55592",
+    "browserUsesInterceptedSyntheticResponses": true,
+    "normalHostedDataDemoClaimed": false,
+    "unrelatedDirtyWorkPreserved": true
+  },
+  "officialReferences": [
+    "https://supabase.com/kb/troubleshooting/failed-to-run-sql-query-connection-terminated-due-to-connection-timeout",
+    "https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-522/",
+    "https://supabase.com/docs/reference/api/v1-get-services-health"
+  ],
+  "stop": "Product review; hosted availability remains blocked. No additional canary attempt."
+}

@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "reviewerTask": "/root/architecture_audit",
+  "review": "Independent source/test/evidence review; no P1/P2. No duplicate test/network execution.",
+  "sourceHashes": [
+    {
+      "path": "src/lib/auth.tsx",
+      "sha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527"
+    },
+    {
+      "path": "scripts/verify-auth-resolution-deadlines.mjs",
+      "sha256": "0813dbaca210dfd14d8a6a53d1c24478e48397f4b4011e8725c3b898daca9ea6"
+    },
+    {
+      "path": "scripts/verify-auth-startup-resolution.mjs",
+      "sha256": "10ff9fce77f9fcb12eea17a7816a5acbdae1f00cf6d10420b817615a154ee73d"
+    }
+  ],
+  "findings": [
+    "Session watchdog invalidates only application generation/in-memory state; SDK persisted session and locks unchanged.",
+    "Profile deadline invalidates generation before cancellation; stale replies cannot grant access.",
+    "Timeout preserves persistent push opt-in via suspension; no signOut or releasePushDevice.",
+    "Access deadline clears before independent welcome notification.",
+    "Host availability failure and missing UI deadline remain separate findings; no live recovery claimed."
+  ]
+}

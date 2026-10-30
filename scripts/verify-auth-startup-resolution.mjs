@@ -8,8 +8,8 @@ const A='00000000-0000-0000-0000-0000000000a1',B='00000000-0000-0000-0000-000000
 function session(id=A,version=1,loginIdentity=false){const user={id,aud:'authenticated',role:'authenticated',email:`review-${id.slice(-2)}@example.invalid`,app_metadata:{},user_metadata:{},created_at:'2026-10-16T00:00:00Z'};const token=Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')+'.'+Buffer.from(JSON.stringify({sub:id,role:'authenticated',exp:4102444800,version,...(loginIdentity?{session_id:'00000000-0000-4000-8000-000000000099'}:{})})).toString('base64url')+'.local-only';return{access_token:token,refresh_token:'local-only',expires_at:4102444800,expires_in:3600,token_type:'bearer',user};}
 const profile=(id=A,active=true)=>[{user_id:id,display_name:id===A?'Review A':'Review B',role:'admin',is_active:active,read_only:false,messaging_write:true,production_blend_manage:false,sample_labels_generate:false}];
 const browser=await chromium.launch({headless:true}),checks=[],external=[],pageErrors=[];
-async function fixture({settings=false,loginIdentity=false,accessFailure=false}={}){
- const context=await browser.newContext({viewport:{width:1440,height:1000}}),pending=[],statusRequests=[];
+async function fixture({settings=false,loginIdentity=false,accessFailure=false,expiredBootstrap=false}={}){
+ const context=await browser.newContext({viewport:{width:1440,height:1000}}),pending=[],statusRequests=[],refreshRequests=[];
  const status={enabled:true,generation:1,delivery_enabled:true,show_previews:true,environment:'prod',key_version:'v1',endpoint_hash:createHash('sha256').update('https://web.push.apple.com/browser-review').digest('hex')};let statusFailure=false,holdStatus=settings;
  await context.addInitScript(({seed,A,B})=>{
   if(!localStorage.getItem('sb-127-auth-token'))localStorage.setItem('sb-127-auth-token',JSON.stringify(seed));
@@ -20,12 +20,21 @@ async function fixture({settings=false,loginIdentity=false,accessFailure=false}=
   Object.defineProperty(navigator,'serviceWorker',{configurable:true,value:{addEventListener(){},removeEventListener(){},getRegistration:async()=>registration,register:async()=>registration,ready:Promise.resolve(registration)}});
   Object.defineProperty(Notification,'permission',{configurable:true,get:()=> 'granted'});
   window.denialTrace=[];new MutationObserver(()=>{if(document.body?.innerText.includes('This account is disabled'))window.denialTrace.push(performance.now());}).observe(document,{childList:true,subtree:true,characterData:true});
- },{seed:session(A,1,loginIdentity),A,B});
+ },{seed:{...session(A,1,loginIdentity),...(expiredBootstrap?{expires_at:1,expires_in:0}:{})},A,B});
  await context.route('**/*',async route=>{
   const r=route.request(),u=new URL(r.url());
   if(u.origin===origin)return route.continue();
   if(u.origin!=='http://127.0.0.1:55592'){external.push(u.origin);return route.abort();}
-  if(u.pathname==='/rest/v1/rpc/get_my_app_access')return new Promise(resolve=>pending.push({reply:async(data,status=200)=>{const response=page.waitForResponse(response=>response.request()===r);await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});await response;await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));resolve();}}));
+  if(expiredBootstrap&&r.method()==='POST'&&u.pathname==='/auth/v1/token'&&u.searchParams.get('grant_type')==='refresh_token')return new Promise(resolve=>refreshRequests.push({failure:()=>r.failure(),fail:async()=>{const response=r.response();await route.abort('failed');assert.equal(await response,null);assert(r.failure(),'Injected held refresh must record its failure');resolve();}}));
+  if(u.pathname==='/rest/v1/rpc/get_my_app_access')return new Promise(resolve=>pending.push({failure:()=>r.failure(),reply:async(data,status=200)=>{
+   // A superseded profile request is now aborted by the provider. Its response
+   // promise settles to null; waiting only for a response event would hang.
+   const response=r.response();let fulfilError;
+   try{await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});}catch(error){fulfilError=error;}
+   const result=await response;
+   if(result){if(fulfilError)throw fulfilError;}else assert.match(r.failure()?.errorText??'',/abort|cancel/i,'Held access request must respond or be observably cancelled');
+   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));resolve();
+  }}));
   if(u.pathname==='/rest/v1/rpc/can_view_my_web_push_settings')return accessFailure?route.fulfill({status:503,json:{message:'Temporary verification failure'}}):route.fulfill({json:true});
   if(u.pathname==='/rest/v1/rpc/get_my_web_push_configuration')return route.fulfill({json:{environment:'prod',key_version:'v1',public_key:'BA'+'A'.repeat(85)}});
   if(u.pathname==='/rest/v1/rpc/get_my_web_push_subscription'){
@@ -39,12 +48,13 @@ async function fixture({settings=false,loginIdentity=false,accessFailure=false}=
  });
  const page=await context.newPage();page.on('pageerror',e=>pageErrors.push(e.message));await page.goto(origin+(settings?'/settings':'/my-work'));
  async function request(index){await expect.poll(()=>pending.length,{timeout:15000}).toBeGreaterThan(index);return pending[index];}
+ async function refreshRequest(){await expect.poll(()=>refreshRequests.length,{timeout:10000}).toBeGreaterThan(0);return refreshRequests[0];}
  async function waiting(){await expect(page.getByText('Restoring your TenOps session…',{exact:true})).toBeVisible();assert.equal(await page.getByRole('button',{name:'Messaging',exact:true}).count(),0);assert.equal(await page.getByText(/This account is disabled/).count(),0);}
  async function allowed(){await expect(page.getByRole('button',{name:'Messaging',exact:true})).toBeVisible();assert.equal(await page.getByText(/This account is disabled/).count(),0);}
  async function denied(){await expect(page.getByText('This account is disabled or does not have access to this TenOps environment.',{exact:true})).toBeVisible();assert.equal(await page.getByRole('button',{name:'Messaging',exact:true}).count(),0);}
  async function failed(){await expect(page.getByRole('alert').filter({hasText:'Unable to verify your TenOps account access.'})).toBeVisible();assert.equal(await page.getByText(/This account is disabled/).count(),0);assert.equal(await page.getByRole('button',{name:'Messaging',exact:true}).count(),0);}
  async function event(name,next){await page.evaluate(({name,next})=>{if(next)localStorage.setItem('sb-127-auth-token',JSON.stringify(next));else localStorage.removeItem('sb-127-auth-token');const channel=new BroadcastChannel('sb-127-auth-token');channel.postMessage({event:name,session:next});channel.close();},{name,next});}
- return {context,page,request,waiting,allowed,denied,failed,event,status,setAccessFailure:value=>{accessFailure=value;},setStatusFailure:value=>{statusFailure=value;},releaseStatus:()=>{holdStatus=false;for(const resolve of statusRequests.splice(0))resolve();}};
+ return {context,page,request,refreshRequest,profileRequestCount:()=>pending.length,waiting,allowed,denied,failed,event,status,setAccessFailure:value=>{accessFailure=value;},setStatusFailure:value=>{statusFailure=value;},releaseStatus:()=>{holdStatus=false;for(const resolve of statusRequests.splice(0))resolve();}};
 }
 async function run(name,test,options){if(process.env.AUTH_REVIEW_CHECK&&!new RegExp(process.env.AUTH_REVIEW_CHECK).test(name))return;const f=await fixture(options);try{await test(f);checks.push(name);console.log('PASS '+name);}catch(error){console.error(JSON.stringify({pageErrors,external,body:(await f.page.locator('body').innerText()).slice(0,400)}));throw error;}finally{await f.context.close();}}
 try{
@@ -86,5 +96,24 @@ try{
   f.status.enabled=false;f.status.generation=2;await section.getByRole('button',{name:'Check again'}).click();await expect(section.getByText('Not registered on this device',{exact:true})).toBeVisible();assert.equal(await f.page.evaluate(()=>window.pushProbe.revokes),0);
   await section.getByRole('button',{name:'Disable on this device'}).click();await expect.poll(()=>f.page.evaluate(()=>window.pushProbe.revokes)).toBeGreaterThan(0);
  },{settings:true});
+ await run('held profile hits real15second deadline, ignores late reply and recovers on genuine refresh',async f=>{
+  const old=await f.request(0),binding=await f.page.evaluate(()=>localStorage.getItem('tenops.push.device.v1'));await f.waiting();
+  const message='Unable to verify your TenOps account access in time. Check your connection, then refresh and retry.';
+  await expect(f.page.getByRole('alert').filter({hasText:message})).toBeVisible({timeout:22000});
+  assert.equal(await f.page.getByRole('button',{name:'Messaging',exact:true}).count(),0);await expect.poll(()=>old.failure()).not.toBeNull();
+  await old.reply(profile());await expect(f.page.getByRole('alert').filter({hasText:message})).toBeVisible();assert.equal(await f.page.getByRole('button',{name:'Messaging',exact:true}).count(),0);
+  assert.equal(await f.page.evaluate(()=>localStorage.getItem('tenops.push.device.v1')),binding);assert.deepEqual(await f.page.evaluate(()=>window.pushProbe),{unsubscribes:0,revokes:0});
+  await f.event('TOKEN_REFRESHED',session(A,2,true));await(await f.request(1)).reply(profile());await f.allowed();assert.equal(await f.page.getByText(message,{exact:true}).count(),0);
+  assert.equal(await f.page.evaluate(()=>localStorage.getItem('tenops.push.device.v1')),binding);assert.deepEqual(await f.page.evaluate(()=>window.pushProbe),{unsubscribes:0,revokes:0});
+ },{loginIdentity:true});
+ await run('held expired-session refresh hits real20second bootstrap deadline without clearing storage or binding',async f=>{
+  const refresh=await f.refreshRequest(),before=await f.page.evaluate(()=>({session:localStorage.getItem('sb-127-auth-token'),binding:localStorage.getItem('tenops.push.device.v1')}));await f.waiting();
+  await expect(f.page.getByRole('alert').filter({hasText:'Unable to restore your TenOps session in time. Check your connection, then refresh and retry.'})).toBeVisible({timeout:24000});
+  await expect(f.page.getByLabel('Email',{exact:true})).toBeVisible();assert.equal(await f.page.getByRole('button',{name:'Messaging',exact:true}).count(),0);assert.equal(f.profileRequestCount(),0);
+  assert.deepEqual(await f.page.evaluate(()=>({session:localStorage.getItem('sb-127-auth-token'),binding:localStorage.getItem('tenops.push.device.v1')})),before);assert.deepEqual(await f.page.evaluate(()=>window.pushProbe),{unsubscribes:0,revokes:0});
+  // Only terminate the injected transport after observing the application
+  // deadline. No synthetic authenticated token response is ever returned.
+  await refresh.fail();assert(refresh.failure());
+ },{expiredBootstrap:true});
  assert.deepEqual(external,[]);assert.deepEqual(pageErrors,[]);console.log(JSON.stringify({passed:checks.length,checks,pageErrors,externalRequests:external,hostedWrites:0},null,2));
 }finally{await browser.close();}
