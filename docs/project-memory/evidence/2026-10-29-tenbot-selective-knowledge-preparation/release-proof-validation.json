@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-30",
+  "status": "passed-local-selective-release-preparation-pending-product-acceptance",
+  "validatedSourceCandidate": "7c4b12af3e613178046c10598e7f345e017dce69",
+  "baseline": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "acceptedKnowledgeSource": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc",
+  "proofCommit": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+  "riskTier": "Tier3 focused provenance/exact-source release proof; completed retrieval/security evidence reused",
+  "commands": [
+    {
+      "command": "node scripts/generate-tenbot-knowledge.mjs --sync",
+      "result": "pass; deterministic proof metadata regenerated before candidate commit"
+    },
+    {
+      "command": "npm run verify:tenbot-knowledge",
+      "result": "pass"
+    },
+    {
+      "command": "node scripts/generate-tenbot-knowledge.mjs --review-release 7c4b12af3e613178046c10598e7f345e017dce69 --sync",
+      "exitCode": 0,
+      "result": "reviewed; committed knowledge and nominated candidate match exactly, no source rewrite or deployed-pin advance"
+    },
+    {
+      "command": "focused exact-source/metadata assertions and git diff --check",
+      "result": "pass"
+    }
+  ],
+  "holdCounts": {
+    "semanticRecordIds": 0,
+    "unclassifiedSensitivePaths": 0,
+    "sourceReviewHolds": 0
+  },
+  "classificationCounts": {
+    "retainedOriginalRecordComparisons": 23,
+    "reboundDocumentComparisons": 3,
+    "excludedInapplicableDevComparisons": 12,
+    "verifiedHistoricalPaths": 13,
+    "verifiedInfrastructurePaths": 16,
+    "verifiedDerivedArtifacts": 1
+  },
+  "acceptedKnowledgeRecordsFacetsGrantsAndReleasePinsUnchanged": true,
+  "gateCodeUnchanged": true,
+  "allNonselectedBaselineSourceAndMigrationsUnchanged": true,
+  "invoiceApprovalMigrationAbsent": true,
+  "invoiceApprovalMigrationApplied": false,
+  "terraQwenRoutingBudgetAndOperationalWriteConfigurationUnchanged": true,
+  "independentExactSourceReview": "no blocker",
+  "cleanCandidateBeforeAndAfterGate": true,
+  "rawGateReportSha256": "35bb3a2479e840137481d9a394ee507a2b8b33f3317f6053854542ff5c3a1a57",
+  "retrievalEvidenceReused": "docs/project-memory/evidence/2026-10-29-tenbot-retrieval-refinement.json",
+  "newBroadQA": false,
+  "newModelInference": 0,
+  "hostedCalls": 0,
+  "hostedMutations": false,
+  "push": false,
+  "deployment": false,
+  "limitation": "Local proof and source preparation only. Retained earlier hosted evidence is not new hosted verification. Product acceptance and separate release approval remain required."
+}

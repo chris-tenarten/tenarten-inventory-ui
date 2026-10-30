@@ -1,0 +1,121 @@
+{
+  "status": "Implemented locally for Product review; local dev commit authorized; no push/deployment/database changes",
+  "authorizedRequest": "TENBOT \u2014 FOCUSED PRODUCTION RETRIEVAL REFINEMENT, October29,2026",
+  "base": "1ce2091c099baf11bcf31e5a3f57a78e88eee5f8",
+  "productionReference": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "risk": "Tier3 / focused Level3 for permission/source-proof-preserving retrieval only",
+  "scope": {
+    "codeFiles": [
+      "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "scripts/verify-tenbot-retrieval.mts"
+    ],
+    "reuse": "Existing accepted structured relationship ranking already returns exact R05/R12 target rules on currentdev. No new synonyms, question routers, architecture, runtime or schema change.",
+    "dedup": "Per-record permission checks precede equivalent-alias suppression before direct/seed caps and across related/final selection. Identity/search labels/identity-derived digest are excluded only from comparison; all other fields, including structured facts, grants, source/evidence/provenance/dependencies, remain significant. Returned representative and its full proof are unchanged.",
+    "limits": "24candidates,2seeds,8edges/seed,1hop,4sources,16KB remain",
+    "provenanceCaveat": "Real Bid/Manpower repeated prose with independent structured/grant/source authority is retained. No real-corpus byte saving or new model-quality improvement is claimed."
+  },
+  "regressions": [
+    {
+      "query": "Material Usage consumes Inventory reservation",
+      "required": "Material Usage reporting does not automatically decrement Inventory or consume a reservation; outtake remains a separate operation."
+    },
+    {
+      "query": "purchasing bags one project and stock split",
+      "required": "Allocate \u2192 Add Job allocation, PO order units, general-stock remainder, and header context alone does not allocate."
+    }
+  ],
+  "validation": {
+    "focusedRetrievalGroups": 9,
+    "existingArchitectureGroups": 15,
+    "generatorReproducibility": "PASS;16module sources,37pinnedfiles,16patches; artifact unchanged",
+    "candidateOnlyChecks": {
+      "mode": "Exact base Git archive plus only the two task source/test files; unrelated dirty runtime/receipts excluded; synthetic public localhost build env; no provider credentials or hosted access",
+      "sourcePins": [
+        {
+          "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+          "sha256": "bc637d02e84e2e7d2fc760899c7bb46453883ca9b60de071f2fde6c19d372d46"
+        },
+        {
+          "path": "scripts/verify-tenbot-retrieval.mts",
+          "sha256": "6f2332fb8856a66d914d002bbad00e391e8e5b452968ef8768860b09a920c8bb"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build",
+          "command": [
+            "npm",
+            "run",
+            "build",
+            "--",
+            "--webpack"
+          ],
+          "code": 0,
+          "signal": null,
+          "durationMs": 17843
+        },
+        {
+          "name": "targeted-lint",
+          "command": [
+            "/opt/homebrew/Cellar/node@24/24.18.0/bin/node",
+            "/Users/chrisngo/source/repos/tenarten-inventory-ui/node_modules/eslint/bin/eslint.js",
+            "--no-ignore",
+            "--no-warn-ignored",
+            "supabase/functions/_shared/tenbot-agent-operations.ts",
+            "scripts/verify-tenbot-retrieval.mts"
+          ],
+          "code": 0,
+          "signal": null,
+          "durationMs": 1498
+        },
+        {
+          "name": "types",
+          "command": [
+            "/opt/homebrew/Cellar/node@24/24.18.0/bin/node",
+            "/Users/chrisngo/source/repos/tenarten-inventory-ui/node_modules/typescript/bin/tsc",
+            "--noEmit",
+            "--incremental",
+            "false"
+          ],
+          "code": 0,
+          "signal": null,
+          "durationMs": 6897
+        }
+      ]
+    },
+    "independentReview": "PASS; no concrete deficiencies",
+    "diffCheck": "PASS",
+    "browser": "No new browser test: backend retrieval-only delta; prior relevant UI/history evidence reused. No review process replaced.",
+    "liveModel": "No new inference/provider comparison",
+    "database": "No database/schema/hosted validation claimed or required by this static selection delta"
+  },
+  "sourcePins": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "bc637d02e84e2e7d2fc760899c7bb46453883ca9b60de071f2fde6c19d372d46"
+    },
+    {
+      "path": "scripts/verify-tenbot-retrieval.mts",
+      "sha256": "6f2332fb8856a66d914d002bbad00e391e8e5b452968ef8768860b09a920c8bb"
+    }
+  ],
+  "releaseBoundary": {
+    "status": "Existing runtime/migration and candidate-aware source-review holds remain; none acknowledged, reclassified or bypassed",
+    "generatedSnapshotChanged": false,
+    "migrationChanged": false,
+    "authorizationHistorySpendingChanged": false,
+    "deployed": false
+  },
+  "preservedDirtyFiles": [
+    "docs/project-memory/2026-10-28-tenbot-openai-agent-poc.md",
+    "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+    "docs/project-memory/CURRENT_STATE.md",
+    "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+    "scripts/verify-tenbot-agent.mts",
+    "supabase/functions/_shared/tenbot-agent.ts"
+  ],
+  "inferenceCalls": 0,
+  "databaseRequests": 0,
+  "hostedRequests": 0,
+  "scratchDirectory": "/private/tmp/tenbot-retrieval-refinement-20261029"
+}

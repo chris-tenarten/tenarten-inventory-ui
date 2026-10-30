@@ -1,0 +1,126 @@
+{
+  "accepted": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc",
+  "baseline": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "sourcePaths": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "acceptedBlob": "d0baddb6724515063567da43370437c886e60a84",
+      "baselineBlob": "2e13692d4ba402e93be982f756c3f4bd7b873baa",
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "d0baddb6724515063567da43370437c886e60a84",
+      "sha256": "cf16874ea61a2ddc637561699826f4e37e024829c2b7beb450afcf3ddd8ef027"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "acceptedBlob": "0b90dd83531e6b95363322f888b5637c530bca1c",
+      "baselineBlob": "8ef3ddea8b790abdb3008e4ba2a6de3a2483941f",
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "0b90dd83531e6b95363322f888b5637c530bca1c",
+      "sha256": "bc637d02e84e2e7d2fc760899c7bb46453883ca9b60de071f2fde6c19d372d46"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "acceptedBlob": "c521fad047d387b226568f33a9213e9f4e564d3a",
+      "baselineBlob": "b3f9faea201ce99111969fef44c370691236cf36",
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "c521fad047d387b226568f33a9213e9f4e564d3a",
+      "sha256": "9451ce566cbd11446eaf5af983981842101c13252363ca3e0c42805eb1312f3c"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "acceptedBlob": "e8f07cd86dba84e41ddc970ce717af05ac169edb",
+      "baselineBlob": "208dcdf72bebb34c780418ac94d6c0e1db12b185",
+      "requiresProofOnlyRegeneration": true,
+      "preparedBlob": "7d7e58bf7186d7b5663c336bdc8469db32a29f45",
+      "sha256": "8ba0e7c2787dc667e4506284af49a4641dcd5fcf2d395312431cd12a3bcc5d3d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "acceptedBlob": "16a59ae220abcab962fc971597aa864b46b2ae70",
+      "baselineBlob": "14342301fbd17621b71f7733735331b4c70bbec3",
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "16a59ae220abcab962fc971597aa864b46b2ae70",
+      "sha256": "b145b092f1f54c367a0cf03ba0d3543cefa46290da356320a84027869f67599e"
+    },
+    {
+      "path": "package.json",
+      "acceptedBlob": "ad66e4b8d3b39f5f59b614724da3a97bdc7f53ea",
+      "baselineBlob": "0083b1c912b502b1ab63a23df223cc357fba17de",
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "ad66e4b8d3b39f5f59b614724da3a97bdc7f53ea",
+      "sha256": "b2ec0f54c394c781ff7e8ef0be5d943a422efe39c809e4e3e9a94a6ff734dc70"
+    },
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "acceptedBlob": "b3f76af6014524a9fa7abdc351e15058ee13e39f",
+      "baselineBlob": "d179f373a4cd96ba102e4e8a48cd74d033c5c699",
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "b3f76af6014524a9fa7abdc351e15058ee13e39f",
+      "sha256": "9c5443c4363d37bb4a650bd9c0ab90031d5ee50cc52d3047e9e019c41478b1b7"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/architecture.mjs",
+      "acceptedBlob": "f87090d98ff61914fb99844513246f37b2865b97",
+      "baselineBlob": null,
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "f87090d98ff61914fb99844513246f37b2865b97",
+      "sha256": "2394787cc80dd451e187105829d3c08b11274b034a0261cd3fe1896fa42afa85"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/infrastructure-reviews.json",
+      "acceptedBlob": "f82a73f676687ab5516a5751a839fef8633b9c1d",
+      "baselineBlob": null,
+      "requiresProofOnlyRegeneration": true,
+      "preparedBlob": "bcfd614925e8bee0085ff22229151358f0092f58",
+      "sha256": "49ee9ffc4734028dd034859e1f57c31f9c491ad57e9cafaf10e54b2030699c62"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "acceptedBlob": "f9695bb04977b26f72f8da35f291a9dffc258ba9",
+      "baselineBlob": "d8b4e283e4bbef03a8bf8ee52cc7d7eaea44a9e7",
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "f9695bb04977b26f72f8da35f291a9dffc258ba9",
+      "sha256": "923b58806536410eb9bc9db64ac241d960bc5431959c3176dea565d1e97e05a5"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+      "acceptedBlob": "820f0990017755b07ae07436904decf33a99c428",
+      "baselineBlob": null,
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "820f0990017755b07ae07436904decf33a99c428",
+      "sha256": "683ff3132cc63820e85e016822b3fdae07937cf4e90e61810709fe2e64e2d421"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-sync.mjs",
+      "acceptedBlob": "14d42bc8a657c107af68200c8ab7f272b7ac2230",
+      "baselineBlob": null,
+      "requiresProofOnlyRegeneration": false,
+      "preparedBlob": "14d42bc8a657c107af68200c8ab7f272b7ac2230",
+      "sha256": "46a80fbb2ec447c6d94754262a1942b1ae601217af456a7911225b900cd34276"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/source-reviews.json",
+      "acceptedBlob": "1b834e4f7d6614fc484b3fc89783b5c2b4d8abdb",
+      "baselineBlob": null,
+      "requiresProofOnlyRegeneration": true,
+      "preparedBlob": "8a5e9c0745545275355a889cf949bfee559606f7",
+      "sha256": "64fc800f8a866d9fea29a04fe3c5424bcb035e497da2b08bbb630e6de8aeb963"
+    }
+  ],
+  "acceptedKnowledgeContentsUnchanged": true,
+  "releasePinsUnchanged": true,
+  "protectedPathsUnchanged": [
+    "docs/project-memory/CURRENT_STATE.md",
+    "docs/project/PROJECT_MANIFEST.md",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/_shared/tenbot-openai-metering.ts",
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "invoiceMigrationAbsent": true,
+  "gateCodeExactAccepted": true,
+  "limitation": "Focused exact-source/proof preparation; prior retrieval/security checks reused; no new application QA or hosted verification."
+}
