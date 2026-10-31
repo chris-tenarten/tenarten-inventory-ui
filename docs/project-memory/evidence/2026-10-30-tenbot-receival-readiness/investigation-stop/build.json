@@ -1,0 +1,9 @@
+{
+  "mode": "isolated exact focused source archive, standard npm build -- --webpack; no hosted release attestation",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "durationMs": 17118,
+  "log": "/private/tmp/tenops-tenbot-investigation-stop-20261030/build.log",
+  "secretsCopied": false
+}

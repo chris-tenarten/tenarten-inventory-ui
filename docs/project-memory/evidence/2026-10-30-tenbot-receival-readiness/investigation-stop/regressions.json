@@ -1,0 +1,15 @@
+{
+  "mode": "offline focused regression",
+  "passed": 7,
+  "checks": [
+    "exact accepted artifact reproduces unsupported_invoice_metadata before duplicate reads",
+    "retained PDF layout binds adjacent supplier and exact invoice-reference column",
+    "existing inline labeled metadata remains supported",
+    "explicit pipe table headers preserve column identity",
+    "wrong column/date, manufacturer, material, partial and foreign evidence remain rejected",
+    "catalog completeness and source quantity checks still fail closed",
+    "actual authenticated controller/session/tool path creates one review draft with writes disabled"
+  ],
+  "inferenceCostUsd": 0,
+  "operationalWrites": 0
+}

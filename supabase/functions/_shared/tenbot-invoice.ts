@@ -3,6 +3,9 @@
 import { combinePurchasingCatalogRecords, samePurchasingVendor } from '../../../src/modules/purchasing/catalog-records.ts';
 import type { AgentTool, JsonValue, StrictSchema } from './tenbot-agent.ts';
 import type { JobToolCaller, JobToolQuery } from './tenbot-job-tools.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
+// @ts-ignore -- Edge requires explicit extensions.
+import { AgentToolError } from './tenbot-investigation-diagnostics.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports.
 import { deriveInvoiceQuantity, type InvoiceSourceQuantity } from '../../../src/modules/inventory/invoice-quantity.ts';
@@ -44,7 +47,7 @@ const object = (value: unknown): value is Row => Boolean(value) && typeof value 
 const norm = (value: string) => value.trim().replace(/\s+/g, ' ').toLowerCase();
 const phrase = (source: string, value: string) => new RegExp(`(?:^|[^a-z0-9])${norm(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:$|[^a-z0-9])`, 'i').test(norm(source));
 const strings = (value: unknown) => typeof value === 'string' ? value.trim() : '';
-const fail = (code: string): never => { throw new Error(code); };
+const fail = (code: string): never => { throw new AgentToolError(code); };
 function plain(value: unknown, max = 300): string {
   if (typeof value !== 'string' || !value.trim() || value.length > max || /[\u0000-\u001f\u007f]/.test(value)) return fail('invalid_invoice_argument');
   return value.trim();
@@ -138,6 +141,25 @@ function date(value: string) { return /^\d{4}-\d{2}-\d{2}$/.test(value) && Numbe
 const textSchema: StrictSchema = { type: 'string', minLength: 1, maxLength: 300 };
 const nullableText: StrictSchema = { anyOf: [textSchema, { type: 'null' }] };
 const schema = (properties: Record<string, StrictSchema>): StrictSchema => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false });
+/** Bind a complete metadata value to its own label in a transcription. OCR and
+ * vision can retain a label/value on one line, adjacent lines, or aligned table
+ * columns. A word occurring elsewhere in the document is never field evidence. */
+function labeledSourceValue(sources: ReadonlyMap<string, string>, sourceRef: string, labels: readonly string[]): string | null {
+  const line = sources.get(sourceRef);
+  if (line === undefined) return null;
+  const isLabel = (value: string) => labels.includes(norm(value).replace(/\s*:\s*$/, ''));
+  const inline = line.match(/^\s*([^:]+)\s*:\s*(.+?)\s*$/);
+  if (inline && isLabel(inline[1])) return inline[2];
+  const previousRef = sourceRef.replace(/:L(\d+)$/, (_, index: string) => `:L${Number(index) - 1}`);
+  const previous = sources.get(previousRef);
+  if (previous === undefined) return null;
+  if (isLabel(previous)) return line.trim();
+  const columns = (value: string) => value.trim().split(/\s{2,}|\t+|\s*\|\s*/).map(cell => cell.trim());
+  const headers = columns(previous), values = columns(line);
+  if (headers.length < 2 || headers.length !== values.length || headers.some(value => !value) || values.some(value => !value)) return null;
+  const matching = headers.map((value, index) => isLabel(value) ? index : -1).filter(index => index >= 0);
+  return matching.length === 1 ? values[matching[0]] : null;
+}
 type Candidate = { candidate_id: string; catalog_source: string; catalog_item_id: string; supplier: string; vendor_sku: string; material_name: string; size: string; category: string; order_unit: string; package_quantity: string; package_measure: string; container_type: string; package_evidence: string };
 type Extraction = { source_ref: string; description: string; quantity: string; unit: string; sourceQuantity: InvoiceSourceQuantity; size: string; vendor_sku: string; candidates: Candidate[] };
 
@@ -208,12 +230,11 @@ export function createTenbotInvoiceTools(options: InvoiceToolOptions): AgentTool
         const supplierSource = source(args.supplier_source_ref), documentSource = source(args.document_source_ref);
         const supplier = extractedText(supplierSource.line, args.supplier), documentRef = extractedText(documentSource.line, args.document_ref);
         if (!extracted.size || supplierSource.sourceRef === documentSource.sourceRef) return fail('invoice_metadata_or_materials_missing');
-        // This text-only synthetic fixture has labeled header evidence. Do not
-        // silently treat a manufacturer, a material description, or a substring
-        // of the document reference as the supplier/document identity.
-        const supplierLabel = supplierSource.line.match(/^\s*(?:supplier|vendor|sold by)\s*:\s*(.+?)\s*$/i);
-        const referenceLabel = documentSource.line.match(/^\s*(?:invoice|invoice number|invoice reference)\s*:\s*(.+?)\s*$/i);
-        if (!supplierLabel || norm(supplierLabel[1]) !== norm(supplier) || !referenceLabel || norm(referenceLabel[1]) !== norm(documentRef)) return fail('unsupported_invoice_metadata');
+        // Preserve full, labeled identities without requiring the transcription
+        // to flatten every PDF header into the original text fixture's layout.
+        const supplierValue = labeledSourceValue(sources, supplierSource.sourceRef, ['supplier', 'vendor', 'sold by']);
+        const referenceValue = labeledSourceValue(sources, documentSource.sourceRef, ['invoice', 'invoice number', 'invoice reference']);
+        if (supplierValue === null || norm(supplierValue) !== norm(supplier) || referenceValue === null || norm(referenceValue) !== norm(documentRef)) return fail('unsupported_invoice_metadata');
         duplicates = null;
         const result = await reader.readReceivals(context.signal);
         authorized(context);

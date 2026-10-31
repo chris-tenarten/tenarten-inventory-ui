@@ -27,6 +27,9 @@ import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING} from './tenbot-openai.ts
 // @ts-ignore -- explicit local extension is required by Edge bundling.
 import {AgentStepError,type AgentProvider} from './tenbot-agent.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
+// @ts-ignore -- explicit local extension is required by Edge bundling.
+import {safeInvestigationDiagnostic} from './tenbot-investigation-diagnostics.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- explicit extension required by Edge bundling.
 import {TENBOT_CANARY_OWNER,parseTenbotCanaryAccess,tenbotCanaryDocumentMatches,tenbotCanaryDraftMatches,tenbotCanaryEditsMatch,type TenbotCanaryAccess} from '../../../src/modules/inventory/tenbot-canary-access.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
@@ -125,6 +128,7 @@ export function createHostedReceivalRuntime(options:{owner:string;origin:string;
   return {...transport,async step(request){await requireCanaryFunding();assertNoFatal();if(image?.mediaType==='application/pdf')await validatePdf(image.bytes);return transport.step({...request,remainingUsd:Math.min(request.remainingUsd,Math.max(0,maximumMicros-accountedMicros)/1000000)});}};
  }
  const runtime=createAuthenticatedReceivalAgent({model:'gpt-6.1-terra',now,remainingUsd:()=>Math.max(0,maximumMicros-accountedMicros)/1000000,assertNoFatal,createProvider:provider,extractDocument:extractOriginalInvoiceDocument,
+  onDiagnostic(event){console.info('tenbot_receival_investigation',safeInvestigationDiagnostic(event));},
   catalogScope(owner){
    if(owner!==TENBOT_CANARY_OWNER)return undefined;
    if(owner!==options.owner||!canaryAccess||Date.parse(canaryAccess.expiresAt)<=now())throw new TenbotError('This temporary canary is unavailable.',403);

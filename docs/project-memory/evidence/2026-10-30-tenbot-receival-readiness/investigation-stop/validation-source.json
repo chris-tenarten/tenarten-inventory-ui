@@ -1,0 +1,17 @@
+{
+  "base": "f286586f9f52ef5e1f7cd1b83ad175c51a30505e",
+  "source": "/private/tmp/tenops-tenbot-investigation-stop-20261030/validation-source",
+  "mode": "source archive with exact focused delta; no release-candidate attestation",
+  "excluded": "pre-existing latency change, dirty verifier/documents, secrets and untracked work",
+  "files": {
+    "supabase/functions/_shared/tenbot-agent.ts": "f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98",
+    "supabase/functions/_shared/tenbot-agent-session.ts": "c36a3963b40c4b37c2dff5a59fcdad0af24cad2d661a96c285174d70a12e9dc3",
+    "supabase/functions/_shared/tenbot-invoice.ts": "9e60c5101092678155920c008691420100e69d032f1aa8c544e28499d52684d1",
+    "supabase/functions/_shared/tenbot-investigation-diagnostics.ts": "84a4d315742e76458bdb6ff840fbaaa195089ac2ddec5184468847abde85379d",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts": "c744f3758a877a17a67e962d85a1de5aa68e1b1d29bf770d58beb675227eabaa",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts": "eb2431bbf805f67a72ba244383a7081fd5ddd6800d47dc8525188ba44e998d71",
+    "scripts/verify-tenbot-invoice-investigation.mts": "5b07a9d99ffed01ebe70e3429c410a4af9482cc64e32d2bcf33e2316b82d6e2b",
+    "scripts/verify-tenbot-investigation-diagnostics.mts": "566ef48d5dace31e432429ed9018cae02ca30776a272c702af3919f5d40dac9b",
+    "scripts/fixtures/tenbot-invoice-investigation.synthetic.json": "d31fddf7c3349638a2c20ec13b4c35aa4602378abaa125d9fbd354cfac0c90f1"
+  }
+}

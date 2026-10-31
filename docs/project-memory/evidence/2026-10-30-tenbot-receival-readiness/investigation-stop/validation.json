@@ -1,0 +1,73 @@
+{
+  "status": "PASS local focused correction; hosted validation not performed",
+  "authority": "Product DIAGNOSE INVESTIGATION STOP; local correction/commit only",
+  "tier": 3,
+  "testingLevel": 3,
+  "base": "f286586f9f52ef5e1f7cd1b83ad175c51a30505e",
+  "checks": {
+    "focusedInvestigationGroups": 7,
+    "adverseMetadataVariants": 11,
+    "diagnosticGroups": 8,
+    "existingInvoiceGroups": 20,
+    "typescript": "PASS tsc --noEmit --incremental false",
+    "eslint": "PASS --no-ignore all six affected shared sources and two new verifiers; zero warnings",
+    "diffCheck": "PASS",
+    "optimizedBuild": "PASS npm run build -- --webpack, 17118ms",
+    "independentDiffReview": "PASS no material issues; replay refreshed after source-persistence naming change"
+  },
+  "source": "validation-source.json; task-only overlay restores unrelated pre-existing after_tool line",
+  "mode": "Offline deterministic/scripted provider transport and simulated caller/Storage replies; not live inference or database-security proof",
+  "historicalTerminalReason": "not retained; unsupported_invoice_metadata reproduced in exact accepted source, not recovered from hosted trace",
+  "result": {
+    "reviewRows": 1,
+    "quantity": "1",
+    "unit": "Bag",
+    "sourceQuantity": "1 Bag",
+    "executionEnabled": false,
+    "canApprove": false,
+    "businessMutationRpcCalls": 0
+  },
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "hostedMutations": 0,
+  "writeGatesActivated": false,
+  "releaseProof": "Not performed; packaged knowledge build check asserts artifact integrity only",
+  "remaining": "Separate acceptance/staging and bounded read-only hosted Deno, logging and real-model continuation; no write canary in this pass",
+  "preservation": [
+    {
+      "path": "docs/project-memory/2026-10-28-tenbot-openai-agent-poc.md",
+      "sha256": "d681471e9b4fafbc04d8dd78c5812127b97507c56827e85c8ece956699642608",
+      "unchanged": true
+    },
+    {
+      "path": "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+      "sha256": "1e304bda4180e2fd4b366a2fc7e474e837ac8099d9e237e56478a755156b48c5",
+      "unchanged": true
+    },
+    {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "sha256": "92cab3d85573029d1cf53358073e5588538a44a0f19cca707400419d518d490c",
+      "unchanged": true
+    },
+    {
+      "path": "docs/project-memory/2026-10-30-tenbot-canary-funding-correction.md",
+      "sha256": "a9444f4451e868dd855fee9e176a023381323d2141bd721f000701e153699fec",
+      "unchanged": true
+    },
+    {
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "sha256": "147bfc90069fbea976039d470a20fa83a591187bd83b802dbc42172321cc206a",
+      "unchanged": true
+    },
+    {
+      "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+      "sha256": "8f848ef9632084d43720648432596828e99207cb43bee776bd6aa7348af894f0",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/verify-tenbot-agent.mts",
+      "sha256": "b46e816c54f4b8e5a5aea17d6db93635c6952f2fb86a3034700324f09d7ce8b1",
+      "unchanged": true
+    }
+  ]
+}

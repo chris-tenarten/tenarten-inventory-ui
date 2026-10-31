@@ -1,0 +1,14 @@
+{
+  "mode": "offline synthetic privacy/boundary checks; no model inference or database security claim",
+  "passed": 8,
+  "checks": [
+    "strict fresh projection removes unknown fields, names, stages, reasons and invalid durations",
+    "normal model and tool events contain no invoice, response, result, context or owner values",
+    "unknown model-selected tool names are redacted while the safe boundary reason survives",
+    "arbitrary exception text is discarded and typed metadata failures remain actionable",
+    "arbitrary provider error codes and authorization exceptions cannot leak into events",
+    "synchronous and asynchronous diagnostic sink failures do not alter success or failure",
+    "runtime extraction failures retain only an allowlisted stage and reason; no write service is invoked",
+    "hosted invoice sink logs only the safe projection and creates no diagnostic storage contract"
+  ]
+}

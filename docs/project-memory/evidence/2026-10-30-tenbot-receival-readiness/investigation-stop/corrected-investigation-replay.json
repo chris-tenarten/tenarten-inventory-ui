@@ -1,0 +1,154 @@
+{
+  "mode": "offline actual runtime/session/tools; explicitly scripted model transport; simulated caller reads/storage",
+  "modelInference": false,
+  "databaseSecurityProof": false,
+  "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+  "stages": [
+    "authenticated-invoice-vision",
+    "authenticated-invoice-investigation"
+  ],
+  "toolTrace": [
+    "discover_capabilities",
+    "read_invoice",
+    "search_catalog",
+    "check_receival_duplicates",
+    "prepare_pending_receivals"
+  ],
+  "diagnostics": [
+    {
+      "stage": "extraction",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "completed"
+    },
+    {
+      "stage": "source-persistence",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "completed"
+    },
+    {
+      "stage": "model",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "received"
+    },
+    {
+      "stage": "tool",
+      "tool": "discover_capabilities",
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "ok"
+    },
+    {
+      "stage": "model",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "received"
+    },
+    {
+      "stage": "tool",
+      "tool": "read_invoice",
+      "outcome": "ok",
+      "durationMs": 1,
+      "reasonCode": "ok"
+    },
+    {
+      "stage": "model",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "received"
+    },
+    {
+      "stage": "tool",
+      "tool": "search_catalog",
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "ok"
+    },
+    {
+      "stage": "model",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "received"
+    },
+    {
+      "stage": "tool",
+      "tool": "check_receival_duplicates",
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "ok"
+    },
+    {
+      "stage": "model",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "received"
+    },
+    {
+      "stage": "tool",
+      "tool": "prepare_pending_receivals",
+      "outcome": "ok",
+      "durationMs": 1,
+      "reasonCode": "ok"
+    },
+    {
+      "stage": "model",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "received"
+    },
+    {
+      "stage": "stop",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "completed"
+    },
+    {
+      "stage": "investigation",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "completed"
+    },
+    {
+      "stage": "draft",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "completed"
+    },
+    {
+      "stage": "draft-persistence",
+      "tool": null,
+      "outcome": "ok",
+      "durationMs": 0,
+      "reasonCode": "completed"
+    }
+  ],
+  "status": "completed",
+  "draft": {
+    "rows": 1,
+    "sourceQuantity": {
+      "quantity": "1",
+      "unit": "Bag"
+    },
+    "quantity": "1",
+    "unit": "Bag",
+    "reasons": [],
+    "executionEnabled": false,
+    "canApprove": false,
+    "persistedInSimulatedPrivateSource": true
+  },
+  "businessMutationRpcCalls": [],
+  "inferenceCostUsd": 0
+}

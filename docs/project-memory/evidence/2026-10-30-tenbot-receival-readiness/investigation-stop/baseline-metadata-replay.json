@@ -1,0 +1,12 @@
+{
+  "mode": "offline deterministic replay; not the lost hosted trace",
+  "sourceArtifactSha256": "4ccfe338997df728b71c438b436264e6e6f9cc0e0048603e14e3dbf8b248bba0",
+  "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+  "catalog": "simulated canonical fixture",
+  "model": "no model invocation",
+  "catalogResult": "matched Alaska White #0; source 1 Bag",
+  "stage": "check_receival_duplicates",
+  "reason": "unsupported_invoice_metadata",
+  "receivalReadCalls": 0,
+  "proposalProduced": false
+}

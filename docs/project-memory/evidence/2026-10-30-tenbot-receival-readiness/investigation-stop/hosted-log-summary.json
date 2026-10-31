@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-10-31T01:41:48.862Z",
+  "readOnly": true,
+  "aggregateOnly": true,
+  "rawLogsRead": false,
+  "start": "2026-10-31T01:24:30Z",
+  "end": "2026-10-31T01:25:10Z",
+  "httpStatus": 200,
+  "durationMs": 940,
+  "available": true,
+  "rows": [
+    {
+      "source": "function_edge_logs",
+      "events": 4,
+      "metadataReason": 0,
+      "errorLimitReason": 0,
+      "structuredEvents": 0
+    },
+    {
+      "source": "function_logs",
+      "events": 3,
+      "metadataReason": 0,
+      "errorLimitReason": 0,
+      "structuredEvents": 0
+    }
+  ],
+  "automaticRetries": 0,
+  "hostedMutations": 0
+}

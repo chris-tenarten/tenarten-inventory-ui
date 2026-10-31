@@ -6,6 +6,9 @@
 import {runTenbotAgent,type AgentProvider,type AgentStep,type JsonValue} from './tenbot-agent.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
+import type {InvestigationDiagnosticSink} from './tenbot-investigation-diagnostics.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
+// @ts-ignore -- explicit extensions for Edge compatibility.
 import {createTenbotAgentJobTools,createTenbotAgentKnowledgeTools,createTenbotAgentScopeTool} from './tenbot-agent-operations.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
@@ -36,6 +39,7 @@ export type AgentSessionDependencies={
  readOnlyHosted?:boolean;
  sessionStore?:AgentSessionStore;
  now?:()=>number;
+ onDiagnostic?:InvestigationDiagnosticSink;
 };
 type KnowledgeProof={id:string;digest:string};
 type GuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
@@ -224,7 +228,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     return {question:previous,answer:turn?'Prior assistant workflow guidance, retained only as conversation context. Re-fetch current knowledge and cite newly issued evidence IDs before giving guidance: '+turn.answer:'Previous live answer omitted. Reauthorize and reread all operational facts. Canonical lookup seeds: '+session!.jobIds.join(', ')};
    });
    if(session.invoiceAttached&&deps.invoice)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:(deps.invoice.document.extraction?'Actual OpenAI image preprocessing produced this transcription. Check read_invoice extraction provenance and compare it against the original image. ':'Synthetic text fixture only. ')+'Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
-   const result=await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,...(deps.readOnlyHosted?{limits:{maxDurationMs:75000}}:{}),async authorize(check){
+   const result=await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic:deps.onDiagnostic,...(deps.readOnlyHosted?{limits:{maxDurationMs:75000}}:{}),async authorize(check){
     if(!await can('readOperationalData'))return false;
     // Do not retransmit retained guidance after a grant/version changes mid-turn.
     if(check.phase==='before_model'){
