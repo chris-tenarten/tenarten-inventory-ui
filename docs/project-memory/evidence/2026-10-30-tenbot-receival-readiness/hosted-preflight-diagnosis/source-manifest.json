@@ -1,0 +1,17 @@
+{
+  "baseDevSha": "9a03fd0ed054fb5880aeff079b0b8f48d8a8fd9d",
+  "files": [
+    {
+      "path": "src/lib/auth.tsx",
+      "sha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527"
+    },
+    {
+      "path": "scripts/verify-auth-resolution-deadlines.mjs",
+      "sha256": "0813dbaca210dfd14d8a6a53d1c24478e48397f4b4011e8725c3b898daca9ea6"
+    },
+    {
+      "path": "scripts/verify-auth-startup-resolution.mjs",
+      "sha256": "10ff9fce77f9fcb12eea17a7816a5acbdae1f00cf6d10420b817615a154ee73d"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "errorCode": null,
+  "durationMs": 42049,
+  "command": "node scripts/verify-auth-startup-resolution.mjs",
+  "browser": {
+    "passed": 20,
+    "checks": [
+      "delayed active restoration, refresh and no false denial",
+      "later TOKEN_REFRESHED event stays pending and then allowed",
+      "push binding survives profile failure and same-account recovery with access closed",
+      "confirmed access denial still clears push binding",
+      "inactive account denied",
+      "missing profile denied",
+      "profile request failure fails closed without disabled wording",
+      "identity change rejects old active result while next identity denied",
+      "late old error cannot revoke newer allowed identity",
+      "same-user session change rejects old active response",
+      "sign-out rejects pending active result",
+      "mismatched returned identity fails closed",
+      "explicit sign-out revokes push before ending the authenticated session",
+      "password recovery retains deliberate device cleanup",
+      "same-login token rotation failure blocks access and recovers without revocation",
+      "Settings initial verification failure offers neutral retry without enrollment controls",
+      "Settings checking, confirmed and unavailable states preserve a healthy registration",
+      "Settings endpoint mismatch stays unverified; confirmed server revocation is not registered",
+      "held profile hits real15second deadline, ignores late reply and recovers on genuine refresh",
+      "held expired-session refresh hits real20second bootstrap deadline without clearing storage or binding"
+    ],
+    "pageErrors": [],
+    "externalRequests": [],
+    "hostedWrites": 0
+  },
+  "scope": "Actual localhost application and installed SDK with intercepted synthetic Auth/profile transport, real browser timers. No genuine session or hosted repair proof."
+}
