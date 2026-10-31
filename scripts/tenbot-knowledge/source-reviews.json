@@ -1661,5 +1661,53 @@
       "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
     },
     "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "blob": "74c992d6e04f18dc7f16c0bdd56f6e2f24629fe8",
+    "sha256": "62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc",
+    "reviewedCandidate": "957de31a4c4c0f7d094863f928d82b03b377a298",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "957de31a4c4c0f7d094863f928d82b03b377a298",
+      "heading": "## Accepted candidate source review — prepared-draft resume and execution-only window"
+    },
+    "acceptedAuthorityRevision": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "blob": "18a8776166c69184246d90d6b0ca971042786486",
+    "sha256": "160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e",
+    "reviewedCandidate": "957de31a4c4c0f7d094863f928d82b03b377a298",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "957de31a4c4c0f7d094863f928d82b03b377a298",
+      "heading": "## Accepted candidate source review — prepared-draft resume and execution-only window"
+    },
+    "acceptedAuthorityRevision": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+    "blob": "baa7b4eb2bd1a0ee078af2808ddb32c4f8972203",
+    "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+    "reviewedCandidate": "957de31a4c4c0f7d094863f928d82b03b377a298",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "957de31a4c4c0f7d094863f928d82b03b377a298",
+      "heading": "## Accepted candidate source review — prepared-draft resume and execution-only window"
+    },
+    "acceptedAuthorityRevision": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c"
   }
 ]
