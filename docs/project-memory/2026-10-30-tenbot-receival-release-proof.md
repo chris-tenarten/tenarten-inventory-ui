@@ -250,3 +250,46 @@ Existing relevant validation is reused; source preparation does not rerun it or 
 The released knowledge sourceFiles/provenance/dependency bindings contain no `src/lib/auth.tsx` dependency. Current State, Product Manifest, all earlier receipt sections, source-review registry and generated knowledge artifact remain byte-identical to the TenDev baseline. No candidate-source/runtime tuple is added for Auth because the unchanged contract does not support this path. No new record-no-claim-impact statement, registry broadening, snapshot regeneration or release-authority advance is introduced.
 
 This candidate selects only one application file, its two accepted verifiers, these four small JSON receipts and this appendix. Every other application, Edge, migration and configuration path remains at the exact TenDev baseline. The mandatory full-history, clean-current-candidate, exact committed artifact, zero-hold release proof and target-matching build remain required; their results must be recorded separately before any separately authorized release. All seven unrelated dirty files in the shared workspace must remain preserved.
+
+
+## Candidate technical source review — isolated canary funding and finite expiry
+
+Product acceptance remains pending for these technical changes.
+
+Product has explicitly authorized the focused implementation and disabled-first TenDev staging of canary-only funding and expiry correction. This technical source receipt does not invent separate acceptance of the resulting bytes, nor claim that an unapplied migration is deployed. The implementation source revision is d2fa05a2b22ae5f1d3a0b3658bf3c63f9e59167a.
+
+Scope: tendev-preparation.
+
+This review is not evidence of hosted application or deployment.
+
+This review grants no migration application, write activation, push or deployment authority.
+
+| Path | Git blob | SHA256 | Authority | Kind | Accepted authority revision |
+|---|---|---|---|---|---|
+| supabase/functions/_shared/tenbot-canary-funding.ts | 6d77e3bdd58c1f0ef52fd32a1a6780cb44cd74cf | df875a6cd45c35b13198a20c062c221dd76b8e2191e5f0986401eb89a317471b | technical-review | runtime | none |
+| supabase/functions/_shared/tenbot-receival-hosted.ts | b985c686c38a4a80baca8c4e1b05ba0ce7d00297 | 260967dfeed3195643588e0bcfd632cf18304d012f9c9a5339674ceaaea0d1e6 | technical-review | runtime | none |
+| supabase/migrations/20261031010000_tenbot_canary_funding_window.sql | d6091f40e7d23e2314c4a2a7bce67e5dd993e7af | 183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6 | technical-review | unapplied-migration | none |
+
+The selected UI, server-only funding adapter and tests are copied byte-for-byte from the focused implementation commit. Ordinary TenBot routing, ordinary shared metering/policy functions, Qwen behavior, authenticated caller tools, Inventory services, grants and permissions retain their deployed source. The separate funding reserve/settle contract uses the existing cumulative usage ledger and retains uncertain reservations and actual charges; a new allowance neither resets ordinary accounting nor renews expired conversational funding. The private initial funding state is disabled and has no execution window or bound grant. Actual private original bytes and the fixed genuine caller/origin/grant are required at inference boundaries. Cleanup and exact revocation remain separately authorized after funding becomes unavailable.
+
+The new migration is an accepted-for-implementation but unapplied technical contract in this preparation. Its tuple is expressly unapplied-migration, never historical-deployed. No migration application, funding activation, grant activation, enrollment, invoice upload, approval or operational write is performed by preparation. All existing Product and database authorization boundaries remain final.
+
+Exact selected paths and SHA256 values:
+
+- src/modules/inventory/tenbot-canary-funding.ts: Git blob 8d458662bb5179830cd860d521422dfec3f83944; SHA256 8eb5f6f963c04bed1b10717bd3fcd6ac4c249a74f42b2d1596fee238bcd17964.
+- src/modules/inventory/tenbot-canary-control.ts: Git blob 733aaeb49f1c45db3e155f281b222098fb40ddb4; SHA256 5ae6c4c51d0131e5b99432d776acc89f0decc94b0446f60a5e81ced1a84cdd65.
+- src/modules/tenbot/TenbotCanaryControl.tsx: Git blob 64161789325782e9d153fbc6827176a4b8e5bc5e; SHA256 6b1df5e02ba7dd99ec5b944180f791b6466ccf765caee6c5ad6379ead24d24d9.
+- supabase/functions/_shared/tenbot-canary-funding.ts: Git blob 6d77e3bdd58c1f0ef52fd32a1a6780cb44cd74cf; SHA256 df875a6cd45c35b13198a20c062c221dd76b8e2191e5f0986401eb89a317471b.
+- supabase/functions/_shared/tenbot-receival-hosted.ts: Git blob b985c686c38a4a80baca8c4e1b05ba0ce7d00297; SHA256 260967dfeed3195643588e0bcfd632cf18304d012f9c9a5339674ceaaea0d1e6.
+- supabase/migrations/20261031010000_tenbot_canary_funding_window.sql: Git blob d6091f40e7d23e2314c4a2a7bce67e5dd993e7af; SHA256 183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6.
+- scripts/verify-tenbot-canary-funding.mts: Git blob 666f512627cce90a359544de9277487c2b0238a5; SHA256 00813a1bbfa27b4131048d823744598ab5e4d0df2f2d2858fbf1ca5253c4bb3d.
+- scripts/verify-tenbot-canary-funding-database.mts: Git blob 4a9ea77800a19d963858bf5ad41f96779652199d; SHA256 38f5db8d7a5f8bc962495dbe6f68d7e253c958d29e81f565626c2a6c9b1369ad.
+- scripts/verify-tenbot-canary-control.mts: Git blob d672e2807de93e2d09c448b5a45ef6b44e90a266; SHA256 a047ca7f201b37915a3525c77530b140bb22c19cf1cf6988d7138e1dd18f7243.
+- scripts/verify-tenbot-canary-runtime.mts: Git blob 0eb896733da4036eff28b0533d02d456061eb018; SHA256 654e8720d79f3a4d0ae23f4ab3da295ae7f8f87def7d4eaffda04db441c1e262.
+- scripts/verify-tenbot-canary-control-browser.mjs: Git blob 6ba55a18c7e308d3aeca61013be1d91195fc3656; SHA256 13110d5f8334d6e230eedd250169dc7fe39dbbd04e6bf4c07ab7af37d7291599.
+- scripts/support/tenbot-hosted-fixture.mts: Git blob 8e857e9cc87cc746ab44a79193576b1f59eaaddb; SHA256 c646917d7882cf4e3d34b51c05227850000f0df5e308494050eb73c2077f80e9.
+- scripts/fixtures/tenbot-capability-history.synthetic.json: Git blob 31b0b3ae0752fc90e0de424be884e2f51efc80f9; SHA256 5a6d2b71f590cb74bb25e078cdae1c67abb8b379dbe250a83cdc9ee651ec2b70.
+
+The full released knowledge sourceFiles, provenance and dependency bindings are inspected before construction; every selected path must be unbound or preparation stops for specific semantic review. Current State, Product Manifest, all historical receipts and existing semantic/source review records remain byte-identical to served da5a9246c8a158c0ed266668a98bf8d54701cebf. No deployed pin, knowledge entry, structured patch, Product claim, permission policy or current helper evidence is advanced. Append-only technical tuples explain only the selected exact runtime/migration source; they do not clear unrelated holds.
+
+Mandatory full-history, clean-current-candidate, exact committed artifact, zero-hold release proof and a secret-free standard optimized TenDev build remain required. The current verifier is unchanged. TenOps Pages is outside this release; ordinary hosted funding remains expired and unchanged. All grants, enrollment and agent writes must remain OFF, and the new canary allowance dormant, throughout disabled-first staging.

@@ -29,11 +29,14 @@ import {AgentStepError,type AgentProvider} from './tenbot-agent.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- explicit extension required by Edge bundling.
 import {TENBOT_CANARY_OWNER,parseTenbotCanaryAccess,tenbotCanaryDocumentMatches,tenbotCanaryDraftMatches,tenbotCanaryEditsMatch,type TenbotCanaryAccess} from '../../../src/modules/inventory/tenbot-canary-access.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
+// @ts-ignore -- explicit extension required by Edge bundling.
+import {createHostedCanaryMetering,readHostedCanaryFunding,assertHostedCanaryFunding} from './tenbot-canary-funding.ts';
 import type {HostedTenbotConfig} from './tenbot-hosted.ts';
 
 export const TENBOT_RECEIVAL_WORKSPACE='invoice-receivals.v1';
 export const TENBOT_RECEIVAL_PILOT_ORIGIN='https://tendev.pages.dev';
-export const TENBOT_RECEIVAL_SERVICE_RPCS=new Set(['tenbot_receival_mint_execution_permit','record_invoice_receival_source_state','tenbot_openai_reserve','tenbot_openai_settle']);
+export const TENBOT_RECEIVAL_SERVICE_RPCS=new Set(['tenbot_receival_mint_execution_permit','record_invoice_receival_source_state','tenbot_openai_reserve','tenbot_openai_settle','tenbot_openai_canary_reserve','tenbot_openai_canary_settle']);
 export type HostedReceivalConfig={enabled:boolean;executionEnabled:boolean;origins:string[];employeeIds:string[];expiresAt:string};
 type Rpc=(name:string,args:Record<string,unknown>)=>PromiseLike<{data:unknown;error:unknown}>;
 type Runtime=(body:Record<string,unknown>,owner:string,caller:InvoiceReceivalCaller)=>Promise<unknown>;
@@ -64,10 +67,23 @@ export function hostedReceivalPilotEnabled(config:HostedReceivalConfig,owner:str
  */
 export function createHostedReceivalRuntime(options:{owner:string;origin:string;pilot:HostedReceivalConfig;openAI:HostedTenbotConfig;caller:HostedReceivalOperationalCaller;service:Rpc;now?:()=>number;fetcher?:typeof fetch;validatePdf?:(bytes:Uint8Array)=>Promise<void>}):Runtime{
  const now=options.now??Date.now,maximumMicros=250000;
- let accountedMicros=0,uncertain=false,canaryAccess:TenbotCanaryAccess|null=null;
+ let accountedMicros=0,uncertain=false,canaryAccess:TenbotCanaryAccess|null=null,verifiedSourceId:string|null=null;
  const refreshCanary=async()=>{canaryAccess=await readHostedCanaryAccess(options.caller,options.owner,now());return canaryAccess;};
- const meter=createHostedOpenAIMetering({owner:options.owner,model:'gpt-6.1-terra',requestId:crypto.randomUUID(),rpc:async(n,a)=>options.service(n,a)});
+ const requireCanaryFunding=async()=>{const access=await refreshCanary();if(access){const funding=await readHostedCanaryFunding(options.caller);assertHostedCanaryFunding(funding,access,now());}return access;};
+ const meterOptions={owner:options.owner,model:'gpt-6.1-terra' as const,requestId:crypto.randomUUID(),rpc:async(n:string,a:Record<string,unknown>)=>options.service(n,a)};
+ const meter=options.owner===TENBOT_CANARY_OWNER?createHostedCanaryMetering({...meterOptions,origin:options.origin,async scope(){const access=await requireCanaryFunding();if(!access||!verifiedSourceId)throw new AgentStepError('canary-original-unverified');return {sourceId:verifiedSourceId,grantId:access.grantId};}}):createHostedOpenAIMetering(meterOptions);
  const source=createInvoiceReceivalAttachmentService(options.caller);
+ async function verifiedDownload(sourceId:string){
+  const original=await source.download(sourceId);
+  if(options.owner===TENBOT_CANARY_OWNER){
+   const access=await refreshCanary();
+   if(!access||original.source.ownerId!==options.owner||!tenbotCanaryDocumentMatches(access,original.source)||original.source.mediaType!=='application/pdf'||original.source.byteSize!==2877||!['uploading','ready'].includes(original.source.state))throw new TenbotError('Use the exact approved synthetic original.',403);
+   // download() has just rechecked caller Storage RLS and the actual byte hash,
+   // MIME type and length. A metadata claim alone never selects this allowance.
+   verifiedSourceId=original.source.id;
+  }
+  return original;
+ }
  const writer=createInvoiceReceivalSourceStateWriter({async rpc(name,args){
   if(name!=='record_invoice_receival_source_state')return {data:null,error:{code:'42501'}};
   const result=await options.service(name,args),error=result.error;
@@ -80,7 +96,7 @@ export function createHostedReceivalRuntime(options:{owner:string;origin:string;
   if(options.owner===TENBOT_CANARY_OWNER&&(!canaryAccess||Date.parse(canaryAccess.expiresAt)<=now()))throw new AgentStepError('canary-access-unavailable');
  }
  async function reserveBudget(usd:number){
-  await refreshCanary();assertNoFatal();const reserved=usdToMicrousd(usd);
+  await requireCanaryFunding();assertNoFatal();const reserved=usdToMicrousd(usd);
   if(reserved>maximumMicros-accountedMicros)throw new AgentStepError('request-budget-unavailable');
   let reservation:Awaited<ReturnType<typeof meter.reserveBudget>>;
   try{reservation=await meter.reserveBudget(usd);}catch(error){uncertain=true;throw error;}
@@ -104,9 +120,9 @@ export function createHostedReceivalRuntime(options:{owner:string;origin:string;
  function provider(_label:string,image?:InvoiceImage):AgentProvider{
   const transport=createOpenAIProvider({model:'gpt-6.1-terra',apiKey:options.openAI.apiKey,spendingAuthorized:options.openAI.spendingAuthorized,pricing:OPENAI_EXPERIMENT_PRICING['gpt-6.1-terra'],requireResponseMetadata:true,reserveBudget,
    ...(image?{originalAttachment:{filename:image.mediaType==='application/pdf'?'invoice.pdf':image.mediaType==='image/png'?'invoice.png':'invoice.jpg',mediaType:image.mediaType,bytes:image.bytes}}:{}),
-   async fetcher(url,init){await refreshCanary();assertNoFatal();return (options.fetcher??fetch)(url,init);},
+   async fetcher(url,init){await requireCanaryFunding();assertNoFatal();if(options.owner===TENBOT_CANARY_OWNER&&!verifiedSourceId)throw new AgentStepError('canary-original-unverified');return (options.fetcher??fetch)(url,init);},
   });
-  return {...transport,async step(request){assertNoFatal();if(image?.mediaType==='application/pdf')await validatePdf(image.bytes);return transport.step({...request,remainingUsd:Math.min(request.remainingUsd,Math.max(0,maximumMicros-accountedMicros)/1000000)});}};
+  return {...transport,async step(request){await requireCanaryFunding();assertNoFatal();if(image?.mediaType==='application/pdf')await validatePdf(image.bytes);return transport.step({...request,remainingUsd:Math.min(request.remainingUsd,Math.max(0,maximumMicros-accountedMicros)/1000000)});}};
  }
  const runtime=createAuthenticatedReceivalAgent({model:'gpt-6.1-terra',now,remainingUsd:()=>Math.max(0,maximumMicros-accountedMicros)/1000000,assertNoFatal,createProvider:provider,extractDocument:extractOriginalInvoiceDocument,
   catalogScope(owner){
@@ -115,21 +131,22 @@ export function createHostedReceivalRuntime(options:{owner:string;origin:string;
    return [{source:canaryAccess.catalogSource,id:canaryAccess.catalogId}];
   },
   async decodeAttachment(){throw new TenbotError('Upload the original privately; inline attachment derivatives are not accepted.');},
-  sourceStore(_caller,owner){if(owner!==options.owner)throw new TenbotError('Private invoice owner changed.',403);return {...source,async record(input){if(input.actorId!==options.owner)throw new TenbotError('Private invoice owner changed.',403);return writer.record(input);}};},
+  sourceStore(_caller,owner){if(owner!==options.owner)throw new TenbotError('Private invoice owner changed.',403);return {...source,download:verifiedDownload,async record(input){if(input.actorId!==options.owner)throw new TenbotError('Private invoice owner changed.',403);return writer.record(input);}};},
   execution:{enabled:options.pilot.executionEnabled,databaseEnvironment:'restricted-tendev'},
   async beforeExecute(input){
    if(input.owner!==options.owner||!hostedReceivalPilotEnabled(options.pilot,input.owner,options.origin,now()))throw new TenbotError('Restricted execution is unavailable.',403);
-   const access=await refreshCanary();
+   const access=await requireCanaryFunding();
    if(access){const draft=await createInvoiceReceivalService(options.caller,{executionEnabled:false}).get({draftId:input.draftId});if(!tenbotCanaryDraftMatches(access,draft))throw new TenbotError('This temporary canary permits only the approved invoice and one pending Bag.',403);}
    await mintHostedReceivalExecutionPermit({...input,origin:options.origin,service:options.service});
   },
  });
  return async(body,owner)=>{
+  verifiedSourceId=null;
   if(owner!==options.owner||!hostedReceivalPilotEnabled(options.pilot,owner,options.origin,now()))throw new TenbotError('The restricted receival pilot is unavailable.',403);
   const access=await refreshCanary();
   if(access){
    const sourceId=body.action==='upload'?body.sourceId:body.attachmentId??(['review','approve','clear'].includes(String(body.action))?body.draftId:undefined);
-   if(sourceId!==undefined){if(typeof sourceId!=='string'||!uuid.test(sourceId))throw new TenbotError('Choose the exact approved canary original.',403);const original=await source.get(sourceId);if(original.ownerId!==owner||!tenbotCanaryDocumentMatches(access,original))throw new TenbotError('This temporary canary permits only the approved synthetic invoice.',403);}
+   if(sourceId!==undefined){if(typeof sourceId!=='string'||!uuid.test(sourceId))throw new TenbotError('Choose the exact approved canary original.',403);const original=await source.get(sourceId);if(original.ownerId!==owner||!tenbotCanaryDocumentMatches(access,original))throw new TenbotError('This temporary canary permits only the approved synthetic invoice.',403);if(body.action==='ask')await verifiedDownload(sourceId);}
    if(body.action==='ask'&&body.attachmentId===undefined)throw new TenbotError('Use the ordinary TenBot conversation for guidance; the canary workspace requires its approved invoice.',403);
    if(body.action==='review'&&!tenbotCanaryEditsMatch(access,body.edits))throw new TenbotError('Review exactly one approved catalog Bag, with no Job or catalog addition.',403);
   }
@@ -167,6 +184,7 @@ export function createHostedReceivalContract(options:{owner:string;origin:string
  const now=options.now??Date.now,can=async(capability:string)=>{const r=await options.caller.rpc('has_app_capability',{p_capability:capability});return !r.error&&r.data===true;};
  let canaryAccess:TenbotCanaryAccess|null=null;
  const authorize=async()=>{if(!hostedReceivalPilotEnabled(options.config,options.owner,options.origin,now()))throw new TenbotError('The restricted receival pilot is unavailable.',403);canaryAccess=await readHostedCanaryAccess(options.caller,options.owner,now());for(const cap of ['readOperationalData','writeBusinessData','adjustInventory'])if(!await can(cap))throw new TenbotError('Your current permissions do not allow pending-receival creation.',403);};
+ const funded=async()=>{if(canaryAccess)assertHostedCanaryFunding(await readHostedCanaryFunding(options.caller),canaryAccess,now());};
  const service=createInvoiceReceivalService(options.caller,{executionEnabled:options.config.executionEnabled===true});
  const keys=(body:Record<string,unknown>,allowed:string[])=>{if(Object.keys(body).some(key=>!['workspace',...allowed].includes(key)))throw new TenbotError('Invalid receival request.');};
  async function current(id:unknown,hash?:unknown):Promise<InvoiceReceivalDraft>{
@@ -200,8 +218,9 @@ export function createHostedReceivalContract(options:{owner:string;origin:string
     // Durable database receipt, not a previous instance's memory, resolves an
     // uncertain response without another approval, permit or Inventory write.
     if(draft.execution)return {workspace:TENBOT_RECEIVAL_WORKSPACE,...draft.execution,simulation:false,onHandChangedByCreation:false,inventoryUrl:'/inventory#pending-receivals'};
+    await funded();
     const approval=await service.approve({draftId:draft.id,hash:draft.hash,confirmation:INVOICE_RECEIVAL_APPROVAL});
-    await authorize();await mintHostedReceivalExecutionPermit({owner:options.owner,draftId:draft.id,hash:draft.hash,approvalId:approval.id,origin:options.origin,service:options.service});
+    await authorize();await funded();await mintHostedReceivalExecutionPermit({owner:options.owner,draftId:draft.id,hash:draft.hash,approvalId:approval.id,origin:options.origin,service:options.service});
     const result=await service.execute({draftId:draft.id,hash:draft.hash,approvalId:approval.id});
     if(options.owner===TENBOT_CANARY_OWNER){if(!await can('readOperationalData'))throw new TenbotError('Your current permissions do not allow this receipt to be read.',403);}else await authorize();
     return {workspace:TENBOT_RECEIVAL_WORKSPACE,...result,simulation:false,onHandChangedByCreation:false,inventoryUrl:'/inventory#pending-receivals'};
