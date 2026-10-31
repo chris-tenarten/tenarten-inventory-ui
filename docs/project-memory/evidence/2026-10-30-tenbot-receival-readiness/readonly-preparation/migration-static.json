@@ -1,0 +1,47 @@
+{
+  "status": "pass",
+  "mode": "offline review-only migration source/transform checks; NOT PostgreSQL/JWT/RLS proof",
+  "groups": 8,
+  "checks": [
+    "all seven final predecessor function bodies are pinned; every substitution has exactly one target",
+    "only source functions/policy are changed; no capability grants, business operations or write-gate activation",
+    "public eligibility takes no actor; owner-only authenticated source helper and private actor functions fail closed",
+    "read-only preparation is owned, live, unbound and unretained; fixed synthetic document applies to every weak actor",
+    "hash-reuse/get retain stronger permissions for retained/bound/expired sources, without losing source identity guards",
+    "source-state remains service-only, owned/versioned and quantity immutable; preparation cannot claim approval or completed actions",
+    "Storage new branch is read/insert only; trusted backend verifies exact owner/bytes; service delete and retained rules unchanged",
+    "only chris_dev source-insert/deferred branch loses grant requirement; all business trigger branches stay intact"
+  ],
+  "migration": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+  "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580",
+  "expectedBeforeBodyMd5": {
+    "begin_invoice_receival_source": "da3396f856c6736e7a5bbd23239a2711",
+    "get_invoice_receival_source": "10750241b1fbf4014f5db37784359479",
+    "record_invoice_receival_source_state": "11a16948c94741f7be2d59a510f8aa23",
+    "invoice_receival_original_allowed": "a726b7cc254a1cd5d03100449abe03ad",
+    "guard_invoice_receival_original_object": "e9e3509b2c992f25b5b640f9634b623b",
+    "tenbot_guard_chris_dev_canary_source": "699a5a9d40d3307246b56711e27f16ab",
+    "tenbot_chris_dev_canary_commit_authorized": "5a36467c6d12a5e0b734ff4735962aaa"
+  },
+  "expectedAfterBodyMd5": {
+    "begin_invoice_receival_source": "2a732c5f4dfa6af897f7f839a2d7e516",
+    "get_invoice_receival_source": "1e97ab9adf129834b4f59ff09a52c3bd",
+    "record_invoice_receival_source_state": "7f2e115f06fe8e8927cacce635d21b44",
+    "invoice_receival_original_allowed": "86bcfe56a4e90ece2a3e7ddf1872b323",
+    "guard_invoice_receival_original_object": "920b0cdd342a7154241f4a6ffa44e659",
+    "tenbot_guard_chris_dev_canary_source": "65302861285bd65c398e989317922747",
+    "tenbot_chris_dev_canary_commit_authorized": "1a33c77b396cd951f390239a157541b4"
+  },
+  "transformations": {
+    "begin_invoice_receival_source": 3,
+    "get_invoice_receival_source": 2,
+    "record_invoice_receival_source_state": 2,
+    "invoice_receival_original_allowed": 1,
+    "guard_invoice_receival_original_object": 1,
+    "tenbot_guard_chris_dev_canary_source": 1,
+    "tenbot_chris_dev_canary_commit_authorized": 1
+  },
+  "migrationApplications": 0,
+  "databaseWrites": 0,
+  "networkCalls": 0
+}

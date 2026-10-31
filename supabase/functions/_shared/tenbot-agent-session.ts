@@ -40,6 +40,8 @@ export type AgentSessionDependencies={
  sessionStore?:AgentSessionStore;
  now?:()=>number;
  onDiagnostic?:InvestigationDiagnosticSink;
+ /** Server-only preparation authority. Grants no durable approval or execution. */
+ canPrepareInvoice?(owner:string):Promise<boolean>;
 };
 type KnowledgeProof={id:string;digest:string};
 type GuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
@@ -170,7 +172,8 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(details)session.confirmation={...session.confirmation,...details};
    const can=(capability:string)=>deps.can(owner,capability);
    const job=createTenbotAgentJobTools(deps.jobTools(owner));
-   const mayPrepare=!deps.readOnlyHosted&&await can('writeBusinessData')&&await can('adjustInventory');
+   const mayPrepareNow=()=>deps.canPrepareInvoice?deps.canPrepareInvoice(owner):(async()=>await can('writeBusinessData')&&await can('adjustInventory'))();
+   const mayPrepare=!deps.readOnlyHosted&&await mayPrepareNow();
    const sourceReader=deps.readOnlyHosted?undefined:deps.invoice?.reader(owner),invoiceReads=new Map<string,string>();let inconsistentInvoice=false;
    const remember=(query:string,value:unknown)=>{const serialized=JSON.stringify(value),previous=invoiceReads.get(query);if(previous!==undefined&&previous!==serialized)inconsistentInvoice=true;if(previous===undefined)invoiceReads.set(query,serialized);};
    const reader:TenbotInvoiceReader={async searchCatalog(query,signal){if(!sourceReader)throw new TenbotError('Invoice tools are unavailable.');const value=await sourceReader.searchCatalog(query,signal);remember(query,value);return value;},async readReceivals(signal){if(!sourceReader)throw new TenbotError('Invoice tools are unavailable.');const value=await sourceReader.readReceivals(signal);remember('',value);return value;}};
@@ -235,17 +238,17 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
      const proofs=new Map(session!.guidance.flatMap(turn=>turn.sources).map(proof=>[proof.id+':'+proof.digest,proof]));
      for(const proof of proofs.values())if(!await proofIsCurrent(proof))return false;
     }
-    if(check.tool==='prepare_pending_receivals'&&(!await can('writeBusinessData')||!await can('adjustInventory')))return false;
+    if(check.tool==='prepare_pending_receivals'&&!await mayPrepareNow())return false;
     if(check.phase==='publish'){
      if(inconsistentInvoice)return false;
      for(const capability of knowledgeGrants)if(!await can(capability))return false;
      const proofs=new Map([...knowledgeProofs.values(),...session!.guidance.flatMap(turn=>turn.sources)].map(proof=>[proof.id+':'+proof.digest,proof]));
      for(const proof of proofs.values())if(!await proofIsCurrent(proof))return false;
-     if(prepared&&(!await can('writeBusinessData')||!await can('adjustInventory')))return false;
+     if(prepared&&!await mayPrepareNow())return false;
      if(!await job.fresh())return false;
      const deadline=new AbortController(),timer=setTimeout(()=>deadline.abort(),4000);
      try{for(const [query,previous] of invoiceReads){if(!sourceReader)return false;const fresh=query?await sourceReader.searchCatalog(query,deadline.signal):await sourceReader.readReceivals(deadline.signal);if(JSON.stringify(fresh)!==previous)return false;}}catch{return false;}finally{clearTimeout(timer);deadline.abort();}
-     if(!await can('readOperationalData')||prepared&&(!await can('writeBusinessData')||!await can('adjustInventory')))return false;
+     if(!await can('readOperationalData')||prepared&&!await mayPrepareNow())return false;
      for(const capability of knowledgeGrants)if(!await can(capability))return false;
     }
     return true;

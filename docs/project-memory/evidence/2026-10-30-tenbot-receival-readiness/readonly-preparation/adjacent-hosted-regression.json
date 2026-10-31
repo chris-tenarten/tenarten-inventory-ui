@@ -1,0 +1,27 @@
+{
+  "command": "./node_modules/.bin/tsx scripts/verify-tenbot-receival-hosted.mts",
+  "receiptMode": "Structured capture from the completed tool stdout; command was run once, not rerun for logging",
+  "exitCode": 0,
+  "passed": true,
+  "groups": 14,
+  "checks": [
+    "pilot is default-off, exact TenDev, finite and employee allowlisted before any RPC",
+    "status cannot enable execution or falsely claim the preparation runtime exists",
+    "current read/write/receival capability is checked outside the model",
+    "new instances get only the exact owner durable review without inference or privilege",
+    "no generic prepare, SQL, tools or editable immutable source forwarding is exposed",
+    "explicit exact approval and independent catalog permission precede mutations",
+    "approval uses caller canonical RPCs and only fixed service metadata before execution",
+    "metadata failures stop without execution or automatic retry",
+    "durable completed receipt reconciles without new approval, permit or Inventory write",
+    "revoked/superseded reviews and disabled execution cannot dispatch a write",
+    "accepted shared runtime injection receives only the explicit workspace after outer authorization",
+    "private source permission, stale evidence and missing-source failures keep safe actionable status codes",
+    "one shared request meter covers original vision and later investigation, without assistant-history persistence",
+    "uncertain original inference retains reservation and stops further model dispatch in the turn"
+  ],
+  "mode": "Offline hosted adapter/authorization-metadata/canonical RPC wiring doubles only",
+  "actualInference": false,
+  "actualDatabase": false,
+  "productionMutations": 0
+}

@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-10-31T02:24:17.974Z",
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "readOnly": true,
+  "attemptsPerEndpoint": 1,
+  "automaticRetries": 0,
+  "checks": [
+    {
+      "endpoint": "secrets",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 282,
+      "contentType": "application/json; charset=utf-8",
+      "responseBytes": 5571,
+      "rawBodyRetained": false,
+      "allExpectedWriteControlsOff": true
+    },
+    {
+      "endpoint": "database/query",
+      "method": "POST",
+      "status": 201,
+      "durationMs": 280,
+      "contentType": "application/json",
+      "responseBytes": 145,
+      "rawBodyRetained": false,
+      "state": {
+        "pilot": false,
+        "execution": false,
+        "serverNow": "2026-10-31T02:24:17.93621+00:00",
+        "enrollment": 0,
+        "activeGrants": 0,
+        "canaryFunding": false
+      }
+    }
+  ],
+  "mutations": 0
+}

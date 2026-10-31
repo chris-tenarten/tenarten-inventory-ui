@@ -1,0 +1,76 @@
+{
+  "status": "Prepared for Product review only; NOT applied, staged or deployed",
+  "recordedAt": "2026-10-31T02:35:25.051Z",
+  "authority": "UNBLOCK READ-ONLY INVOICE PREPARATION, plus explicit $0.25 test-only approval and prepare narrow migration for review; do not apply yet",
+  "tier": 3,
+  "testingLevel": 3,
+  "base": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+  "migration": {
+    "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+    "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580",
+    "applied": false,
+    "livePredecessorHashesMatched": 7,
+    "livePolicyHashMatched": true
+  },
+  "rootCause": "Preparation incorrectly coupled to strong operational capability checks in Edge/session/runtime, source RPCs, Storage/RLS and chris_dev source trigger; expired ordinary funding is separate",
+  "boundary": {
+    "eligible": "Authenticated active non-read-only caller with existing readOperationalData",
+    "scope": "Only fixed approved synthetic PDF for new weak source paths; hosted test additionally exact TenDev/chris_dev/<=15-minute window",
+    "canonicalPrivateOriginals": true,
+    "sourceEvidenceImmutable": true,
+    "retainedOrBoundSources": "strong legacy authorization preserved",
+    "approvalExecution": "strong existing contract preserved; preparation denies review/approve/execute",
+    "ordinaryPaidInference": "forced OFF while preparation flag enabled; history/Qwen retained",
+    "defaultPreparationFlag": "OFF; never activated"
+  },
+  "validation": {
+    "focusedRuntimeGroups": 6,
+    "adjacentHostedGroups": 14,
+    "staticMigrationGroups": 8,
+    "typescript": "PASS",
+    "eslint": "PASS explicit --no-ignore affected source/tests",
+    "diffCheck": "PASS",
+    "optimizedBuild": "PASS exact source archive, 16745ms",
+    "independentSecurityReview": "PASS after source-deferred fallback correction",
+    "actualDatabaseMigrationTests": "NOT RUN; prohibited application pending acceptance",
+    "browserUI": "NOT RUN against new candidate; default-off source and build verified",
+    "selectiveReleaseProof": "Not run for this unaccepted boundary; existing metadata candidate proof remains historical evidence"
+  },
+  "realHostedResult": {
+    "inferenceCalls": 0,
+    "inferenceCostUsd": 0,
+    "actualNewDraft": false,
+    "offlineDraft": "1 Bag, executionEnabled false, canApprove false, both write capabilities false",
+    "newDiagnosticRetention": "not verified"
+  },
+  "funding": {
+    "authorizedAdditionalUsd": 0.25,
+    "activated": false,
+    "usedCanaryLedgerReset": false,
+    "ordinaryPolicyChanged": false,
+    "requiredBeforeFutureTest": "Deny ordinary spending first; drain old requests; atomically bound existing cumulative/month/day/user usage including legacy/reserved/uncertain; cap +250000 microUSD and one new distinct request within same UTC day; finite <=15-minute expiry; cleanup meter before restoring any general flag"
+  },
+  "hosted": {
+    "managementChecks": "GET secrets200 and POST database/query201, once each, <=10s",
+    "initialControls": "pilot/execution/canaryFunding OFF, grants0, enrollment0",
+    "mutations": 0,
+    "migrations": 0,
+    "deployments": 0,
+    "permissionsChanged": false,
+    "uploads": 0,
+    "approvals": 0,
+    "operationalWrites": 0,
+    "lastVerifiedTenDevSha": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+    "lastVerifiedTenDevDeployment": "8e9dcd06-68b3-495f-a374-d3c0e7735ff9"
+  },
+  "remaining": [
+    "Product review/acceptance of narrow migration and code",
+    "Explicit authorization to apply/test in isolated Free fixture; real JWT/RLS/Storage/revocation/concurrency/strong-write denial gates",
+    "Separate shared migration/staging authorization after passing real database gates; mandatory selective proof/build",
+    "Finite preparation-only funding activation and one actual hosted Terra test; disclose cached versus fresh extraction accurately",
+    "Separate approval remains required for any operational execution"
+  ],
+  "unrelatedDirtyWorkPreserved": true,
+  "sharedGitHeadIndexPreservedBeforeCommit": true,
+  "scratch": "/private/tmp/tenops-tenbot-readonly-preparation-20261030"
+}

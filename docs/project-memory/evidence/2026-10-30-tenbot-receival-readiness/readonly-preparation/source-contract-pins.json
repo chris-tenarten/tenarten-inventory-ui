@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-10-31T02:30:44.165Z",
+  "readOnly": true,
+  "httpStatus": 201,
+  "durationMs": 315,
+  "contracts": {
+    "functions": [
+      {
+        "bodyMd5": "da3396f856c6736e7a5bbd23239a2711",
+        "signature": "begin_invoice_receival_source(text,text,bigint,text)"
+      },
+      {
+        "bodyMd5": "10750241b1fbf4014f5db37784359479",
+        "signature": "get_invoice_receival_source(uuid)"
+      },
+      {
+        "bodyMd5": "e9e3509b2c992f25b5b640f9634b623b",
+        "signature": "guard_invoice_receival_original_object()"
+      },
+      {
+        "bodyMd5": "a726b7cc254a1cd5d03100449abe03ad",
+        "signature": "invoice_receival_original_allowed(text,text)"
+      },
+      {
+        "bodyMd5": "11a16948c94741f7be2d59a510f8aa23",
+        "signature": "record_invoice_receival_source_state(uuid,uuid,integer,text,jsonb)"
+      },
+      {
+        "bodyMd5": "5a36467c6d12a5e0b734ff4735962aaa",
+        "signature": "tenbot_chris_dev_canary_commit_authorized()"
+      },
+      {
+        "bodyMd5": "699a5a9d40d3307246b56711e27f16ab",
+        "signature": "tenbot_guard_chris_dev_canary_source()"
+      }
+    ],
+    "sourcePolicy": {
+      "name": "invoice_sources_owner_read",
+      "roles": [
+        "authenticated"
+      ],
+      "command": "r",
+      "qualMd5": "4857968a96b7787b85b9bf57e0a4fd53",
+      "permissive": true
+    }
+  },
+  "rawErrorsRetained": false,
+  "mutations": 0
+}

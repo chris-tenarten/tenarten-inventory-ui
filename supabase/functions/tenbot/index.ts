@@ -3,7 +3,7 @@ import {cloudflareProvider,TenbotError,MODEL} from '../_shared/tenbot-core.ts';
 import {isAllowedModel} from '../_shared/tenbot-models.ts';
 import {createTenbotJobTools} from '../_shared/tenbot-job-tools.ts';
 import {createHostedTenbot,TENBOT_HOSTED_SERVICE_RPCS} from '../_shared/tenbot-hosted.ts';
-import {createHostedReceivalContract,createHostedReceivalRuntime,hostedReceivalPilotEnabled,TENBOT_RECEIVAL_SERVICE_RPCS,TENBOT_RECEIVAL_WORKSPACE} from '../_shared/tenbot-receival-hosted.ts';
+import {createHostedReceivalContract,createHostedReceivalRuntime,hostedReceivalPilotEnabled,hostedInvoicePreparationEnabled,ordinaryTenbotSpendingAuthorized,TENBOT_RECEIVAL_SERVICE_RPCS,TENBOT_RECEIVAL_WORKSPACE} from '../_shared/tenbot-receival-hosted.ts';
 Deno.serve(async(request:Request)=>{
  const origin=request.headers.get('origin')||'';
  const allowed=(Deno.env.get('TENBOT_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean);
@@ -32,18 +32,20 @@ Deno.serve(async(request:Request)=>{
  // Privileged client is confined to meter/history and fixed authorization
  // metadata RPCs, never handed to operational model tools or business services.
  const service=createClient(url,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{global:{fetch:boundedFetch},auth:{persistSession:false}});
- const openAI={enabled:Deno.env.get('TENBOT_OPENAI_ENABLED')==='true',origins:(Deno.env.get('TENBOT_OPENAI_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean),apiKey:Deno.env.get('TENBOT_OPENAI_API_KEY')||'',keyExpiresAt:Deno.env.get('TENBOT_OPENAI_KEY_EXPIRES_AT')||'',spendingAuthorized:Deno.env.get('TENBOT_OPENAI_SPEND_AUTHORIZED')==='true'};
+ const preparation={enabled:Deno.env.get('TENBOT_INVOICE_PREPARATION_ENABLED')==='true',spendingAuthorized:Deno.env.get('TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED')==='true',startsAt:Deno.env.get('TENBOT_INVOICE_PREPARATION_STARTS_AT')||'',expiresAt:Deno.env.get('TENBOT_INVOICE_PREPARATION_EXPIRES_AT')||''};
+ const openAI={enabled:Deno.env.get('TENBOT_OPENAI_ENABLED')==='true',origins:(Deno.env.get('TENBOT_OPENAI_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean),apiKey:Deno.env.get('TENBOT_OPENAI_API_KEY')||'',keyExpiresAt:Deno.env.get('TENBOT_OPENAI_KEY_EXPIRES_AT')||'',spendingAuthorized:ordinaryTenbotSpendingAuthorized(Deno.env.get('TENBOT_OPENAI_SPEND_AUTHORIZED')==='true',preparation)};
  const pilot={enabled:Deno.env.get('TENBOT_RECEIVAL_PILOT_ENABLED')==='true',executionEnabled:Deno.env.get('TENBOT_RECEIVAL_EXECUTION_ENABLED')==='true',origins:(Deno.env.get('TENBOT_RECEIVAL_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean),employeeIds:(Deno.env.get('TENBOT_RECEIVAL_EMPLOYEE_IDS')||'').split(',').map(s=>s.trim()).filter(Boolean),expiresAt:Deno.env.get('TENBOT_RECEIVAL_PILOT_EXPIRES_AT')||''};
  if(body.workspace===TENBOT_RECEIVAL_WORKSPACE){
   const metadata=(n:string,a:Record<string,unknown>)=>TENBOT_RECEIVAL_SERVICE_RPCS.has(n)?service.rpc(n,a):Promise.resolve({data:null,error:{message:'Receival authorization unavailable'}});
-  const runtime=createHostedReceivalRuntime({owner:data.user.id,origin,pilot,openAI,caller,service:metadata});
-  const receivals=createHostedReceivalContract({owner:data.user.id,origin,caller,service:metadata,config:pilot,runtime});
+  const runtime=createHostedReceivalRuntime({owner:data.user.id,origin,pilot,preparation,openAI,caller,service:metadata});
+  const receivals=createHostedReceivalContract({owner:data.user.id,origin,caller,service:metadata,config:pilot,preparation,runtime});
   return reply(await receivals(body));
  }
  const hosted=createHostedTenbot({owner:data.user.id,origin,
   config:openAI,
   caller:(n,a)=>caller.rpc(n,a),service:(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?service.rpc(n,a):Promise.resolve({data:null,error:{message:'Metering action unavailable'}}),qwen:provider,jobTools:createTenbotJobTools(caller)});
  const result=await hosted(body);
+ if(body.action==='status'&&preparation.enabled){if(hostedInvoicePreparationEnabled(preparation,data.user.id,origin)){const allowed=await caller.rpc('can_prepare_invoice_receival',{});if(!allowed.error&&allowed.data===true)return reply({...result,receivalPilotAvailable:true});}return reply(result);}
  if(body.action==='status'&&hostedReceivalPilotEnabled(pilot,data.user.id,origin)){
   const write=await caller.rpc('has_app_capability',{p_capability:'writeBusinessData'}),receival=await caller.rpc('has_app_capability',{p_capability:'adjustInventory'});
   if(!write.error&&write.data===true&&!receival.error&&receival.data===true)return reply({...result,receivalPilotAvailable:true});

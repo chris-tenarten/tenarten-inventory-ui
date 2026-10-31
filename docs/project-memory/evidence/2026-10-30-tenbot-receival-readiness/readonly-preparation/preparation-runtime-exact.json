@@ -1,0 +1,15 @@
+{
+  "mode": "offline scripted provider and simulated database/Storage only; not live inference or JWT/RLS proof",
+  "passed": 6,
+  "checks": [
+    "default OFF, exact caller/origin and independent finite <=15-minute expiry fail closed",
+    "verified original scope rejects wrong hash, owner, byte count, media type and retained/deleted sources",
+    "preparation contract needs read-helper only and rejects every approval/write action without touching runtime",
+    "ordinary employees cannot spend prep allowance even when general authorization and shared meter are available",
+    "real runtime creates one 1 Bag non-executing draft with both write capabilities false",
+    "fresh preparation authorization revocation blocks publication after model continuation"
+  ],
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "operationalWrites": 0
+}

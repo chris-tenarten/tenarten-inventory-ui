@@ -1,0 +1,45 @@
+{
+  "base": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+  "source": "/private/tmp/tenops-tenbot-readonly-preparation-20261030/validation-source",
+  "mode": "exact task-only source archive; no release attestation",
+  "files": [
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sha256": "3e724c8e8f417bcbf8842648833d1b9de614ddf3dc077e3a00700c4b6d681843"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "316ca40bc5e4b71584ab72ea5d45719e9545e74290c79a893d72cc7984520447"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "0bea8de12d9f0f20ef7988953a0ea60b92ad5af5eeb89809b9fbd31232946db4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "302995833d638dca82ebea439f985d7e200890dff46491dde29975beada51ef0"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "f394fb2c59249ee2748bccd7a2d1aaa64f5875ad3eace84285f012dd70a44e5a"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "6c8aadb83edf217bdae8f9d6de45fcc3b69f2ca68c35e3dd58d40ce54640311f"
+    },
+    {
+      "path": "scripts/verify-tenbot-invoice-preparation.mts",
+      "sha256": "0910a103f3691715f16a4fbafb22e30a699d83acc7467883c0ff93600eebe351"
+    },
+    {
+      "path": "scripts/verify-tenbot-preparation-migration.mts",
+      "sha256": "01e3f1d0639b4a4f39d09472cf044e442507f5136e6b9e8996948e02bb2c81f3"
+    },
+    {
+      "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+      "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580"
+    }
+  ],
+  "unrelatedDirtyWorkExcluded": true,
+  "secretsCopied": false
+}
