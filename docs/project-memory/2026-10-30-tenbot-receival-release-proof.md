@@ -343,3 +343,53 @@ Selected source hashes:
 - scripts/verify-tenbot-invoice-preparation.mts: Git blob c039200786b9e5fdaf8b68a72e521677ea6bf5c9; SHA256 0910a103f3691715f16a4fbafb22e30a699d83acc7467883c0ff93600eebe351.
 - scripts/verify-tenbot-preparation-migration.mts: Git blob 3b4f937574dfa27f061de17723a9ad12ec04ceb7; SHA256 01e3f1d0639b4a4f39d09472cf044e442507f5136e6b9e8996948e02bb2c81f3.
 - supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql: Git blob c6485e36dc0b8951176eb2437aa978c1abf3e1ef; SHA256 35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580.
+
+
+## Accepted candidate source review — prepared-draft resume and execution-only window
+
+Chris accepts 05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c as the prepared-draft resume and execution-only authorization candidate. Product authorizes a fresh data-free Free fixture and positive real database tests, then only on success current read-only shared compatibility and selective TenDev candidate preparation. The two linked prerequisite receipts have passed before this source is constructed. This records conditional acceptance, not a deployment claim.
+
+Scope: tendev-preparation.
+
+This review is not evidence of hosted application or deployment.
+
+This review grants no migration application, write activation, push or deployment authority.
+
+| Path | Git blob | SHA256 | Authority | Kind | Accepted authority revision |
+|---|---|---|---|---|---|
+| supabase/functions/_shared/tenbot-receival-hosted.ts | 74c992d6e04f18dc7f16c0bdd56f6e2f24629fe8 | 62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc | product-accepted | runtime | 05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c |
+| supabase/functions/_shared/tenbot-receival-runtime.ts | 18a8776166c69184246d90d6b0ca971042786486 | 160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e | product-accepted | runtime | 05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c |
+| supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql | baa7b4eb2bd1a0ee078af2808ddb32c4f8972203 | 720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27 | product-accepted | unapplied-migration | 05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c |
+
+Nine exact application files, eight focused verifier/support files and one proposed migration are copied byte-for-byte from the accepted commit onto served TenDev e357d5625734522c904fa80335e9aad5180a3fec. The unrelated dirty latency change, its verifier and other dev work remain excluded. The existing original synthetic PDF is reused unchanged (SHA256 c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a). No Production data, local environment file or credential is copied.
+
+Resume uses owner-scoped attested source evidence and no model request. Response-only availability does not alter persisted operation identity/hash/revision/rows or confer approval. Fresh canonical review and explicit immutable approval remain required; revoked approvals cannot revive. The execution-only window is a private default-OFF single-use fixed scope, bounded by the server to fifteen minutes and separate from inference funding. Existing canonical Admin activation/revocation, RBAC/RLS, source quantity, transaction, duplicate, idempotency, audit and on-hand stock contracts remain in force.
+
+Migration supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql, exact SHA256 720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27, is accepted and validated in the separate synthetic fixture but remains unapplied to the shared target at preparation. Its kind is unapplied-migration, never historical-deployed. Isolated evidence does not confer shared application or write activation authority. This preparation performs no migration application, grant, enrollment, funding, inference, approval, operational write, push or deployment.
+
+Every selected path is checked against all released knowledge sourceFiles, provenance and dependency bindings. Bound semantic impacts stop preparation for record-specific review; no claim or verifier bypass is allowed. Employee knowledge entries, structured patches, deployed authority pins, previous review records, Current State, Manifest and historical receipts remain unchanged from e357d5625734522c904fa80335e9aad5180a3fec, except this append-only scoped source receipt. Only appended exact source tuples and generated input/artifact digests may change.
+
+Mandatory unchanged full-history clean-current-candidate zero-hold proof, exact committed artifact and standard target-matched secret-free build remain required. The new relative runtime module also needs real Deno/bundle verification; AST extension fallback and a local Next build alone do not prove hosted resolution. TenOps Pages, ordinary Terra/Qwen configuration, history/privacy, caller-authorized Job tools, existing accounting/uncertain reservations and all write gates remain unchanged by preparation.
+
+Prerequisite evidence hashes: actual isolated database 656f36d0ab70e23746f77dc7ba3736dcdc2eceb0d37a04b5fac305c728d71c72; read-only shared compatibility 6d0830cf9451998802477f0e9660aac9fd2978b9ccdd1e9b9f2675ba4ba34b51.
+
+Selected source hashes:
+
+- src/modules/inventory/tenbot-canary-control.ts: Git blob 05059719413c17031172f5fe052e7268c516c962; SHA256 095fb9576780e94f092dd9e2f49769ee4f32cbb390ad724bd4b0f60a35974a55.
+- src/modules/inventory/tenbot-canary-execution.ts: Git blob 89dca910bfa8683d918ae3244126ecb7b089c302; SHA256 02f35ae1927242ac9b19bff077bde525dc59c62c7c4668c1ef2b9dd334d8576e.
+- src/modules/tenbot/ReceivalDraftReview.tsx: Git blob f019d31a66b2719d6777e26f9ed3b9daf1711aff; SHA256 6a3994ff906be1f34c7d9b170a9ce6f8a0464f4f4f1333c8d66b80da2e3af665.
+- src/modules/tenbot/TenbotCanaryControl.tsx: Git blob 031550e7ccef515063fd305e683c174c3c6b676c; SHA256 a914bcd9ffc61076fbc6fd48663d0fac75c8e25479e67fa5f5a17ad2242deb3e.
+- src/modules/tenbot/TenbotWorkspace.tsx: Git blob 3b81f1d0a737c0376e32e3be9145f173ed39438f; SHA256 afcf43ec6446da08a43cbc33ed60c39649f07932c9516579df5d6e181f8c0bd8.
+- src/modules/tenbot/live-review.ts: Git blob 8c9614761ac12d66e8893afb090ce22aa79dd0b1; SHA256 0b42ff8592c195544d927c33b427c48fb066d1db9b85d7d6f73c81ed69f2306c.
+- src/modules/tenbot/prepared-draft-resume.ts: Git blob 47fac4d66f71bf771fb29e133fc8d96db40cd3f7; SHA256 1e40d6f608921a1d149bd4734813898ca82f8473991513d4b6bad3d0c273b099.
+- supabase/functions/_shared/tenbot-receival-hosted.ts: Git blob 74c992d6e04f18dc7f16c0bdd56f6e2f24629fe8; SHA256 62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc.
+- supabase/functions/_shared/tenbot-receival-runtime.ts: Git blob 18a8776166c69184246d90d6b0ca971042786486; SHA256 160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e.
+- scripts/support/tenbot-execution-window-database.sql: Git blob dd9fc04e883ca227a603553520709cfd1920872e; SHA256 77ed7efaaf309c6b6043051e1ead5cf79e64db99bc3ae8577725347dc780b7fd.
+- scripts/support/tenbot-execution-window-lock-a.sql: Git blob 79a61aeada8a1bc01f31fe149c097d075c906047; SHA256 36b6fe5f54eea557071c497e69b31ca07cbbfc418a91441e01d4086adec33e87.
+- scripts/support/tenbot-execution-window-lock-b.sql: Git blob 143195cd433edb4d4a1dacc7068bf7161c26b414; SHA256 405107ddf49317589f1ea7432fe3cdf0b5a0dc6a0cfa7b38fed2d77f01342415.
+- scripts/verify-tenbot-canary-execution.mts: Git blob 01d8108ad3b6df2211153018892b346a7b8a7982; SHA256 f5a298a87506dd2e6c79e66cdfc52fd49715ce2cec5f5a450544be002e9c9ba8.
+- scripts/verify-tenbot-canary-runtime.mts: Git blob f52f20abb2961f96fc5f6b4feea39e64a0726764; SHA256 b7b18734626cf4d5b364a209155092df6b658b83f548c4489b11060a5f4a9947.
+- scripts/verify-tenbot-model-free-resume.mts: Git blob 75d08aa8d829a12e99d12d0a41680bb48024a7dc; SHA256 d76eaeb77397836d20f01f3f6c4dafe45d18312f8ce5c8d95e45965d080c2ee7.
+- scripts/verify-tenbot-prepared-draft-resume.mts: Git blob 4582909beab4193ff8130ea56555d322186717ff; SHA256 451ef432bf95743e45e01c8ab1e4e391bbf478aeb783f3a65015d25ec73ea8ba.
+- scripts/verify-tenbot-prepared-resume-browser.mjs: Git blob 3b117cfe131b65be1a853f20ed6d58bf992bf047; SHA256 67ced80cb5d3bb789bf78a4a6c202d38ae96e1c1bd887c0e187686b7844734f1.
+- supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql: Git blob baa7b4eb2bd1a0ee078af2808ddb32c4f8972203; SHA256 720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27.

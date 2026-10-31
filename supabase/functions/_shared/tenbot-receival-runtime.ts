@@ -43,7 +43,7 @@ export type ReceivalRuntimeSourceStore={get(id:string):Promise<InvoiceReceivalSo
 type Row=Record<string,unknown>;
 type SourceDraftRow=LocalDraftRow&{sourceQuantity:InvoiceSourceQuantity|null;quantityBasis:InvoiceQuantityBasis};
 export type ReceivalAgentCaller=JobToolCaller&InvoiceReceivalCaller;
-export type ReceivalRuntimeDependencies={model:string;sourceStore?(caller:ReceivalAgentCaller,owner:string):ReceivalRuntimeSourceStore;/** Host-verified picker restriction only; never supplied by body/model. */catalogScope?(owner:string):readonly InvoiceCatalogIdentity[]|undefined;decodeAttachment(value:unknown):Promise<InvoiceImage&{filename:string;sha256:string}>;extractDocument(input:{id:string;filename:string;image:InvoiceImage;model:string;provider:AgentProvider;remainingUsd:number;assertNoFatal():void}):Promise<TenbotInvoiceDocument>;createProvider(label:string,image?:InvoiceImage):AgentProvider;remainingUsd():number;assertNoFatal():void;now?:()=>number;onDiagnostic?:InvestigationDiagnosticSink;/** Server-only source preparation; never durable business review/approval. */preparationOnly?:boolean;execution?:{enabled:boolean;databaseEnvironment:'isolated-test'|'restricted-tendev'};beforeExecute?(input:{owner:string;draftId:string;hash:string;approvalId:string}):Promise<unknown>};
+export type ReceivalRuntimeDependencies={model:string;sourceStore?(caller:ReceivalAgentCaller,owner:string):ReceivalRuntimeSourceStore;/** Host-verified picker restriction only; never supplied by body/model. */catalogScope?(owner:string):readonly InvoiceCatalogIdentity[]|undefined;decodeAttachment(value:unknown):Promise<InvoiceImage&{filename:string;sha256:string}>;extractDocument(input:{id:string;filename:string;image:InvoiceImage;model:string;provider:AgentProvider;remainingUsd:number;assertNoFatal():void}):Promise<TenbotInvoiceDocument>;createProvider(label:string,image?:InvoiceImage):AgentProvider;remainingUsd():number;assertNoFatal():void;now?:()=>number;onDiagnostic?:InvestigationDiagnosticSink;/** Server-only source preparation; never durable business review/approval. */preparationOnly?:boolean;/** Fresh server authorization, never an HTTP/model field. */executionOnly?():boolean;execution?:{enabled:boolean;databaseEnvironment:'isolated-test'|'restricted-tendev'};beforeExecute?(input:{owner:string;draftId:string;hash:string;approvalId:string}):Promise<unknown>};
 type Attachment={id:string;owner:string;filename:string;image:InvoiceImage;sha256:string;expires:number;document?:TenbotInvoiceDocument;session?:ReturnType<typeof createTenbotAgentSessions>;source?:InvoiceReceivalSource};
 type Review={owner:string;attachmentId:string;expires:number;draft:LocalReceivalDraft;supplier:string;reference:string;traceHash:string;durable?:InvoiceReceivalDraft};
 const record=(v:unknown):v is Row=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -88,7 +88,8 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
  async function restore(sourceId:unknown,owner:string,store:ReceivalRuntimeSourceStore){
   if(typeof sourceId!=='string'||!uuid.test(sourceId))fail('Choose the exact private original document.');
   const source=await store.get(sourceId);
-  if(source.ownerId!==owner||['deleting','deleted'].includes(source.state)||source.state!=='retained'&&Date.parse(source.expiresAt)<=now())fail('This private invoice source is unavailable or expired.',403);
+  if(source.ownerId!==owner)fail('This private invoice source is unavailable.',403);
+  if(['deleting','deleted'].includes(source.state)||source.state!=='retained'&&Date.parse(source.expiresAt)<=now())fail('This prepared invoice is expired or no longer available. No invoice was reprocessed.',410);
   const current=attachments.get(sourceId);
   if(current?.source?.version===source.version)return current;
   const state=source.agentState;
@@ -122,8 +123,9 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
    for(const [id,item] of attachments)if(item.expires<=now())attachments.delete(id);
    for(const [id,item] of reviews)if(item.expires<=now())reviews.delete(id);
    const action=body.action,store=deps.sourceStore?.(caller,owner);
-   if(preparationOnly){if(!['status','upload','ask'].includes(String(action)))fail('This invoice workspace prepares drafts only. Approval and execution require the authorized Inventory workflow.',403);await authorizePreparation(owner);if(action==='ask'&&body.attachmentId===undefined)fail('Attach the approved synthetic invoice for this preparation-only test.',403);}
-   if(store&&action!=='status'&&action!=='history'&&!(action==='ask'&&body.attachmentId===undefined)&&!(action==='clear'&&body.attachmentId===undefined)){const sourceId=action==='upload'?body.sourceId:body.attachmentId??body.draftId;if(sourceId!==undefined)await restore(sourceId,owner,store);}
+   if(preparationOnly){if(!['status','resume','upload','ask'].includes(String(action)))fail('This invoice workspace prepares drafts only. Approval and execution require the authorized Inventory workflow.',403);await authorizePreparation(owner);if(action==='ask'&&body.attachmentId===undefined)fail('Attach the approved synthetic invoice for this preparation-only test.',403);}
+   if(deps.executionOnly?.()===true&&!['status','resume','review','approve'].includes(String(action)))fail('This execution-only window can resume and review the existing invoice. Uploads and AI requests are disabled.',403);
+   if(store&&action!=='status'&&action!=='history'&&!(action==='ask'&&body.attachmentId===undefined)&&!(action==='clear'&&body.attachmentId===undefined)){const sourceId=action==='upload'||action==='resume'?body.sourceId:body.attachmentId??body.draftId;if(sourceId!==undefined)await restore(sourceId,owner,store);}
    if(action==='history'){
     keys(body,['action','conversationId']);const history=await helpSession(body,owner);await authorize(owner);return history;
    }
@@ -137,6 +139,32 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
     if(found.error||!Array.isArray(found.data))initializationUnavailable('jobs');
     await authorize(owner);
     return {mode:'authenticated-receivals',simulation:false,databaseEnvironment:deps.execution?.databaseEnvironment,preparationOnly,canPrepare:preparationOnly?true:await can(owner,'writeBusinessData')&&await can(owner,'adjustInventory'),canCreateCatalog:!preparationOnly&&await can(owner,'writeBusinessData')&&await can(owner,'manageVendorsCatalog'),executionEnabled,blockedReason:executionEnabled?undefined:BLOCKED,model:deps.model,recordSource:executionEnabled?'Real isolated test records / caller JWT, existing TenOps RBAC and RLS':'Caller JWT / existing TenOps RBAC and RLS; execution disabled',catalog:combinePurchasingCatalogRecords(catalog.standard,catalog.specialty).map(c=>({id:`${c.source}:${c.id}`,materialName:c.materialName,size:c.chipSize,unit:c.orderUnit||c.containerType,supplier:c.vendor,packageQuantity:c.packageQuantity,packageMeasure:c.packageMeasure,containerType:c.containerType,packageLabel:c.packageEvidence?.label||''})),jobs:array(found.data).slice(0,20).map(j=>({id:j.id,label:[j.job_number,j.name].filter(Boolean).join(' — ')})),jobsLimited:Array.isArray(found.data)&&found.data.length>20,requiresPrivateOriginal:Boolean(store),maxOriginalBytes:12000000,maxAttachmentBytes:90000,mediaTypes:['image/png','image/jpeg']};
+   }
+   if(action==='resume'){
+    keys(body,['action','sourceId']);await authorizePreparation(owner);
+    if(!store)fail('Private prepared-draft restoration is unavailable.',503);
+    const item=attached(body.sourceId,owner),value=reviewed(item.id,owner);
+    if(item.source?.state!=='ready'||!item.document||value.draft.status!=='review_required'||value.durable?.superseded)fail('This original is not an available prepared draft. Open its existing Inventory result if it was already approved or replaced.',409);
+    const state=item.source.agentState;
+    if(value.draft.id!==item.id||value.draft.attachmentId!==item.id||!/^[a-f0-9]{64}$/.test(value.draft.hash)||!Number.isSafeInteger(value.draft.revision)||value.draft.revision<1||state?.originalSha256!==item.sha256||!state.sourceRows.length||value.draft.rows.length!==state.sourceRows.length||new Set(value.draft.rows.map(row=>row.lineId)).size!==value.draft.rows.length||value.draft.rows.some(row=>!state.sourceRows.some(original=>original.lineId===row.lineId&&original.sourceText===row.sourceText&&original.sourceQuantity?.quantity===row.sourceQuantity?.quantity&&original.sourceQuantity?.unit===row.sourceQuantity?.unit)))fail('The stored draft identity or original quantity evidence changed. No approval is available.',409);
+    // Keep the attested preview hash verbatim. JSONB can reorder object keys;
+    // re-hashing its JSON.stringify representation would reject valid old drafts.
+    // The canonical service creates the approval-bound hash after fresh review.
+    // Reading an attested source does not regenerate it, advance its revision,
+    // download/re-extract the original, or invoke a provider. Review will perform
+    // fresh catalog/duplicate/quantity validation before any durable approval.
+    await authorizePreparation(owner);
+    const draft=clone(value.draft);
+    // A failed edit already revoked its old approval. Keep owned source evidence
+    // available for correction, but require another server review; never revive
+    // that revoked approval or ask the model to reconstruct the invoice.
+    if(value.durable?.revoked){draft.canApprove=false;draft.reviewed=false;draft.blockReason='The previous server review was revoked. Save changes for review again.';}
+    // Availability is a fresh response projection, not immutable operation
+    // content. A disabled-first review can become executable in the SAME grant
+    // without forcing another review merely to update a stale display flag.
+    // Identity, hash, revision, metadata, quantities and persisted state stay exact.
+    if(deps.executionOnly?.()===true&&draft.executionEnabled!==executionEnabled){draft.executionEnabled=executionEnabled;if(executionEnabled)delete draft.blockReason;else draft.blockReason=BLOCKED;}
+    return {attachment:{attachmentId:item.id,sourceId:item.id,filename:item.filename,mediaType:item.source.mediaType,expiresAt:new Date(item.expires).toISOString(),simulation:false},draft,simulation:false,modelInference:false};
    }
    if(action==='upload'){
     await authorizePreparation(owner);
