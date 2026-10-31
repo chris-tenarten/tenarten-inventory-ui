@@ -1533,5 +1533,133 @@
       "revision": "84213cd7456752bc7bb5b437f9e97836f2e2e1e0",
       "heading": "## Candidate technical source review — isolated canary funding and finite expiry"
     }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-agent.ts",
+    "blob": "29ccba59420eda0202b5dd03407028497ab70a3c",
+    "sha256": "f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98",
+    "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+    },
+    "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+    "blob": "71bcc5d8f9c76a2d7a4a1bdc80f10b66e7ee6b52",
+    "sha256": "0bea8de12d9f0f20ef7988953a0ea60b92ad5af5eeb89809b9fbd31232946db4",
+    "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+    },
+    "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-invoice.ts",
+    "blob": "b6450def39482f3da1b28003357f116810b5af2c",
+    "sha256": "9e60c5101092678155920c008691420100e69d032f1aa8c544e28499d52684d1",
+    "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+    },
+    "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+    "blob": "bea0e13636c95718fb35d08da4b30e01c85f1395",
+    "sha256": "84a4d315742e76458bdb6ff840fbaaa195089ac2ddec5184468847abde85379d",
+    "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+    },
+    "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "blob": "45ed05856dfbd52ab16ae1d6ebee0f9038c49afb",
+    "sha256": "f394fb2c59249ee2748bccd7a2d1aaa64f5875ad3eace84285f012dd70a44e5a",
+    "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+    },
+    "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "blob": "4dc9a2948bf5f4bb2ee40fec458fe66916e6fffe",
+    "sha256": "302995833d638dca82ebea439f985d7e200890dff46491dde29975beada51ef0",
+    "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+    },
+    "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/tenbot/index.ts",
+    "blob": "96852bc575846a4928d11787a48edb6005af46d6",
+    "sha256": "6c8aadb83edf217bdae8f9d6de45fcc3b69f2ca68c35e3dd58d40ce54640311f",
+    "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+    },
+    "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+    "blob": "c6485e36dc0b8951176eb2437aa978c1abf3e1ef",
+    "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580",
+    "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+    },
+    "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
   }
 ]
