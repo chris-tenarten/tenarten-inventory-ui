@@ -1488,5 +1488,50 @@
       "heading": "## Accepted candidate source review — bounded hosted invoice initialization"
     },
     "acceptedAuthorityRevision": "c251eb8f911bc6d989b22afd11777604d77268ed"
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-canary-funding.ts",
+    "blob": "6d77e3bdd58c1f0ef52fd32a1a6780cb44cd74cf",
+    "sha256": "df875a6cd45c35b13198a20c062c221dd76b8e2191e5f0986401eb89a317471b",
+    "reviewedCandidate": "84213cd7456752bc7bb5b437f9e97836f2e2e1e0",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "84213cd7456752bc7bb5b437f9e97836f2e2e1e0",
+      "heading": "## Candidate technical source review — isolated canary funding and finite expiry"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "blob": "b985c686c38a4a80baca8c4e1b05ba0ce7d00297",
+    "sha256": "260967dfeed3195643588e0bcfd632cf18304d012f9c9a5339674ceaaea0d1e6",
+    "reviewedCandidate": "84213cd7456752bc7bb5b437f9e97836f2e2e1e0",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "84213cd7456752bc7bb5b437f9e97836f2e2e1e0",
+      "heading": "## Candidate technical source review — isolated canary funding and finite expiry"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+    "blob": "d6091f40e7d23e2314c4a2a7bce67e5dd993e7af",
+    "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6",
+    "reviewedCandidate": "84213cd7456752bc7bb5b437f9e97836f2e2e1e0",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "revision": "84213cd7456752bc7bb5b437f9e97836f2e2e1e0",
+      "heading": "## Candidate technical source review — isolated canary funding and finite expiry"
+    }
   }
 ]
