@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "groups": 6,
+  "checks": [
+    "fresh runtime and preparation/execution transitions resume exact attested preview without inference, mutation or JSON key-order dependence",
+    "owner, active permissions, source expiry and immutable quantity mismatches deny resume without fallback or model replay",
+    "metadata-only canonical review reuses exact one-Bag evidence and creates new immutable review identity with execution disabled",
+    "editing metadata revokes previous immutable review; stale approval and contradictory package count cannot be reused",
+    "fresh hosted instances use execution-only authorization with invalid AI credentials and never consult funding or reserve",
+    "matching but disabled/expired execution windows fail closed and cannot fall back to old inference allowance"
+  ],
+  "mode": "Offline real orchestration; explicit simulated source/DB/canonical RPC results only. No JWT/RLS, SQL migration, real approval, grant or transaction proof.",
+  "networkCalls": 0,
+  "inferenceCalls": 0,
+  "grantsActivated": 0,
+  "hostedMutations": 0,
+  "operationalWrites": 0
+}

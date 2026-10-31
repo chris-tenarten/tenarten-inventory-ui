@@ -1,0 +1,170 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T04:08:44.649Z",
+  "baseline": "4fba20b71970a0d9c60aeb09352854be21977e56",
+  "sourceArchive": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source",
+  "sourceHashes": [
+    {
+      "path": "src/modules/inventory/tenbot-canary-execution.ts",
+      "sha256": "02f35ae1927242ac9b19bff077bde525dc59c62c7c4668c1ef2b9dd334d8576e"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-control.ts",
+      "sha256": "095fb9576780e94f092dd9e2f49769ee4f32cbb390ad724bd4b0f60a35974a55"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotCanaryControl.tsx",
+      "sha256": "a914bcd9ffc61076fbc6fd48663d0fac75c8e25479e67fa5f5a17ad2242deb3e"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "afcf43ec6446da08a43cbc33ed60c39649f07932c9516579df5d6e181f8c0bd8"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sha256": "6a3994ff906be1f34c7d9b170a9ce6f8a0464f4f4f1333c8d66b80da2e3af665"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "0b42ff8592c195544d927c33b427c48fb066d1db9b85d7d6f73c81ed69f2306c"
+    },
+    {
+      "path": "src/modules/tenbot/prepared-draft-resume.ts",
+      "sha256": "1e40d6f608921a1d149bd4734813898ca82f8473991513d4b6bad3d0c273b099"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc"
+    },
+    {
+      "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-runtime.mts",
+      "sha256": "b7b18734626cf4d5b364a209155092df6b658b83f548c4489b11060a5f4a9947"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-execution.mts",
+      "sha256": "f5a298a87506dd2e6c79e66cdfc52fd49715ce2cec5f5a450544be002e9c9ba8"
+    },
+    {
+      "path": "scripts/verify-tenbot-model-free-resume.mts",
+      "sha256": "d76eaeb77397836d20f01f3f6c4dafe45d18312f8ce5c8d95e45965d080c2ee7"
+    },
+    {
+      "path": "scripts/verify-tenbot-prepared-draft-resume.mts",
+      "sha256": "451ef432bf95743e45e01c8ab1e4e391bbf478aeb783f3a65015d25ec73ea8ba"
+    },
+    {
+      "path": "scripts/verify-tenbot-prepared-resume-browser.mjs",
+      "sha256": "67ced80cb5d3bb789bf78a4a6c202d38ae96e1c1bd887c0e187686b7844734f1"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-database.sql",
+      "sha256": "77ed7efaaf309c6b6043051e1ead5cf79e64db99bc3ae8577725347dc780b7fd"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-lock-a.sql",
+      "sha256": "36b6fe5f54eea557071c497e69b31ca07cbbfc418a91441e01d4086adec33e87"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-lock-b.sql",
+      "sha256": "405107ddf49317589f1ea7432fe3cdf0b5a0dc6a0cfa7b38fed2d77f01342415"
+    }
+  ],
+  "results": [
+    {
+      "label": "verify-tenbot-canary-runtime",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 212,
+      "reused": true
+    },
+    {
+      "label": "verify-tenbot-receival-hosted",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 274,
+      "reused": true
+    },
+    {
+      "label": "verify-tenbot-invoice-preparation",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 273,
+      "reused": true
+    },
+    {
+      "label": "verify-tenbot-canary-execution",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 188,
+      "reused": true
+    },
+    {
+      "label": "verify-tenbot-canary-control",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 215,
+      "reused": true
+    },
+    {
+      "label": "verify-tenbot-prepared-draft-resume",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 201,
+      "reused": true
+    },
+    {
+      "label": "verify-tenbot-model-free-resume",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 257
+    },
+    {
+      "label": "typescript",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 7261
+    },
+    {
+      "label": "eslint",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 1987
+    },
+    {
+      "label": "build",
+      "status": 0,
+      "signal": null,
+      "errorCode": null,
+      "durationMs": 12779
+    }
+  ],
+  "exactTaskSource": true,
+  "unrelatedLatencyChangeExcluded": true,
+  "localEnvironmentFilesCopied": false,
+  "inferenceCredentialsLoaded": false,
+  "buildType": "Local optimized source-archive build with unchanged packaged-knowledge integrity prebuild; not a clean selective release-proof attestation.",
+  "releaseProofRequiredBeforeStaging": true,
+  "priorSandboxFailureRetained": true,
+  "actualDatabase": false,
+  "actualInference": false,
+  "hostedMutations": 0,
+  "reviewRecoveryCorrectionValidated": true,
+  "previousValidationPreserved": true
+}

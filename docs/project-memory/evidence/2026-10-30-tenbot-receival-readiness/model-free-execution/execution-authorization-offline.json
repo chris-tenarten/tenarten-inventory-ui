@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "groups": 8,
+  "checks": [
+    "strict fixed-scope execution projection defaults OFF and accepts no inference authority",
+    "server clock and elapsed time expire independently of cleanup or workstation date",
+    "genuine Admin control loads separate status and activates exact RPC without unavailable inference funding",
+    "bound, disabled and expired execution attempt cannot fall back to available inference funding",
+    "authorization/account changes deny before activation and dormant execution preserves legacy funded path",
+    "migration pins exact predecessor bodies, leaves immutable used allowance/accounting and canonical RPCs intact",
+    "default-OFF window is private, source pinned and exact-grant revocation closes only its binding",
+    "all canonical operation guards and finite grant bounds remain independently enforced"
+  ],
+  "migrationSha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+  "mode": "Offline deterministic parser/control and migration inspection only; no database/JWT/RLS/browser validation",
+  "actualNetworkCalls": 0,
+  "actualDatabase": false,
+  "realGrantMutations": 0,
+  "operationalWrites": 0,
+  "inferenceCalls": 0
+}

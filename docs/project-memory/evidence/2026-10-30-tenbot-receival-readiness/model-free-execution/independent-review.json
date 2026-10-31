@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "reviewer": "metadata_staging_plan",
+  "mode": "Independent exact-source/security review only; no duplicate tests or database/network actions.",
+  "findings": [
+    "Owner-scoped trusted source restore; no provider/download/persist on resume; legacy JSONB preview hash preserved",
+    "Both execution paths check fresh execution window and exact source/evidence binding; inactive bound window cannot fall back to funding",
+    "Private default-OFF one-shot window, <=15m server expiry, exact-grant revoke closes it; bound grant cannot reserve AI inference",
+    "Canonical approval/hash, permission epoch, quantity, idempotency and business-write contracts preserved",
+    "Response-only execution availability projection is outside operation hash; persisted state, hash, revision and canApprove remain unchanged"
+  ],
+  "migrationApplied": false,
+  "actualDatabaseValidated": false,
+  "remainingGate": "New migration needs separately authorized isolated real PostgreSQL/Auth/concurrency validation before application or staging."
+}

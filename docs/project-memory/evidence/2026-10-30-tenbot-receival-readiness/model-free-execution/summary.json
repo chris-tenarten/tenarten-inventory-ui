@@ -1,0 +1,157 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T04:09:38.982Z",
+  "authority": "Product FIX DRAFT RESUME & EXECUTION AUTHORIZATION: local implementation, focused validation and commit only.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "baseline": "4fba20b71970a0d9c60aeb09352854be21977e56",
+  "acceptedHostedBaseline": "e357d5625734522c904fa80335e9aad5180a3fec",
+  "preparedPreview": {
+    "id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+    "revision": 1,
+    "quantity": "1",
+    "unit": "Bag"
+  },
+  "focusedNewDeterministicGroups": 20,
+  "focusedBrowserGroups": 4,
+  "adjacentDeterministicGroups": 40,
+  "typescriptPassed": true,
+  "targetedLintPassed": true,
+  "optimizedBuildPassed": true,
+  "releaseProofClaimed": false,
+  "sourceHashes": [
+    {
+      "path": "src/modules/inventory/tenbot-canary-execution.ts",
+      "sha256": "02f35ae1927242ac9b19bff077bde525dc59c62c7c4668c1ef2b9dd334d8576e"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-control.ts",
+      "sha256": "095fb9576780e94f092dd9e2f49769ee4f32cbb390ad724bd4b0f60a35974a55"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotCanaryControl.tsx",
+      "sha256": "a914bcd9ffc61076fbc6fd48663d0fac75c8e25479e67fa5f5a17ad2242deb3e"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "afcf43ec6446da08a43cbc33ed60c39649f07932c9516579df5d6e181f8c0bd8"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sha256": "6a3994ff906be1f34c7d9b170a9ce6f8a0464f4f4f1333c8d66b80da2e3af665"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sha256": "0b42ff8592c195544d927c33b427c48fb066d1db9b85d7d6f73c81ed69f2306c"
+    },
+    {
+      "path": "src/modules/tenbot/prepared-draft-resume.ts",
+      "sha256": "1e40d6f608921a1d149bd4734813898ca82f8473991513d4b6bad3d0c273b099"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc"
+    },
+    {
+      "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-runtime.mts",
+      "sha256": "b7b18734626cf4d5b364a209155092df6b658b83f548c4489b11060a5f4a9947"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-execution.mts",
+      "sha256": "f5a298a87506dd2e6c79e66cdfc52fd49715ce2cec5f5a450544be002e9c9ba8"
+    },
+    {
+      "path": "scripts/verify-tenbot-model-free-resume.mts",
+      "sha256": "d76eaeb77397836d20f01f3f6c4dafe45d18312f8ce5c8d95e45965d080c2ee7"
+    },
+    {
+      "path": "scripts/verify-tenbot-prepared-draft-resume.mts",
+      "sha256": "451ef432bf95743e45e01c8ab1e4e391bbf478aeb783f3a65015d25ec73ea8ba"
+    },
+    {
+      "path": "scripts/verify-tenbot-prepared-resume-browser.mjs",
+      "sha256": "67ced80cb5d3bb789bf78a4a6c202d38ae96e1c1bd887c0e187686b7844734f1"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-database.sql",
+      "sha256": "77ed7efaaf309c6b6043051e1ead5cf79e64db99bc3ae8577725347dc780b7fd"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-lock-a.sql",
+      "sha256": "36b6fe5f54eea557071c497e69b31ca07cbbfc418a91441e01d4086adec33e87"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-lock-b.sql",
+      "sha256": "405107ddf49317589f1ea7432fe3cdf0b5a0dc6a0cfa7b38fed2d77f01342415"
+    }
+  ],
+  "migration": {
+    "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+    "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+    "applied": false,
+    "defaultEnabled": false,
+    "inferenceAllowed": false
+  },
+  "securityEvidenceLimit": "New execution-window PostgreSQL/JWT/concurrency behavior has not been exercised. Offline database replies and source review are not proof of actual database security.",
+  "hostedConfigurationChanged": false,
+  "grantsActivated": 0,
+  "approvalsSubmitted": 0,
+  "inferenceCalls": 0,
+  "costUsd": 0,
+  "operationalWrites": 0,
+  "push": false,
+  "deployment": false,
+  "credentialsLoaded": false,
+  "existingAccountingUntouched": true,
+  "remainingReleaseGates": [
+    "Product acceptance of local candidate",
+    "Explicit isolated migration/test authorization; safe non-destructive fixture setup for the fixed prepared source (old fixture chris_dev original is retained/bound)",
+    "Mandatory unchanged selective release proof and shared compatibility checks before separately approved migration application/TenDev staging",
+    "Separate execution-only arming and genuine Admin/chris_dev one-row canary approval before any grant or write"
+  ],
+  "evidence": [
+    {
+      "path": "model-free-resume.json",
+      "sha256": "c8ab55aae24c9fa4b04d7a59ebf48b44749228ffdc15bb25bde2b31174a88032"
+    },
+    {
+      "path": "execution-authorization-offline.json",
+      "sha256": "004039abc7389324f9119023e9c56a40729da2f7f351001282c63e790a24c15d"
+    },
+    {
+      "path": "browser.json",
+      "sha256": "0b30950d315804dd6eafb35489eda450d416c399dc469e6271940439f62d391b"
+    },
+    {
+      "path": "candidate-validation.json",
+      "sha256": "b79a41f8a45dba022b2aefa4a5595e09a645182c21ceee308e9b71e2e38bbff4"
+    },
+    {
+      "path": "independent-review.json",
+      "sha256": "2a31fa1dcac965686b6f3d0cc69dfe488675bee646e132d750e3e2c020884094"
+    },
+    {
+      "path": "resumed-review-desktop.png",
+      "sha256": "143f3460f24ed1219a679f057564e2f0fa4b40afb72f0145b972e89efec074c0"
+    },
+    {
+      "path": "expired-review-mobile.png",
+      "sha256": "56cb41790be173684404213883af9180909149533f12cde472ed282b48f8a73e"
+    }
+  ],
+  "scratch": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030",
+  "correctionsToValidationHarness": [
+    "Initial archive export buffering limit: switched to file-backed source-only archive",
+    "Sandbox denied tsx IPC pipe: bounded candidate validation rerun with scoped approval",
+    "Archive omitted two unchanged baseline TypeScript imports: restored exact Git source; passed focused checks reused",
+    "Browser fixture normalized catalog order unit to Bag/package label50lb; awaited actual server-review revision instead of input-value match. Original failed harness receipts retained."
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "groups": 4,
+  "checks": [
+    "Preparation to execution remount resumes exact preview with no ask/upload; proposed order metadata is editable/unsaved; server review retains one-Bag evidence; reviewed state resumes and edits invalidate approval; ordinary help omits invoice context",
+    "Fresh permission and expiry rejection never display the private preview or retry as inference",
+    "An enabled synthetic execution status describes approval/create accurately without auto-reviewing or approving",
+    "Another owner cannot reuse the original owner locator"
+  ],
+  "sourceHashes": {
+    "src/modules/tenbot/TenbotWorkspace.tsx": "afcf43ec6446da08a43cbc33ed60c39649f07932c9516579df5d6e181f8c0bd8",
+    "src/modules/tenbot/ReceivalDraftReview.tsx": "6a3994ff906be1f34c7d9b170a9ce6f8a0464f4f4f1333c8d66b80da2e3af665",
+    "src/modules/tenbot/prepared-draft-resume.ts": "1e40d6f608921a1d149bd4734813898ca82f8473991513d4b6bad3d0c273b099",
+    "src/modules/tenbot/live-review.ts": "0b42ff8592c195544d927c33b427c48fb066d1db9b85d7d6f73c81ed69f2306c"
+  },
+  "bundleSha256": "c376fe5a22c8efe5f4eed7dd753d14247472cb5ff41d541f8c526dc3116f1a55",
+  "mode": "Actual source hook, review component and SDK with synthetic Auth/intercepted HTTP only; not real JWT/RLS, database, hosted or model validation.",
+  "inferenceCalls": 0,
+  "approvalsSubmitted": 0,
+  "grantMutations": 0,
+  "operationalWrites": 0,
+  "externalRequestsForwarded": 0,
+  "portsUsed": [],
+  "traces": [
+    {
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "resume",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "resume",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "review",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "resume",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "ask",
+      "workspace": null
+    },
+    {
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "resume",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "resume",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "resume",
+      "workspace": "invoice-receivals.v1"
+    },
+    {
+      "action": "status",
+      "workspace": null
+    },
+    {
+      "action": "status",
+      "workspace": "invoice-receivals.v1"
+    }
+  ],
+  "errors": [],
+  "blocked": []
+}
