@@ -1,0 +1,46 @@
+[
+  {
+    "path": "src/modules/inventory/tenbot-canary-funding.ts",
+    "sha256": "8eb5f6f963c04bed1b10717bd3fcd6ac4c249a74f42b2d1596fee238bcd17964"
+  },
+  {
+    "path": "src/modules/inventory/tenbot-canary-control.ts",
+    "sha256": "5ae6c4c51d0131e5b99432d776acc89f0decc94b0446f60a5e81ced1a84cdd65"
+  },
+  {
+    "path": "src/modules/tenbot/TenbotCanaryControl.tsx",
+    "sha256": "6b1df5e02ba7dd99ec5b944180f791b6466ccf765caee6c5ad6379ead24d24d9"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-canary-funding.ts",
+    "sha256": "df875a6cd45c35b13198a20c062c221dd76b8e2191e5f0986401eb89a317471b"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "sha256": "260967dfeed3195643588e0bcfd632cf18304d012f9c9a5339674ceaaea0d1e6"
+  },
+  {
+    "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+    "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6"
+  },
+  {
+    "path": "scripts/verify-tenbot-canary-funding.mts",
+    "sha256": "00813a1bbfa27b4131048d823744598ab5e4d0df2f2d2858fbf1ca5253c4bb3d"
+  },
+  {
+    "path": "scripts/verify-tenbot-canary-funding-database.mts",
+    "sha256": "38f5db8d7a5f8bc962495dbe6f68d7e253c958d29e81f565626c2a6c9b1369ad"
+  },
+  {
+    "path": "scripts/verify-tenbot-canary-control.mts",
+    "sha256": "a047ca7f201b37915a3525c77530b140bb22c19cf1cf6988d7138e1dd18f7243"
+  },
+  {
+    "path": "scripts/verify-tenbot-canary-runtime.mts",
+    "sha256": "654e8720d79f3a4d0ae23f4ab3da295ae7f8f87def7d4eaffda04db441c1e262"
+  },
+  {
+    "path": "scripts/verify-tenbot-canary-control-browser.mjs",
+    "sha256": "13110d5f8334d6e230eedd250169dc7fe39dbbd04e6bf4c07ab7af37d7291599"
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "groups": 9,
+  "checks": [
+    "strict separate projection rejects widened budgets, nonfinite/overlong windows and inconsistent remaining/active state",
+    "finite window uses observed server time plus elapsed duration and expires independently of cleanup",
+    "fixed-identity meter maps only its own reservations and late/uncertain settlements, preserving one stable request ID",
+    "actual runtime verifies private original bytes before canary reserve and uses new metering only for the fixed document",
+    "forged/wrong originals and invoice-less or opt-in requests cannot dispatch or reserve canary inference",
+    "disabled/expired/mismatched funding fails before dispatch; fresh funding prevents a second paid action after reserve",
+    "an exactly exhausted allowance still permits its already-reserved dispatch within the valid window",
+    "a paid response crossing expiry still settles measured charge and cannot persist a new proposal",
+    "ordinary conversations from both employees and chris_dev retain general-budget denial and Qwen fallback, never the allowance"
+  ],
+  "actualInference": false,
+  "actualDatabase": false,
+  "externalNetworkCalls": 0,
+  "realGrantMutations": 0,
+  "operationalWrites": 0,
+  "scope": "Actual runtime/client/meter code with synthetic Auth/RPC/provider transport and approved PDF bytes; not JWT/RLS/database or live model evidence"
+}

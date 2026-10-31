@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "migration": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+  "migrationSha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6",
+  "groups": [
+    {
+      "name": "Pristine dormant migration and immutable synthetic evidence baseline",
+      "durationMs": 365
+    },
+    {
+      "name": "Existing synthetic Auth JWTs verified without secret export",
+      "durationMs": 589
+    },
+    {
+      "name": "Dormant exact RPC, role ACLs, finite-window and no-reset constraints",
+      "durationMs": 399
+    },
+    {
+      "name": "Exact public reserve positive/negative metadata contract; all fixture setup rolled back",
+      "durationMs": 843
+    },
+    {
+      "name": "Fixture-only source relation clone; exact normalized reserve body and dormant gates",
+      "durationMs": 432
+    },
+    {
+      "name": "Exact public retained-source denial and fixed-scope negative reservations",
+      "durationMs": 413
+    },
+    {
+      "name": "Measured, uncertain, replay and one-request accounting",
+      "durationMs": 375
+    },
+    {
+      "name": "Actual concurrent reservations serialize and cannot exceed finite cap",
+      "durationMs": 1054
+    },
+    {
+      "name": "Immutable window, source/request binding, preserved ordinary expiry and hard cap",
+      "durationMs": 1104
+    },
+    {
+      "name": "Real server expiry denies new spending independently of cleanup",
+      "durationMs": 42511
+    },
+    {
+      "name": "Exact revocation, late/uncertain accounting, overrun isolation and no rearm",
+      "durationMs": 367
+    }
+  ],
+  "authHttpCalls": 8,
+  "actualPostgreSQL": true,
+  "concurrency": "Two independent PostgreSQL backend transactions against exact shared funding/usage locks and normalized reserve body.",
+  "limitations": [
+    "Positive source lifecycle uses a private synthetic source relation substitution; public exact RPC separately rejects retained source. No source history or triggers altered.",
+    "Synthetic fixture grant was direct operator setup, not Admin activation proof.",
+    "No inference or actual uploaded-byte interpretation performed."
+  ],
+  "sourceHistoryUnchanged": true,
+  "ordinaryPolicyAndPriorUsageUnchanged": true,
+  "productionRequests": 0,
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "fundingEnabled": false,
+  "activeGrants": 0,
+  "enrollments": 0
+}

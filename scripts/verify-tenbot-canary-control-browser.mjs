@@ -13,14 +13,14 @@ import {session} from './support/wave4-fixture.mjs';
 
 const root=process.cwd(),directory='/private/tmp/tenops-tenbot-chris-dev-staging-20261030/canary-preparation/application-controls/browser';
 const fixtureOrigin='https://canary-ui-fixture.supabase.invalid',enabledOrigin='https://tendev.pages.dev',reviewOrigin='http://localhost:3000';
-const now=Date.parse('2026-10-30T19:00:00Z'),iso=value=>new Date(value).toISOString(),clone=value=>structuredClone(value);
+const now=Date.parse('2026-10-31T01:00:00Z'),iso=value=>new Date(value).toISOString(),clone=value=>structuredClone(value);
 const id=number=>`10302026-0000-4000-8000-${String(number).padStart(12,'0')}`;
 const admin=id(1),grantId=id(2),draftId=id(3),recordId=id(4),approvalId=id(5),sourceId=id(6),hash='a'.repeat(64);
 const {TENBOT_CANARY_OWNER:owner,TENBOT_CANARY_CATALOG_ID:catalog,TENBOT_CANARY_DOCUMENT_SHA256:sha,TENBOT_CANARY_DOCUMENT_REFERENCE:reference}=await tsImport('../src/modules/inventory/tenbot-canary-access.ts',import.meta.url);
 const checks=[],errors=[],traces=[],blockedNetwork=[],unexpectedNetwork=[],mutationRequests=[];
 const digest=value=>createHash('sha256').update(value).digest('hex');
 mkdirSync(directory,{recursive:true});
-const sourcePaths=['src/modules/tenbot/TenbotCanaryControl.tsx','src/modules/inventory/tenbot-canary-control.ts','src/modules/inventory/tenbot-canary-access.ts','src/modules/inventory/invoice-receival-service.ts','src/modules/inventory/invoice-receival-attachments.ts'];
+const sourcePaths=['src/modules/tenbot/TenbotCanaryControl.tsx','src/modules/inventory/tenbot-canary-control.ts','src/modules/inventory/tenbot-canary-funding.ts','src/modules/inventory/tenbot-canary-access.ts','src/modules/inventory/invoice-receival-service.ts','src/modules/inventory/invoice-receival-attachments.ts'];
 const sourceHashes=Object.fromEntries(sourcePaths.map(file=>[file,digest(readFileSync(file))]));
 
 // Test-only adapters never read the application's Auth storage, .env or profile.
@@ -63,7 +63,7 @@ let browser,lastPage;
 const deadline=setTimeout(()=>{console.error('Bounded canary control browser verifier exceeded 120 seconds.');void browser?.close();process.exitCode=1;},120000);
 async function open(name,options={}){
  const auth=authFixture(options.kind??'admin'),viewer=options.kind==='owner'?'owner':'admin';
- const state={auth,status:statusFor(viewer,options.grant??viewer==='owner'),calls:[],mutations:[],pendingStatus:'pending',capabilityRevoked:false,malformedActivation:false,wrongSource:false,received:false,statusCalls:0,revokeOnStatus:0};
+ const state={auth,status:statusFor(viewer,options.grant??viewer==='owner'),calls:[],mutations:[],pendingStatus:'pending',fundingDisabled:options.fundingDisabled??false,fundingMissing:options.fundingMissing??false,capabilityRevoked:false,malformedActivation:false,wrongSource:false,received:false,statusCalls:0,revokeOnStatus:0};
  if(options.expired&&state.status.grant){state.status.grant.active=false;state.status.grant.startsAt=iso(now-900000);state.status.grant.expiresAt=iso(now-1000);}
  const origin=options.origin??enabledOrigin,mode=options.mode??'enabled';
  const context=await browser.newContext({viewport:options.mobile?{width:390,height:844}:{width:1440,height:1000},timezoneId:'UTC',serviceWorkers:'block'}),page=await context.newPage();lastPage=page;page.setDefaultTimeout(6500);
@@ -88,6 +88,7 @@ async function open(name,options={}){
      if(rpc==='get_my_app_access')data=[{user_id:state.auth.user?.id,role:state.auth.profile?.role,is_active:true,read_only:state.auth.profile?.readOnly??false}];
      else if(rpc==='has_app_capability')data=!(state.capabilityRevoked&&args.p_capability==='manageRolesPermissions');
      else if(rpc==='get_tenbot_chris_dev_canary_control_status'){state.statusCalls++;if(state.revokeOnStatus===state.statusCalls&&state.status.grant){state.status.grant.active=false;state.status.grant.revokedAt=iso(now);}data=clone(state.status);}
+     else if(rpc==='get_tenbot_chris_dev_canary_funding_status'){if(state.fundingMissing)return reply({status:404,json:{code:'PGRST202'}});data={schemaVersion:'tenbot-canary-funding.v1',serverNow:iso(now),enabled:!state.fundingDisabled,startsAt:iso(now-60000),expiresAt:iso(now+840000),fundingId:id(91),grantId:state.status.grant?.id??null,budgetMicrousd:250000,accountedMicrousd:0,remainingMicrousd:250000,active:!state.fundingDisabled&&state.status.grant?.active===true};}
      else if(rpc==='activate_tenbot_chris_dev_canary_grant'){
       assert.deepEqual(Object.keys(args).sort(),['p_expires_at','p_reason']);assert.equal(args.p_expires_at,iso(now+600000));assert.equal(args.p_reason,'Synthetic reviewed canary');
       state.mutations.push({rpc,args});mutationRequests.push({scenario:name,rpc,args});state.status=statusFor('admin',true);state.status.grant.startsAt=iso(now);state.status.grant.expiresAt=args.p_expires_at;data=state.malformedActivation?'unknown-synthetic-outcome':grantId;
@@ -127,9 +128,9 @@ const activationCheck=page=>page.getByRole('checkbox',{name:'I approve this exac
 const revokeCheck=page=>page.getByRole('checkbox',{name:'I approve revoking this exact grant, including after expiry.',exact:true});
 const cancelCheck=page=>page.getByRole('checkbox',{name:'I reviewed this exact synthetic receival and request cancellation.',exact:true});
 async function ready(view){await expect(view.page.getByRole('button',{name:'Refresh durable status',exact:true})).toBeEnabled();await expect(view.page.getByText('Developer baseline verified.',{exact:false})).toBeVisible();}
-async function activationForm(view){await ready(view);await view.page.getByLabel('Canary reason',{exact:true}).fill('Synthetic reviewed canary');await view.page.getByLabel('Canary expiration',{exact:true}).fill('2026-10-30T19:10');await activationCheck(view.page).check();}
+async function activationForm(view){await ready(view);await view.page.getByLabel('Canary reason',{exact:true}).fill('Synthetic reviewed canary');await view.page.getByLabel('Canary expiration',{exact:true}).fill(iso(now+600000).slice(0,16));await activationCheck(view.page).check();}
 async function contained(page){assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),'The control overflows the viewport.');}
-async function check(name,run){await run();checks.push(name);}
+async function check(name,run){if(process.argv.includes('--funding-only')&&!name.startsWith('Funding:'))return;await run();checks.push(name);}
 async function using(name,options,run){const view=await open(name,options);try{await run(view);}finally{await view.context.close();}}
 
 try{
@@ -164,6 +165,14 @@ try{
   await using('owner-focus-revocation',{kind:'owner'},async view=>{await ready(view);await cancelCheck(view.page).check();view.state.status.grant.active=false;view.state.status.grant.revokedAt=iso(now);await view.page.evaluate(()=>window.dispatchEvent(new Event('focus')));await ready(view);await expect(cancelCheck(view.page)).not.toBeChecked();await expect(cancelCheck(view.page)).toBeDisabled();assert.equal(view.state.mutations.length,0);await contained(view.page);await view.page.screenshot({path:directory+'/owner-revoked-desktop.png',fullPage:true});});
   await using('owner-server-duration-expiry',{kind:'owner'},async view=>{await ready(view);await cancelCheck(view.page).check();await view.page.clock.fastForward(571000);await expect(cancelCheck(view.page)).not.toBeChecked();await expect(cancelCheck(view.page)).toBeDisabled();await expect(view.page.getByText('Receival: '+recordId,{exact:true})).toBeVisible();assert.equal(view.state.mutations.length,0);});
  });
+ await check('Funding: disabled or unavailable allowance blocks activation while exact revocation remains available',async()=>{
+  for(const option of [{fundingDisabled:true},{fundingMissing:true}])await using('funding-off',option,async view=>{await ready(view);await expect(activationCheck(view.page)).toBeDisabled();await expect(view.page.getByRole('button',{name:'Activate temporary access',exact:true})).toBeDisabled();assert.equal(view.state.mutations.length,0);await contained(view.page);});
+  await using('funding-off-revoke',{grant:true,fundingDisabled:true},async view=>{await ready(view);await view.page.getByLabel('Canary reason',{exact:true}).fill('Close exact synthetic grant');await revokeCheck(view.page).check();await expect(view.page.getByRole('button',{name:'Revoke exact grant',exact:true})).toBeEnabled();assert.equal(view.state.mutations.length,0);});
+ });
+ await check('Funding: finite post-cutoff server window enables reviewed controls then expires independently on mobile',async()=>using('funding-finite-window',{mobile:true},async view=>{
+  await ready(view);await expect(view.page.getByRole('region',{name:'Canary inference allowance'})).toContainText('Window open; awaiting the exact new grant.');await activationForm(view);await expect(view.page.getByRole('button',{name:'Activate temporary access',exact:true})).toBeEnabled();assert.equal(view.state.mutations.length,0);await contained(view.page);await view.page.screenshot({path:directory+'/funding-window-mobile.png',fullPage:true});await view.page.clock.fastForward(841000);await expect(activationCheck(view.page)).toBeDisabled();await expect(activationCheck(view.page)).not.toBeChecked();await expect(view.page.getByRole('button',{name:'Activate temporary access',exact:true})).toBeDisabled();assert.equal(view.state.mutations.length,0);
+ }));
+ await check('Funding: owner cleanup remains available after funding is disabled without invoking cancellation',async()=>using('funding-off-owner-cleanup',{kind:'owner',fundingDisabled:true},async view=>{await ready(view);await expect(cancelCheck(view.page)).toBeEnabled();await expect(view.page.getByRole('button',{name:'Cancel exact synthetic receival',exact:true})).toBeDisabled();assert.equal(view.state.mutations.length,0);}));
  assert.deepEqual(errors,[]);assert.deepEqual(unexpectedNetwork,[]);
  for(const [file,expected]of Object.entries(sourceHashes))assert.equal(digest(readFileSync(file)),expected,'Source changed during this browser run: '+file);
  const report={passed:true,groups:checks.length,checks,mode:'Source component and actual client service + Supabase SDK, synthetic Auth/REST responses only; not app-route, hosted RPC/JWT/RLS, grants, database or inference proof.',sourceHashes,bundleSha256:digest(bundle),css:{directory:path.relative(root,cssDirectory),files:cssFiles,sha256:digest(css)},actualDatabase:false,actualInference:false,realGrantMutations:0,operationalWrites:0,externalRequestsForwarded:0,portsUsed:[],mutationRequests,traces,errors,blockedNetwork,unexpectedNetwork};

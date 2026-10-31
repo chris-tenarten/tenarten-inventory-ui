@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "sourceHistoryUnchanged": true,
+  "ordinaryPolicyAndPriorUsageUnchanged": true,
+  "fundingEnabled": false,
+  "unrevokedGrants": 0,
+  "fixtureSchemaRemoved": true,
+  "oldAccountingPreserved": true,
+  "newFixtureAccountingRetained": true
+}

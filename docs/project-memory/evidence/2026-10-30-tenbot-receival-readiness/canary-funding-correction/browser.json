@@ -1,0 +1,224 @@
+{
+  "passed": true,
+  "groups": 3,
+  "checks": [
+    "Funding: disabled or unavailable allowance blocks activation while exact revocation remains available",
+    "Funding: finite post-cutoff server window enables reviewed controls then expires independently on mobile",
+    "Funding: owner cleanup remains available after funding is disabled without invoking cancellation"
+  ],
+  "mode": "Source component and actual client service + Supabase SDK, synthetic Auth/REST responses only; not app-route, hosted RPC/JWT/RLS, grants, database or inference proof.",
+  "sourceHashes": {
+    "src/modules/tenbot/TenbotCanaryControl.tsx": "6b1df5e02ba7dd99ec5b944180f791b6466ccf765caee6c5ad6379ead24d24d9",
+    "src/modules/inventory/tenbot-canary-control.ts": "5ae6c4c51d0131e5b99432d776acc89f0decc94b0446f60a5e81ced1a84cdd65",
+    "src/modules/inventory/tenbot-canary-funding.ts": "8eb5f6f963c04bed1b10717bd3fcd6ac4c249a74f42b2d1596fee238bcd17964",
+    "src/modules/inventory/tenbot-canary-access.ts": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97",
+    "src/modules/inventory/invoice-receival-service.ts": "4cc9d6fe8164e8fe98026d499d53f5235f18ff44cfa34c46eb472f9ae8c82343",
+    "src/modules/inventory/invoice-receival-attachments.ts": "620cd88fc655ee194622e266fd527ea3fe92dcec2842b43f0c5e6308afac4edb"
+  },
+  "bundleSha256": "7238d820e7ce5800a972f5b93bbf1249b173cd558d685e07c43dcb0aeb4badf6",
+  "css": {
+    "directory": ".next/static/css",
+    "files": [
+      "009e8344dd0776ae.css",
+      "15f74ee999edbd3d.css",
+      "6faf42657f96bc11.css",
+      "7fff52451dadd398.css",
+      "9611c0b375fc73f6.css",
+      "d12f0aca13423a71.css"
+    ],
+    "sha256": "ef1bec81b3066ab8bd12ecd63c7c493291c2d528a7fe59e600ed1eae152f113c"
+  },
+  "actualDatabase": false,
+  "actualInference": false,
+  "realGrantMutations": 0,
+  "operationalWrites": 0,
+  "externalRequestsForwarded": 0,
+  "portsUsed": [],
+  "mutationRequests": [],
+  "traces": [
+    {
+      "scenario": "funding-off",
+      "kind": "auth"
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_funding_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "auth"
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_funding_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off-revoke",
+      "kind": "auth"
+    },
+    {
+      "scenario": "funding-off-revoke",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off-revoke",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "funding-off-revoke",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off-revoke",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_funding_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-finite-window",
+      "kind": "auth"
+    },
+    {
+      "scenario": "funding-finite-window",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "funding-finite-window",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "manageRolesPermissions"
+      }
+    },
+    {
+      "scenario": "funding-finite-window",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-finite-window",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_funding_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off-owner-cleanup",
+      "kind": "auth"
+    },
+    {
+      "scenario": "funding-off-owner-cleanup",
+      "kind": "rpc",
+      "rpc": "get_my_app_access",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off-owner-cleanup",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "readOperationalData"
+      }
+    },
+    {
+      "scenario": "funding-off-owner-cleanup",
+      "kind": "rpc",
+      "rpc": "has_app_capability",
+      "args": {
+        "p_capability": "writeBusinessData"
+      }
+    },
+    {
+      "scenario": "funding-off-owner-cleanup",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_control_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off-owner-cleanup",
+      "kind": "rpc",
+      "rpc": "get_tenbot_chris_dev_canary_funding_status",
+      "args": {}
+    },
+    {
+      "scenario": "funding-off-owner-cleanup",
+      "kind": "table",
+      "table": "invoice_receival_executions",
+      "method": "GET",
+      "query": {
+        "select": "draft_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,approval_id,executed_at",
+        "draft_id": "eq.10302026-0000-4000-8000-000000000003",
+        "owner_user_id": "eq.3785f6b9-742e-452f-af6c-31613a983633",
+        "limit": "2"
+      }
+    },
+    {
+      "scenario": "funding-off-owner-cleanup",
+      "kind": "table",
+      "table": "pending_receivals",
+      "method": "GET",
+      "query": {
+        "select": "id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by",
+        "id": "eq.10302026-0000-4000-8000-000000000004",
+        "limit": "2"
+      }
+    }
+  ],
+  "errors": [],
+  "blockedNetwork": [],
+  "unexpectedNetwork": []
+}

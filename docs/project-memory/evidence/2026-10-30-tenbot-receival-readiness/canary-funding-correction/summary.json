@@ -1,0 +1,39 @@
+{
+  "status": "implemented-locally; TenDev staging pending",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "productAuthority": "Current explicit FINAL CANARY FUNDING & EXPIRY CORRECTION; separate Advisory thread unavailable",
+  "migrationSha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6",
+  "databaseGroups": 11,
+  "offlineFundingGroups": 9,
+  "offlineRuntimeGroups": 8,
+  "offlineControlGroups": 12,
+  "browserGroups": 3,
+  "typescriptPassed": true,
+  "targetedLintPassed": true,
+  "ordinaryPolicyChanges": 0,
+  "existingAccountingReset": false,
+  "hostedMutations": 0,
+  "inferenceCalls": 0,
+  "apiCostUsd": 0,
+  "canaryFundingEnabled": false,
+  "writeGatesEnabled": false,
+  "grantActivated": false,
+  "existingFixtureOriginalPolicyRestored": true,
+  "limitations": [
+    "Positive source lifecycle uses a private synthetic source relation substitution; public exact RPC separately rejects retained source. No source history or triggers altered.",
+    "Synthetic fixture grant was direct operator setup, not Admin activation proof.",
+    "No inference or actual uploaded-byte interpretation performed.",
+    "Expired-window database denial was checked with the allowance fully reserved; expiry-before-budget SQL ordering and separate offline positive-balance expiry tests establish the independent expiry boundary."
+  ],
+  "harnessCorrections": [
+    "Existing fixture request/user caps were zero; temporarily set to 250000 for tests and restored exactly.",
+    "Corrected Management API last-rowset parsing and rollback-only Storage owner-claim setup; no hosted application defect resulted."
+  ],
+  "remaining": [
+    "Exact clean selective candidate proof/build",
+    "Apply only dormant migration and deploy matching TenDev code",
+    "Genuine Admin/chris_dev read-only funding UI checks",
+    "Separate Product approval before arming window, grant, enrollment, spending or writes"
+  ]
+}

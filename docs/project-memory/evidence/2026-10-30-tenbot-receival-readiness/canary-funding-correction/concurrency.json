@@ -1,0 +1,15 @@
+{
+  "results": [
+    {
+      "id": "1e067bff-f8e3-4b4f-988a-07d9b335277d",
+      "ok": true,
+      "requestId": "1b86b7e1-1f03-4928-887e-5c7dd41886b4",
+      "reservedMicrousd": 120000
+    },
+    {
+      "code": "P0001",
+      "denied": true
+    }
+  ],
+  "accountedMicrousd": "110000"
+}
