@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T01:06:13.336226+00:00",
+  "origin": "https://tendev.pages.dev/tenbot/canary",
+  "method": "Actual native browser UI, genuine preexisting sessions; reload and caller SDK status reads only; no console or token access",
+  "Safari": {
+    "viewer": "Chris Ngo / Admin",
+    "activationDisabled": true,
+    "grant": "Revoked",
+    "funding": "Not configured; no canary funding is active. Remaining $0.250000.",
+    "pilot": false,
+    "execution": false,
+    "enrollment": 0
+  },
+  "Chrome": {
+    "viewer": "chris developer / Developer",
+    "adminControlsPresent": false,
+    "funding": "Not configured; no canary funding is active. Remaining $0.250000.",
+    "grant": "Revoked",
+    "completedReceival": false,
+    "pilot": false,
+    "execution": false,
+    "enrollment": 0
+  },
+  "actions": {
+    "grant": 0,
+    "enrollment": 0,
+    "upload": 0,
+    "approval": 0,
+    "create": 0,
+    "cancel": 0,
+    "inference": 0
+  },
+  "screenControlReleased": true
+}

@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "candidateRevision": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+  "status": "candidate-preparation-reviewed",
+  "sourceReviewHolds": [],
+  "semanticRecordIds": [],
+  "unclassifiedSensitivePaths": [],
+  "rawProofSha256": "2030af3edb7c0dab51042a95ce03e2048cba3bb4f89f8edcf1846c0bf2fd57cb",
+  "candidateSourceAuthority": {
+    "scope": "tendev-preparation",
+    "requiresProductAcceptance": true,
+    "hostedApplicationVerified": false,
+    "deploymentAuthorized": false
+  }
+}

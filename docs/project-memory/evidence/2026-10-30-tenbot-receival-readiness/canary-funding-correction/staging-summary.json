@@ -1,0 +1,70 @@
+{
+  "status": "staged on TenDev; awaiting Product acceptance and separate execution approval",
+  "implementationCommit": "d2fa05a2b22ae5f1d3a0b3658bf3c63f9e59167a",
+  "servedSha": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+  "deployment": "8e9dcd06-68b3-495f-a374-d3c0e7735ff9",
+  "edgeVersion": 24,
+  "migration": {
+    "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+    "version": "20261031010000",
+    "name": "tenbot_canary_funding_window",
+    "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6"
+  },
+  "selectedApplicationFiles": 5,
+  "selectedTestFilesAndDependencies": 7,
+  "proofMetadataPaths": [
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+  ],
+  "knowledgeUnchanged": true,
+  "funding": {
+    "capMicrousd": 250000,
+    "enabled": false,
+    "startsAt": null,
+    "expiresAt": null,
+    "boundGrant": null,
+    "accountedMicrousd": 0
+  },
+  "ordinaryPolicyExpiryUnchanged": "2026-10-30T23:00:00+00:00",
+  "cumulativeAccountedMicrousd": 758624,
+  "oldReservedMicrousd": 61139,
+  "oldReservationState": "reserved",
+  "tenOps": {
+    "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+    "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+    "pagesUnchanged": true,
+    "ordinaryRuntimeUnchanged": true
+  },
+  "validation": {
+    "databaseGroups": 11,
+    "offlineFundingGroups": 9,
+    "offlineRuntimeGroups": 8,
+    "offlineControlGroups": 12,
+    "browserFixtureGroups": 3,
+    "releaseProofHolds": 0,
+    "build": true,
+    "servedAssets": 36,
+    "genuineAdminAndDeveloper": true,
+    "anonymousDenied": true,
+    "disabledReservationDenied": true
+  },
+  "costUsd": 0,
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "allWriteGatesOff": true,
+  "activeGrants": 0,
+  "enrollment": 0,
+  "remaining": [
+    "Fresh Product authorization to arm this one-shot funding window, then genuine Admin exact grant and scoped gates; no ordinary policy renewal.",
+    "Recheck current promotional funds and duplicate/material/session state immediately before choosing a fresh <=15-minute window.",
+    "Run the one-row workflow only after that approval; disable creation, guarded-cancel returned pending row, revoke exact grant, clear enrollment/gates and close funding."
+  ],
+  "limitations": [
+    "Positive source lifecycle uses a private synthetic source relation substitution; public exact RPC separately rejects retained source. No source history or triggers altered.",
+    "Synthetic fixture grant was direct operator setup, not Admin activation proof.",
+    "No inference or actual uploaded-byte interpretation performed.",
+    "Database expiry denial occurred with a fully reserved cap; positive-balance expiry was separately tested offline.",
+    "No live model or operational write was performed during this staging pass."
+  ]
+}

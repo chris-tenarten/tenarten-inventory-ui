@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T01:04:32.319Z",
+  "sha": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+  "tenDevDeployment": "8e9dcd06-68b3-495f-a374-d3c0e7735ff9",
+  "tenOpsSha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "tenOpsDeployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+  "edgeVersion": 24,
+  "migration": {
+    "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+    "version": "20261031010000",
+    "name": "tenbot_canary_funding_window",
+    "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6"
+  },
+  "completeRelativeClosureVerified": true,
+  "ordinaryRuntimeUnchanged": true,
+  "allSecretDigestsAndPagesConfigUnchanged": true,
+  "allWriteGatesOff": true,
+  "canaryFundingEnabled": false,
+  "window": null,
+  "activeGrants": 0,
+  "enrollment": 0,
+  "historicalGrantAndAuditUnchanged": true,
+  "oldReservationPreserved": true,
+  "cumulativeUsageUnchanged": true,
+  "providerPolicyUnchanged": true,
+  "cleanupUnchanged": true,
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

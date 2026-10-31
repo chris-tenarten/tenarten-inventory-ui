@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "preparedAt": "2026-10-31T01:02:38.510Z",
+  "candidate": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+  "migration": {
+    "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+    "version": "20261031010000",
+    "name": "tenbot_canary_funding_window",
+    "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6"
+  },
+  "sqlFile": "apply-dormant-funding.private.sql",
+  "sqlSha256": "9d29fd714a9e99c3557de14ffd46a3b228635df7e2b3d957c0667687a2e70550",
+  "atomicSourceAndLedger": true,
+  "onlyOneMigration": true,
+  "dormantOnly": true,
+  "activationStatements": 0
+}

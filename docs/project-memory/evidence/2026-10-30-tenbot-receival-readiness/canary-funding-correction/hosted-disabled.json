@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T01:05:34.418Z",
+  "anonymousRpc": [
+    {
+      "rpc": "get_tenbot_chris_dev_canary_funding_status",
+      "status": 401,
+      "code": "42501",
+      "unauthorizedDenied": true
+    },
+    {
+      "rpc": "tenbot_openai_canary_reserve",
+      "status": 401,
+      "code": "42501",
+      "unauthorizedDenied": true
+    }
+  ],
+  "actualHostedPostgreSQL": true,
+  "dormantReservationRejected": true,
+  "transactionRolledBack": true,
+  "paidInferenceCalls": 0,
+  "operationalWrites": 0
+}
