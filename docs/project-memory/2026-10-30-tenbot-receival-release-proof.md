@@ -393,3 +393,18 @@ Selected source hashes:
 - scripts/verify-tenbot-prepared-draft-resume.mts: Git blob 4582909beab4193ff8130ea56555d322186717ff; SHA256 451ef432bf95743e45e01c8ab1e4e391bbf478aeb783f3a65015d25ec73ea8ba.
 - scripts/verify-tenbot-prepared-resume-browser.mjs: Git blob 3b117cfe131b65be1a853f20ed6d58bf992bf047; SHA256 67ced80cb5d3bb789bf78a4a6c202d38ae96e1c1bd887c0e187686b7844734f1.
 - supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql: Git blob baa7b4eb2bd1a0ee078af2808ddb32c4f8972203; SHA256 720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27.
+
+
+## Consolidated readiness technical import correction — October 31, 2026
+
+Product acceptance remains pending for this mechanical correction. Chris CONSOLIDATED RELEASE READINESS authorizes focused integration/source and Edge import checks, one exact selective candidate and final Product scope review; no migration, deployment or activation is authorized here.
+
+The exact default local Deno module graph for accepted f39a135c36da94906c8ddfa72dcccaa06c5b0606 fails with Module not found on ./tenbot-canary-access. The only application change supplies the existing .ts filename and uses the repository’s existing lint/TypeScript suppression convention for shared Node/Deno imports. No control flow, data, capability, quantity, lifetime, inference, history or UI behavior is changed. This local failure is not a claim of an attempted hosted deployment. Original f39 source/proof/build evidence is retained.
+
+| Path | Git blob | SHA256 | Status |
+|---|---|---|---|
+| src/modules/inventory/tenbot-canary-execution.ts | b978f7fa9337d3e569eb9e614a1ff115351f9e2c | d20623ca2be46394e2ca958ad123a4d75fd7c6488eea846346f22565660cbbfc | technical correction; pending Product acceptance |
+
+Scope remains tendev-preparation. All existing product-accepted source reviews, exact migration720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27 and employee-knowledge/deployed pins remain unchanged. This append supersedes only f39’s old import-line hash for this unbound source module; its accepted business/security implementation remains the baseline. Do not reclassify an unapplied migration as deployed, expand the clean verifier’s authority, or promote this candidate unchanged to TenOps.
+
+Required checks: default Deno import graph; targeted TypeScript/lint; unchanged exact clean selective proof; standard target-matched optimized build. Existing PostgreSQL/JWT/RLS/concurrency/quantity/privacy/history evidence is reused, not rerun. Hosted checks follow separate staging approval. Keep all shared grants, enrollment, preparation spending and operational writes OFF.

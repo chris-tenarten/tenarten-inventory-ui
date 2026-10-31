@@ -1,6 +1,8 @@
 /** Public fixed-scope status only. This module cannot arm a window, grant
  * permission, fund inference, approve a draft or execute an Inventory write. */
-import {TENBOT_CANARY_OWNER,TENBOT_CANARY_DOCUMENT_SHA256} from './tenbot-canary-access';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- explicit extension is required by Edge bundling.
+// @ts-ignore -- shared Node/Deno source uses an explicit local extension.
+import {TENBOT_CANARY_OWNER,TENBOT_CANARY_DOCUMENT_SHA256} from './tenbot-canary-access.ts';
 
 export const TENBOT_CANARY_EXECUTION_SOURCE_ID='1423d4e0-1a4a-48bd-af79-28e623102da4';
 export const TENBOT_CANARY_EXECUTION_SOURCE_EVIDENCE_SHA256='534087aeed62e2dd4d7112e22d700b760eb0f436445de16d300fc3ca83ad7c54';
