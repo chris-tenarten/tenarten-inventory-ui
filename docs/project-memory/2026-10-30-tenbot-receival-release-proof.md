@@ -293,3 +293,53 @@ Exact selected paths and SHA256 values:
 The full released knowledge sourceFiles, provenance and dependency bindings are inspected before construction; every selected path must be unbound or preparation stops for specific semantic review. Current State, Product Manifest, all historical receipts and existing semantic/source review records remain byte-identical to served da5a9246c8a158c0ed266668a98bf8d54701cebf. No deployed pin, knowledge entry, structured patch, Product claim, permission policy or current helper evidence is advanced. Append-only technical tuples explain only the selected exact runtime/migration source; they do not clear unrelated holds.
 
 Mandatory full-history, clean-current-candidate, exact committed artifact, zero-hold release proof and a secret-free standard optimized TenDev build remain required. The current verifier is unchanged. TenOps Pages is outside this release; ordinary hosted funding remains expired and unchanged. All grants, enrollment and agent writes must remain OFF, and the new canary allowance dormant, throughout disabled-first staging.
+
+
+## Accepted candidate source review — read-only synthetic invoice preparation
+
+Chris accepts 4fba20b71970a0d9c60aeb09352854be21977e56 as the local read-only synthetic invoice preparation correction, authorizes isolated real database validation first, then selective TenDev staging if its gates pass. Previously accepted metadata/diagnostics f2ecfe91329f527b1fcaa72f447fb2a068199695 is included without using the unused metadata staging candidate as a deployed baseline. This receipt records current Product acceptance, not a deployment claim.
+
+Scope: tendev-preparation.
+
+This review is not evidence of hosted application or deployment.
+
+This review grants no migration application, write activation, push or deployment authority.
+
+| Path | Git blob | SHA256 | Authority | Kind | Accepted authority revision |
+|---|---|---|---|---|---|
+| supabase/functions/_shared/tenbot-agent.ts | 29ccba59420eda0202b5dd03407028497ab70a3c | f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98 | product-accepted | runtime | 4fba20b71970a0d9c60aeb09352854be21977e56 |
+| supabase/functions/_shared/tenbot-agent-session.ts | 71bcc5d8f9c76a2d7a4a1bdc80f10b66e7ee6b52 | 0bea8de12d9f0f20ef7988953a0ea60b92ad5af5eeb89809b9fbd31232946db4 | product-accepted | runtime | 4fba20b71970a0d9c60aeb09352854be21977e56 |
+| supabase/functions/_shared/tenbot-invoice.ts | b6450def39482f3da1b28003357f116810b5af2c | 9e60c5101092678155920c008691420100e69d032f1aa8c544e28499d52684d1 | product-accepted | runtime | 4fba20b71970a0d9c60aeb09352854be21977e56 |
+| supabase/functions/_shared/tenbot-investigation-diagnostics.ts | bea0e13636c95718fb35d08da4b30e01c85f1395 | 84a4d315742e76458bdb6ff840fbaaa195089ac2ddec5184468847abde85379d | product-accepted | runtime | 4fba20b71970a0d9c60aeb09352854be21977e56 |
+| supabase/functions/_shared/tenbot-receival-runtime.ts | 45ed05856dfbd52ab16ae1d6ebee0f9038c49afb | f394fb2c59249ee2748bccd7a2d1aaa64f5875ad3eace84285f012dd70a44e5a | product-accepted | runtime | 4fba20b71970a0d9c60aeb09352854be21977e56 |
+| supabase/functions/_shared/tenbot-receival-hosted.ts | 4dc9a2948bf5f4bb2ee40fec458fe66916e6fffe | 302995833d638dca82ebea439f985d7e200890dff46491dde29975beada51ef0 | product-accepted | runtime | 4fba20b71970a0d9c60aeb09352854be21977e56 |
+| supabase/functions/tenbot/index.ts | 96852bc575846a4928d11787a48edb6005af46d6 | 6c8aadb83edf217bdae8f9d6de45fcc3b69f2ca68c35e3dd58d40ce54640311f | product-accepted | runtime | 4fba20b71970a0d9c60aeb09352854be21977e56 |
+| supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql | c6485e36dc0b8951176eb2437aa978c1abf3e1ef | 35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580 | product-accepted | unapplied-migration | 4fba20b71970a0d9c60aeb09352854be21977e56 |
+
+Nine exact application files, five focused verifier/fixture dependencies, and one proposed migration are selected byte-for-byte from the accepted commit. Metadata ancestry is checked against served 65e52868fed5c11e1fef310fdfd7b04bdd9a4b10; the boundary source is checked against accepted f2ecfe91329f527b1fcaa72f447fb2a068199695. The unrelated pre-existing after_tool authorization deletion and its test remain excluded. Inline/adjacent/table identity validation, immutable source quantities and safe five-field diagnostics remain intact.
+
+The preparation-only code defaults OFF and restricts the finite read-only route to the genuine authorized caller, TenDev and the fixed original. No catalog, receival, Job, stock, grant, enrollment, approval or business write is enabled by preparation. The resulting draft is explicitly non-executing; its review controls cannot imply approval. Ordinary Terra/Qwen, Auth, knowledge, operational tools, cleanup and existing accounting retain their contracts. The existing synthetic PDF is reused unchanged (SHA256 c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a).
+
+Migration supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql (SHA256 35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580) is an accepted but unapplied source-preparation contract. It is represented as unapplied-migration, never historical-deployed. Actual isolated signed JWT/RLS/Storage/revocation and boundary validation must pass against these exact bytes before any shared application; preparation of this candidate performs no migration application. Business drafts, approvals, execution, catalog/receival permissions and retained/bound originals preserve stronger requirements.
+
+Every selected path is checked against all released sourceFiles, provenance and dependency bindings. If a selected path affects a bound knowledge claim, preparation stops for specific semantic review. No semantic bypass or invented acceptance is allowed. Current State, Product Manifest, historical receipts and existing review records remain byte-identical to served 65e52868fed5c11e1fef310fdfd7b04bdd9a4b10; employee knowledge content, structured patches and deployed pins remain unchanged. Only appended exact candidate-source tuples and generated input/artifact digests may change.
+
+Mandatory unchanged full-history clean-current-candidate release proof with zero holds, exact committed knowledge artifact, actual isolated database evidence and a standard secret-free target-matched build remain required. Any hosted migration/application, finite preparation-only funding and bounded real-Terra test follow the separate explicit Product staging instruction; this review itself grants no execution authority. Ordinary spending and the used canary allowance must not be reset or silently reactivated. TenOps Pages and all operational write gates remain outside the release.
+
+Selected source hashes:
+
+- supabase/functions/_shared/tenbot-agent.ts: Git blob 29ccba59420eda0202b5dd03407028497ab70a3c; SHA256 f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98.
+- supabase/functions/_shared/tenbot-agent-session.ts: Git blob 71bcc5d8f9c76a2d7a4a1bdc80f10b66e7ee6b52; SHA256 0bea8de12d9f0f20ef7988953a0ea60b92ad5af5eeb89809b9fbd31232946db4.
+- supabase/functions/_shared/tenbot-invoice.ts: Git blob b6450def39482f3da1b28003357f116810b5af2c; SHA256 9e60c5101092678155920c008691420100e69d032f1aa8c544e28499d52684d1.
+- supabase/functions/_shared/tenbot-investigation-diagnostics.ts: Git blob bea0e13636c95718fb35d08da4b30e01c85f1395; SHA256 84a4d315742e76458bdb6ff840fbaaa195089ac2ddec5184468847abde85379d.
+- supabase/functions/_shared/tenbot-receival-runtime.ts: Git blob 45ed05856dfbd52ab16ae1d6ebee0f9038c49afb; SHA256 f394fb2c59249ee2748bccd7a2d1aaa64f5875ad3eace84285f012dd70a44e5a.
+- supabase/functions/_shared/tenbot-receival-hosted.ts: Git blob 4dc9a2948bf5f4bb2ee40fec458fe66916e6fffe; SHA256 302995833d638dca82ebea439f985d7e200890dff46491dde29975beada51ef0.
+- src/modules/tenbot/ReceivalDraftReview.tsx: Git blob 3fb5c3e2aef6884265c478c4224f74444702c06e; SHA256 3e724c8e8f417bcbf8842648833d1b9de614ddf3dc077e3a00700c4b6d681843.
+- src/modules/tenbot/live-review.ts: Git blob 73455739ea0f9f50cf2d06d412ca976c9321574a; SHA256 316ca40bc5e4b71584ab72ea5d45719e9545e74290c79a893d72cc7984520447.
+- supabase/functions/tenbot/index.ts: Git blob 96852bc575846a4928d11787a48edb6005af46d6; SHA256 6c8aadb83edf217bdae8f9d6de45fcc3b69f2ca68c35e3dd58d40ce54640311f.
+- scripts/verify-tenbot-invoice-investigation.mts: Git blob 1d8c7995c8e30ff7c8fc1211b0405fa101d36fd5; SHA256 5b07a9d99ffed01ebe70e3429c410a4af9482cc64e32d2bcf33e2316b82d6e2b.
+- scripts/verify-tenbot-investigation-diagnostics.mts: Git blob 746b70c35e65f7b1a412a0c2ea4a21d4f27f7fe2; SHA256 566ef48d5dace31e432429ed9018cae02ca30776a272c702af3919f5d40dac9b.
+- scripts/fixtures/tenbot-invoice-investigation.synthetic.json: Git blob fc8ac8a56ad3ec0661cd88102c6167be82a1b2e0; SHA256 d31fddf7c3349638a2c20ec13b4c35aa4602378abaa125d9fbd354cfac0c90f1.
+- scripts/verify-tenbot-invoice-preparation.mts: Git blob c039200786b9e5fdaf8b68a72e521677ea6bf5c9; SHA256 0910a103f3691715f16a4fbafb22e30a699d83acc7467883c0ff93600eebe351.
+- scripts/verify-tenbot-preparation-migration.mts: Git blob 3b4f937574dfa27f061de17723a9ad12ec04ceb7; SHA256 01e3f1d0639b4a4f39d09472cf044e442507f5136e6b9e8996948e02bb2c81f3.
+- supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql: Git blob c6485e36dc0b8951176eb2437aa978c1abf3e1ef; SHA256 35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580.

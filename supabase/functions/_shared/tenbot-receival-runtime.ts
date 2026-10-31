@@ -15,7 +15,10 @@ import {createTenbotJobTools,type JobToolCaller,type JobToolQuery} from './tenbo
 import {TenbotError} from './tenbot-core.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge requires explicit extensions.
-import {isJsonValue,type AgentProvider} from './tenbot-agent.ts';
+import {AgentStepError,isJsonValue,type AgentProvider} from './tenbot-agent.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
+// @ts-ignore -- Edge requires explicit extensions.
+import {emitInvestigationDiagnostic,type InvestigationDiagnostic,type InvestigationDiagnosticSink} from './tenbot-investigation-diagnostics.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge requires explicit extensions.
 import {deriveInvoiceQuantity,invoiceQuantityIssues,type InvoiceSourceQuantity,type InvoiceQuantityBasis} from '../../../src/modules/inventory/invoice-quantity.ts';
@@ -40,7 +43,7 @@ export type ReceivalRuntimeSourceStore={get(id:string):Promise<InvoiceReceivalSo
 type Row=Record<string,unknown>;
 type SourceDraftRow=LocalDraftRow&{sourceQuantity:InvoiceSourceQuantity|null;quantityBasis:InvoiceQuantityBasis};
 export type ReceivalAgentCaller=JobToolCaller&InvoiceReceivalCaller;
-export type ReceivalRuntimeDependencies={model:string;sourceStore?(caller:ReceivalAgentCaller,owner:string):ReceivalRuntimeSourceStore;/** Host-verified picker restriction only; never supplied by body/model. */catalogScope?(owner:string):readonly InvoiceCatalogIdentity[]|undefined;decodeAttachment(value:unknown):Promise<InvoiceImage&{filename:string;sha256:string}>;extractDocument(input:{id:string;filename:string;image:InvoiceImage;model:string;provider:AgentProvider;remainingUsd:number;assertNoFatal():void}):Promise<TenbotInvoiceDocument>;createProvider(label:string,image?:InvoiceImage):AgentProvider;remainingUsd():number;assertNoFatal():void;now?:()=>number;execution?:{enabled:boolean;databaseEnvironment:'isolated-test'|'restricted-tendev'};beforeExecute?(input:{owner:string;draftId:string;hash:string;approvalId:string}):Promise<unknown>};
+export type ReceivalRuntimeDependencies={model:string;sourceStore?(caller:ReceivalAgentCaller,owner:string):ReceivalRuntimeSourceStore;/** Host-verified picker restriction only; never supplied by body/model. */catalogScope?(owner:string):readonly InvoiceCatalogIdentity[]|undefined;decodeAttachment(value:unknown):Promise<InvoiceImage&{filename:string;sha256:string}>;extractDocument(input:{id:string;filename:string;image:InvoiceImage;model:string;provider:AgentProvider;remainingUsd:number;assertNoFatal():void}):Promise<TenbotInvoiceDocument>;createProvider(label:string,image?:InvoiceImage):AgentProvider;remainingUsd():number;assertNoFatal():void;now?:()=>number;onDiagnostic?:InvestigationDiagnosticSink;/** Server-only source preparation; never durable business review/approval. */preparationOnly?:boolean;execution?:{enabled:boolean;databaseEnvironment:'isolated-test'|'restricted-tendev'};beforeExecute?(input:{owner:string;draftId:string;hash:string;approvalId:string}):Promise<unknown>};
 type Attachment={id:string;owner:string;filename:string;image:InvoiceImage;sha256:string;expires:number;document?:TenbotInvoiceDocument;session?:ReturnType<typeof createTenbotAgentSessions>;source?:InvoiceReceivalSource};
 type Review={owner:string;attachmentId:string;expires:number;draft:LocalReceivalDraft;supplier:string;reference:string;traceHash:string;durable?:InvoiceReceivalDraft};
 const record=(v:unknown):v is Row=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -63,19 +66,22 @@ function details(value:unknown):LocalOrderDetails{if(!record(value))fail('Review
  * exact caller client. Tokens are not retained in attachment/conversation state. */
 export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencies){
  const now=deps.now??Date.now,attachments=new Map<string,Attachment>(),reviews=new Map<string,Review>(),active=new Map<string,ReceivalAgentCaller>();
+ const diagnostic=(stage:InvestigationDiagnostic['stage'],outcome:InvestigationDiagnostic['outcome'],started:number,reasonCode:string)=>emitInvestigationDiagnostic(deps.onDiagnostic,{stage,tool:null,outcome,durationMs:now()-started,reasonCode});
  // This host-only gate cannot be supplied by an HTTP request or model output.
  // The independent database gate and authenticated canonical RPCs remain final.
- const executionEnabled=deps.execution?.enabled===true&&['isolated-test','restricted-tendev'].includes(deps.execution.databaseEnvironment);
+ const preparationOnly=deps.preparationOnly===true;
+ const executionEnabled=!preparationOnly&&deps.execution?.enabled===true&&['isolated-test','restricted-tendev'].includes(deps.execution.databaseEnvironment);
  const client=(owner:string)=>active.get(owner)??fail('The authenticated request has ended.',403);
  const can=async(owner:string,capability:string)=>{const r=capability==='proposal.access'?await client(owner).rpc('has_proposal_access',{}):await client(owner).rpc('has_app_capability',{p_capability:capability});return !r.error&&r.data===true;};
- const authorize=async(owner:string,write=false)=>{for(const cap of ['readOperationalData',...(write?['writeBusinessData','adjustInventory']:[])])if(!await can(owner,cap))fail('Your current permissions do not allow this TenOps request.',403);};
+ const authorize=async(owner:string,write=false)=>{const started=now();for(const cap of ['readOperationalData',...(write?['writeBusinessData','adjustInventory']:[])])if(!await can(owner,cap)){diagnostic('authorization','error',started,'authorization-denied');fail('Your current permissions do not allow this TenOps request.',403);}};
+ const authorizePreparation=async(owner:string)=>{if(!preparationOnly)return authorize(owner,true);await authorize(owner);const r=await client(owner).rpc('can_prepare_invoice_receival',{});if(r.error||r.data!==true)fail('Your current permissions do not allow private invoice preparation.',403);};
  const helpSession=createTenbotAgentSessions({mode:'openai',can,jobTools:id=>createTenbotJobTools(client(id)),provider:()=>deps.createProvider('authenticated-conversation'),invoice:{document:{id:'no-attachment',filename:'No attachment',mediaType:'text/plain',synthetic:true,text:'No attachment was submitted.'},reader:id=>createCallerInvoiceReader(client(id))},now});
  function attached(id:unknown,owner:string){const item=typeof id==='string'?attachments.get(id):undefined;if(!item||item.owner!==owner||item.expires<=now())return fail('This invoice attachment is unavailable or expired.',403);return item;}
  function reviewed(id:unknown,owner:string){const value=typeof id==='string'?reviews.get(id):undefined;if(!value||value.owner!==owner||value.expires<=now())return fail('This reviewed draft is unavailable or expired.',403);attached(value.attachmentId,owner);return value;}
  function hash(value:Review){return digest({owner:value.owner,attachment:value.attachmentId,source:attached(value.attachmentId,value.owner).sha256,revision:value.draft.revision,details:value.draft.orderDetails,rows:value.draft.rows,durable:value.durable?{id:value.durable.id,hash:value.durable.hash}:null});}
  function update(value:Review){
   value.draft.missingFields=Object.entries(value.draft.orderDetails).filter(([,v])=>!v).map(([k])=>k);
-  value.draft.canApprove=Boolean(value.durable)&&!value.draft.missingFields.length&&value.draft.rows.some(r=>!r.excluded)&&value.draft.rows.every(r=>r.excluded||!r.reasons.length);
+  value.draft.canApprove=!preparationOnly&&Boolean(value.durable)&&!value.draft.missingFields.length&&value.draft.rows.some(r=>!r.excluded)&&value.draft.rows.every(r=>r.excluded||!r.reasons.length);
   value.draft.executionEnabled=executionEnabled;value.draft.blockReason=executionEnabled?undefined:BLOCKED;
   value.draft.durableDraftId=value.durable?.id;value.draft.durableHash=value.durable?.hash;value.draft.hash=hash(value);
  }
@@ -89,7 +95,7 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
   const item:Attachment={id:source.id,owner,filename:source.filename,image:{bytes:new Uint8Array(),mediaType:source.mediaType},sha256:source.sha256,expires:source.state==='retained'?now()+3600000:Date.parse(source.expiresAt),source};
   if(state?.document&&record(state.document)&&typeof state.document.text==='string')item.document=clone(state.document) as unknown as TenbotInvoiceDocument;
   attachments.set(source.id,item);
-  if(state?.draft){const draft=clone(state.draft),durable=draft.durableDraftId?await createInvoiceReceivalService(client(owner),{executionEnabled}).get({draftId:draft.durableDraftId}):undefined;reviews.set(draft.id,{owner,attachmentId:item.id,expires:item.expires,draft,supplier:draft.provenance?.supplier??'',reference:draft.provenance?.documentReference??'',traceHash:state.traceHash??digest([]),durable});}
+  if(state?.draft){const draft=clone(state.draft);if(preparationOnly&&(draft.durableDraftId||draft.durableHash||draft.status==='created'||draft.canApprove||draft.executionEnabled))fail('This source belongs to a permission-gated review. Use the authorized Inventory workflow.',403);const durable=draft.durableDraftId?await createInvoiceReceivalService(client(owner),{executionEnabled}).get({draftId:draft.durableDraftId}):undefined;reviews.set(draft.id,{owner,attachmentId:item.id,expires:item.expires,draft,supplier:draft.provenance?.supplier??'',reference:draft.provenance?.documentReference??'',traceHash:state.traceHash??digest([]),durable});}
   return item;
  }
  async function persist(item:Attachment,owner:string,store:ReceivalRuntimeSourceStore,value?:Review){
@@ -116,6 +122,7 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
    for(const [id,item] of attachments)if(item.expires<=now())attachments.delete(id);
    for(const [id,item] of reviews)if(item.expires<=now())reviews.delete(id);
    const action=body.action,store=deps.sourceStore?.(caller,owner);
+   if(preparationOnly){if(!['status','upload','ask'].includes(String(action)))fail('This invoice workspace prepares drafts only. Approval and execution require the authorized Inventory workflow.',403);await authorizePreparation(owner);if(action==='ask'&&body.attachmentId===undefined)fail('Attach the approved synthetic invoice for this preparation-only test.',403);}
    if(store&&action!=='status'&&action!=='history'&&!(action==='ask'&&body.attachmentId===undefined)&&!(action==='clear'&&body.attachmentId===undefined)){const sourceId=action==='upload'?body.sourceId:body.attachmentId??body.draftId;if(sourceId!==undefined)await restore(sourceId,owner,store);}
    if(action==='history'){
     keys(body,['action','conversationId']);const history=await helpSession(body,owner);await authorize(owner);return history;
@@ -129,10 +136,10 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
     const found=owner===TENBOT_CANARY_OWNER&&scope!==undefined?{data:[],error:null}:await Promise.resolve(jobQuery.select('id,name,job_number',{count:'exact'}).is('archived_at',null).order('job_number').limit(21).abortSignal(AbortSignal.timeout(4000))).catch(()=>initializationUnavailable('jobs'));
     if(found.error||!Array.isArray(found.data))initializationUnavailable('jobs');
     await authorize(owner);
-    return {mode:'authenticated-receivals',simulation:false,databaseEnvironment:deps.execution?.databaseEnvironment,canPrepare:await can(owner,'writeBusinessData')&&await can(owner,'adjustInventory'),canCreateCatalog:await can(owner,'writeBusinessData')&&await can(owner,'manageVendorsCatalog'),executionEnabled,blockedReason:executionEnabled?undefined:BLOCKED,model:deps.model,recordSource:executionEnabled?'Real isolated test records / caller JWT, existing TenOps RBAC and RLS':'Caller JWT / existing TenOps RBAC and RLS; execution disabled',catalog:combinePurchasingCatalogRecords(catalog.standard,catalog.specialty).map(c=>({id:`${c.source}:${c.id}`,materialName:c.materialName,size:c.chipSize,unit:c.orderUnit||c.containerType,supplier:c.vendor,packageQuantity:c.packageQuantity,packageMeasure:c.packageMeasure,containerType:c.containerType,packageLabel:c.packageEvidence?.label||''})),jobs:array(found.data).slice(0,20).map(j=>({id:j.id,label:[j.job_number,j.name].filter(Boolean).join(' — ')})),jobsLimited:Array.isArray(found.data)&&found.data.length>20,requiresPrivateOriginal:Boolean(store),maxOriginalBytes:12000000,maxAttachmentBytes:90000,mediaTypes:['image/png','image/jpeg']};
+    return {mode:'authenticated-receivals',simulation:false,databaseEnvironment:deps.execution?.databaseEnvironment,preparationOnly,canPrepare:preparationOnly?true:await can(owner,'writeBusinessData')&&await can(owner,'adjustInventory'),canCreateCatalog:!preparationOnly&&await can(owner,'writeBusinessData')&&await can(owner,'manageVendorsCatalog'),executionEnabled,blockedReason:executionEnabled?undefined:BLOCKED,model:deps.model,recordSource:executionEnabled?'Real isolated test records / caller JWT, existing TenOps RBAC and RLS':'Caller JWT / existing TenOps RBAC and RLS; execution disabled',catalog:combinePurchasingCatalogRecords(catalog.standard,catalog.specialty).map(c=>({id:`${c.source}:${c.id}`,materialName:c.materialName,size:c.chipSize,unit:c.orderUnit||c.containerType,supplier:c.vendor,packageQuantity:c.packageQuantity,packageMeasure:c.packageMeasure,containerType:c.containerType,packageLabel:c.packageEvidence?.label||''})),jobs:array(found.data).slice(0,20).map(j=>({id:j.id,label:[j.job_number,j.name].filter(Boolean).join(' — ')})),jobsLimited:Array.isArray(found.data)&&found.data.length>20,requiresPrivateOriginal:Boolean(store),maxOriginalBytes:12000000,maxAttachmentBytes:90000,mediaTypes:['image/png','image/jpeg']};
    }
    if(action==='upload'){
-    await authorize(owner,true);
+    await authorizePreparation(owner);
     keys(body,['action','attachment','sourceId','syntheticConfirmed']);if(body.syntheticConfirmed!==true)fail('Use approved synthetic test documents for this restricted candidate.');
     if(store){if(body.attachment!==undefined)fail('The original must be uploaded privately; inline derivatives are not accepted.');const item=await restore(body.sourceId,owner,store);if(item.source?.state==='retained')fail('This original already belongs to an approved batch. Open its pending receivals in Inventory.',409);await store.download(item.id);return {attachmentId:item.id,sourceId:item.id,filename:item.filename,mediaType:item.source!.mediaType,expiresAt:new Date(item.expires).toISOString(),simulation:false};}
     if(body.sourceId!==undefined)fail('Private original retention is unavailable.');
@@ -143,16 +150,28 @@ export function createAuthenticatedReceivalAgent(deps:ReceivalRuntimeDependencie
    if(action==='ask'){
     keys(body,['action','attachmentId','conversationId','question','context','orderDetails']);
     if(body.attachmentId===undefined){const result=await helpSession({action:'ask',question:body.question,context:body.context,...(body.conversationId?{conversationId:body.conversationId}:{})},owner);await authorize(owner);return {...result,notices:['Local OpenAI TenOps guidance. Guidance is separate from actions; no database changes were made.'],localDemo:{simulation:false,draft:null}};}
-    await authorize(owner,true);const item=attached(body.attachmentId,owner);const metadata=details(body.orderDetails??{});
+    await authorizePreparation(owner);const item=attached(body.attachmentId,owner);const metadata=details(body.orderDetails??{});
     if(item.source?.state==='retained')fail('This original has already been approved. Open the existing Inventory receipt.',409);
-    if(!item.document){if(store){const original=await store.download(item.id);item.source=original.source;item.image={bytes:new Uint8Array(await original.original.arrayBuffer()),mediaType:item.source.mediaType};}item.document=await deps.extractDocument({id:item.id,filename:item.filename,image:item.image,model:deps.model,provider:deps.createProvider('authenticated-invoice-vision',item.image),remainingUsd:deps.remainingUsd(),assertNoFatal:deps.assertNoFatal});if(store)await persist(item,owner,store);}
-    item.session??=createTenbotAgentSessions({mode:'openai',can,jobTools:id=>createTenbotJobTools(client(id)),provider:()=>deps.createProvider('authenticated-invoice-investigation'),invoice:{document:item.document,reader:id=>createCallerInvoiceReader(client(id))},now});
-    const result=await item.session({action:'ask',question:body.question,context:body.context,...(!store&&body.conversationId?{conversationId:body.conversationId}:{}),invoiceId:item.id,orderDetails:metadata},owner);
-    await authorize(owner,true);attached(item.id,owner);
-    const agent='agent' in result?result.agent:undefined;if(!agent)fail('The agent did not publish a validated result.',503);
+    if(!item.document){
+     const started=now();
+     try{if(store){const original=await store.download(item.id);item.source=original.source;item.image={bytes:new Uint8Array(await original.original.arrayBuffer()),mediaType:item.source.mediaType};}item.document=await deps.extractDocument({id:item.id,filename:item.filename,image:item.image,model:deps.model,provider:deps.createProvider('authenticated-invoice-vision',item.image),remainingUsd:deps.remainingUsd(),assertNoFatal:deps.assertNoFatal});diagnostic('extraction','ok',started,'completed');}
+     catch(error){diagnostic('extraction','error',started,error instanceof AgentStepError?error.code:'extraction-failed');throw error;}
+     if(store){const started=now();try{await persist(item,owner,store);diagnostic('source-persistence','ok',started,'completed');}catch(error){diagnostic('source-persistence','error',started,'source-persistence-failed');throw error;}}
+    }
+    item.session??=createTenbotAgentSessions({mode:'openai',can,jobTools:id=>createTenbotJobTools(client(id)),provider:()=>deps.createProvider('authenticated-invoice-investigation'),invoice:{document:item.document,reader:id=>createCallerInvoiceReader(client(id))},now,onDiagnostic:deps.onDiagnostic,...(preparationOnly?{canPrepareInvoice:async(id:string)=>{try{await authorizePreparation(id);return true;}catch{return false;}}}:{})});
+    const investigationStarted=now();
+    let result:Awaited<ReturnType<NonNullable<typeof item.session>>>;
+    try{result=await item.session({action:'ask',question:body.question,context:body.context,...(!store&&body.conversationId?{conversationId:body.conversationId}:{}),invoiceId:item.id,orderDetails:metadata},owner);}
+    catch(error){diagnostic('investigation','error',investigationStarted,'investigation-failed');throw error;}
+    await authorizePreparation(owner);attached(item.id,owner);
+    const agent='agent' in result?result.agent:undefined;if(!agent){diagnostic('investigation','error',investigationStarted,'invalid-agent-result');fail('The agent did not publish a validated result.',503);}
+    diagnostic('investigation',agent.status==='completed'?'ok':'stopped',investigationStarted,agent.status==='completed'?'completed':agent.reason??'investigation-failed');
     const proposals=agent.status==='completed'?array(agent.proposals).map(p=>p.proposal).filter(record):[];
     const value=proposals.find(p=>p.version==='tenbot-pending-receival-review.v1');
-    const prepared=value?proposal(owner,item,value,metadata,agent.trace):null;if(store&&prepared)await persist(item,owner,store,reviews.get(prepared.id));
+    let prepared:LocalReceivalDraft|null=null;const draftStarted=now();
+    try{prepared=value?proposal(owner,item,value,metadata,agent.trace):null;diagnostic('draft',prepared?'ok':'stopped',draftStarted,prepared?'completed':'no-draft-proposal');}
+    catch(error){diagnostic('draft','error',draftStarted,'draft-invalid');throw error;}
+    if(store&&prepared){const started=now();try{await persist(item,owner,store,reviews.get(prepared.id));diagnostic('draft-persistence','ok',started,'completed');}catch(error){diagnostic('draft-persistence','error',started,'draft-persistence-failed');throw error;}}
     return {...result,notices:[executionEnabled?'Preparation only. Your explicit approval is required to create reviewed pending receivals.':'Experimental authenticated TenOps preparation. '+BLOCKED],localDemo:{simulation:false,draft:prepared}};
    }
    if(action==='review'){
