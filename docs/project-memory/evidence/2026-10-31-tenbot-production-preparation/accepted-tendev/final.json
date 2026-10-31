@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T21:23:57.658Z",
+  "sha": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "deploymentId": "7cac1a67-410f-4f48-aa1c-fd883b83cd28",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 33,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "a277db1990d40d4588fec8e1f45d940f4ba0ee421d5afb209877082e403137f8"
+  },
+  "migration": {
+    "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+    "version": "20261031030000",
+    "name": "tenbot_execution_only_canary_window",
+    "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27"
+  },
+  "windowAndWritesOff": true,
+  "grants": 0,
+  "enrollment": 0,
+  "ordinaryFundingAndSecretDigestsUnchanged": true,
+  "tenOpsSha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "tenOpsDeployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+  "authenticatedBrowserVerificationPending": true,
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

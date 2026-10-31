@@ -6,6 +6,9 @@
 import {runTenbotAgent,type AgentProvider,type AgentStep,type JsonValue} from './tenbot-agent.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
+import type {InvestigationDiagnosticSink} from './tenbot-investigation-diagnostics.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
+// @ts-ignore -- explicit extensions for Edge compatibility.
 import {createTenbotAgentJobTools,createTenbotAgentKnowledgeTools,createTenbotAgentScopeTool} from './tenbot-agent-operations.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
@@ -36,6 +39,9 @@ export type AgentSessionDependencies={
  readOnlyHosted?:boolean;
  sessionStore?:AgentSessionStore;
  now?:()=>number;
+ onDiagnostic?:InvestigationDiagnosticSink;
+ /** Server-only preparation authority. Grants no durable approval or execution. */
+ canPrepareInvoice?(owner:string):Promise<boolean>;
 };
 type KnowledgeProof={id:string;digest:string};
 type GuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
@@ -166,7 +172,8 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(details)session.confirmation={...session.confirmation,...details};
    const can=(capability:string)=>deps.can(owner,capability);
    const job=createTenbotAgentJobTools(deps.jobTools(owner));
-   const mayPrepare=!deps.readOnlyHosted&&await can('writeBusinessData')&&await can('adjustInventory');
+   const mayPrepareNow=()=>deps.canPrepareInvoice?deps.canPrepareInvoice(owner):(async()=>await can('writeBusinessData')&&await can('adjustInventory'))();
+   const mayPrepare=!deps.readOnlyHosted&&await mayPrepareNow();
    const sourceReader=deps.readOnlyHosted?undefined:deps.invoice?.reader(owner),invoiceReads=new Map<string,string>();let inconsistentInvoice=false;
    const remember=(query:string,value:unknown)=>{const serialized=JSON.stringify(value),previous=invoiceReads.get(query);if(previous!==undefined&&previous!==serialized)inconsistentInvoice=true;if(previous===undefined)invoiceReads.set(query,serialized);};
    const reader:TenbotInvoiceReader={async searchCatalog(query,signal){if(!sourceReader)throw new TenbotError('Invoice tools are unavailable.');const value=await sourceReader.searchCatalog(query,signal);remember(query,value);return value;},async readReceivals(signal){if(!sourceReader)throw new TenbotError('Invoice tools are unavailable.');const value=await sourceReader.readReceivals(signal);remember('',value);return value;}};
@@ -224,24 +231,24 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     return {question:previous,answer:turn?'Prior assistant workflow guidance, retained only as conversation context. Re-fetch current knowledge and cite newly issued evidence IDs before giving guidance: '+turn.answer:'Previous live answer omitted. Reauthorize and reread all operational facts. Canonical lookup seeds: '+session!.jobIds.join(', ')};
    });
    if(session.invoiceAttached&&deps.invoice)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:(deps.invoice.document.extraction?'Actual OpenAI image preprocessing produced this transcription. Check read_invoice extraction provenance and compare it against the original image. ':'Synthetic text fixture only. ')+'Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
-   const result=await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,...(deps.readOnlyHosted?{limits:{maxDurationMs:75000}}:{}),async authorize(check){
+   const result=await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic:deps.onDiagnostic,...(deps.readOnlyHosted?{limits:{maxDurationMs:75000}}:{}),async authorize(check){
     if(!await can('readOperationalData'))return false;
     // Do not retransmit retained guidance after a grant/version changes mid-turn.
     if(check.phase==='before_model'){
      const proofs=new Map(session!.guidance.flatMap(turn=>turn.sources).map(proof=>[proof.id+':'+proof.digest,proof]));
      for(const proof of proofs.values())if(!await proofIsCurrent(proof))return false;
     }
-    if(check.tool==='prepare_pending_receivals'&&(!await can('writeBusinessData')||!await can('adjustInventory')))return false;
+    if(check.tool==='prepare_pending_receivals'&&!await mayPrepareNow())return false;
     if(check.phase==='publish'){
      if(inconsistentInvoice)return false;
      for(const capability of knowledgeGrants)if(!await can(capability))return false;
      const proofs=new Map([...knowledgeProofs.values(),...session!.guidance.flatMap(turn=>turn.sources)].map(proof=>[proof.id+':'+proof.digest,proof]));
      for(const proof of proofs.values())if(!await proofIsCurrent(proof))return false;
-     if(prepared&&(!await can('writeBusinessData')||!await can('adjustInventory')))return false;
+     if(prepared&&!await mayPrepareNow())return false;
      if(!await job.fresh())return false;
      const deadline=new AbortController(),timer=setTimeout(()=>deadline.abort(),4000);
      try{for(const [query,previous] of invoiceReads){if(!sourceReader)return false;const fresh=query?await sourceReader.searchCatalog(query,deadline.signal):await sourceReader.readReceivals(deadline.signal);if(JSON.stringify(fresh)!==previous)return false;}}catch{return false;}finally{clearTimeout(timer);deadline.abort();}
-     if(!await can('readOperationalData')||prepared&&(!await can('writeBusinessData')||!await can('adjustInventory')))return false;
+     if(!await can('readOperationalData')||prepared&&!await mayPrepareNow())return false;
      for(const capability of knowledgeGrants)if(!await can(capability))return false;
     }
     return true;

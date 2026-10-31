@@ -1,0 +1,57 @@
+{
+  "retainedHistoricalReviews": [
+    {
+      "classification": "historical-deployed",
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "blob": "5ce93bcce182097707c3ec60b5cabd44c5f2a62d",
+      "release": {
+        "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+        }
+      }
+    },
+    {
+      "classification": "historical-deployed",
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "blob": "856446f68e057f068dc04ffb2cb7f3fd3912b9ed",
+      "release": {
+        "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+        }
+      }
+    },
+    {
+      "classification": "historical-deployed",
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "blob": "b3fc2b383be2115d0214fee33cb2bd2ddc74fd34",
+      "release": {
+        "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+        }
+      }
+    },
+    {
+      "classification": "historical-deployed",
+      "path": "supabase/functions/tenbot/index.ts",
+      "blob": "4328303531ec6423633ceed9a49806ea5d32d477",
+      "release": {
+        "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+        }
+      }
+    }
+  ],
+  "reason": "Current source review replaced only by exact already-executed shared Edge/source evidence; original released revisions and receipts remain intact."
+}

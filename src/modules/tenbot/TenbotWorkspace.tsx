@@ -1,13 +1,17 @@
 'use client';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
-import {useEffect,useRef,useState,type ReactNode} from 'react';
+import {useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
 import {Info,MoreHorizontal,Paperclip,X} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {ReceivalDraftReview} from './ReceivalDraftReview';
+import {createInvoiceReceivalAttachmentService,invoiceOriginalSha256} from '../inventory/invoice-receival-attachments';
+import {parseTenbotCanaryAccess,tenbotCanaryRemainingMs} from '../inventory/tenbot-canary-access';
 import {clearHistoryLocator,historyAccessHash,readHistoryLocator,saveHistoryLocator,type HistoryBinding} from './conversation-history';
-import {localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,receivalReviewNotice,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
+import {tenbotFailureMetadata,tenbotFailureTimedOut,tenbotInitializationFailure,type TenbotInitializationStage} from './initialization-failure';
+import {clearPreparedDraftLocator,preparedDraftResumeFailure,proposedCanaryOrderDetails,readPreparedDraftLocator,resumePreparedReceival,savePreparedDraftLocator} from './prepared-draft-resume';
+import {invalidateReceivalApproval,localAgentExperimentRequested,localReceivalCandidateRequested,prepareInvoiceImage,receivalExecutionBlock,receivalReviewNotice,type LocalDemoStatus,type LocalAttachment,type LocalReceivalDraft,type LocalApproval,type LocalOrderDetails,type LocalRowEdit} from './live-review';
 type Source={id:string;title:string;status:string;guidance:string;path:string;route:string|null;source:string;availability?:string;constraints?:string[]};
 type Answer={conversationId?:string;mode:string;message:string;resolution?:'available'|'partial'|'unavailable'|'permission-denied'|'documentation-missing';sources:Source[];snapshot:{revision:string;verifiedAt:string};summary:string|null;fallback?:boolean;notices?:string[];suggestionAllowed?:boolean;operational?:{observedAt:string|null;complete:boolean;truncated:boolean;facts:{id:string;text:string}[];refreshable:boolean}};
 type Draft={capability:string;problem:string;desired:string;module:string;original:string;summary:string;summaryKind:string;context:string};
@@ -61,14 +65,15 @@ async function invoke<T>(body:Record<string,unknown>,owner:string):Promise<T>{
  const localFixture=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&sessionData.session?.access_token.endsWith('.local');
  // The owner-scoped controller selects this mode once. Route changes must not
  // silently send experimental questions to the ordinary Qwen adapter.
- const {localAgentExperiment,localReceivalExecution,...payload}=body;
+ const {localAgentExperiment,localReceivalExecution,hostedReceivalRequest,...payload}=body;
+ if(hostedReceivalRequest===true)payload.workspace='invoice-receivals.v1';
  const experiment=typeof window!=='undefined'&&window.location.origin==='http://localhost:3000'&&localAgentExperiment===true;
  const endpoint=experiment?(localReceivalExecution===true?'http://localhost:55596':'http://localhost:55595'):process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||(localFixture?'http://localhost:55593':undefined);
  if(endpoint&&typeof window!=='undefined'&&window.location.hostname==='localhost'){
- const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(payload),signal:AbortSignal.timeout(experiment?100000:payload.action==='ask'?125000:35000)});const value=await r.json();if(!r.ok)throw Object.assign(new Error(value.error||'TenBot unavailable.'),{status:r.status});return value;
+ const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${sessionData.session?.access_token||''}`},body:JSON.stringify(payload),signal:AbortSignal.timeout(experiment?100000:payload.action==='ask'?125000:35000)});const value=await r.json().catch(()=>null);if(!r.ok)throw Object.assign(new Error(typeof value?.error==='string'?value.error:'TenBot unavailable.'),tenbotFailureMetadata(r.status,value,r.headers.get('sb-request-id')||r.headers.get('x-request-id')));return value;
  }
  const {data,error}=await supabase.functions.invoke('tenbot',{body:payload,headers:{Authorization:`Bearer ${sessionData.session.access_token}`},signal:AbortSignal.timeout(payload.action==='ask'?125000:35000)});
- if(error){const response='context' in error&&error.context instanceof Response?error.context:null;const detail=response?await response.json().catch(()=>null):null;throw Object.assign(new Error(detail?.error||'TenBot is unavailable. The rest of TenOps remains available.'),{status:response?.status});}return data;
+ if(error){const response='context' in error&&error.context instanceof Response?error.context:null;const detail=response?await response.json().catch(()=>null):null;throw Object.assign(new Error(typeof detail?.error==='string'?detail.error:'TenBot is unavailable. The rest of TenOps remains available.'),tenbotFailureMetadata(response?.status,detail,response?.headers.get('sb-request-id')||response?.headers.get('x-request-id')),{name:tenbotFailureTimedOut(error)?'TimeoutError':'Error'});}return data;
 }
 type ModuleContext={label:string;module:string};
 function moduleContext(pathname:string):ModuleContext{
@@ -109,15 +114,17 @@ export function useTenbotConversation():TenbotConversation{
  const [notice,setNotice]=useState(''),[showFeedback,setShowFeedback]=useState(false);
  const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
  const [usage,setUsage]=useState<Usage|null>(null),[usageError,setUsageError]=useState('');
+ const [hostedReceivals,setHostedReceivals]=useState(false);
  const [experiment,setExperiment]=useState(false),[authenticatedExperiment,setAuthenticatedExperiment]=useState(false),[developerDiagnostics,setDeveloperDiagnostics]=useState(false);
  const [orderDetails,setOrderDetails]=useState({orderedBy:'',orderDate:'',location:''});
  const [experimentStatus,setExperimentStatus]=useState<LocalDemoStatus|null>(null),[syntheticConfirmed,setSyntheticConfirmed]=useState(false);
+ const [canaryDeadline,setCanaryDeadline]=useState<number|null>(null);
  const [attachment,setAttachment]=useState<LocalAttachment|null>(null),[attachmentPreview,setAttachmentPreview]=useState('');
  const [selectedAttachment,setSelectedAttachment]=useState<File|null>(null);
  const [attachmentOrigin,setAttachmentOrigin]=useState<{originalFilename:string;renderedPdf:boolean}|null>(null);
  const [receivalDraft,setReceivalDraft]=useState<LocalReceivalDraft|null>(null),[localApproval,setLocalApproval]=useState<LocalApproval|null>(null);
- const authenticatedReceivals=experiment&&authenticatedExperiment;
- const liveDemo=experiment&&(authenticatedExperiment||experimentStatus?.mode==='synthetic-live'||experimentStatus?.mode==='authenticated-receivals');
+ const authenticatedReceivals=experiment&&authenticatedExperiment||hostedReceivals;
+ const liveDemo=hostedReceivals||experiment&&(authenticatedExperiment||experimentStatus?.mode==='synthetic-live'||experimentStatus?.mode==='authenticated-receivals');
  const [notes,setNotes]=useState<Record<string,string>>({});
  const lock=useRef(false),sequence=useRef(0);
  const conversation=useRef<{owner:string;id?:string}>({owner});
@@ -135,6 +142,42 @@ export function useTenbotConversation():TenbotConversation{
  const lastAnswer=messages.at(-1)?.answer;
  const accessFingerprint=JSON.stringify(auth.profile);
  const currentAccess=useRef(accessFingerprint);currentAccess.current=accessFingerprint;
+ const canUseReceivalAccess=()=>canaryDeadline===null||canaryDeadline>Date.now();
+ const expireCanaryAccess=useCallback(()=>{
+  setExperimentStatus(status=>status?.canaryAccess?{...status,canPrepare:false,executionEnabled:false,canAcknowledgeDuplicates:false,blockedReason:'Temporary canary access expired or was revoked. No new action is authorized.'}:status);
+  // A completed receipt is evidence, not an outstanding authorization. Keep its
+  // returned IDs visible while invalidating every remaining approval control.
+  setLocalApproval(value=>value&&!value.simulation&&value.draft.status==='created'?value:null);
+  setReceivalDraft(value=>value&&!value.simulation?{...value,canApprove:false,executionEnabled:false,blockReason:'Temporary canary access expired or was revoked.'}:value);
+  // Drop only this browser's submission context. Private originals, durable
+  // approvals and audit evidence are not deleted or changed by UI expiry.
+  // Keeping an expired attachment selected would prevent ordinary text help.
+  setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setSyntheticConfirmed(false);
+ },[]);
+ const receiveExperimentStatus=useCallback((status:LocalDemoStatus)=>{
+  if(status.canaryAccess){const access=parseTenbotCanaryAccess(status.canaryAccess,owner);if(!access)throw Error('Temporary canary access is unavailable.');setCanaryDeadline(Date.now()+tenbotCanaryRemainingMs(access));}
+  else setCanaryDeadline(null);
+  setExperimentStatus(status);
+ },[owner]);
+ useEffect(()=>{
+  if(canaryDeadline===null)return;
+  // This is only a convenience for a stale UI. Every server action independently
+  // checks the database clock, current grant and exact approved operation.
+  const timer=setTimeout(expireCanaryAccess,Math.max(0,canaryDeadline-Date.now()));
+  return()=>clearTimeout(timer);
+ },[canaryDeadline,expireCanaryAccess]);
+ useEffect(()=>{
+  if(!hostedReceivals||!experimentStatus?.canaryAccess)return;
+  let current=true;
+  const refresh=async()=>{
+   const expectedGrant=experimentStatus.canaryAccess!.grantId;
+   try{const {data,error}=await supabase.rpc('get_my_tenbot_receival_canary_access',{});if(!current||currentOwner.current!==owner)return;if(error)throw Error('unavailable');const access=parseTenbotCanaryAccess(data,owner);if(!access||access.grantId!==expectedGrant)throw Error('changed');setCanaryDeadline(Date.now()+tenbotCanaryRemainingMs(access));}
+   catch{if(current&&currentOwner.current===owner)expireCanaryAccess();}
+  };
+  const focus=()=>{if(document.visibilityState==='visible')void refresh();};
+  window.addEventListener('focus',focus);document.addEventListener('visibilitychange',focus);
+  return()=>{current=false;window.removeEventListener('focus',focus);document.removeEventListener('visibilitychange',focus);};
+ },[hostedReceivals,experimentStatus?.canaryAccess,owner,expireCanaryAccess]);
  useEffect(()=>{
   const closeOutside=(event:PointerEvent)=>{const popup=privacyRef.current;if(popup?.open&&event.target instanceof Node&&!popup.contains(event.target))popup.open=false;};
   window.addEventListener('pointerdown',closeOutside);
@@ -144,28 +187,58 @@ export function useTenbotConversation():TenbotConversation{
   let current=true;const generation=++lifecycle.current;
   const active=()=>current&&generation===lifecycle.current&&currentOwner.current===owner&&currentAccess.current===accessFingerprint;
   historyBinding.current=null;conversation.current={owner};liveTurn.current=null;
-  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
+  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setHostedReceivals(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setCanaryDeadline(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
   setHistoryLoading(available);
   if(!available){
    // Pending Auth is not a sign-out. Do not destroy the opaque locator while the
    // same account is being hydrated during an ordinary component remount.
    if(auth.ready&&auth.accessStatus!=='pending')clearHistoryLocator();
   }else void (async()=>{
-   let receivals=false;
+   let receivals=false,initializationStage:TenbotInitializationStage='hosted-status',invoiceStatus:LocalDemoStatus|null=null;
    try{
     const {data}=await supabase.auth.getSession();if(!active()||data.session?.user.id!==owner)return;
     const authenticated=Boolean(data.session.access_token),enabled=localAgentExperimentRequested(window.location.origin,window.location.search,authenticated);
     receivals=localReceivalCandidateRequested(window.location.origin,window.location.search,authenticated);
     setExperiment(enabled);setAuthenticatedExperiment(receivals);
     if(enabled){
+     initializationStage='local-status';
      const status=await invoke<LocalDemoStatus>({action:'status',localAgentExperiment:true,localReceivalExecution:receivals},owner);
      if(receivals&&(status.mode!=='authenticated-receivals'||status.simulation!==false))throw new Error('The authenticated receivals server returned an incompatible mode.');
-     if(!active())return;setExperimentStatus(status);
+     if(!active())return;receiveExperimentStatus(status);if(receivals)invoiceStatus=status;
     }else{
      // An older/Qwen-only backend can reject status; normal conversation remains
      // available. Never send experimental flags or enable document controls.
-     const status=await invoke<{mode:string;historyAvailable:boolean}>({action:'status'},owner).catch(()=>null);
+     const status=await invoke<{mode:string;historyAvailable:boolean;receivalPilotAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
      if(!active()||status?.mode!=='assistant'||status.historyAvailable!==true)return;
+     if(status.receivalPilotAvailable===true){
+      try{
+       const candidate=await invoke<LocalDemoStatus>({action:'status',hostedReceivalRequest:true},owner);if(!active())return;
+       if(candidate.mode!=='authenticated-receivals'||candidate.simulation!==false||candidate.requiresPrivateOriginal!==true)throw new Error('Incompatible invoice workspace status.');
+       receiveExperimentStatus(candidate);setHostedReceivals(true);invoiceStatus=candidate;
+      }catch(caught){
+       if(!active())return;
+       const failure=tenbotInitializationFailure(caught,'hosted-invoice-status');
+       setError(failure.message);console.warn('TenBot workspace initialization failed',failure.diagnostic);
+       // Invoice setup must not prevent ordinary help or owner-authorized
+       // history hydration. No attachment or receival controls were enabled.
+      }
+     }
+    }
+    if(invoiceStatus?.requiresPrivateOriginal&&invoiceStatus.canPrepare!==false){
+     // The server's fixed canary selection takes precedence over a browser
+     // locator. Neither contains invoice evidence or grants source access.
+     const sourceId=invoiceStatus.resumableSourceId??readPreparedDraftLocator(owner);
+     if(sourceId)try{
+      const restored=await resumePreparedReceival(sourceId,body=>invoke({...body,...(enabled?{localAgentExperiment:true,localReceivalExecution:receivals}:{hostedReceivalRequest:true})},owner));
+      if(!active())return;
+      setAttachment(restored.attachment);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(restored.draft);setLocalApproval(null);setOrderDetails(restored.draft.orderDetails);setSyntheticConfirmed(false);
+      savePreparedDraftLocator(owner,sourceId);setNotice('Prepared invoice restored. Source quantities are unchanged; no AI request was repeated.');
+     }catch(caught){
+      if(!active())return;
+      const status=caught&&typeof caught==='object'&&'status' in caught?Number(caught.status):0;
+      if([400,403,404,409,410].includes(status))clearPreparedDraftLocator(owner);
+      setError(preparedDraftResumeFailure(caught));
+     }
     }
     const binding:HistoryBinding={owner,accessHash:await historyAccessHash(accessFingerprint),mode:enabled?(receivals?'authenticated':'synthetic'):'hosted'};
     if(!active())return;historyBinding.current=binding;
@@ -183,11 +256,11 @@ export function useTenbotConversation():TenbotConversation{
       else{conversation.current={owner,id};setError('Saved TenBot history is temporarily unavailable. Reopen TenBot to restore it. No AI request was repeated.');}
      }
     }
-   }catch(caught){if(active())setError(receivals?`Authenticated database unavailable; writes disabled. ${caught instanceof Error?caught.message:'Reopen TenBot after the isolated database is available.'}`:'The local experiment is unavailable. Reopen TenBot after its server is ready.');}
+   }catch(caught){if(active()){const failure=tenbotInitializationFailure(caught,initializationStage);setError(failure.message);console.warn('TenBot workspace initialization failed',failure.diagnostic);}}
    finally{if(active())setHistoryLoading(false);}
   })();
   return()=>{current=false;lifecycle.current=generation+1;};
- },[owner,available,accessFingerprint,auth.ready,auth.accessStatus]);
+ },[owner,available,accessFingerprint,auth.ready,auth.accessStatus,receiveExperimentStatus]);
  useEffect(()=>{
   const invalidate=()=>setMessages(turns=>turns.map(turn=>volatileAnswer(turn.answer)?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
   const refresh=async()=>{
@@ -219,8 +292,9 @@ export function useTenbotConversation():TenbotConversation{
   const chat=body.action==='ask'||body.action==='draft';
   const generation=lifecycle.current;
   try{
-   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&conversation.current.id?{conversationId:conversation.current.id}:{}),...(experiment?{localAgentExperiment:true,localReceivalExecution:authenticatedExperiment}:{})},owner);
-   if(chat&&generation===lifecycle.current&&conversation.current.owner===owner&&result.conversationId){
+   const receivalRequest=hostedReceivals&&(Boolean(body.attachmentId)||['upload','resume','review','approve'].includes(String(body.action)));
+   const result=await invoke<T&{conversationId?:string}>({...body,...(chat&&!receivalRequest&&conversation.current.id?{conversationId:conversation.current.id}:{}),...(experiment?{localAgentExperiment:true,localReceivalExecution:authenticatedExperiment}:{}),...(receivalRequest?{hostedReceivalRequest:true}:{})},owner);
+   if(chat&&!receivalRequest&&generation===lifecycle.current&&conversation.current.owner===owner&&result.conversationId){
     conversation.current.id=result.conversationId;
     let binding=historyBinding.current;
     if(!binding&&!experiment&&'mode' in result&&result.mode==='assistant'){
@@ -232,6 +306,7 @@ export function useTenbotConversation():TenbotConversation{
    }
    return result;
   }catch(e){
+   if(hostedReceivals&&experimentStatus?.canaryAccess&&e&&typeof e==='object'&&'status' in e&&e.status===403)expireCanaryAccess();
    if(e instanceof Error&&/^Conversation (unavailable|changed)/.test(e.message)&&generation===lifecycle.current&&conversation.current.owner===owner){conversation.current={owner};clearHistoryLocator();}
    throw e;
   }
@@ -242,7 +317,11 @@ export function useTenbotConversation():TenbotConversation{
   const current=question.trim();
   if(historyLoading||experiment&&!experimentStatus){setError('TenBot is restoring the current conversation. Please wait a moment.');return false;}
   if(!current||current.length>1200||lock.current)return false;
-  let turnAttachment=attachment;
+  // The execution-only window never sends document questions to a model.
+  // Ordinary text help remains a separate request with no attachment context.
+  const invoiceTurn=liveDemo&&experimentStatus?.executionOnly!==true;
+  let turnAttachment=invoiceTurn?attachment:null;
+  if(liveDemo&&(selectedAttachment||turnAttachment)&&!canUseReceivalAccess()){expireCanaryAccess();setError('Temporary canary access expired or was revoked.');return false;}
   if(selectedAttachment){
    if(!syntheticConfirmed){setError('Confirm the attachment contains approved synthetic test data before sending.');return false;}
    const uploaded=await uploadInvoice(selectedAttachment);
@@ -260,14 +339,14 @@ export function useTenbotConversation():TenbotConversation{
   liveTurn.current=null;
   setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>volatileAnswer(item.answer)?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
   try{
-   const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(liveDemo?{...(turnAttachment?{attachmentId:turnAttachment.attachmentId}:{}),orderDetails}:experiment?{demoScenario:'job-investigation',orderDetails}:{})});
+   const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(invoiceTurn?{...(turnAttachment?{attachmentId:turnAttachment.attachmentId}:{}),orderDetails}:experiment&&experimentStatus?.executionOnly!==true?{demoScenario:'job-investigation',orderDetails}:{})});
    if(generation!==lifecycle.current||currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
    if(volatileAnswer(response)&&(!foreground.current||document.visibilityState!=='visible')){
     setMessages(m=>m.map(item=>item.id===turn.id?{...item,error:inactiveResponse}:item));
     return true;
    }
    if(response.operational)liveTurn.current={id:turn.id,owner};
-   if(liveDemo){setReceivalDraft(response.localDemo?.draft??null);setLocalApproval(null);}
+   if(invoiceTurn){const received=response.localDemo?.draft??null;setReceivalDraft(received);setLocalApproval(null);if(received&&!received.simulation&&turnAttachment?.sourceId&&received.attachmentId===turnAttachment.sourceId)savePreparedDraftLocator(owner,turnAttachment.sourceId);}
    setMessages(m=>m.map(item=>item.id===turn.id?{...item,id:response.historyTurnId??item.id,createdAt:response.createdAt??item.createdAt,answer:response,answeredAt:response.answeredAt??new Date().toISOString()}:item));
    return true;
   }catch(e){
@@ -293,7 +372,12 @@ export function useTenbotConversation():TenbotConversation{
  async function clear(){
   if(!begin())return;
   try{
-   if(conversation.current.id||attachment)await request({action:'clear',...(conversation.current.id?{conversationId:conversation.current.id}:{}),...(attachment?{attachmentId:attachment.attachmentId}:{})});
+   const inactiveCanary=Boolean(experimentStatus?.canaryAccess&&(experimentStatus.canPrepare===false||!canUseReceivalAccess()));
+   // Expired access cannot authorize source cleanup. A local reset still lets
+   // the employee return to conversation; retained evidence remains untouched.
+   if(experimentStatus?.executionOnly===true){if(conversation.current.id)await request({action:'clear',conversationId:conversation.current.id});}
+   else if(!inactiveCanary&&(conversation.current.id||attachment))await request({action:'clear',...(conversation.current.id?{conversationId:conversation.current.id}:{}),...(attachment?{attachmentId:attachment.attachmentId}:{})});
+   if(attachment)clearPreparedDraftLocator(owner);
    conversation.current={owner};clearHistoryLocator();setMessages([]);setDraft(null);setError('');setNotice('');setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
   }catch{setError('TenBot could not clear this conversation. Retry.');}finally{finish();}
  }
@@ -314,44 +398,50 @@ export function useTenbotConversation():TenbotConversation{
   catch(e){setError(e instanceof Error?e.message:'Review failed.');}finally{finish();}
  }
  async function uploadInvoice(file:File):Promise<LocalAttachment|undefined>{
-  if(!liveDemo||!syntheticConfirmed||!experimentStatus||experimentStatus.canPrepare===false||!begin())return;
+  if(!liveDemo||!syntheticConfirmed||!experimentStatus||experimentStatus.executionOnly===true||experimentStatus.canPrepare===false||!canUseReceivalAccess()||!begin())return;
   const requestAccess=currentAccess.current;
   try{
+   if(experimentStatus.canaryAccess&&await invoiceOriginalSha256(file)!==experimentStatus.canaryAccess.documentSha256)throw Error('This temporary canary permits only the approved synthetic invoice file.');
    const prepared=await prepareInvoiceImage(file,experimentStatus.maxAttachmentBytes);
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
-   const uploaded=await request<LocalAttachment>({action:'upload',syntheticConfirmed:true,attachment:{filename:prepared.filename,mediaType:prepared.mediaType,dataBase64:prepared.dataBase64}});
+   const source=experimentStatus.requiresPrivateOriginal?await createInvoiceReceivalAttachmentService(supabase).upload(file,file.name):null;
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
-   setAttachment(uploaded);setSelectedAttachment(null);setAttachmentPreview(prepared.preview);setAttachmentOrigin({originalFilename:prepared.originalFilename,renderedPdf:prepared.renderedPdf});setReceivalDraft(null);setLocalApproval(null);setMessages([]);conversation.current={owner};clearHistoryLocator();
+   const uploaded=await request<LocalAttachment>({action:'upload',syntheticConfirmed:true,...(source?{sourceId:source.id}:{attachment:{filename:prepared.filename,mediaType:prepared.mediaType,dataBase64:prepared.dataBase64}})});
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
+   setAttachment(uploaded);if(uploaded.sourceId)savePreparedDraftLocator(owner,uploaded.sourceId);setSelectedAttachment(null);setAttachmentPreview(prepared.preview);setAttachmentOrigin({originalFilename:prepared.originalFilename,renderedPdf:prepared.renderedPdf});setReceivalDraft(null);setLocalApproval(null);setMessages([]);conversation.current={owner};clearHistoryLocator();
    setNotice(`${prepared.originalFilename} attached.`);
    return uploaded;
-  }catch(e){setError(e instanceof Error?e.message:'The attachment could not be uploaded.');}finally{finish();}
+  }catch(e){setError(e instanceof Error&&e.message==='invoice_source_rejected:42501'?'Your current permissions do not allow this private invoice upload.':e instanceof Error&&/^(invoice_source_|invalid_invoice_source_)/.test(e.message)?'The private original could not be stored or verified. Retry the same file; no receivals were created.':e instanceof Error?e.message:'The attachment could not be uploaded.');}finally{finish();}
  }
- async function saveReceivalReview(edits:LocalRowEdit[],details:LocalOrderDetails){
-  if(authenticatedReceivals&&edits.some(row=>!row.excluded&&row.catalogRequest)){
-   setError('Combined catalog-material and pending-receival creation is not available in the authenticated review. This proposal can only be reviewed and approved in the simulated local experiment; no records were created.');
-   setLocalApproval(null);return;
-  }
-  if(authenticatedReceivals&&edits.some(row=>!row.excluded&&row.duplicateAcknowledgement)){
-   setError('Duplicate acknowledgement is available only for simulated review. Real duplicate protection cannot be overridden here.');setLocalApproval(null);return;
-  }
-  if(!liveDemo||!receivalDraft||!begin())return;
+ async function downloadOriginal(){
+  if(!attachment?.sourceId||!begin())return;
   const requestAccess=currentAccess.current;
   try{
-   // The real service accepts only existing-material edits. Proposal metadata,
-   // including explicit nulls and excluded local requests, stays outside its RPC.
-   const reviewedEdits=authenticatedReceivals?edits.map(row=>{const existing={...row};delete existing.catalogRequest;delete existing.duplicateAcknowledgement;return existing;}):edits;
-   const value=await request<{draft:LocalReceivalDraft;simulation:boolean}>({action:'review',draftId:receivalDraft.id,revision:receivalDraft.revision,edits:reviewedEdits,orderDetails:details});
+   const {source,original}=await createInvoiceReceivalAttachmentService(supabase).download(attachment.sourceId);
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
-   setReceivalDraft(value.draft);setLocalApproval(null);setOrderDetails(value.draft.orderDetails);setNotice(value.simulation&&experimentStatus?receivalReviewNotice(value.draft,{...experimentStatus,canCreateCatalog:available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')&&experimentStatus.canCreateCatalog!==false}):value.draft.durableDraftId&&value.draft.durableHash?'This exact draft was saved for durable server review. Check all current lines before approval.':'Draft changes reviewed. Durable database review remains required before execution.');
+   const url=URL.createObjectURL(original),link=document.createElement('a');link.href=url;link.download=source.filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch{setError('The private original is unavailable or no longer authorized.');}finally{finish();}
+ }
+ async function saveReceivalReview(edits:LocalRowEdit[],details:LocalOrderDetails){
+  if(!liveDemo||!receivalDraft||receivalDraft.status!=='review_required'||!canUseReceivalAccess()||!begin())return;
+  const requestAccess=currentAccess.current;
+  setReceivalDraft(invalidateReceivalApproval(receivalDraft));setLocalApproval(null);
+  try{
+   // Proposed materials and acknowledgements remain explicit review inputs.
+   // The server revalidates permissions, source evidence and duplicate identity.
+   const value=await request<{draft:LocalReceivalDraft;simulation:boolean}>({action:'review',draftId:receivalDraft.id,revision:receivalDraft.revision,edits,orderDetails:details});
+   if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
+   setReceivalDraft(value.draft);setLocalApproval(null);setOrderDetails(value.draft.orderDetails);setNotice(experimentStatus?receivalReviewNotice(value.draft,{...experimentStatus,canCreateCatalog:available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')&&experimentStatus.canCreateCatalog!==false}):'Draft changes reviewed. Durable database review remains required before execution.');
   }catch(e){setError(e instanceof Error?e.message:'The draft could not be reviewed.');}finally{finish();}
  }
  async function approveReceivalReview(current:LocalReceivalDraft){
-  if(!liveDemo||!experimentStatus||receivalExecutionBlock(current,experimentStatus)||receivalDraft?.id!==current.id||receivalDraft.revision!==current.revision||receivalDraft.hash!==current.hash||!current.canApprove||!begin())return;
+  if(!liveDemo||!experimentStatus||!canUseReceivalAccess()||receivalExecutionBlock(current,experimentStatus)||receivalDraft?.id!==current.id||receivalDraft.revision!==current.revision||receivalDraft.hash!==current.hash||!current.canApprove||!begin())return;
   const requestAccess=currentAccess.current;
   try{
    const value=await request<LocalApproval>({action:'approve',draftId:current.id,revision:current.revision,hash:current.hash,...(!current.simulation?{durableDraftId:current.durableDraftId,durableHash:current.durableHash}:{}),confirmation:true});
    if(currentOwner.current!==owner||currentAccess.current!==requestAccess)return;
-   setReceivalDraft(value.draft);setLocalApproval(value);setNotice(value.simulation?value.catalogAdditions?.length?'Simulated catalog additions and dependent pending receivals approved locally. No catalog or receival records were created.':'Simulated pending receivals approved locally. No catalog or receival records were created.':`${value.idempotent?value.receivals.length:value.createdCount} pending receivals ${value.idempotent?'already created':'created'} through your authorized TenOps access. Review the returned record IDs below.`);
+   if(!value.simulation)window.dispatchEvent(new Event('tenops:pending-receivals-changed'));
+   setReceivalDraft(value.draft);setLocalApproval(value);setNotice(value.simulation?value.catalogAdditions?.length?'Simulated catalog additions and dependent pending receivals approved locally. No catalog or receival records were created.':'Simulated pending receivals approved locally. No catalog or receival records were created.':`${value.createdCatalogRecords?.length?`${value.createdCatalogRecords.length} catalog material(s) and `:''}${value.idempotent?value.receivals.length:value.createdCount} pending receivals ${value.idempotent?'already created':'created'} through your authorized TenOps access. Open Inventory or review the returned record IDs below.`);
   }catch(e){setError(e instanceof Error?e.message:'The pending entries could not be approved.');}finally{finish();}
  }
  const entries:AssistantEntry[]=available?messages.flatMap(m=>[{id:`assistant-question-${m.id}`,createdAt:m.createdAt,content:<article className="relative mb-3 ml-auto max-w-[88%] rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
@@ -403,12 +493,12 @@ export function useTenbotConversation():TenbotConversation{
   <summary aria-label="About TenBot AI" title="About TenBot AI" className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:ring-2 focus-visible:ring-blue-500 [&::-webkit-details-marker]:hidden"><Info className="h-4 w-4" aria-hidden="true"/></summary>
   <div role="note" aria-label="TenBot AI privacy" className="absolute right-0 top-full z-40 mt-1 max-h-[min(24rem,60dvh)] w-72 max-w-[calc(100vw-3rem)] overflow-y-auto rounded-md border border-slate-200 bg-white p-3 text-xs leading-relaxed text-slate-600 shadow-lg">
    <p>TenBot uses AI to help answer questions and process attachments. Submitted content may be processed by OpenAI. Your TenOps permissions still apply.</p>
-   <details className="mt-2"><summary className="min-h-9 cursor-pointer py-2 text-slate-500">More privacy details</summary><p>{authenticatedReceivals?'This local candidate sends only the approved test attachment image, submitted questions and narrowly authorized catalog/Job tool results to OpenAI. Documents are untrusted input and cannot grant permissions or approve actions. A one-page PDF is rendered locally without OCR or text extraction. Reads use your authenticated TenOps access. Review and explicit approval are separate from model reasoning; execution remains disabled until database-backed release gates pass. No personal ChatGPT context is connected.':liveDemo?'This local demo sends the approved synthetic attachment image and questions you submit to OpenAI for actual inference. A one-page PDF is rendered locally into an image without offline OCR or text extraction. Operational records, catalog matches and approved pending entries are simulated locally. No Production records are read or written, and real database authorization/RLS is not validated by this demonstration.':'When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live answers are refreshed for each request and are not saved in assistant history. TenBot does not independently read private messages, personal tasks or financial information. Eligible private workflow guidance expires automatically: Terra history after one hour without a new turn, and Qwen context after eight hours.'}</p></details>
+   <details className="mt-2"><summary className="min-h-9 cursor-pointer py-2 text-slate-500">More privacy details</summary><p>{authenticatedReceivals?<>This restricted candidate sends only the approved original test document, submitted questions and narrowly authorized catalog/Job tool results to OpenAI. Documents are untrusted input and cannot grant permissions or approve actions. Original invoices are stored privately as batch evidence. Previews may be rendered locally; the server processes verified original bytes. Reads use your authenticated TenOps access. {experimentStatus?.executionEnabled===true?'Explicit approval submits the exact server-reviewed operations through authenticated TenOps services. Catalog and receival permissions are checked independently.':'Review and explicit approval are separate from model reasoning; execution is currently disabled by the server.'} No personal ChatGPT context is connected.</>:liveDemo?'This local demo sends the approved synthetic attachment image and questions you submit to OpenAI for actual inference. A one-page PDF is rendered locally into an image without offline OCR or text extraction. Operational records, catalog matches and approved pending entries are simulated locally. No Production records are read or written, and real database authorization/RLS is not validated by this demonstration.':'When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live answers are refreshed for each request and are not saved in assistant history. TenBot does not independently read private messages, personal tasks or financial information. Eligible private workflow guidance expires automatically: Terra history after one hour without a new turn, and Qwen context after eight hours.'}</p></details>
   </div>
  </details>;
- const attachmentControl=available&&liveDemo?<>
+ const attachmentControl=available&&liveDemo&&experimentStatus?.executionOnly!==true?<>
   <input ref={attachmentInput} aria-label="TenBot attachment file" tabIndex={-1} type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" disabled={busy||!experimentStatus||experimentStatus.canPrepare===false} className="hidden" onChange={event=>{
-   const file=event.currentTarget.files?.[0];event.currentTarget.value='';if(!file)return;
+   const file=event.currentTarget.files?.[0];event.currentTarget.value='';if(!file||experimentStatus?.executionOnly===true)return;
    setError('');
    if(!['application/pdf','image/jpeg','image/png'].includes(file.type)){setError('Choose a PNG, JPEG or one-page PDF invoice.');return;}
    if(file.size>12000000){setError('Choose an invoice attachment smaller than 12 MB.');return;}
@@ -424,17 +514,18 @@ export function useTenbotConversation():TenbotConversation{
  const controls=():ReactNode=>{
   if(!available)return null;
   return <div className="space-y-3" data-tenbot-controls>
-   {authenticatedReceivals&&experimentStatus?.executionEnabled!==true?<p role="status" className="text-xs text-slate-600">Real pending-receival creation is disabled in this local review.</p>:null}
+   {authenticatedReceivals&&experimentStatus?.executionEnabled!==true?<p role="status" className="text-xs text-slate-600">Real pending-receival creation is disabled for this review.</p>:null}
+   {experimentStatus?.executionOnly?<p role="status" className="text-xs text-slate-600">{experimentStatus.executionEnabled===true?'Prepared invoice · Model inference is off. Review the form; explicit approval creates the pending receival.':'Prepared-draft review only · Model inference and pending-receival creation are off. Use the form for changes; ordinary chat stays separate.'}</p>:null}
    {experiment&&developerDiagnostics?<section aria-label="TenBot developer diagnostics" className="rounded border border-slate-200 p-2 text-xs text-slate-500"><p>{authenticatedReceivals?'Authenticated local candidate':'Local agent candidate'} · {experimentStatus?.mode||'Checking status'}</p>{experimentStatus?.blockedReason?<p>{experimentStatus.blockedReason}</p>:null}</section>:null}
    {liveDemo?<>
-     {attachment?<details className="rounded border border-slate-200 bg-white p-2"><summary className="min-h-11 cursor-pointer py-2">Attachment preview · {attachmentOrigin?.originalFilename||attachment.filename}</summary>{attachmentOrigin?.renderedPdf?<p className="mb-2 text-xs text-slate-600">PDF page rendered for actual OpenAI vision; no offline OCR.</p>:null}{attachmentPreview?<>
+     {attachment?<details className="rounded border border-slate-200 bg-white p-2"><summary className="min-h-11 cursor-pointer py-2">Attachment preview · {attachmentOrigin?.originalFilename||attachment.filename}</summary>{attachmentOrigin?.renderedPdf?<p className="mb-2 text-xs text-slate-600">{experimentStatus?.requiresPrivateOriginal?'Local preview. The server processes the verified private original.':'PDF page rendered for actual OpenAI vision; no offline OCR.'}</p>:null}{attachment.sourceId?<button type="button" disabled={busy} onClick={()=>void downloadOriginal()} className="min-h-11 py-2 text-xs text-blue-800 underline disabled:opacity-50">Download private original</button>:null}{attachmentPreview?<>
       {/* Native image preserves an owner-local data URL without remote optimization. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={attachmentPreview} alt={`Uploaded test invoice: ${attachment.filename}`} className="mx-auto max-h-[32rem] max-w-full object-contain"/>
-     </>:null}<p className="mt-2 text-xs text-slate-600">This is the image sent for interpretation. Only your submitted attachment is used.</p></details>:null}
+     </>:null}<p className="mt-2 text-xs text-slate-600">{experimentStatus?.executionOnly?'The existing private original and verified source evidence are reused. Nothing is resent for AI interpretation.':'This is the image sent for interpretation. Only your submitted attachment is used.'}</p></details>:null}
      {attachment&&!receivalDraft?<details className="text-xs text-slate-600"><summary className="min-h-9 cursor-pointer py-2">Order details (optional)</summary><div className="space-y-2"><p>Leave unknown values blank. Invoice date does not automatically supply the order date.</p>{([['orderedBy','Ordered by'],['orderDate','Order date'],['location','Destination location']] as const).map(([key,label])=><label key={key} className="block">{label}<input aria-label={label} disabled={busy} type={key==='orderDate'?'date':'text'} maxLength={120} value={orderDetails[key]} onChange={event=>setOrderDetails(value=>({...value,[key]:event.target.value}))} className="min-h-11 w-full rounded border bg-white p-2"/></label>)}</div></details>:null}
    </>:null}
-   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} onDetails={setOrderDetails} onEdit={()=>{setError('');setNotice('');}} onReview={saveReceivalReview} onApprove={approveReceivalReview} canRequestCatalogMaterial={available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')} canAcknowledgeDuplicates={available&&auth.can('writeBusinessData')&&auth.can('adjustInventory')}/>:null}
+   {liveDemo&&receivalDraft&&experimentStatus?<ReceivalDraftReview key={`${receivalDraft.id}:${receivalDraft.revision}:${receivalDraft.hash}:${receivalDraft.status}:${Boolean(experimentStatus.canaryAccess&&(experimentStatus.canPrepare===false||!canUseReceivalAccess()))}`} draft={receivalDraft} status={experimentStatus} busy={busy} approval={localApproval} initialOrderDetails={proposedCanaryOrderDetails(owner,receivalDraft,experimentStatus)} onDetails={setOrderDetails} onEdit={()=>{setError('');setNotice('');setLocalApproval(null);}} onReview={saveReceivalReview} onApprove={approveReceivalReview} canRequestCatalogMaterial={!experimentStatus.canaryAccess&&available&&auth.can('writeBusinessData')&&auth.can('manageVendorsCatalog')} canAcknowledgeDuplicates={available&&auth.can('writeBusinessData')&&canUseReceivalAccess()&&(auth.can('adjustInventory')||hostedReceivals&&Boolean(experimentStatus.canaryAccess)&&experimentStatus.canAcknowledgeDuplicates===true)}/>:null}
    {error?<p role="alert" className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>:null}
    {notice?<p role="status" className="rounded bg-green-50 px-3 py-2 text-sm">{notice}</p>:null}
    {draft?<form ref={draftForm} onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3 rounded-lg border bg-white p-3" aria-label="Feature suggestion draft">

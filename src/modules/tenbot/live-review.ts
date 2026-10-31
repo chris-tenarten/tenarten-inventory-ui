@@ -1,20 +1,22 @@
 import type {PurchasingCatalogItemInput} from '../purchasing/types';
 import {samePurchasingVendor} from '../purchasing/catalog-records';
+import {catalogRequestIssues,receivalUnit} from '../../../supabase/functions/_shared/tenbot-invoice-catalog';
 import {invoiceQuantityIssues, type InvoiceQuantityBasis, type InvoiceSourceQuantity} from '../inventory/invoice-quantity';
+import type {TenbotCanaryAccess} from '../inventory/tenbot-canary-access';
 
 export type LocalCatalogChoice = { id: string; materialName: string; size: string; unit: string; supplier?: string; packageLabel?: string; packageQuantity?: string; packageMeasure?: string; containerType?: string };
 export type LocalJobChoice = { id: string; label: string };
-export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; canPrepare?: boolean; canCreateCatalog?: boolean; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
+export type LocalDemoStatus = { mode: 'synthetic-live' | 'offline-scripted' | 'openai' | 'authenticated-receivals'; simulation: boolean; databaseEnvironment?: 'isolated-test'|'restricted-tendev'; requiresPrivateOriginal?:boolean; preparationOnly?:boolean; executionOnly?:boolean; resumableSourceId?:string; maxOriginalBytes?:number; canPrepare?: boolean; canCreateCatalog?: boolean; canAcknowledgeDuplicates?:boolean; canaryAccess?:TenbotCanaryAccess; executionEnabled?: boolean; blockedReason?: string; catalog: LocalCatalogChoice[]; jobs: LocalJobChoice[]; maxAttachmentBytes: number; mediaTypes: string[] };
 export type LocalOrderDetails = { orderedBy: string; orderDate: string; location: string };
-export type LocalDuplicateMatch = {recordId: string; source: 'fixture' | 'simulated'; supplier: string; status: string; materialName: string; size: string; quantityExpected: string; quantityReceived?: string; unit: string; documentReference: string | null; classification: 'possible' | 'confirmed'; recordFingerprint?: string; reason?: string};
+export type LocalDuplicateMatch = {recordId: string; source: 'fixture' | 'simulated' | 'database' | 'tenops'; supplier: string; status: string; materialName: string; size: string; quantityExpected: string; quantityReceived?: string; unit: string; documentReference: string | null; classification: 'possible' | 'confirmed'; recordFingerprint?: string; reason?: string};
 export type LocalDuplicateReview = {fingerprint: string; matches: LocalDuplicateMatch[]; canAcknowledge: boolean; acknowledged: boolean};
 export type LocalDraftRow = { lineId: string; sourceText: string; sourceQuantity?: InvoiceSourceQuantity | null; quantityBasis?: InvoiceQuantityBasis; materialId: string | null; materialName: string | null; size: string | null; quantity: string; unit: string; jobId: string | null; excluded: boolean; reasons: string[]; catalogRequest?: ProposedCatalogMaterial | null; duplicateReview?: LocalDuplicateReview | null; duplicateAcknowledgement?: string | null };
 export type LocalInvoiceProvenance = {supplier: string; documentReference: string; attachmentSha256: string};
 export type LocalReceivalDraft = { id: string; revision: number; hash: string; status: 'review_required' | 'approved_simulated' | 'created'; simulation: boolean; attachmentId: string; orderDetails: LocalOrderDetails; orderDetailEvidence?: Partial<Record<keyof LocalOrderDetails,{sourceRef:string;value:string}>>; missingFields: string[]; canApprove: boolean; rows: LocalDraftRow[]; durableDraftId?: string; durableHash?: string; executionEnabled?: boolean; blockReason?: string; provenance?: LocalInvoiceProvenance; catalogApprovalRequired?: boolean; reviewed?: boolean };
 export type LocalRowEdit = Pick<LocalDraftRow, 'lineId' | 'materialId' | 'quantity' | 'unit' | 'jobId' | 'excluded' | 'catalogRequest' | 'duplicateAcknowledgement'>;
-export type LocalAttachment = { attachmentId: string; filename: string; mediaType: string; expiresAt?: string; simulation: boolean };
-export type LocalCatalogAddition = {simulation: true; sourceLineId: string; catalogId: null; material: ProposedCatalogMaterial; provenance: LocalInvoiceProvenance & {sourceText: string}};
-export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<string, unknown>[]; catalogAdditions?: LocalCatalogAddition[]; createdCount: number; simulation: boolean; idempotent: boolean };
+export type LocalAttachment = { attachmentId: string; sourceId?:string; filename: string; mediaType: string; expiresAt?: string; simulation: boolean };
+export type LocalCatalogAddition = {sourceLineId: string; material: ProposedCatalogMaterial; provenance: LocalInvoiceProvenance & {sourceText: string}} & ({simulation: true; catalogId: null} | {simulation: false; catalogId: string; catalogSource?: 'standard' | 'specialty'});
+export type LocalApproval = { draft: LocalReceivalDraft; receivals: Record<string, unknown>[]; createdRecordIds?: string[]; createdCatalogRecords?: {sourceLineId: string; catalogSource: 'standard' | 'specialty'; catalogId: string}[]; catalogAdditions?: LocalCatalogAddition[]; createdCount: number; simulation: boolean; idempotent: boolean; notice?: string };
 /** Proposed operation, never an existing catalog identity or a real write. */
 export type ProposedCatalogMaterial = Pick<PurchasingCatalogItemInput, 'itemName' | 'vendorSku' | 'materialType' | 'size' | 'unitSize' | 'unitSizeUom' | 'packaging' | 'priceUnit' | 'notes'> & {supplier: string; prepared: boolean};
 export type ReceivalLineValidation = {
@@ -22,35 +24,7 @@ export type ReceivalLineValidation = {
   fields: Partial<Record<'materialId' | 'supplier' | 'quantity' | 'unit' | 'jobId', string>>;
   holds: string[]; changed: boolean;
 };
-export function catalogRequestIssues(value: ProposedCatalogMaterial, invoiceSupplier?: string): Partial<Record<keyof ProposedCatalogMaterial, string>> {
-  const issues: Partial<Record<keyof ProposedCatalogMaterial, string>> = {};
-  for (const key of ['supplier','itemName','vendorSku','materialType','size','unitSize','unitSizeUom','packaging','priceUnit','notes'] as const) {
-    if (typeof value[key] !== 'string' || value[key].length > (key === 'notes' ? 1200 : 160) || /[\u0000-\u001f\u007f]/.test(value[key])) issues[key] = 'Use bounded plain text for this catalog field.';
-  }
-  if (!value.supplier?.trim()) issues.supplier = 'Supplier is required.';
-  else if (invoiceSupplier && !samePurchasingVendor(value.supplier,invoiceSupplier)) issues.supplier = `Invoice supplier is ${invoiceSupplier}. Choose that supplier for this proposal.`;
-  if (!value.itemName?.trim()) issues.itemName = 'Material name is required.';
-  if (!['chip','resin','pigment','filler','other'].includes(value.materialType)) issues.materialType = 'Choose a material type.';
-  if (value.materialType === 'chip' && !value.size?.trim()) issues.size = 'Chip size is required.';
-  const unit = typeof value.priceUnit === 'string' ? receivalUnit(value.priceUnit) : '';
-  if (!unit) issues.priceUnit = 'A supported order unit is required.';
-  const packageUnit = ['Bag','Pail','Box','Bucket','Drum','Case','Tote','Kit'].includes(unit);
-  if (packageUnit || value.unitSize || value.unitSizeUom || value.packaging) {
-    if (!/^(?:0|[1-9]\d{0,8})(?:\.\d{1,6})?$/.test(value.unitSize) || !(Number(value.unitSize) > 0)) issues.unitSize = 'Package amount must be a positive decimal.';
-    if (!['LB','GAL','KG','OZ','L'].includes(value.unitSizeUom)) issues.unitSizeUom = 'Choose the package measure.';
-    if (!value.packaging?.trim() || packageUnit && receivalUnit(value.packaging) !== unit) issues.packaging = 'Container must match the proposed order unit.';
-  }
-  return issues;
-}
-/** Completing local fields prepares a proposal, never employee approval. */
-export function completeCatalogRequest(value: ProposedCatalogMaterial): ProposedCatalogMaterial { return {...value,prepared:Object.keys(catalogRequestIssues(value)).length===0}; }
-// Advisory display validation follows the existing invoice unit aliases; the
-// caller-authorized server remains responsible for accepting every line.
-export function receivalUnit(value: string): string {
-  const key = value.trim().toLowerCase().replace(/\.$/, '');
-  const groups: [string, string[]][] = [['Bag', ['bag', 'bags']], ['Pail', ['pail', 'pails']], ['Box', ['box', 'boxes']], ['Bucket', ['bucket', 'buckets']], ['Drum', ['drum', 'drums']], ['Case', ['case', 'cases']], ['Tote', ['tote', 'totes']], ['Kit', ['kit', 'kits']], ['Each', ['ea', 'each']], ['LB', ['lb', 'lbs', 'pound', 'pounds']], ['KG', ['kg', 'kilogram', 'kilograms']], ['GAL', ['gal', 'gallon', 'gallons']], ['L', ['l', 'liter', 'liters']], ['OZ', ['oz', 'ounce', 'ounces']]];
-  return groups.find(([, aliases]) => aliases.includes(key))?.[0] || '';
-}
+export {catalogRequestIssues,completeCatalogRequest,receivalUnit} from '../../../supabase/functions/_shared/tenbot-invoice-catalog';
 export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit, status: LocalDemoStatus, invoiceSupplier?: string): ReceivalLineValidation {
   const changed = reviewRowChanged(source,row);
   if (row.excluded) return { state: 'Excluded', fields: {}, holds: [], changed };
@@ -86,12 +60,11 @@ export function receivalLineValidation(source: LocalDraftRow, row: LocalRowEdit,
     else if (reason==='source_unit_mismatch') fields.unit=quantityLabels[reason];
     else holds.push(quantityLabels[reason] || `Quantity evidence needs review: ${reason.replaceAll('_',' ')}.`);
   }
-  if (completeProposal && !status.simulation) holds.push('Combined catalog and receival execution is unavailable on the real-data path. No write will run.');
   if (completeProposal && status.canCreateCatalog === false) holds.push('Catalog creation requires review and approval by an employee with Manage vendors and catalog permission.');
   const labels: Record<string, string> = {
     potential_duplicate: source.duplicateReview?.canAcknowledge ? 'Review the matching receival evidence below. Acknowledge a separate order, or exclude this line.' : 'A potential duplicate needs evidence review. Exclude the line if it is the same order; saving alone cannot resolve it.',
-    confirmed_duplicate: 'This invoice/material already has a simulated receival. Exclude this line; acknowledgement cannot create it again.',
-    confirmed_catalog_duplicate: 'A catalog addition for this material or SKU was already simulated. Use the earlier approved result or exclude this repeated proposal; acknowledgement cannot create it again.',
+    confirmed_duplicate: `This invoice/material already has a ${status.simulation ? 'simulated ' : ''}receival. Exclude this line; acknowledgement cannot create it again.`,
+    confirmed_catalog_duplicate: `A catalog addition for this material or SKU was already ${status.simulation ? 'simulated' : 'created'}. Use the earlier approved result or exclude this repeated proposal; acknowledgement cannot create it again.`,
     duplicate_draft_line: 'Duplicate material/Job line. Change or exclude it, then save for server review.',
     duplicate_invoice_material_line: 'Repeated invoice material. Server review is required before approval.',
     duplicate_catalog_request: 'This new material is proposed more than once. Combine or exclude the duplicate, then save for server review.',
@@ -158,6 +131,12 @@ export function reviewRowChanged(source: LocalRowEdit, row: LocalRowEdit) { retu
 export const editableRows = (draft: LocalReceivalDraft): LocalRowEdit[] => normalizedEdits(draft.rows);
 export function reviewChanged(draft: LocalReceivalDraft, edits: LocalRowEdit[], details: LocalOrderDetails) {
   return JSON.stringify(editableRows(draft)) !== JSON.stringify(normalizedEdits(edits)) || JSON.stringify(draft.orderDetails) !== JSON.stringify(details);
+}
+/** A Save attempt can revoke its previous durable review before validation.
+ * Preserve the editor identity/source rows so a rejected Save cannot discard
+ * local edits, or regain stale approval merely by reverting those fields. */
+export function invalidateReceivalApproval(draft: LocalReceivalDraft): LocalReceivalDraft {
+  return {...draft, canApprove: false, reviewed: false, durableDraftId: undefined, durableHash: undefined};
 }
 export function receivalReviewNotice(draft: LocalReceivalDraft, status: LocalDemoStatus): string {
   const concerns = Object.values(receivalOrderIssues(draft.orderDetails));

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T21:22:13.690Z",
+  "checks": [
+    {
+      "method": "OPTIONS",
+      "status": 204,
+      "bodyLogged": false
+    },
+    {
+      "method": "POST",
+      "status": 401,
+      "bodyLogged": false
+    }
+  ],
+  "unauthenticatedResumeDenied": true,
+  "authenticatedOwnerResumeNotClaimed": true,
+  "inferenceCalls": 0
+}

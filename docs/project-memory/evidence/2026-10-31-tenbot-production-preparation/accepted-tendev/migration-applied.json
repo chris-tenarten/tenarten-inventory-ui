@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T21:19:41.982Z",
+  "candidate": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "migration": {
+    "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+    "version": "20261031030000",
+    "name": "tenbot_execution_only_canary_window",
+    "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27"
+  },
+  "exactLedger": {
+    "name": "tenbot_execution_only_canary_window",
+    "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+    "version": "20261031030000",
+    "statementCount": 1
+  },
+  "reconciled": false,
+  "protectedSchemaStateAndAccountingUnchanged": true,
+  "allAgentWritesAndWindowOff": true,
+  "grants": 0,
+  "enrollment": 0
+}
