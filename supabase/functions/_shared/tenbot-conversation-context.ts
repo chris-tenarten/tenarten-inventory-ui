@@ -55,6 +55,8 @@ export function contextFromReads(reads:ContextRead[],question:string,now:number,
   value.selection.startDate=previous.selection.startDate;value.selection.endDate=previous.selection.endDate;
  }
  if(last.name==='find_jobs'&&previous?.subject==='Production'&&!value.selection.statuses.length)value.selection.statuses=[...previous.selection.statuses];
+ // Overview dates bound upcoming completions, never the current count population.
+ if(last.name==='get_production_overview'&&!/\b(?:upcoming|finish|finishing|due|completion dates?)\b/i.test(question)){value.selection.startDate=null;value.selection.endDate=null;}
  return validConversationContext(value)?value:null;
 }
 export function workflowConversationContext(subject:string,sources:ConversationContext['sources'],clarify:boolean,now:number):ConversationContext{

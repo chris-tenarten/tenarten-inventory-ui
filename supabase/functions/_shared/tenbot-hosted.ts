@@ -44,6 +44,8 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
  const sessions=enabled?createTenbotAgentSessions({
   can:(_owner,capability)=>_owner===owner?can(capability):Promise.resolve(false),
   jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,now,
+  // Only the staged TenDev UI understands bounded, reauthorized live history.
+  operationalHistory:options.origin==='https://tendev.pages.dev',
   sessionStore:historyStore,
   fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,qwen,undefined,tools,undefined,{context,history}),
   provider(){

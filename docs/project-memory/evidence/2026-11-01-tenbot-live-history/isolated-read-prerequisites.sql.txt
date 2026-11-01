@@ -1,0 +1,20 @@
+begin;
+create table public.production_rework_cycles(id uuid primary key,job_id uuid not null references public.jobs(id),sequence_number integer not null,production_status text not null,planned_start date,planned_end date,updated_at timestamptz not null default now());
+create table public.job_updates(id uuid primary key,job_id uuid not null references public.jobs(id),requires_follow_up boolean not null default false,resolved_at timestamptz);
+create table public.manpower_entries(id uuid primary key,job_id uuid not null references public.jobs(id),rework_cycle_id uuid,work_date date not null,am_hours numeric not null,pm_hours numeric not null,updated_at timestamptz not null default now());
+alter table public.production_rework_cycles enable row level security;
+alter table public.job_updates enable row level security;
+alter table public.manpower_entries enable row level security;
+create policy live_history_fixture_read on public.production_rework_cycles for select to authenticated using(public.has_app_capability('readOperationalData') and exists(select 1 from public.jobs j where j.id=job_id));
+create policy live_history_fixture_read on public.job_updates for select to authenticated using(public.has_app_capability('readOperationalData') and exists(select 1 from public.jobs j where j.id=job_id));
+create policy live_history_fixture_read on public.manpower_entries for select to authenticated using(public.has_app_capability('readOperationalData') and exists(select 1 from public.jobs j where j.id=job_id));
+grant select on public.production_rework_cycles,public.job_updates,public.manpower_entries to authenticated;
+insert into public.jobs(id,name,job_number,customer,production_status,material_status,planned_start,planned_end,archived_at) values
+('11902026-0000-4000-8000-000000000001','Synthetic Live History Alpha','HIST-1','Synthetic','in_production','ready','2026-11-01','2026-11-10',null),
+('11902026-0000-4000-8000-000000000002','Synthetic Live History Deck','HIST-2','Synthetic','on_deck','not_ready','2026-11-01','2026-11-10',null),
+('11902026-0000-4000-8000-000000000003','Synthetic Live History Hold','HIST-3','Synthetic','on_hold','unknown','2026-11-01','2026-11-10',null),
+('11902026-0000-4000-8000-000000000004','Synthetic Live History Rework','HIST-4','Synthetic','complete','ready','2026-11-01','2026-11-10',null),
+('11902026-0000-4000-8000-000000000005','Synthetic Live History Archived','HIST-5','Synthetic','in_production','ready','2026-11-01','2026-11-10',now());
+insert into public.production_rework_cycles values('11902026-0000-4000-8000-000000000104','11902026-0000-4000-8000-000000000004',1,'in_production','2026-11-01','2026-11-10',now());
+insert into public.manpower_entries values('11902026-0000-4000-8000-000000000201','11902026-0000-4000-8000-000000000001',null,'2026-11-01',3,2,now());
+notify pgrst,'reload schema';commit;

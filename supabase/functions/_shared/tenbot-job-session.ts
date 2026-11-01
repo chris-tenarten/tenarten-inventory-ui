@@ -39,15 +39,18 @@ export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question
  if(intent.kind==='search'&&intent.selection?.statuses.length){
   // Reuse bounded, caller-authorized browsing. Filter fresh canonical lifecycle
   // data on the server; never reinterpret a saved count as the list of Jobs.
-  const jobs:JobFacts[]=[],all:JobToolResult[]=[];let cursor:unknown=undefined;
+  const jobs:JobFacts[]=[],all:JobToolResult[]=[],seenIds=new Set<string>();let cursor:unknown=undefined,incomplete=false;
   for(let page=0;page<3;page++){
    const result=await tools.execute('find_jobs',{...intent.args,limit:20,...(cursor?{cursor}:{})});all.push(result);
    const data=result.data as {jobs?:JobFacts[];has_more?:boolean;next_cursor?:string}|null;
    if(result.status!=='ok'||!result.complete||!data?.jobs){const evidence=buildJobEvidence(result);return {intent,result,evidence,message:renderJobEvidence(evidence)};}
+   if(data.jobs.some(j=>seenIds.has(j.job_id))){incomplete=true;break;}for(const j of data.jobs)seenIds.add(j.job_id);
    jobs.push(...data.jobs.filter(j=>intent.kind==='search'&&intent.selection!.statuses.includes(j.effective.status)));
+   if(data.has_more&&(!data.next_cursor||data.next_cursor===cursor)){incomplete=true;break;}
    cursor=data.has_more?data.next_cursor:undefined;if(!cursor||jobs.length>=20)break;
   }
-  const last=all.at(-1)!,result:JobToolResult={...last,filters:{...last.filters,requested_statuses:intent.selection.statuses},data:{...(last.data as {jobs:JobFacts[];match:'browse';has_more:boolean;next_cursor:string|null}),jobs:jobs.slice(0,20),has_more:Boolean(cursor)||jobs.length>20},sources:all.flatMap(r=>r.sources),truncated:Boolean(cursor)||jobs.length>20,unknowns:[...last.unknowns,...(cursor||jobs.length>20?['Only a bounded portion of the matching scope is shown; this is not a complete count.']:[])]};
+  const last=all.at(-1)!,result:JobToolResult={...last,filters:{...last.filters,requested_statuses:intent.selection.statuses},data:{...(last.data as {jobs:JobFacts[];match:'browse';has_more:boolean;next_cursor:string|null}),jobs:jobs.slice(0,20),has_more:incomplete||Boolean(cursor)||jobs.length>20},sources:all.flatMap(r=>r.sources),truncated:incomplete||Boolean(cursor)||jobs.length>20,unknowns:[...last.unknowns,...(incomplete||cursor||jobs.length>20?['Only a bounded portion of the matching scope is shown; this is not a complete count.']:[])]};
+  if(result.truncated){result.status='partial';result.complete=false;}
   const evidence=buildJobEvidence(result);return {intent,result,evidence,message:renderJobEvidence(evidence,1400,question)};
  }
  const result=await tools.execute(intent.tool,intent.kind==='job'?{...intent.args,job_id:'jobId' in intent.reference?intent.reference.jobId:''}:intent.args);

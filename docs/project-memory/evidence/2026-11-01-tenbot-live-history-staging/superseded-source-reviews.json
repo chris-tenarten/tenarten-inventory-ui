@@ -1,0 +1,117 @@
+{
+  "reason": "Exact accepted/technical staging bytes replace prior candidate tuples; historical evidence preserved",
+  "rows": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "blob": "b21778a095c651649a8a28c6e1960a71ec9d4766",
+      "sha256": "36c655b8d7cb532c648a4ddf2d274c954cca0e5f30f77ffe8cfa9bbbbf91c692",
+      "reviewedCandidate": "0d6d5466538761f0fa582f018853a79ade51055f",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-source-proof.md",
+        "revision": "0d6d5466538761f0fa582f018853a79ade51055f",
+        "heading": "## Accepted candidate source review — conversational context, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "blob": "2df00dea5ec98c58c8dcb0cb1767be1ef3885fe5",
+      "sha256": "ae6ca61c5e97a3b3031bceff94a78f80ef79acaff26c5ff8b309643c0af8e59e",
+      "reviewedCandidate": "0d6d5466538761f0fa582f018853a79ade51055f",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-source-proof.md",
+        "revision": "0d6d5466538761f0fa582f018853a79ade51055f",
+        "heading": "## Accepted candidate source review — conversational context, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "75fa80c81ac952aa1970963e614953f840530290",
+      "sha256": "0ac74bc2f589a91a763717ad4229b3e863537909dc68ac8f6f4953210b581647",
+      "reviewedCandidate": "0d6d5466538761f0fa582f018853a79ade51055f",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-source-proof.md",
+        "revision": "0d6d5466538761f0fa582f018853a79ade51055f",
+        "heading": "## Accepted candidate source review — conversational context, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+      "blob": "01414c4ec80f0aa1b3a3793549429c4e91cfd725",
+      "sha256": "e71576ba403560a6fb3561da3c49b0bc000bbe1f9469a292cd2996db76711473",
+      "reviewedCandidate": "0d6d5466538761f0fa582f018853a79ade51055f",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-source-proof.md",
+        "revision": "0d6d5466538761f0fa582f018853a79ade51055f",
+        "heading": "## Accepted candidate source review — conversational context, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "blob": "420e7c802d1b12d9d4229bc71461f89bd4e74ab5",
+      "sha256": "e6e622b088c049240ed1d39bf55a9f19640a7adc825d64ad496fe03e78e7dcf5",
+      "reviewedCandidate": "0d6d5466538761f0fa582f018853a79ade51055f",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-source-proof.md",
+        "revision": "0d6d5466538761f0fa582f018853a79ade51055f",
+        "heading": "## Accepted candidate source review — conversational context, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "blob": "997976be9c91291a956c5f949b8c2de600ea8cdb",
+      "sha256": "7de9120fc73c664990fa17f3e72f1575f123d8a84a74c1b53fb66fead9cddc7a",
+      "reviewedCandidate": "0d6d5466538761f0fa582f018853a79ade51055f",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-source-proof.md",
+        "revision": "0d6d5466538761f0fa582f018853a79ade51055f",
+        "heading": "## Accepted candidate source review — conversational context, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "blob": "0721fc2466e37b4def9ec7f133901983105cbe50",
+      "sha256": "ccb04c2e39c9f917ed09c651d3443f97d2869a7de05698be437ad90dd3c4acf8",
+      "reviewedCandidate": "0d6d5466538761f0fa582f018853a79ade51055f",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-source-proof.md",
+        "revision": "0d6d5466538761f0fa582f018853a79ade51055f",
+        "heading": "## Accepted candidate source review — conversational context, November 1, 2026"
+      }
+    }
+  ]
+}

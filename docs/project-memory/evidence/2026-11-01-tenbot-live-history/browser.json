@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "checks": [
+    "Count and Which ones remain simultaneously readable with historical labels",
+    "Blur/focus reauthorizes and restores prior readable answers without another ask",
+    "Remount restores both historical prose and subject without repeating inference",
+    "Browser storage contains no operational answer or Job label",
+    "Composer remains usable at mobile width"
+  ],
+  "actions": [
+    "status",
+    "ask",
+    "ask",
+    "history",
+    "status",
+    "history",
+    "ask"
+  ],
+  "errors": [],
+  "actualMessagingUi": true,
+  "syntheticAuthAndData": true,
+  "liveInference": false,
+  "realDatabase": false,
+  "hostedCalls": 0
+}

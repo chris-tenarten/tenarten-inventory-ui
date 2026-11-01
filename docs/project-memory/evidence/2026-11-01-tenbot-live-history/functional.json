@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "source": "Exact final task-only archive, excluding pre-existing latency edits",
+  "tests": [
+    {
+      "name": "live-history",
+      "chunk_id": "83266b",
+      "wall_time_seconds": 0.284750042,
+      "exit_code": 0,
+      "original_token_count": 279,
+      "output": "{\n  \"passed\": true,\n  \"groups\": 10,\n  \"checks\": [\n    \"they/them followups retain canonical current-status population rather than searching pronoun words\",\n    \"Readable answers survive server reopening; bounded display prose is separate from raw tool results and model context\",\n    \"Receipt schema rejects arbitrary snapshots, SQL capabilities and retention extensions\",\n    \"Failed enumeration is a retrieval limitation, never a zero-Job assertion\",\n    \"Bounded incomplete pages explicitly remain partial; an empty filtered page cannot become zero Jobs\",\n    \"Missing pagination cursor fails closed as incomplete\",\n    \"Revocation or unavailable evidence redacts retained text and question\",\n    \"Primary model-selected find_jobs receives the same retained population even when pronouns appear in its generated query\",\n    \"Canonical scoped enumeration overrides a false-zero primary-model answer without a brittle prose filter\",\n    \"Bounded verification prioritizes the newest answer; older receipts cannot starve or block a successful new turn\"\n  ],\n  \"actualInference\": false,\n  \"actualDatabase\": false\n}\n"
+    },
+    {
+      "name": "context",
+      "chunk_id": "cfcf10",
+      "wall_time_seconds": 0.30938475,
+      "exit_code": 0,
+      "original_token_count": 710,
+      "output": "{\n  \"passed\": true,\n  \"groups\": 11,\n  \"checks\": [\n    \"A Production count → Which ones reuses scope and freshly reads actual five-tool executor\",\n    \"B named Job → labor retains canonical identity, requeries totals and never retains results\",\n    \"C original Bid remains a knowledge follow-up, never an invented relationship/tool\",\n    \"D Intake walkthrough and next-step context restore without provider invocation\",\n    \"E Inventory → incoming retains verified module context without enabling inventory reads/writes\",\n    \"F reopening on another handler preserves topic, identity and TTL without inference\",\n    \"G record and account revocation clear seeds or deny; legacy markers cannot resurrect them\",\n    \"H expired references, ambiguity, untrusted fields and arbitrary live payloads fail closed\",\n    \"retained collection context cannot bypass financial restrictions or persistence failures\",\n    \"Qwen source permission revoked during inference cannot publish or retain its answer\",\n    \"Terra orchestration receives only selectors after instance restoration, not prior live answers\"\n  ],\n  \"examples\": [\n    {\n      \"case\": \"A\",\n      \"first\": \"Active Production Jobs: 8. Production Jobs with recorded status In Production: 8.\",\n      \"followUp\": \"Matching Production Job: CTX-1 — Context Alpha; recorded status: In Production. Matching Production Job: CTX-2 — Context Job 2; recorded status: In Production. Matching Production Job: CTX-3 — Context Job 3; recorded status: In Production. Matching Production Job: CTX-4 — Context Job 4; recorded status: In Production. Matching Production Job: CTX-5 — Context Job 5; recorded status: In Production. Matching Production Job: CTX-6 — Context Job 6; recorded status: In Production. Matching Production Job: CTX-7 — Context Job 7; recorded status: In Production. Matching Production Job: CTX-8 — Context Job 8; recorded status: In Production.\"\n    },\n    {\n      \"case\": \"B\",\n      \"followUp\": \"Production Job: CTX-1 — Context Alpha. Recorded labor: 5 hours for 2026-10-02 through 2026-10-31. Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown. These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.\"\n    },\n    {\n      \"case\": \"C\",\n      \"answer\": \"The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.\",\n      \"relationshipReadAvailable\": false\n    }\n  ],\n  \"mode\": \"actual hosted/session and authorized tool implementations with synthetic RPC/PostgREST and scripted model transports\",\n  \"actualPaidInference\": false,\n  \"realDatabase\": false,\n  \"productionCalls\": 0\n}\n"
+    },
+    {
+      "name": "hosted-history",
+      "chunk_id": "212354",
+      "wall_time_seconds": 0.2177455,
+      "exit_code": 0,
+      "original_token_count": 377,
+      "output": "{\n  \"status\": \"pass\",\n  \"groups\": 13,\n  \"checks\": [\n    \"claims expose only metadata; proof-bearing raw history loads through service-only RPC\",\n    \"eligible answer survives a different server instance and history invokes no inference or expiry renewal\",\n    \"Raw live results/native state stay excluded; bounded private display receipts never enter model context\",\n    \"cross-owner access and revoked base permission cannot hydrate history\",\n    \"source proof changes are pruned across instances before display and model context\",\n    \"concurrent claim refuses a second instance and lease/revision replay cannot commit\",\n    \"clear invalidates in-flight immutable claim and late completion cannot resurrect a conversation\",\n    \"provider fallback error is thrown only after lease release; persistence failure never becomes fallback\",\n    \"one-hour expiry remains strict and hosted requests cannot acquire invoice or execution capabilities\",\n    \"an account revoked while ask/history commit returns cannot receive an answer or fallback\",\n    \"source grants revoked during ask/history commit cannot publish source-derived prose\",\n    \"Job facts changed while durable commit returns are re-read and cannot be published\",\n    \"schema contracts prohibit raw client state publication and bind service writes to active owner/claim/revision\"\n  ],\n  \"mode\": \"offline server/store contract doubles and schema inspection; not hosted JWT/RLS/database certification\",\n  \"inference_calls\": 0,\n  \"database_writes\": 0\n}\n"
+    },
+    {
+      "name": "hosted-fallback",
+      "chunk_id": "e1f586",
+      "wall_time_seconds": 0.199036666,
+      "exit_code": 0,
+      "original_token_count": 282,
+      "output": "{\"passed\":true,\"checks\":[\"Origin rollout keeps TenOps on Qwen while TenDev has the read-only agent\",\"Terra transport reserves before every call, settles actual usage and restores across new instances without inference\",\"Spending denial invokes Qwen without any paid dispatch and uses the same authorized conversation\",\"Provider outage retains uncertain reservations and falls back without copying native context\",\"Qwen fallback holds the conversation lease against concurrent hydration/ask and releases after legacy append\",\"Missing/expired key and disabled spend cannot dispatch OpenAI; Qwen remains functional\",\"Unexpected model/tier metadata retains full reservation and falls back rather than underpricing the response\",\"Input, access and persistence failures never become provider fallback or paid inference\",\"Read-only tool discovery cannot expose invoice, catalog preparation, execute, SQL or shell\",\"Clear deletes durable context and rejects subsequent history without replaying inference\"],\"groups\":10,\"mode\":\"Offline hosted construction/Responses transport/RPC doubles\",\"actualInference\":false,\"actualDatabase\":false}\n"
+    }
+  ],
+  "actualInference": false,
+  "realDatabase": false
+}

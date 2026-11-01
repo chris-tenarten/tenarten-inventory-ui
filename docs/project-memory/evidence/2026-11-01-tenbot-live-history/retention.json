@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "actualPostgreSQL": true,
+  "fixture": "jltgxcfiprocydhbrahz",
+  "checks": [
+    "active claims skipped",
+    "expired operational text physically removed",
+    "idempotent retry",
+    "authenticated EXECUTE denied",
+    "service_role EXECUTE denied"
+  ],
+  "actualReturnedFields": {
+    "expired_text_physically_removed": true,
+    "employee_denied": true,
+    "service_role_denied": true
+  },
+  "syntheticTestRowRolledBack": true,
+  "privateFunctionInstalledInIsolatedFixture": true,
+  "schedulerAvailable": false,
+  "schedulerCreated": false,
+  "sharedOrProductionChanges": 0,
+  "validationSqlSha256": "15068249d335a936e6457bf76e291b1d0494aa3465265f97b36fe3f506cf56df"
+}

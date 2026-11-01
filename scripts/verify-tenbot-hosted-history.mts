@@ -64,9 +64,9 @@ await check('eligible answer survives a different server instance and history in
  assert.equal(restored.mode,'assistant');assert.equal(restored.turns[0].answer.message,first.message);assert.equal(providerCalls,before);assert.equal(db.rows.get(id)!.expires,expiry);
  const native=JSON.stringify(db.rows.get(id)!.state);assert.ok(!native.includes('UNRETAINED_NATIVE_CONTINUATION'));
 });
-await check('live Job results, questions and native state are excluded; only canonical lookup selectors persist',async()=>{
- const db=new Fixture(),first=await ask(make(db,{kind:'job'}));assert.equal(first.contentScope,'volatile');const state=db.rows.get(String(first.conversationId))!.state;
- assert.deepEqual(state.guidance,[]);assert.deepEqual(state.display,[]);assert.deepEqual(state.context?.references,[jobId]);assert.ok(!JSON.stringify(state).includes('PRIVATE_JOB_EVIDENCE'));
+await check('Raw live results/native state stay excluded; bounded private display receipts never enter model context',async()=>{
+ const db=new Fixture(),first=await ask(make(db,{kind:'job'}));assert.equal(first.contentScope,'operational-history');const state=db.rows.get(String(first.conversationId))!.state;
+ assert.deepEqual(state.guidance,[]);assert.deepEqual(state.display,[]);assert.deepEqual(state.context?.references,[jobId]);assert.ok(!JSON.stringify({...state,operational:undefined}).includes('PRIVATE_JOB_EVIDENCE'));assert.equal(state.operational?.[0].message,'PRIVATE_JOB_EVIDENCE');assert.ok(!JSON.stringify(state.operational).includes('\"data\":'));
 });
 await check('cross-owner access and revoked base permission cannot hydrate history',async()=>{
  const db=new Fixture(),first=await ask(make(db)),id=String(first.conversationId);
@@ -120,7 +120,7 @@ await check('source grants revoked during ask/history commit cannot publish sour
 await check('Job facts changed while durable commit returns are re-read and cannot be published',async()=>{
  const db=new Fixture();let changed=false,reads=0;db.afterCommit=()=>{changed=true;};
  await assert.rejects(ask(make(db,{kind:'job',job:()=>{reads++;const result=copy(jobResult);if(changed)(result.data as {job:{name:string}}).job.name='CHANGED_AFTER_COMMIT';return result;}})),value=>value instanceof Error&&!(value instanceof HostedAgentUnavailable)&&'status' in value&&value.status===403);
- assert.equal(reads,3);const state=[...db.rows.values()][0].state;assert.deepEqual(state.guidance,[]);assert.deepEqual(state.display,[]);assert.ok(!JSON.stringify(state).includes('PRIVATE_JOB_EVIDENCE'));
+ assert(reads>=3);const state=[...db.rows.values()][0].state;assert.deepEqual(state.guidance,[]);assert.deepEqual(state.display,[]);assert.ok(!JSON.stringify({...state,operational:undefined}).includes('PRIVATE_JOB_EVIDENCE'));const id=[...db.rows.keys()][0];const restored=await make(db,{kind:'job',job:()=>{const value=copy(jobResult);(value.data as {job:{name:string}}).job.name='CHANGED_AFTER_COMMIT';return value;}})({action:'history',conversationId:id},owner);assert(!JSON.stringify(restored).includes('PRIVATE_JOB_EVIDENCE'));
 });
 await check('schema contracts prohibit raw client state publication and bind service writes to active owner/claim/revision',async()=>{
  const sql=await readFile(new URL('../supabase/migrations/20261029221000_tenbot_agent_history.sql',import.meta.url),'utf8');

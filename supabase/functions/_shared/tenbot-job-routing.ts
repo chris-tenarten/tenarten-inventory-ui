@@ -56,6 +56,8 @@ export function jobReportingPeriod(question:string,now=new Date()):{start_date:s
  return null;
 }
 
+export const isJobFollowupReference=(q:string)=>/\b(?:it|its|that|those|these|they|them|ones|other)\b/i.test(q)&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
+
 /** Explicit canonical context is a lookup seed, never evidence or authorization. */
 export function resolveJobIntent(question:string,context?:JobContext|null,now=new Date()):JobIntent|null{
  if(typeof question!=='string'||!question.trim()||question.length>1200)return null;
@@ -68,7 +70,7 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  // Other module references remain knowledge questions. A remembered Job must
  // not fabricate a Bid/material relationship or acquire another read capability.
  if(/\b(?:bid|intake|inventory|purchasing|catalog|messaging)\b/i.test(q)&&!/\b(?:status|hours?|labor|labour|schedule)\b/i.test(q))return null;
- const continuity=context?.continuity,referential=/\b(?:it|its|that|those|these|ones|other)\b/i.test(q)&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
+ const continuity=context?.continuity,referential=isJobFollowupReference(q);
  if(continuity&&referential&&continuity.subject==='Production'){
   if(/\bother\b/i.test(q)&&continuity.resultType==='collection')return {kind:'clarify',message:'Which subset of the Production Jobs do you want to compare? I retained the search scope, not a copy of the previous result list.'};
   const s=continuity.selection,args={...(s.includeArchived?{include_archived:true}:{}),...(s.startDate&&s.endDate?{start_date:s.startDate,end_date:s.endDate}:{})};
@@ -169,7 +171,7 @@ export function buildJobEvidence(result:JobToolResult):JobEvidence{
   const item=object(value),effective=object(item.effective),label=statuses[String(effective.status)]??'Unknown';
   add(`match_${i+1}`,'identity',`Matching Production Job: ${clean(item.reference)}; recorded status: ${label}.`,[clean(item.reference),'status',label]);
  }
- if(result.tool==='find_jobs'&&Array.isArray(data.jobs)&&data.jobs.length===0&&result.complete)add('no_matches','limitation','No visible Production Jobs match the requested search scope.',['No','visible','Production Jobs','requested','search','scope']);
+ if(result.tool==='find_jobs'&&Array.isArray(data.jobs)&&data.jobs.length===0&&result.status==='ok'&&result.complete&&!result.truncated&&data.has_more!==true)add('no_matches','limitation','No visible Production Jobs match the requested search scope.',['No','visible','Production Jobs','requested','search','scope']);
  if(result.tool==='get_job_summary'){
   const counts=object(data.counts);
   for(const [key,title] of [['rework_cycles','Recorded Rework cycles'],['active_rework_cycles','Active Rework cycles'],['open_follow_ups','Unresolved recorded follow-ups']] as const){const value=count(counts[key]);if(value!==null)add(key,'count',`${title}: ${value}.`,[title]);}
