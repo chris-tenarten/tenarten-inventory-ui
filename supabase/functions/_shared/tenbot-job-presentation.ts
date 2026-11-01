@@ -13,10 +13,11 @@ export function presentJobResult(result:JobToolResult,question='',maxCharacters=
  if(!result.data||!['ok','partial'].includes(result.status))return null;
  const lines:string[]=[],q=question.toLowerCase(),exact=result.status==='ok'&&result.complete&&!result.truncated;
  if(result.tool==='get_production_overview'){
-  const d=result.data as JobOverviewData,c=d.counts;
+  const d=result.data as JobOverviewData,c=d.counts,selected=Array.isArray(result.filters.statuses)?result.filters.statuses.filter((s):s is string=>typeof s==='string'&&Object.hasOwn(labels,s)):[];
   if(result.status==='ok'&&result.complete){
    let field:unknown=c.jobs,label='Jobs';
-   if(/\bactive\b/.test(q)){field=c.active_jobs;label='active Jobs';}
+   if(selected.length){field=c.jobs;label=selected.length===1?'Jobs '+(selected[0]==='in_production'?'currently in Production':'marked '+labels[selected[0]]):selected.length===4&&['not_started','on_deck','in_production','on_hold'].every(s=>selected.includes(s))?(result.filters.include_archived===true?'Jobs in active lifecycle statuses':'active Jobs'):'Jobs in the selected lifecycle statuses';}
+   else if(/\bactive\b/.test(q)){field=c.active_jobs;label='active Jobs';}
    else if(/\bunscheduled\b/.test(q)){field=c.unscheduled;label='unscheduled Jobs';}
    else if(/\bscheduled\b/.test(q)){field=c.scheduled;label='scheduled Jobs';}
    else for(const [key,name]of Object.entries(labels))if(new RegExp('\\b'+name.replace(/ /g,'(?:\\s+|-)')+'\\b','i').test(q)){field=c.by_status[key];label='Jobs '+(key==='in_production'?'currently in Production':'marked '+name);break;}
@@ -32,7 +33,7 @@ export function presentJobResult(result:JobToolResult,question='',maxCharacters=
   }else lines.push('The Production results are incomplete. I cannot give an exact Job count.');
  }else if(result.tool==='find_jobs'){
   const d=result.data as JobFindData;
-  lines.push(exact?d.jobs.length?`${d.jobs.length} matching ${d.jobs.length===1?'Job':'Jobs'}:`:'No Jobs match this search within your current access.':'Here are the available matches; this is not a complete Job list.');
+  lines.push(exact?d.jobs.length?`${d.jobs.length} matching ${d.jobs.length===1?'Job':'Jobs'}${Number(result.filters.cursor)>0?' on this page':''}:`:Number(result.filters.cursor)>0?'No further Jobs are available on this page.':'No Jobs match this search within your current access.':'Here are the available matches; this is not a complete Job list.');
   for(const j of d.jobs.slice(0,20))lines.push(`• ${reference(j)} — ${status(j)}${j.archived?' · Archived':''}`);
  }else if(result.tool==='get_job_labor_summary'){
   const d=result.data as JobLaborData,total=quantity(d.total_hours);
@@ -59,7 +60,13 @@ export function presentJobResult(result:JobToolResult,question='',maxCharacters=
  if(!lines.length)return null;
  // Caveats survive rendering/truncation. Tool totals remain the authority.
  const warnings=[...new Set(result.unknowns.map(safe).filter(Boolean))];if(result.truncated)warnings.unshift(result.complete&&result.status==='ok'&&result.tool==='get_production_overview'?'The planned-finish list is limited; Job counts cover the complete authorized scope.':result.complete&&result.status==='ok'&&result.tool==='get_job_labor_summary'?'The Rework breakdown is limited; the total includes all recorded hours in the period.':'Some records are omitted; do not treat this as a complete total.');
- const tail=warnings.slice(0,4).join(' ').slice(0,650),budget=Math.max(0,maxCharacters-tail.length-2),body:string[]=[];let length=0;
- for(const line of lines){if(length+line.length+1>budget)break;body.push(line);length+=line.length+1;}
- return [...body,...(tail?[tail]:[])].join('\n');
+ const tail=warnings.slice(0,4).join(' ').slice(0,Math.min(650,Math.max(0,maxCharacters)));
+ const fit=(ending:string)=>{const budget=Math.max(0,maxCharacters-ending.length-2),body:string[]=[];let length=0;for(const line of lines){if(length+line.length+1>budget)break;body.push(line);length+=line.length+1;}return body;};
+ let ending=tail,body=fit(ending);
+ if(result.tool==='find_jobs'&&body.length<lines.length){
+  // A complete tool page can still exceed the conversation's display budget.
+  // Reserve its omission notice alongside, never instead of, tool caveats.
+  ending=['Some matching Jobs are omitted from this message.',tail].filter(Boolean).join(' ').slice(0,Math.max(0,maxCharacters));body=fit(ending);
+ }
+ return [...body,...(ending?[ending]:[])].join('\n');
 }

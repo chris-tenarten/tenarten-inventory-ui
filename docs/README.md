@@ -44,3 +44,6 @@ The [model-free prepared-draft correction](project-memory/2026-10-30-tenbot-mode
 - [TenBot Messaging/history UX correction, November 1](project-memory/2026-11-01-tenbot-messaging-refinement.md): local selected-thread styling, pinned TenBot, restored dropdown navigation and legacy-versus-persistent history notices; focused desktop/mobile/privacy checks, no backend migration or hosted activation.
 
 - [Actual Messaging build / On Deck follow-up, November 1](project-memory/2026-11-01-tenbot-build-verification.md): Product confirms TenDev; served9415 lacks local e61 UI fixes. Focused remaining Production-status selector corrected; no deployment/migration/funding change, private history placeholders remain unclassified without owner session.
+
+
+- [Generalized TenBot operational Job reads, November 1](project-memory/2026-11-01-tenbot-job-read-contract.md): local native status/archive count-list contracts, effective Rework, bounded discovery/enumeration, compatible private history and focused real JWT/RLS validation. No hosted release or operational writes.

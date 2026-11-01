@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Deno extension
+import {canonicalHistoryScope} from './tenbot-history-scope.ts';
 // Server-owned, bounded assistant state. Only proven static workflow/scope turns
 // and lookup selectors may reach model context. Short-lived operational display
 // receipts remain separate, owner-bound, and reauthorized before publication.
@@ -37,7 +40,7 @@ import {contextFromReads,currentConversationContext,conversationContextHint,work
 import {operationalReceipt,operationalHistoryMeta,restoreOperationalHistory,type OperationalReceipt} from './tenbot-operational-history.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension for Deno.
-import {resolveJobIntent,isJobFollowupReference} from './tenbot-job-routing.ts';
+import {resolveJobIntent} from './tenbot-job-routing.ts';
 export type AgentDemoScenario='job-investigation'|'invoice-preparation'|'tool-recovery';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Deno import.
@@ -104,7 +107,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  const scopeDigest=async(owner:string)=>{
   const tools=[...createTenbotAgentJobTools(deps.jobTools(owner)).tools,...createTenbotAgentKnowledgeTools(capability=>deps.can(owner,capability))];
   const scope=createTenbotAgentScopeTool(tools);
-  return sourceDigest((await scope.execute({}, {callerId:owner,signal:new AbortController().signal})).data,'tenbot-agent-display-scope.v1');
+  return sourceDigest(canonicalHistoryScope((await scope.execute({}, {callerId:owner,signal:new AbortController().signal})).data),'tenbot-agent-display-scope.v1');
  };
  return async(body:Record<string,unknown>,owner:string)=>{
   if(!owner||!await deps.can(owner,'readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
@@ -212,8 +215,8 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const can=(capability:string)=>deps.can(owner,capability);
    session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner),persistent);
    const priorContext=session.context;
-   const followup=deps.readOnlyHosted&&session.context?.subject==='Production'&&isJobFollowupReference(question)?resolveJobIntent(question,{jobId:'',continuity:session.context},new Date(now())):null;
-   const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?.kind==='search'?{intent:followup,question}:undefined);
+   const followup=deps.readOnlyHosted?resolveJobIntent(question,{jobId:session.context?.subject==='Job'&&session.context.references.length===1?session.context.references[0]:'',continuity:session.context??undefined},new Date(now())):null;
+   const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?.kind==='search'||followup?.kind==='overview'?{intent:followup,question}:undefined);
    const mayPrepareNow=()=>deps.canPrepareInvoice?deps.canPrepareInvoice(owner):(async()=>await can('writeBusinessData')&&await can('adjustInventory'))();
    const mayPrepare=!deps.readOnlyHosted&&await mayPrepareNow();
    const sourceReader=deps.readOnlyHosted?undefined:deps.invoice?.reader(owner),invoiceReads=new Map<string,string>();let inconsistentInvoice=false;
@@ -369,9 +372,11 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     return record(jobData.job)&&typeof jobData.job.job_id==='string'&&uuid.test(jobData.job.job_id)?[jobData.job.job_id]:[];
    }))].slice(0,4);
    const quantitativeReads=job.reads().filter(r=>['get_production_overview','get_job_labor_summary'].includes(r.name));
-   const singleRead=quantitativeReads.length===1?quantitativeReads[0]:undefined;
-   const quantitativeBrief=result.status==='completed'&&singleRead&&['get_production_overview','get_job_labor_summary'].includes(singleRead.name)?presentJobResult(singleRead.result,question):null;
-   const message=followup?.kind==='search'?(job.scoped()?.message??'The authorized Job list was not retrieved. I cannot establish a matching count or enumerate those Jobs. Please retry the list.'):(quantitativeBrief??result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.'));
+   const singleRead=quantitativeReads.length===1?quantitativeReads[0]:quantitativeReads.length===0?job.reads().find(r=>r.name==='find_jobs'):undefined;
+   const quantitativeBrief=result.status==='completed'&&singleRead&&['find_jobs','get_production_overview','get_job_labor_summary'].includes(singleRead.name)?presentJobResult(singleRead.result,question)??'The current authorized operational result is unavailable. I cannot establish an exact total or matching list.':null;
+   const overviewRead=job.reads().find(r=>r.name==='get_production_overview');
+   const countBrief=followup?.kind==='overview'?(result.status==='completed'&&overviewRead?presentJobResult(overviewRead.result,question):null)??'The current authorized Job count is unavailable. I cannot establish an exact total.':null;
+   const message=followup?.kind==='search'?(job.scoped()?.message??'The authorized Job list was not retrieved. I cannot establish a matching count or enumerate those Jobs. Please retry the list.'):(countBrief??quantitativeBrief??result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.'));
    const answeredAt=new Date(now()).toISOString(),contentScope=knowledgeOnly?'workflow':scopeOnly?'scope':'volatile';
    let historyTurnId:string|undefined;
    if(contentScope!=='volatile'){

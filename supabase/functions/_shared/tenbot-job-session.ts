@@ -5,7 +5,7 @@
 import {buildJobEvidence,renderJobEvidence,resolveExactJobReference,type JobEvidence,type JobIntent} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports.
-import type {JobToolResult,JobIdentity,JobFacts,TenbotJobToolName} from './tenbot-job-tools.ts';
+import type {JobToolResult,JobIdentity,TenbotJobToolName} from './tenbot-job-tools.ts';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Deno import.
@@ -41,23 +41,9 @@ export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question
     message:choices.length?'Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. '+present(found,evidence,question):present(found,evidence,question),choices};
   }
  }
- if(intent.kind==='search'&&intent.selection?.statuses.length){
-  // Reuse bounded, caller-authorized browsing. Filter fresh canonical lifecycle
-  // data on the server; never reinterpret a saved count as the list of Jobs.
-  const jobs:JobFacts[]=[],all:JobToolResult[]=[],seenIds=new Set<string>();let cursor:unknown=undefined,incomplete=false;
-  for(let page=0;page<3;page++){
-   const result=await tools.execute('find_jobs',{...intent.args,limit:20,...(cursor?{cursor}:{})});all.push(result);
-   const data=result.data as {jobs?:JobFacts[];has_more?:boolean;next_cursor?:string}|null;
-   if(result.status!=='ok'||!result.complete||!data?.jobs){const evidence=buildJobEvidence(result);return {intent,result,evidence,message:present(result,evidence,question)};}
-   if(data.jobs.some(j=>seenIds.has(j.job_id))){incomplete=true;break;}for(const j of data.jobs)seenIds.add(j.job_id);
-   jobs.push(...data.jobs.filter(j=>intent.kind==='search'&&intent.selection!.statuses.includes(j.effective.status)));
-   if(data.has_more&&(!data.next_cursor||data.next_cursor===cursor)){incomplete=true;break;}
-   cursor=data.has_more?data.next_cursor:undefined;if(!cursor||jobs.length>=20)break;
-  }
-  const last=all.at(-1)!,result:JobToolResult={...last,filters:{...last.filters,requested_statuses:intent.selection.statuses},data:{...(last.data as {jobs:JobFacts[];match:'browse';has_more:boolean;next_cursor:string|null}),jobs:jobs.slice(0,20),has_more:incomplete||Boolean(cursor)||jobs.length>20},sources:all.flatMap(r=>r.sources),truncated:incomplete||Boolean(cursor)||jobs.length>20,unknowns:[...last.unknowns,...(incomplete||cursor||jobs.length>20?['Only a bounded portion of the matching scope is shown; this is not a complete count.']:[])]};
-  if(result.truncated){result.status='partial';result.complete=false;}
-  const evidence=buildJobEvidence(result);return {intent,result,evidence,message:present(result,evidence,question)};
- }
+ // Status selection is a native contract of both population tools. Retain
+ // old server-authored search seeds without keeping a second paging engine.
+ if(intent.kind==='search'&&intent.selection?.statuses.length&&intent.args.statuses===undefined)intent={...intent,args:{...intent.args,statuses:intent.selection.statuses}};
  const result=await tools.execute(intent.tool,intent.kind==='job'?{...intent.args,job_id:'jobId' in intent.reference?intent.reference.jobId:''}:intent.args);
  const evidence=buildJobEvidence(result);
  return {intent,result,evidence,message:present(result,evidence,question)};

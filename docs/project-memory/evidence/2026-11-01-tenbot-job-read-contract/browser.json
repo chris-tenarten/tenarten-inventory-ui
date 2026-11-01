@@ -1,0 +1,90 @@
+{
+  "passed": true,
+  "actualApplicationUi": true,
+  "syntheticAuthAndRecords": true,
+  "realDatabase": false,
+  "realInference": false,
+  "hostedCalls": 0,
+  "checks": [
+    "Four status count/list equivalence classes use the expected effective Rework population",
+    "Status-only refinement preserves list operation and Production context",
+    "Explicit archived include/exclude changes only archive scope",
+    "Reopen retains status/archive selectors and timestamped owner-private history",
+    "Existing desktop/mobile Messaging composer remains usable"
+  ],
+  "answers": [
+    {
+      "question": "How many Jobs are In Production?",
+      "message": "There are 3 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Which Jobs are In Production?",
+      "message": "3 matching Jobs:\n• CTX-1 — Context Alpha — In Production\n• CTX-2 — Context Job 2 — In Production\n• CTX-8 — Context Job 8 — Rework · In Production",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "How many Jobs are On Deck?",
+      "message": "There are 3 Jobs marked On Deck.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Which Jobs are On Deck?",
+      "message": "3 matching Jobs:\n• CTX-3 — Context Job 3 — On Deck\n• CTX-4 — Context Job 4 — On Deck\n• CTX-7 — Context Job 7 — Rework · On Deck",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "How many Jobs are On Hold?",
+      "message": "There is 1 Job marked On Hold.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Which Jobs are On Hold?",
+      "message": "1 matching Job:\n• CTX-5 — Context Job 5 — On Hold",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "How many Jobs are Shipped?",
+      "message": "There is 1 Job marked Shipped.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Which Jobs are Shipped?",
+      "message": "1 matching Job:\n• CTX-6 — Context Job 6 — Shipped",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "What about On Deck?",
+      "message": "3 matching Jobs:\n• CTX-3 — Context Job 3 — On Deck\n• CTX-4 — Context Job 4 — On Deck\n• CTX-7 — Context Job 7 — Rework · On Deck",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Which Jobs are On Deck including archived?",
+      "message": "4 matching Jobs:\n• CTX-3 — Context Job 3 — On Deck\n• CTX-4 — Context Job 4 — On Deck\n• CTX-7 — Context Job 7 — Rework · On Deck\n• CTX-9 — Context Job 9 — On Deck · Archived",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Which ones excluding archived?",
+      "message": "3 matching Jobs:\n• CTX-3 — Context Job 3 — On Deck\n• CTX-4 — Context Job 4 — On Deck\n• CTX-7 — Context Job 7 — Rework · On Deck",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Which ones?",
+      "message": "3 matching Jobs:\n• CTX-3 — Context Job 3 — On Deck\n• CTX-4 — Context Job 4 — On Deck\n• CTX-7 — Context Job 7 — Rework · On Deck",
+      "persistent": true,
+      "status": 200
+    }
+  ],
+  "errors": []
+}
