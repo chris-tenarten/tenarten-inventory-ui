@@ -1,0 +1,27 @@
+{
+  "devParent": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+  "productionBaseline": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "files": {
+    "supabase/functions/_shared/tenbot-operational-history.ts": "4d8435ae37aa6f95a1e5f3adf4583c7ad82cf7d8c8a5654ce01a949a09c4d2d0",
+    "supabase/functions/_shared/tenbot-agent-history-store.ts": "d2d34a13c696b26a38880e004627f05a6b90bdf585c05c4ffce4862059f2421f",
+    "supabase/functions/_shared/tenbot-agent-session.ts": "729142cf6ee9c583ad26ed7c0e04137b4400d0053f438a119edf9191421c906d",
+    "supabase/functions/_shared/tenbot-conversation-context.ts": "72b99a701bc37c2e57ed12cb72d1984e40c6afb6c8bceb4b7b8ce12e38187cc9",
+    "supabase/functions/_shared/tenbot-job-routing.ts": "e0a111b97d28033c0c5b52d33553b01184c46b0969dbc26c364f20b13122a03c",
+    "supabase/functions/_shared/tenbot-job-session.ts": "d147c0e05a8c0fd15583bd7a76f2e57d6a152bd7947da3d2a42a6c907462d20c",
+    "src/modules/tenbot/TenbotWorkspace.tsx": "43e8ce073eba327de95b35940d3f0999535f1985b9fe121b2452a23cc71cb16c",
+    "scripts/verify-tenbot-conversation-context.mts": "bcda8af83e49276feb7a8adbc88977796b09338d616920d9e120b7aa98287ac7",
+    "scripts/verify-tenbot-hosted-history.mts": "3ed1de5d3f4e7ce51b4c2c074086e81b4b556c4410f3e635d2ca3b33fbf66312",
+    "scripts/verify-tenbot-context-browser.mjs": "a0e9ebb5dcf558285c2f260053f24eecc22e6cc33caf3c2d826689723d37940a",
+    "scripts/verify-tenbot-live-history.mts": "d7592f3ca44e4bbc1eada365d39cfcf7a1ab811844dec1628707113f2e915140",
+    "scripts/verify-tenbot-live-history-database.mts": "221055eeebfea4567cfc3fd20a2bdc41540204d597f2bbc4d291d656547ca7d1",
+    "scripts/support/tenbot-live-history-fixture.sql": "ba53a030ae201a131faa62e50f870eb154adafca39b747ddc76f3a3ffb2aff6a",
+    "supabase/migrations/20261101180000_tenbot_reauthorized_operational_history.sql": "67ce36cca4e5ecee965182e544ef588c70f18f17125992089a556cf14a0ad342",
+    "supabase/migrations/20261101181000_tenbot_operational_history_retention.sql": "8dda0d2e7dcb665f4b589f3cd16c15269b66ff41900db2b80ea46a0b7b85a472",
+    "supabase/functions/_shared/tenbot-agent-operations.ts": "28d8f88895d12dcdb38c3f4a799323256da7cf03890304afb6f64d37c20e1a5a"
+  },
+  "migrations": {
+    "supabase/migrations/20261101180000_tenbot_reauthorized_operational_history.sql": "67ce36cca4e5ecee965182e544ef588c70f18f17125992089a556cf14a0ad342",
+    "supabase/migrations/20261101181000_tenbot_operational_history_retention.sql": "8dda0d2e7dcb665f4b589f3cd16c15269b66ff41900db2b80ea46a0b7b85a472"
+  },
+  "sharedMigrationsApplied": false
+}

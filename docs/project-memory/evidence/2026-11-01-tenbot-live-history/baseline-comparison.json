@@ -1,0 +1,37 @@
+{
+  "basis": "retained exact accepted/deployed Production candidate; no fresh hosted inspection",
+  "files": [
+    {
+      "path": "supabase/functions/_shared/tenbot-operational-history.ts",
+      "new": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "parentMatchesAcceptedProductionSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "parentMatchesAcceptedProductionSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+      "parentMatchesAcceptedProductionSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "parentMatchesAcceptedProductionSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "parentMatchesAcceptedProductionSource": true
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "parentMatchesAcceptedProductionSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "parentMatchesAcceptedProductionSource": true
+    }
+  ]
+}

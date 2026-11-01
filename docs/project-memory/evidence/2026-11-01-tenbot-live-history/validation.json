@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "riskTier": 3,
+  "testingLevel": 3,
+  "finalDeterministicGroups": 44,
+  "realAuthJwtRlsPostgreSQLGroups": 12,
+  "realRetentionChecks": 5,
+  "actualLocalMessagingChecks": 5,
+  "typescript": "PASS",
+  "targetedEslintIncludingEdgeSources": "PASS",
+  "diffCheck": "PASS",
+  "taskOnlyProductionBuild": "PASS",
+  "actualModelInferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "databaseFixture": "jltgxcfiprocydhbrahz",
+  "realDatabaseModelTransport": "Disabled; actual caller tools and canonical deterministic fallback",
+  "browserUsesSyntheticAuthAndData": true,
+  "hostedOrProductionValidationClaimed": false,
+  "allOperationalWriteAuthorityUnchanged": true,
+  "sharedOrProductionMigrationsApplied": false,
+  "releaseGates": [
+    "Product acceptance",
+    "selective source proof and shared-schema compatibility",
+    "matching UI/Edge client compatibility",
+    "two reviewed migrations and trusted private purge scheduling before hosted rollout"
+  ],
+  "reviewUrl": "http://localhost:3000/my-work",
+  "apiPort": 55597
+}

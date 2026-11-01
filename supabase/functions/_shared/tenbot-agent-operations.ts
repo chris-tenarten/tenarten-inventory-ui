@@ -36,12 +36,18 @@ function argsFor(name:TenbotJobToolName,args:Record<string,JsonValue>){
  if(name==='get_job_summary'||name==='get_job_planning')return {job_id:values.job_id};
  return values;
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit extension for Deno.
+import {prepareJobRequest,type PreparedJobRequest} from './tenbot-job-session.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit extension for Deno.
+import type {JobIntent} from './tenbot-job-routing.ts';
 function comparable(result:JobToolResult){return JSON.stringify({data:result.data,status:result.status,complete:result.complete,truncated:result.truncated,unknowns:result.unknowns,filters:result.filters});}
 
 /** Reuses the five real authorized executors; freshness is a caller check, never model policy. */
-export function createTenbotAgentJobTools(jobTools:JobTools){
+export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Extract<JobIntent,{kind:'search'}>;question:string}){
  const reads=new Map<string,{name:TenbotJobToolName;args:Record<string,unknown>;result:JobToolResult}>();
- let inconsistent=false;
+ let inconsistent=false,scoped:PreparedJobRequest|undefined;
  const execute:JobTools['execute']=async(name,canonical)=>{
   const result=await jobTools.execute(name,canonical);
   const key=JSON.stringify([name,canonical]),previous=reads.get(key);
@@ -50,10 +56,12 @@ export function createTenbotAgentJobTools(jobTools:JobTools){
   return result;
  };
  const tools:AgentTool[]=specifications.map(spec=>({...spec,kind:'read',async execute(args){
-  const result=await execute(spec.name,argsFor(spec.name,args));
+  // The model selects find_jobs; the server preserves the employee's already
+  // established population instead of treating a pronoun as a search term.
+  let result:JobToolResult;if(spec.name==='find_jobs'&&followup){scoped=await prepareJobRequest(followup.intent,{execute},followup.question);result=scoped.result!;}else result=await execute(spec.name,argsFor(spec.name,args));
   return {data:json(result)};
  }}));
- return {tools,execute,reads:()=>structuredClone([...reads.values()]),async fresh(){
+ return {tools,execute,scoped:()=>scoped,reads:()=>structuredClone([...reads.values()]),async fresh(){
   if(inconsistent)return false;
   for(const read of reads.values()){
    const current=await jobTools.execute(read.name,read.args);

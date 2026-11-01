@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "fixture": "jltgxcfiprocydhbrahz",
+  "actualAuthJwtRlsAndPostgreSQL": true,
+  "groups": 12,
+  "checks": [
+    "Three fresh synthetic users sign in through real Auth; verified JWTs, existing member/Admin roles",
+    "Actual PostgreSQL effective Rework/status/archive count and Which Jobs are they population agree",
+    "Fresh server instance reopens readable historical answers with timestamps, reauthorization and no provider request",
+    "Employee and Admin cross-owner history rejected; owner cannot directly SELECT raw private state",
+    "Real caller Job and labor tools preserve readable 5-hour answer across instance restoration",
+    "Real Job RLS revocation redacts both answer and identifying question while base read permission remains",
+    "Changed authorized evidence redacts the old result; a new question reads fresh 6-hour data",
+    "Independent 10-minute history expiry redacts without renewing the conversation or repeating inference",
+    "Real state validator/CAS refuses an overlong operational retention window",
+    "Current capability revocation denies all restoration despite a previously valid signed JWT",
+    "Existing verified static help/history still restores without inference",
+    "Agent operational transport uses only caller-scoped read methods; no Inventory/catalog/receival/stock endpoint"
+  ],
+  "modelTransport": "Disabled; deterministic existing fallback",
+  "liveInferenceCalls": 0,
+  "productionRequests": 0,
+  "httpCalls": 613,
+  "examples": {
+    "count": "Production Jobs with recorded status In Production: 2.",
+    "list": "Matching Production Job: HIST-1 — Synthetic Live History Alpha; recorded status: In Production. Matching Production Job: HIST-4 — Synthetic Live History Rework; recorded status: In Production.",
+    "labor": "Production Job: HIST-1 — Synthetic Live History Alpha. Recorded labor: 5 hours for 2026-10-03 through 2026-11-01. Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown. These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+    "freshLabor": "Production Job: HIST-1 — Synthetic Live History Alpha. Recorded labor: 6 hours for 2026-10-03 through 2026-11-01. Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown. These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified."
+  },
+  "newHistoryValidatorMigrationSha256": "67ce36cca4e5ecee965182e544ef588c70f18f17125992089a556cf14a0ad342"
+}

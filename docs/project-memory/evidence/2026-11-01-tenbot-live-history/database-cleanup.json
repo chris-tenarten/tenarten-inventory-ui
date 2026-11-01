@@ -1,0 +1,9 @@
+{
+  "syntheticAuthUsersRemoved": 3,
+  "expected": 3,
+  "taskJobRowsRemoved": 5,
+  "taskPolicyRemoved": true,
+  "priorFixtureRowsReset": false,
+  "fixtureReadTablesRetained": true,
+  "sharedChanges": 0
+}

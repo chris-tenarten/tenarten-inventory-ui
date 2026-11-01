@@ -1,5 +1,6 @@
 // A narrow persistence adapter for proven workflow/scope dialogue and bounded
-// lookup selectors. Live operational prose, facts and tool payloads never persist.
+// lookup selectors, plus at most four short-lived private rendered answers.
+// Raw tool payloads and provider continuations never persist; restoration rechecks reads.
 // The caller JWT claims/clears its own conversation; only the trusted server can
 // publish validated state bound to that exact owner, revision and lease.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
@@ -8,11 +9,14 @@ import {TenbotError} from './tenbot-core.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension required by Deno.
 import {validConversationContext,type ConversationContext} from './tenbot-conversation-context.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Edge/Node shared source
+// @ts-ignore -- explicit Edge extension.
+import {validOperationalReceipt,type OperationalReceipt} from './tenbot-operational-history.ts';
 export type KnowledgeProof={id:string;digest:string};
 export type StoredGuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
 export type StoredDisplayAnswer={conversationId:string;mode:'agent-experiment'|'assistant';contentScope:'workflow'|'scope';message:string;sources:never[];snapshot:{revision:string;verifiedAt:string};summary:null;suggestionAllowed:false;notices:never[]};
 export type StoredDisplayTurn={id:string;question:string;createdAt:string;answeredAt:string;answer:StoredDisplayAnswer;sources:KnowledgeProof[];scopeDigest:string};
-export type StoredAgentState={guidance:StoredGuidanceTurn[];display:StoredDisplayTurn[];context?:ConversationContext|null};
+export type StoredAgentState={guidance:StoredGuidanceTurn[];display:StoredDisplayTurn[];context?:ConversationContext|null;operational?:OperationalReceipt[]};
 export type AgentSessionLease={id:string;owner:string;revision:number;claim:string;expiresAt:number;state:StoredAgentState};
 export type AgentSessionStore={
  claim(owner:string,id?:string):Promise<AgentSessionLease>;
@@ -29,9 +33,9 @@ const text=(value:unknown,max:number)=>typeof value==='string'&&value.length>0&&
 const timestamp=(value:unknown)=>typeof value==='string'&&/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,6})?(?:Z|[+-]\d\d:\d\d)$/.test(value)&&Number.isFinite(Date.parse(value));
 const empty=(value:unknown)=>Array.isArray(value)&&value.length===0;
 const proofs=(value:unknown):value is KnowledgeProof[]=>Array.isArray(value)&&value.length<=12&&value.every(item=>record(item)&&keys(item,['id','digest'])&&text(item.id,160)&&typeof item.digest==='string'&&digest.test(item.digest));
-/** Reject native continuations, live facts, tool payloads and arbitrary keys. */
+/** Reject native continuations, raw tool payloads and arbitrary keys. */
 export function validateStoredAgentState(value:unknown):value is StoredAgentState{
- if(!record(value)||!keys(value,Object.hasOwn(value,'context')?['guidance','display','context']:['guidance','display'])||new TextEncoder().encode(JSON.stringify(value)).byteLength>64000||value.context!==undefined&&value.context!==null&&!validConversationContext(value.context))return false;
+ if(!record(value)||!keys(value,['guidance','display',...(Object.hasOwn(value,'context')?['context']:[]),...(Object.hasOwn(value,'operational')?['operational']:[])])||value.operational!==undefined&&(!Array.isArray(value.operational)||value.operational.length>4||!value.operational.every(validOperationalReceipt))||new TextEncoder().encode(JSON.stringify(value)).byteLength>64000||value.context!==undefined&&value.context!==null&&!validConversationContext(value.context))return false;
  if(!Array.isArray(value.guidance)||value.guidance.length>3||!value.guidance.every(turn=>record(turn)&&keys(turn,['question','answer','sources'])&&text(turn.question,1200)&&text(turn.answer,2400)&&proofs(turn.sources)&&turn.sources.length>0))return false;
  if(!Array.isArray(value.display)||value.display.length>8)return false;
  return value.display.every(turn=>{

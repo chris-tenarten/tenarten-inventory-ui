@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "errorCode": null,
+  "durationMs": 12657,
+  "taskOnlySource": true,
+  "source": "/private/tmp/tenops-tenbot-live-history-20261101/build-source",
+  "localReviewUrl": "http://localhost:3000/my-work",
+  "syntheticAuthAndModel": true,
+  "inferenceCalls": 0,
+  "releaseProofClaimed": false,
+  "noKnowledgeRegeneration": true
+}

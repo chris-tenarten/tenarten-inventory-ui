@@ -36,3 +36,5 @@ The [receival staging proof correction](project-memory/2026-10-30-tenbot-receiva
 The [model-free prepared-draft correction](project-memory/2026-10-30-tenbot-model-free-execution.md) adds owner-authorized preview resume and a dormant execution-only canary window. Its migration is unapplied; no grants, approvals, inference or operational writes occurred. Isolated database validation and selective staging remain separately authorized gates.
 
 - [TenBot conversational context, November 1](project-memory/2026-11-01-tenbot-conversation-context.md): implemented owner-scoped subject/query continuity, focused evidence and synthetic localhost review; shared migration/release pending, no inference funding or operational writes.
+
+- [TenBot live-answer history/follow-up correction, November 1](project-memory/2026-11-01-tenbot-live-answer-history.md): local bounded reauthorized operational display and consistent canonical Job enumeration; actual isolated JWT/RLS evidence and synthetic localhost review, shared migrations/compatibility/purge scheduling remain separate release gates.
