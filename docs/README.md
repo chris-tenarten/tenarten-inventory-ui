@@ -38,3 +38,5 @@ The [model-free prepared-draft correction](project-memory/2026-10-30-tenbot-mode
 - [TenBot conversational context, November 1](project-memory/2026-11-01-tenbot-conversation-context.md): implemented owner-scoped subject/query continuity, focused evidence and synthetic localhost review; shared migration/release pending, no inference funding or operational writes.
 
 - [TenBot live-answer history/follow-up correction, November 1](project-memory/2026-11-01-tenbot-live-answer-history.md): local bounded reauthorized operational display and consistent canonical Job enumeration; actual isolated JWT/RLS evidence and synthetic localhost review, shared migrations/compatibility/purge scheduling remain separate release gates.
+
+- [Persistent private TenBot conversations, November1](project-memory/2026-11-01-tenbot-persistent-conversations.md): local replacement of four-answer/ten-minute display retention, current-access redaction, bounded inference context and concise Job briefings; isolated PostgreSQL/JWT/RLS evidence, no shared migration or release.

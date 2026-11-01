@@ -32,22 +32,33 @@ export async function operationalReceipt(reads:ContextRead[],question:string,mes
  return validOperationalReceipt(value)?value:null;
 }
 export const operationalHistoryMeta=(r:OperationalReceipt,now:number,historical=true)=>({state:'verified' as const,historical,observedAt:r.answeredAt,checkedAt:new Date(now).toISOString(),expiresAt:r.expiresAt});
-/** At most eight distinct existing read calls per hydration, with request-local
+/** At most sixteen distinct existing read calls (four receipts × four reads) per hydration, with request-local
  * deduplication only. Neither receipt prose nor digests reach model prompts. */
 export async function restoreOperationalHistory(rows:OperationalReceipt[],tools:JobTools,now:number,scope:string,conversationId:string,mode:string,sourceCurrent:(proof:{id:string;digest:string})=>Promise<boolean>){
- const cache=new Map<string,Promise<string|null>>(),kept:OperationalReceipt[]=[],turns=[];
- // Spend the bounded verification budget on the newest answers first.
+ const cache=new Map<string,Promise<{digest:string|null;retryable:boolean}>>(),kept:OperationalReceipt[]=[],retained:OperationalReceipt[]=[],turns=[];
+ // Newest first, but every valid receipt fits the strict four-by-four bound.
  for(const r of rows.slice(-4).reverse()){
-  let valid=validOperationalReceipt(r)&&Date.parse(r.expiresAt)>now&&Date.parse(r.answeredAt)<=now&&r.scopeDigest===scope;
-  if(valid)for(const proof of r.sources)if(!await sourceCurrent(proof)){valid=false;break;}
-  if(valid)for(const read of r.reads){
+  let reason:'expired'|'access-or-evidence-changed'|'temporarily-unavailable'|null=null;
+  if(!validOperationalReceipt(r)||Date.parse(r.expiresAt)<=now||Date.parse(r.answeredAt)>now)reason='expired';
+  else if(r.scopeDigest!==scope)reason='access-or-evidence-changed';
+  if(!reason)for(const proof of r.sources)if(!await sourceCurrent(proof)){reason='access-or-evidence-changed';break;}
+  if(!reason)for(const read of r.reads){
    const key=JSON.stringify([read.name,read.args]);
-   if(!cache.has(key)){if(cache.size>=8){valid=false;break;}cache.set(key,(async()=>{try{const result=await tools.execute(read.name,read.args);return result.status==='ok'&&result.complete?await operationalDigest(result):null;}catch{return null;}})());}
-   if(await cache.get(key)!==read.digest){valid=false;break;}
+   if(!cache.has(key)){
+    if(cache.size>=16){reason='temporarily-unavailable';break;}
+    cache.set(key,(async()=>{try{const result=await tools.execute(read.name,read.args);return {digest:result.status==='ok'&&result.complete?await operationalDigest(result):null,retryable:result.status==='unavailable'||result.status==='partial'};}catch{return {digest:null,retryable:true};}})());
+   }
+   const checked=await cache.get(key)!;
+   if(checked.digest!==read.digest){reason=checked.retryable?'temporarily-unavailable':'access-or-evidence-changed';break;}
   }
-  if(valid)for(const proof of r.sources)if(!await sourceCurrent(proof)){valid=false;break;}
-  if(valid)kept.push(r);
-  turns.push({id:r.id,question:valid?r.question:'Previous operational request',createdAt:r.createdAt,answeredAt:r.answeredAt,answer:{conversationId,mode,contentScope:'operational-history',message:valid?r.message:'This previous operational answer is no longer available: its access, evidence or retention window changed. Ask for a fresh result.',sources:[],snapshot:{revision:'tenbot-job-read.v1',verifiedAt:r.answeredAt},summary:null,suggestionAllowed:false,notices:[],history:valid?operationalHistoryMeta(r,now):{state:'redacted' as const,historical:true,observedAt:r.answeredAt,checkedAt:new Date(now).toISOString(),expiresAt:r.expiresAt}}});
+  if(!reason)for(const proof of r.sources)if(!await sourceCurrent(proof)){reason='access-or-evidence-changed';break;}
+  if(!reason)kept.push(r);
+  // A failed read cannot authorize display, nor does it prove revocation. Keep
+  // only the already bounded private receipt for a later *fresh* read. It never
+  // enters a prompt or an HTTP response until all checks succeed again.
+  if(!reason||reason==='temporarily-unavailable')retained.push(r);
+  turns.push({id:r.id,question:reason?'Previous operational request':r.question,createdAt:r.createdAt,answeredAt:r.answeredAt,answer:{conversationId,mode,contentScope:'operational-history',message:reason?'':r.message,sources:[],snapshot:{revision:'tenbot-job-read.v1',verifiedAt:r.answeredAt},summary:null,suggestionAllowed:false,notices:[],history:reason?{state:'redacted' as const,reason,historical:true,observedAt:r.answeredAt,checkedAt:new Date(now).toISOString(),expiresAt:r.expiresAt}:operationalHistoryMeta(r,now)}});
  }
- return {kept:kept.sort((a,b)=>a.createdAt.localeCompare(b.createdAt)),turns:turns.sort((a,b)=>a.createdAt.localeCompare(b.createdAt))};
+ const chronological=(a:OperationalReceipt,b:OperationalReceipt)=>a.createdAt.localeCompare(b.createdAt);
+ return {kept:kept.sort(chronological),retained:retained.sort(chronological),turns:turns.sort((a,b)=>a.createdAt.localeCompare(b.createdAt))};
 }

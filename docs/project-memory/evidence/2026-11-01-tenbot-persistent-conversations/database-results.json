@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "fixture": "jltgxcfiprocydhbrahz",
+  "groups": 10,
+  "checks": [
+    "Genuine signed Member/Admin JWTs on isolated Free project; no Production credentials or records",
+    "Actual canonical Job reads and current effective-status count/list populations agree",
+    "New real login/server instance discovers same owner transcript and original historical timestamp without inference",
+    "Historical count remains readable after status changes; expired subject context reauthorizes/rebases and new followup reads fresh population",
+    "Historical5hours survives changed data; new caller-authorized labor answer is6hours",
+    "Employee/Admin cross-owner history and direct raw transcript/RPC bypasses rejected by actual JWT/RLS/ACL contracts",
+    "Real record RLS revocation selectively redacts affected aggregate/Job prose while unrelated historical answer remains",
+    "Real indexed pagination retains more than20 messages without overlap or transcript trimming",
+    "Durable display is separate from bounded model/history state; no operational snapshot cache",
+    "Current capability revocation denies retrieval under still-signed employee token"
+  ],
+  "migrationSha256": "535410dd08c0f199a87d9b1d7439990d9d5a2e90052d27cf9f62b4971f9f9811",
+  "actualPostgreSQL": true,
+  "actualSignedJwtRls": true,
+  "oldTimestampsSeeded": true,
+  "liveInferenceCalls": 0,
+  "providerAttemptsAreDisabledTransportOnly": 7,
+  "productionRequests": 0,
+  "operationalInventoryWrites": 0,
+  "httpCalls": 439
+}

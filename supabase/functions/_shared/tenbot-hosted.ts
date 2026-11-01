@@ -25,11 +25,11 @@ import {TenbotError,type InferenceProvider} from './tenbot-core.ts';
 import type {JobTools} from './tenbot-job-session.ts';
 
 export type HostedRpc=(name:string,args?:Record<string,unknown>)=>Promise<{data:unknown;error:unknown}>;
-export type HostedTenbotConfig={enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
+export type HostedTenbotConfig={persistentHistory?:boolean;enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
 export const TENBOT_HOSTED_SERVICE_RPCS=new Set([
  'tenbot_reserve_usage','tenbot_finish_usage','tenbot_append_conversation_turn',
  'tenbot_openai_reserve','tenbot_openai_settle','tenbot_openai_meter_status',
- 'tenbot_agent_load','tenbot_agent_commit',
+ 'tenbot_agent_load','tenbot_agent_commit','tenbot_employee_commit','tenbot_employee_page',
 ]);
 export function createHostedTenbot(options:{owner:string;origin:string;config:HostedTenbotConfig;caller:HostedRpc;service:HostedRpc;jobTools:JobTools;qwen:InferenceProvider|null;fetcher?:typeof fetch;now?:()=>number}){
  const {owner,caller,service,jobTools,qwen,config}=options,now=options.now??Date.now;
@@ -40,10 +40,12 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
  };
  const defaultHandler=(body:Record<string,unknown>)=>handleTenbot(body,owner,caller,service,qwen,undefined,jobTools);
  const expires=Date.parse(config.keyExpiresAt);
- const historyStore=createTenbotAgentHistoryStore(caller,service);
+ const historyStore=createTenbotAgentHistoryStore(caller,service,{persistent:config.persistentHistory??(options.origin==='https://tendev.pages.dev'||options.origin==='http://localhost:3000')});
  const sessions=enabled?createTenbotAgentSessions({
   can:(_owner,capability)=>_owner===owner?can(capability):Promise.resolve(false),
   jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,now,
+  // Only the staged TenDev UI understands bounded, reauthorized live history.
+  operationalHistory:options.origin==='https://tendev.pages.dev',
   sessionStore:historyStore,
   fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,qwen,undefined,tools,undefined,{context,history}),
   provider(){
@@ -63,13 +65,13 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
   if(body.action==='status'){
    if(Object.keys(body).some(key=>key!=='action'))throw new TenbotError('Invalid status request.');
    if(!await can('readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
-   return {mode:enabled?'assistant':'qwen',historyAvailable:enabled,readOnly:true};
+   return {mode:enabled?'assistant':'qwen',historyAvailable:enabled,persistentHistoryAvailable:enabled&&historyStore.persistent===true,readOnly:true};
   }
   if(!sessions)return defaultHandler(body);
   // Hosted read-only routes cannot receive document/prepare/approve/execute
   // fields. Existing explicit Product feedback remains on its normal path.
   if(['ask','history','clear'].includes(String(body.action))){
-   const allowed=body.action==='ask'?['action','question','context','conversationId']:['action','conversationId'];
+   const allowed=body.action==='ask'?['action','question','context','conversationId']:['action','conversationId','before'];
    if(Object.keys(body).some(key=>!allowed.includes(key)))throw new TenbotError('Invalid read-only TenBot request.');
    return sessions(body,owner);
   }

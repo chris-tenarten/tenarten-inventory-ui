@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "relativeRuntimeModules": 39,
+  "exactImportResolution": true,
+  "boundary": "Existing TenDev selective source plus task runtime delta; not unrelated dev Edge helpers",
+  "actualHostedDeno": false
+}

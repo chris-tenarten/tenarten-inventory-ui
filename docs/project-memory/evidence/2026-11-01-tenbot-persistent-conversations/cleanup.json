@@ -1,0 +1,8 @@
+{
+  "taskRecordsRemoved": true,
+  "syntheticAuthUsersRemoved": 2,
+  "expectedAuth": 2,
+  "priorFixtureReset": false,
+  "localMigrationRetained": true,
+  "sharedChanges": 0
+}

@@ -44,6 +44,8 @@ export type JobToolData = JobFindData | JobSummaryData | JobPlanningData | JobLa
 export type JobToolResult = {
   tool: TenbotJobToolName; version: 'tenbot-job-read.v1';
   status: 'ok' | 'partial' | 'not_found_or_not_authorized' | 'unavailable' | 'invalid_request';
+  /** Server-only authorization references. Removed before model dispatch. */
+  accessRefs?: string[];
   observed_at: string; timezone: 'America/Chicago'; filters: Record<string, unknown>;
   read_started_at: string; read_completed_at: string; consistency: 'best_effort_multi_query';
   units: Record<string, string>; sources: JobSourceReference[]; unknowns: string[];
@@ -359,6 +361,7 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
             if (!allowed) { result.status = 'not_found_or_not_authorized'; result.complete = false; result.data = null; result.sources = []; result.unknowns = ['The requested operational records are unavailable or no longer authorized.']; }
           } catch { result.status = 'unavailable'; result.complete = false; result.data = null; result.sources = []; result.unknowns = ['Current authorization could not be verified; no operational facts were returned.']; }
         }
+        if(result.data!==null&&['ok','partial'].includes(result.status))result.accessRefs=[...new Set(verifiedIds)];
         result.read_completed_at = (options.now?.() ?? new Date()).toISOString();
         result.observed_at = result.read_completed_at;
       }
@@ -373,6 +376,10 @@ export function createTenbotJobTools(caller: JobToolCaller, options: { now?: () 
   const deadlineMs = options.deadlineMs ?? 4000;
   if (!Number.isSafeInteger(deadlineMs) || deadlineMs < 1 || deadlineMs > 10000) throw new Error('Invalid operational tool deadline.');
   return {
+    async authorizeHistory(ids:string[]):Promise<'authorized'|'denied'|'unavailable'>{
+      if(ids.length>1000||ids.some(id=>!isUuid(id)))return 'denied';
+      try{const request=caller.rpc('tenbot_authorize_history_jobs',{p_ids:ids}) as ReturnType<JobToolCaller['rpc']>&{abortSignal?:(s:AbortSignal)=>ReturnType<JobToolCaller['rpc']>};const signal=AbortSignal.timeout(deadlineMs);const r=await Promise.race([Promise.resolve(request.abortSignal?request.abortSignal(signal):request),new Promise<never>((_,reject)=>signal.addEventListener('abort',()=>reject(new Unavailable()),{once:true}))]);return r.error?'unavailable':r.data===true?'authorized':'denied';}catch{return 'unavailable';}
+    },
     async execute(tool: TenbotJobToolName, args: Record<string, unknown> = {}): Promise<JobToolResult> {
       const controller = new AbortController();
       let rejectDeadline: (error: Error) => void = () => {};

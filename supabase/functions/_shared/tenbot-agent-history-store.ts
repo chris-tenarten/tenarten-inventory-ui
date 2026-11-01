@@ -12,6 +12,9 @@ import {validConversationContext,type ConversationContext} from './tenbot-conver
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Edge/Node shared source
 // @ts-ignore -- explicit Edge extension.
 import {validOperationalReceipt,type OperationalReceipt} from './tenbot-operational-history.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Deno/Node shared source
+// @ts-ignore -- explicit Edge extension
+import {employeeDisplayValid,type EmployeeDisplay} from './tenbot-employee-history.ts';
 export type KnowledgeProof={id:string;digest:string};
 export type StoredGuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
 export type StoredDisplayAnswer={conversationId:string;mode:'agent-experiment'|'assistant';contentScope:'workflow'|'scope';message:string;sources:never[];snapshot:{revision:string;verifiedAt:string};summary:null;suggestionAllowed:false;notices:never[]};
@@ -19,8 +22,10 @@ export type StoredDisplayTurn={id:string;question:string;createdAt:string;answer
 export type StoredAgentState={guidance:StoredGuidanceTurn[];display:StoredDisplayTurn[];context?:ConversationContext|null;operational?:OperationalReceipt[]};
 export type AgentSessionLease={id:string;owner:string;revision:number;claim:string;expiresAt:number;state:StoredAgentState};
 export type AgentSessionStore={
+ persistent?:boolean;
+ page?(lease:AgentSessionLease,before?:string):Promise<{turns:EmployeeDisplay[];nextCursor:string|null;appendCursor:string|null}>;
  claim(owner:string,id?:string):Promise<AgentSessionLease>;
- commit(lease:AgentSessionLease,state:StoredAgentState,renew:boolean):Promise<void>;
+ commit(lease:AgentSessionLease,state:StoredAgentState,renew:boolean,turn?:EmployeeDisplay):Promise<void>;
  release(lease:AgentSessionLease):Promise<void>;
  clear(owner:string,id:string):Promise<void>;
 };
@@ -44,12 +49,20 @@ export function validateStoredAgentState(value:unknown):value is StoredAgentStat
   return record(answer)&&keys(answer,['conversationId','mode','contentScope','message','sources','snapshot','summary','suggestionAllowed','notices'])&&typeof answer.conversationId==='string'&&uuid.test(answer.conversationId)&&['agent-experiment','assistant'].includes(String(answer.mode))&&['workflow','scope'].includes(String(answer.contentScope))&&text(answer.message,2400)&&empty(answer.sources)&&record(answer.snapshot)&&keys(answer.snapshot,['revision','verifiedAt'])&&text(answer.snapshot.revision,100)&&timestamp(answer.snapshot.verifiedAt)&&answer.summary===null&&answer.suggestionAllowed===false&&empty(answer.notices)&&(answer.contentScope!=='workflow'||turn.sources.length>0);
  });
 }
-export function createTenbotAgentHistoryStore(caller:AgentHistoryRpc,service:AgentHistoryRpc):AgentSessionStore{
+export function createTenbotAgentHistoryStore(caller:AgentHistoryRpc,service:AgentHistoryRpc,options:{persistent?:boolean}={}):AgentSessionStore{
  const call=async(rpc:AgentHistoryRpc,name:string,args:Record<string,unknown>)=>{const result=await rpc(name,args);if(result.error)throw new TenbotError('Conversation storage is unavailable. Please retry later.',503);return result.data;};
  return {
+  persistent:options.persistent===true,
+  async page(lease,before){
+   if(!options.persistent||before!==undefined&&!/^[1-9][0-9]{0,18}$/.test(before))throw new TenbotError('Invalid history page.');
+   const data=await call(service,'tenbot_employee_page',{p_user:lease.owner,p_conversation_id:lease.id,p_claim:lease.claim,p_revision:lease.revision,p_before:before??null});
+   if(!record(data)||!Array.isArray(data.turns)||data.turns.length>20||!data.turns.every(employeeDisplayValid)||data.nextCursor!==null&&(typeof data.nextCursor!=='string'||!/^[1-9][0-9]{0,18}$/.test(data.nextCursor)))throw new TenbotError('Conversation history is unavailable.',503);
+   if(data.appendCursor!==null&&(typeof data.appendCursor!=='string'||!/^[1-9][0-9]{0,18}$/.test(data.appendCursor)))throw new TenbotError('Conversation history is unavailable.',503);
+   return {turns:data.turns as EmployeeDisplay[],nextCursor:data.nextCursor as string|null,appendCursor:data.appendCursor as string|null};
+  },
   async claim(owner,id){
    if(!uuid.test(owner)||id!==undefined&&!uuid.test(id))throw new TenbotError('Invalid conversation request.');
-   const data=await call(caller,'tenbot_agent_claim',{p_conversation_id:id??null});
+   const data=await call(caller,options.persistent?'tenbot_employee_claim':'tenbot_agent_claim',{p_conversation_id:id??null});
    if(!record(data)||data.ok!==true){
     if(record(data)&&data.reason==='busy')throw new TenbotError('A request is already running in this conversation.',409);
     if(record(data)&&data.reason==='limit')throw new TenbotError('TenBot conversation limit reached.',429);
@@ -66,9 +79,9 @@ export function createTenbotAgentHistoryStore(caller:AgentHistoryRpc,service:Age
     await call(caller,'tenbot_agent_release',{p_conversation_id:data.id,p_claim:data.claim,p_revision:data.revision});throw error;
    }
   },
-  async commit(lease,state,renew){
+  async commit(lease,state,renew,turn){
    if(!validateStoredAgentState(state)||state.display.some(turn=>turn.answer.conversationId!==lease.id))throw new TenbotError('Conversation storage rejected the update.',503);
-   const data=await call(service,'tenbot_agent_commit',{p_user:lease.owner,p_conversation_id:lease.id,p_claim:lease.claim,p_revision:lease.revision,p_state:state,p_renew:renew});
+   const data=await call(service,options.persistent?'tenbot_employee_commit':'tenbot_agent_commit',{p_user:lease.owner,p_conversation_id:lease.id,p_claim:lease.claim,p_revision:lease.revision,p_state:state,p_renew:renew,...(options.persistent?{p_turn:turn??null}:{})});
    if(data!==true)throw new TenbotError('Conversation changed or access expired. Reopen TenBot and retry.',409);
   },
   async release(lease){if(await call(caller,'tenbot_agent_release',{p_conversation_id:lease.id,p_claim:lease.claim,p_revision:lease.revision})!==true)throw new TenbotError('Conversation release is unavailable. Please retry later.',503);},

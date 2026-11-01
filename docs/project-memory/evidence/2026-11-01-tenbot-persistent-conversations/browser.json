@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "virtualTimeAdvancedMs": 61000,
+  "checks": [
+    "Count and Which ones remain simultaneously readable with historical labels",
+    "One virtual minute and automatic reauthorization preserve readable answers",
+    "Transient409 hides old text, offers one compact control and recovers without repeating inference",
+    "Blur/focus reauthorizes and restores prior readable answers without another ask",
+    "Remount restores both historical prose and subject without repeating inference",
+    "Browser storage contains no operational answer or Job label",
+    "Conversation restores without a tab locator or repeated request",
+    "Closing/reopening normal Messaging retains answers without repeating the request",
+    "Named Job → labor followup shows a concise named total and work-date reporting period",
+    "Composer remains usable at mobile width"
+  ],
+  "actions": [
+    "status",
+    "history",
+    "ask",
+    "ask",
+    "history",
+    "history",
+    "history",
+    "history",
+    "status",
+    "history",
+    "ask",
+    "status",
+    "history",
+    "ask",
+    "ask"
+  ],
+  "errors": [],
+  "actualMessagingUi": true,
+  "syntheticAuthAndData": true,
+  "liveInference": false,
+  "realDatabase": false,
+  "hostedCalls": 0
+}
