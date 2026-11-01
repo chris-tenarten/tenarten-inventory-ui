@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "errorCode": null,
+  "durationMs": 12528,
+  "source": "/private/tmp/tenops-tenbot-context-20261031/build-source",
+  "inference": false,
+  "noKnowledgeRegeneration": true,
+  "releaseProofClaimed": false,
+  "localReviewOrigin": "http://localhost:3000"
+}

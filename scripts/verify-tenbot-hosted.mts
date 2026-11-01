@@ -17,7 +17,7 @@ await check('Terra transport reserves before every call, settles actual usage an
 await check('Spending denial invokes Qwen without any paid dispatch and uses the same authorized conversation',async()=>{
  const f=createHostedTenbotFixture();f.state.budget=false;
  const r=await f.handler()({action:'ask',question:'How do I create a group conversation?'}) as {conversationId:string;fallback:boolean;contentScope:string};
- assert(r.fallback);assert.equal(r.contentScope,'volatile');assert.equal(f.state.providerCalls,0);assert.equal(f.state.qwenCalls,1);assert.equal(f.rows.size,1);assert.equal(f.rows.get(r.conversationId)?.turns.length,1);assert.equal(f.rows.get(r.conversationId)?.claim,null);
+ assert(r.fallback);assert.equal(r.contentScope,'workflow');assert.equal(f.state.providerCalls,0);assert.equal(f.state.qwenCalls,1);assert.equal(f.rows.size,1);assert.equal(f.rows.get(r.conversationId)?.turns.length,1);assert.equal(f.rows.get(r.conversationId)?.claim,null);
 });
 await check('Provider outage retains uncertain reservations and falls back without copying native context',async()=>{
  const f=createHostedTenbotFixture();f.state.providerFailure=true;

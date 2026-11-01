@@ -42,14 +42,18 @@ function comparable(result:JobToolResult){return JSON.stringify({data:result.dat
 export function createTenbotAgentJobTools(jobTools:JobTools){
  const reads=new Map<string,{name:TenbotJobToolName;args:Record<string,unknown>;result:JobToolResult}>();
  let inconsistent=false;
- const tools:AgentTool[]=specifications.map(spec=>({...spec,kind:'read',async execute(args){
-  const canonical=argsFor(spec.name,args),result=await jobTools.execute(spec.name,canonical);
-  const key=JSON.stringify([spec.name,canonical]),previous=reads.get(key);
+ const execute:JobTools['execute']=async(name,canonical)=>{
+  const result=await jobTools.execute(name,canonical);
+  const key=JSON.stringify([name,canonical]),previous=reads.get(key);
   if(previous&&comparable(previous.result)!==comparable(result))inconsistent=true;
-  if(!previous)reads.set(key,{name:spec.name,args:canonical,result});
+  if(!previous)reads.set(key,{name,args:canonical,result});
+  return result;
+ };
+ const tools:AgentTool[]=specifications.map(spec=>({...spec,kind:'read',async execute(args){
+  const result=await execute(spec.name,argsFor(spec.name,args));
   return {data:json(result)};
  }}));
- return {tools,async fresh(){
+ return {tools,execute,reads:()=>structuredClone([...reads.values()]),async fresh(){
   if(inconsistent)return false;
   for(const read of reads.values()){
    const current=await jobTools.execute(read.name,read.args);
