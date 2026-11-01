@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "actualApplicationUi": "e61d333",
+  "actualCorrectedHandlers": true,
+  "syntheticAuthDatabaseModel": true,
+  "realHostedEmployee": false,
+  "realDatabase": false,
+  "actualInference": false,
+  "hostedCalls": 0,
+  "checks": [
+    "Production count7 -> On Deck count1 -> CTX-2-only current list",
+    "Production subject/on_deck selection preserved",
+    "Reopen restores history and same filtered current followup",
+    "No My Work routing or task-data tool access",
+    "Existing owner-private persistent history contract retained"
+  ],
+  "answers": [
+    {
+      "question": "How many Jobs are currently in Production?",
+      "message": "There are 7 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "persistent": true
+    },
+    {
+      "question": "What about On Deck?",
+      "message": "There is 1 Job marked On Deck.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "persistent": true
+    },
+    {
+      "question": "Which Jobs are they?",
+      "message": "1 matching Job:\n• CTX-2 — Context Job 2 — On Deck",
+      "persistent": true
+    },
+    {
+      "question": "Which ones?",
+      "message": "1 matching Job:\n• CTX-2 — Context Job 2 — On Deck",
+      "persistent": true
+    }
+  ],
+  "actions": [
+    "status",
+    "history",
+    "ask",
+    "ask",
+    "ask",
+    "status",
+    "history",
+    "ask"
+  ],
+  "toolTables": [
+    "has_app_capability",
+    "jobs",
+    "production_rework_cycles",
+    "tenbot_authorize_history_jobs"
+  ],
+  "errors": []
+}

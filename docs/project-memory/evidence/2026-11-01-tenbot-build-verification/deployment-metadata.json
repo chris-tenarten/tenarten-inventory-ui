@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-01T22:07:02.174Z",
+  "results": [
+    {
+      "project": "tendev",
+      "status": 401,
+      "durationMs": 357,
+      "metadataAvailable": false
+    },
+    {
+      "project": "tenops",
+      "status": 401,
+      "durationMs": 451,
+      "metadataAvailable": false
+    }
+  ],
+  "settingsReadOrModified": false,
+  "credentialsPrinted": false
+}

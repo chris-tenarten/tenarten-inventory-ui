@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "at": "2026-11-01T21:59:14.342Z",
+  "results": [
+    {
+      "environment": "TenDev",
+      "origin": "https://tendev.pages.dev",
+      "servedSha": "9415adc577e5509c2473001fbd514ab644077e3c",
+      "deploymentId": "f62e8e3f-4c5e-40fb-94c0-f0e02feed638",
+      "identityMethod": "Fresh exact HTML and relevant Messaging chunk hashes match retained verified build",
+      "html": {
+        "path": "/my-work",
+        "status": 200,
+        "durationMs": 231,
+        "sha256": "de2eb961df578e691a8515b507dc2dcf1994cae2158a87b6f3926df3e1fac7d0",
+        "cache": null,
+        "etag": null
+      },
+      "messagingAssets": [
+        {
+          "path": "/_next/static/chunks/2930.2ace58bc0425857f.js",
+          "status": 200,
+          "durationMs": 66,
+          "sha256": "51739c4df7efdc83f92e03e3e47616fa956e27d6814cf4031071ad92687e2928",
+          "cache": null,
+          "etag": "W/\"ad641fce691b201d826f153c4d8f6124\"",
+          "matchesKnownBuild": true,
+          "includesReportedOldPhrase": false,
+          "includesNewSelectedIndicator": false,
+          "includesPersistentPath": true,
+          "includesHistoryContractMarker": false
+        }
+      ],
+      "authenticatedTabCaptured": false
+    },
+    {
+      "environment": "TenOps",
+      "origin": "https://tenops.pages.dev",
+      "servedSha": "01c0b4576a61329d973ce65ca58437ce26627be1",
+      "deploymentId": "967ed4d1-0ee8-4488-8db2-ee984cabc953",
+      "identityMethod": "Fresh exact HTML and relevant Messaging chunk hashes match retained verified build",
+      "html": {
+        "path": "/my-work",
+        "status": 200,
+        "durationMs": 230,
+        "sha256": "06b6d4cbb1e92cc0d0129c8608542be31830eabc79e5b7572c9a3801b876f0dc",
+        "cache": null,
+        "etag": null
+      },
+      "messagingAssets": [
+        {
+          "path": "/_next/static/chunks/2754.a6b9df91d7bfa2be.js",
+          "status": 200,
+          "durationMs": 65,
+          "sha256": "8a22274d7236778de2b2df092c2590132bbf0af6e3c237053cb5b7b40ac1c757",
+          "cache": null,
+          "etag": "W/\"8413f2389338839bd0cda8924757f97e\"",
+          "matchesKnownBuild": true,
+          "includesReportedOldPhrase": false,
+          "includesNewSelectedIndicator": false,
+          "includesPersistentPath": false,
+          "includesHistoryContractMarker": false
+        }
+      ],
+      "authenticatedTabCaptured": false
+    },
+    {
+      "environment": "localhost",
+      "origin": "http://localhost:3000",
+      "servedSha": "e61d333ccfb2fed1f1488ad8071d169cf67c73b7",
+      "deploymentId": null,
+      "identityMethod": "Fresh exact HTML and relevant Messaging chunk hashes match retained verified build",
+      "html": {
+        "path": "/my-work",
+        "status": 200,
+        "durationMs": 66,
+        "sha256": "a69347b951143f7b7bdbe7f5dafedc79fd38dfd77fffebf667a9d5b2acbd4687",
+        "cache": null,
+        "etag": null
+      },
+      "messagingAssets": [
+        {
+          "path": "/_next/static/chunks/5128.f8a4a9e39dfe6480.js",
+          "status": 200,
+          "durationMs": 2,
+          "sha256": "74b25ceb6e447d4fd5de6d7f1baacac7d94d4ea6494b2734acafc549920a5d84",
+          "cache": null,
+          "etag": null,
+          "matchesKnownBuild": true,
+          "includesReportedOldPhrase": false,
+          "includesNewSelectedIndicator": true,
+          "includesPersistentPath": true,
+          "includesHistoryContractMarker": true
+        }
+      ],
+      "authenticatedTabCaptured": false
+    }
+  ],
+  "affectedBrowserSessionKnown": false,
+  "inferenceCalls": 0,
+  "hostedMutations": 0,
+  "affectedEnvironment": "TenDev",
+  "confirmationSource": "Product confirmed https://tendev.pages.dev in this turn",
+  "perTabLoadedAssetsCaptured": false
+}

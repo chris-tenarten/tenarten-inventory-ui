@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "path": "src/components/GlobalMessaging.tsx",
+      "acceptedTenDevPredecessorMatches": true
+    },
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "acceptedTenDevPredecessorMatches": true
+    },
+    {
+      "path": "src/modules/my-work/inbox.ts",
+      "acceptedTenDevPredecessorMatches": true
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "acceptedTenDevPredecessorMatches": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "acceptedTenDevPredecessorMatches": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+      "acceptedTenDevPredecessorMatches": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
+      "acceptedTenDevPredecessorMatches": true
+    }
+  ],
+  "newUiHelper": "src/modules/tenbot/history-presentation.ts",
+  "newMigrations": 0
+}

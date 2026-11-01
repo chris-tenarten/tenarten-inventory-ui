@@ -42,3 +42,5 @@ The [model-free prepared-draft correction](project-memory/2026-10-30-tenbot-mode
 - [Persistent private TenBot conversations, November1](project-memory/2026-11-01-tenbot-persistent-conversations.md): local replacement of four-answer/ten-minute display retention, current-access redaction, bounded inference context and concise Job briefings; isolated PostgreSQL/JWT/RLS evidence, no shared migration or release.
 
 - [TenBot Messaging/history UX correction, November 1](project-memory/2026-11-01-tenbot-messaging-refinement.md): local selected-thread styling, pinned TenBot, restored dropdown navigation and legacy-versus-persistent history notices; focused desktop/mobile/privacy checks, no backend migration or hosted activation.
+
+- [Actual Messaging build / On Deck follow-up, November 1](project-memory/2026-11-01-tenbot-build-verification.md): Product confirms TenDev; served9415 lacks local e61 UI fixes. Focused remaining Production-status selector corrected; no deployment/migration/funding change, private history placeholders remain unclassified without owner session.

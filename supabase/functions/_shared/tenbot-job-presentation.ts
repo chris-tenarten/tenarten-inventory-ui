@@ -19,7 +19,7 @@ export function presentJobResult(result:JobToolResult,question='',maxCharacters=
    if(/\bactive\b/.test(q)){field=c.active_jobs;label='active Jobs';}
    else if(/\bunscheduled\b/.test(q)){field=c.unscheduled;label='unscheduled Jobs';}
    else if(/\bscheduled\b/.test(q)){field=c.scheduled;label='scheduled Jobs';}
-   else for(const [key,name]of Object.entries(labels))if(new RegExp('\\b'+name.replace(/ /g,'\\s+')+'\\b','i').test(q)){field=c.by_status[key];label='Jobs '+(key==='in_production'?'currently in Production':'marked '+name);break;}
+   else for(const [key,name]of Object.entries(labels))if(new RegExp('\\b'+name.replace(/ /g,'(?:\\s+|-)')+'\\b','i').test(q)){field=c.by_status[key];label='Jobs '+(key==='in_production'?'currently in Production':'marked '+name);break;}
    if(/\b(?:upcoming|finish|finishing|due|completion)\b/.test(q)){
     lines.push('Upcoming planned finishes'+(typeof result.filters.start_date==='string'&&typeof result.filters.end_date==='string'?` · ${date(result.filters.start_date)}–${date(result.filters.end_date)}`:'')+':');
     if(!d.upcoming.length)lines.push('No active Jobs have a saved planned finish in this window.');
