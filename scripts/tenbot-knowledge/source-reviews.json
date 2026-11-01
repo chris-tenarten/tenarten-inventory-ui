@@ -497,32 +497,6 @@
   },
   {
     "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
-    "blob": "a0888e92a05ec479571b7c93ee5486429685cbd4",
-    "release": {
-      "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
-      "receipt": {
-        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-        "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
-        "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-hosted.ts",
-    "blob": "4a06c93430e86f3bfda7a02f50111c17a7800c49",
-    "release": {
-      "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
-      "receipt": {
-        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-        "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
-        "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
     "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
     "blob": "4f538fe0b23c7fdbb7a0edc6f8fa14429b18090e",
     "release": {
@@ -557,19 +531,6 @@
         "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
         "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
         "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
-    "blob": "71bcc5d8f9c76a2d7a4a1bdc80f10b66e7ee6b52",
-    "release": {
-      "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
-      "receipt": {
-        "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
-        "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
-        "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
       }
     }
   },
@@ -908,6 +869,123 @@
         "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
         "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
         "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "blob": "b21778a095c651649a8a28c6e1960a71ec9d4766",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "blob": "2df00dea5ec98c58c8dcb0cb1767be1ef3885fe5",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+    "blob": "75fa80c81ac952aa1970963e614953f840530290",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+    "blob": "01414c4ec80f0aa1b3a3793549429c4e91cfd725",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-handler.ts",
+    "blob": "d57da01127979b7a972a1f27e2ee130cb0671858",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-hosted.ts",
+    "blob": "420e7c802d1b12d9d4229bc71461f89bd4e74ab5",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+    "blob": "997976be9c91291a956c5f949b8c2de600ea8cdb",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-job-session.ts",
+    "blob": "0721fc2466e37b4def9ec7f133901983105cbe50",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261031230000_tenbot_conversation_context.sql",
+    "blob": "5e69ed688132133aaffeed8f5c555eff8b4022e6",
+    "release": {
+      "revision": "509abf3be39e77d607e458a297abbaa3e592f189",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+        "revision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+        "heading": "## Executed shared conversational context source reconciliation — November 1, 2026"
       }
     }
   }
