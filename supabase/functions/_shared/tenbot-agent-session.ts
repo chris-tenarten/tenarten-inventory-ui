@@ -1,6 +1,6 @@
 // Server-owned, bounded assistant state. Only proven static workflow/scope turns
-// may survive requests. Hosted storage uses owner-bound atomic claims; local
-// experiments retain the existing in-memory lifecycle. No live tool facts persist.
+// and lookup selectors may survive requests. Hosted storage uses owner-bound
+// atomic claims; local experiments retain their lifecycle. No live facts persist.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {runTenbotAgent,type AgentProvider,type AgentStep,type JsonValue} from './tenbot-agent.ts';
@@ -28,6 +28,9 @@ import {agentKnowledgeEntries,agentKnowledgeSnapshot as snapshot} from './tenbot
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {type AgentSessionStore,type AgentSessionLease,type StoredAgentState,validateStoredAgentState} from './tenbot-agent-history-store.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit extension required by Deno.
+import {contextFromReads,currentConversationContext,conversationContextHint,workflowConversationContext,type ConversationContext} from './tenbot-conversation-context.ts';
 
 export type AgentDemoScenario='job-investigation'|'invoice-preparation'|'tool-recovery';
 export type AgentSessionDependencies={
@@ -42,12 +45,14 @@ export type AgentSessionDependencies={
  onDiagnostic?:InvestigationDiagnosticSink;
  /** Server-only preparation authority. Grants no durable approval or execution. */
  canPrepareInvoice?(owner:string):Promise<boolean>;
+ /** Existing Qwen path, inside the same claimed owner conversation. */
+ fallback?(body:Record<string,unknown>,tools:JobTools,context:ConversationContext|null,history:string[]):Promise<unknown>;
 };
 type KnowledgeProof={id:string;digest:string};
 type GuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
 type DisplayAnswer={conversationId:string;mode:'agent-experiment'|'assistant';contentScope:'workflow'|'scope';message:string;sources:never[];snapshot:{revision:string;verifiedAt:string};summary:null;suggestionAllowed:false;notices:never[]};
 type DisplayTurn={id:string;question:string;createdAt:string;answeredAt:string;answer:DisplayAnswer;sources:KnowledgeProof[];scopeDigest:string};
-type Session={owner:string;touched:number;questions:string[];guidance:GuidanceTurn[];display:DisplayTurn[];jobIds:string[];invoiceAttached:boolean;confirmation:InvoiceConfirmation;busy:boolean};
+type Session={owner:string;touched:number;questions:string[];guidance:GuidanceTurn[];display:DisplayTurn[];jobIds:string[];context:ConversationContext|null;invoiceAttached:boolean;confirmation:InvoiceConfirmation;busy:boolean};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const record=(value:unknown):value is Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const json=(value:unknown)=>JSON.parse(JSON.stringify(value)) as JsonValue;
@@ -63,7 +68,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  if(deps.sessionStore&&!deps.readOnlyHosted)throw new Error('Durable assistant sessions require read-only hosted mode.');
  if(deps.readOnlyHosted&&!deps.sessionStore)throw new Error('Hosted assistant sessions require durable storage.');
  const responseMode=deps.readOnlyHosted?'assistant':'agent-experiment';
- const storedState=(session:Session):StoredAgentState=>({guidance:structuredClone(session.guidance),display:structuredClone(session.display)});
+ const storedState=(session:Session):StoredAgentState=>({guidance:structuredClone(session.guidance),display:structuredClone(session.display),...(session.context?{context:structuredClone(session.context)}:{})});
  const sessions=new Map<string,Session>(),now=deps.now??Date.now;
  const publicationAllowed=async(check:()=>Promise<boolean>)=>{
   let timer:ReturnType<typeof setTimeout>|undefined;
@@ -99,11 +104,11 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(typeof supplied!=='string')throw new TenbotError('Invalid conversation request.');
    await deps.sessionStore.clear(owner,supplied);return {cleared:true};
   }
-  let lease:AgentSessionLease|undefined,committed=false;
+  let lease:AgentSessionLease|undefined,committed=false,fallbackAttempted=false;
   if(deps.sessionStore){
    lease=await deps.sessionStore.claim(owner,typeof supplied==='string'?supplied:undefined);
    if(!validateStoredAgentState(lease.state))throw new TenbotError('Conversation storage is unavailable.',503);
-   sessions.set(lease.id,{owner,touched:lease.expiresAt-3600000,questions:lease.state.guidance.map(turn=>turn.question),guidance:structuredClone(lease.state.guidance),display:structuredClone(lease.state.display),jobIds:[],invoiceAttached:false,confirmation:{},busy:false});
+   sessions.set(lease.id,{owner,touched:lease.expiresAt-3600000,questions:lease.state.guidance.map(turn=>turn.question),guidance:structuredClone(lease.state.guidance),display:structuredClone(lease.state.display),jobIds:[],context:lease.state.context??null,invoiceAttached:false,confirmation:{},busy:false});
   }
   try{
   let session=lease?sessions.get(lease.id):typeof supplied==='string'?sessions.get(supplied):undefined;
@@ -119,6 +124,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(session.busy)throw new TenbotError('A request is already running in this conversation.',409);
    session.busy=true;
    try{
+    session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner));
     const currentScope=await scopeDigest(owner),retained:DisplayTurn[]=[];
     for(const turn of session.display){
      if(turn.scopeDigest!==currentScope)continue;
@@ -162,15 +168,16 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
   if(!session){
    // Bound in-memory owner sessions; do not evict another account's active work.
    if(sessions.size>=100)throw new TenbotError('Local experiment session limit reached.',429);
-   session={owner,touched:now(),questions:[],guidance:[],display:[],jobIds:[],invoiceAttached:false,confirmation:{},busy:false};
+   session={owner,touched:now(),questions:[],guidance:[],display:[],jobIds:[],context:null,invoiceAttached:false,confirmation:{},busy:false};
   }
   const id=lease?.id??(typeof supplied==='string'?supplied:crypto.randomUUID());sessions.set(id,session);
   session.touched=now();session.busy=true;
   const createdAt=new Date(now()).toISOString();
   try{
-   if(body.invoiceId!==undefined){session.invoiceAttached=true;session.guidance=[];}
+   if(body.invoiceId!==undefined){session.invoiceAttached=true;session.guidance=[];session.context=null;}
    if(details)session.confirmation={...session.confirmation,...details};
    const can=(capability:string)=>deps.can(owner,capability);
+   session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner));
    const job=createTenbotAgentJobTools(deps.jobTools(owner));
    const mayPrepareNow=()=>deps.canPrepareInvoice?deps.canPrepareInvoice(owner):(async()=>await can('writeBusinessData')&&await can('adjustInventory'))();
    const mayPrepare=!deps.readOnlyHosted&&await mayPrepareNow();
@@ -198,6 +205,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     if(current)retainedGuidance.push(turn);
    }
    session.guidance=retainedGuidance;
+   if(deps.readOnlyHosted)session.questions=retainedGuidance.map(turn=>turn.question);
    const knowledge=createTenbotAgentKnowledgeTools(can,()=>[...job.tools,...invoice.filter(tool=>tool.kind==='read'||mayPrepare)]);
    for(const tool of knowledge){
     const execute=tool.execute;tool.execute=async(args,context)=>{
@@ -230,6 +238,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     const turn=[...session!.guidance].reverse().find(item=>item.question===previous);
     return {question:previous,answer:turn?'Prior assistant workflow guidance, retained only as conversation context. Re-fetch current knowledge and cite newly issued evidence IDs before giving guidance: '+turn.answer:'Previous live answer omitted. Reauthorize and reread all operational facts. Canonical lookup seeds: '+session!.jobIds.join(', ')};
    });
+   if(session.context)retainedContext.push({question:'Current conversation subject',answer:conversationContextHint(session.context)});
    if(session.invoiceAttached&&deps.invoice)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:(deps.invoice.document.extraction?'Actual OpenAI image preprocessing produced this transcription. Check read_invoice extraction provenance and compare it against the original image. ':'Synthetic text fixture only. ')+'Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
    const result=await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic:deps.onDiagnostic,...(deps.readOnlyHosted?{limits:{maxDurationMs:75000}}:{}),async authorize(check){
     if(!await can('readOperationalData'))return false;
@@ -253,7 +262,42 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     }
     return true;
    }});
-   if(deps.readOnlyHosted&&(result.status==='provider-unavailable'||result.status==='limit'&&result.reason==='cost-limit'))throw new HostedAgentUnavailable(id,result.reason??'provider-unavailable');
+   if(deps.readOnlyHosted&&(result.status==='provider-unavailable'||result.status==='limit'&&result.reason==='cost-limit')){
+    if(!deps.fallback)throw new HostedAgentUnavailable(id,result.reason??'provider-unavailable');
+    const history=session.guidance.length?['Conversation context:\n'+session.guidance.map(t=>`Employee: ${t.question}\nTenBot: ${t.answer}`).join('\n')]:[];
+    fallbackAttempted=true;
+    const fallback=await deps.fallback({...body,conversationId:id},{execute:job.execute},session.context,history);
+    // The canonical legacy handler appended exactly one turn and advanced the
+    // shared conversation revision under our existing claim. Never reclaim or
+    // guess another caller's revision; a stale commit fails its original CAS.
+    if(lease)lease={...lease,revision:lease.revision+1};
+    if(!record(fallback)||typeof fallback.message!=='string'||!Array.isArray(fallback.sources))throw new TenbotError('Invalid fallback answer.',503);
+    const sourceProofs:KnowledgeProof[]=[];let sourceReviewFailed=false;
+    if(!job.reads().length&&!fallback.operational)for(const source of fallback.sources){
+     if(!record(source)||typeof source.id!=='string'){sourceReviewFailed=true;break;}
+     const entry=agentKnowledgeEntries().find(x=>x.id===source.id),published=entry?publishedKnowledgeSource(entry):null;
+     if(!entry||!published||source.guidance!==published.guidance||source.route!==published.route){sourceReviewFailed=true;break;}
+     const proof={id:entry.id,digest:await sourceDigest(knowledgeProofValue(entry),snapshot)};
+     if(!await sourceIsCurrent(proof,owner)){sourceReviewFailed=true;break;}sourceProofs.push(proof);
+    }
+    if(sourceReviewFailed)throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    const workflow=sourceProofs.length>0&&!job.reads().length&&!fallback.operational;
+    const message=String(workflow&&fallback.mode==='guide'&&record(fallback.sources[0])?fallback.sources[0].guidance:fallback.message).slice(0,2400);
+    const answeredAt=new Date(now()).toISOString();let historyTurnId:string|undefined;
+    if(workflow){
+     const ancestry=new Map([...session.guidance.flatMap(x=>x.sources),...sourceProofs].map(x=>[x.id+':'+x.digest,x]));
+     if(ancestry.size>12)throw new TenbotError('Conversation source limit reached. Clear the conversation to continue.',409);
+     const proofs=[...ancestry.values()];historyTurnId=crypto.randomUUID();
+     session.guidance=[...session.guidance,{question,answer:message,sources:proofs}].slice(-3);
+     const savedAnswer:DisplayAnswer={conversationId:id,mode:responseMode,contentScope:'workflow',message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,notices:[]};
+     session.display=[...session.display,{id:historyTurnId,question,createdAt,answeredAt,answer:savedAnswer,sources:proofs,scopeDigest:await scopeDigest(owner)}].slice(-8);
+     const entry=agentKnowledgeEntries().find(x=>x.id===sourceProofs[0].id);session.context=workflowConversationContext(entry?.modules[0]??'TenOps',proofs,false,now());
+    }else{session.guidance=[];session.context=contextFromReads(job.reads(),question,now(),session.context)??(!job.reads().length&&session.context&&!/\b(?:new topic|switch(?:ing)? to)\b/i.test(question)?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);}
+    if(!await job.fresh()||!await can('readOperationalData'))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    if(lease){await deps.sessionStore!.commit(lease,storedState(session),true);committed=true;}
+    if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await job.fresh())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    return {...fallback,conversationId:id,contentScope:workflow?'workflow':'volatile',fallback:true,...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};
+   }
    session.questions=[...session.questions,question].slice(-3);
    // Failed/attempted operational tools make a turn ineligible even if no result
    // was published. No invoice, live-record prose, tool payload or provider-native
@@ -263,6 +307,11 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const ancestry=new Map([...session.guidance.flatMap(turn=>turn.sources),...knowledgeProofs.values()].map(proof=>[proof.id+':'+proof.digest,proof]));
    const knowledgeOnly=result.status==='completed'&&result.final!==null&&!session.invoiceAttached&&result.proposals.length===0&&knowledgeProofs.size>0&&ancestry.size<=12&&result.evidence.length>0&&result.evidence.every(item=>item.tool==='search_workflow_knowledge')&&result.trace.every(item=>item.event!=='tool'||item.name==='discover_capabilities'||item.name==='search_workflow_knowledge');
    const scopeOnly=result.status==='completed'&&result.final!==null&&!session.invoiceAttached&&result.proposals.length===0&&ancestry.size<=12&&result.evidence.length>0&&result.evidence.every(item=>item.tool==='describe_assistant_scope')&&result.trace.every(item=>item.event!=='tool'||item.name==='discover_capabilities'||item.name==='describe_assistant_scope')&&result.final.questions.length===0&&result.final.observations.length===1&&result.final.observations[0].text===result.final.answer&&result.final.inferences.length===0&&result.final.recommendations.length===0&&result.final.completed_actions.length===0;
+   if(!session.invoiceAttached&&result.status==='completed'){
+    if(knowledgeOnly){const entry=agentKnowledgeEntries().find(x=>x.id===[...knowledgeProofs.keys()][0]);session.context=workflowConversationContext(entry?.modules[0]??'TenOps',[...ancestry.values()],Boolean(result.final?.questions.length),now());}
+    else if(scopeOnly)session.context={...workflowConversationContext('TenOps',[],false,now()),operation:'scope',resultType:'scope'};
+    else session.context=contextFromReads(job.reads(),question,now(),session.context)??(!job.reads().length&&result.final?.questions.length&&session.context?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);
+   }
    session.guidance=knowledgeOnly?[...session.guidance,{question,answer:result.final!.answer,sources:[...ancestry.values()]}].slice(-3):[];
    // IDs are lookup seeds only; future requests receive no retained facts/prose.
    session.jobIds=[...new Set(result.evidence.flatMap(item=>{
@@ -296,7 +345,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
   }finally{
    if(lease){
     sessions.delete(lease.id);
-    if(!committed)await deps.sessionStore!.release(lease);
+    if(!committed){try{await deps.sessionStore!.release(lease);}catch(error){if(!fallbackAttempted)throw error;await deps.sessionStore!.release({...lease,revision:lease.revision+1});}}
    }
   }
  };

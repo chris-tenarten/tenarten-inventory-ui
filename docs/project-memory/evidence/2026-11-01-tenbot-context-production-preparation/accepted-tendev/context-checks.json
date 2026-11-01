@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "groups": 11,
+  "source": "exact selective candidate 509abf3be39e77d607e458a297abbaa3e592f189",
+  "command": "tsx scripts/verify-tenbot-conversation-context.mts",
+  "checked": [
+    "Production count to fresh list",
+    "named Job to labor with retained period",
+    "knowledge context for Bid/Intake/Inventory without invented capabilities",
+    "reopen on new handler without inference",
+    "revoked account/record/source denial",
+    "expiry and ambiguous references",
+    "financial restriction",
+    "persistence failure",
+    "Terra runtime selectors without previous live answer"
+  ],
+  "mode": "Actual server/session/tool implementations; synthetic RPC/PostgREST/provider transports",
+  "actualHostedFollowups": false,
+  "actualInference": false,
+  "realDatabase": false
+}

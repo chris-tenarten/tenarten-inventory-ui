@@ -1,14 +1,18 @@
-// A narrow persistence adapter for proven TenBot workflow/scope dialogue only.
+// A narrow persistence adapter for proven workflow/scope dialogue and bounded
+// lookup selectors. Live operational prose, facts and tool payloads never persist.
 // The caller JWT claims/clears its own conversation; only the trusted server can
 // publish validated state bound to that exact owner, revision and lease.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extension for Edge compatibility.
 import {TenbotError} from './tenbot-core.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit extension required by Deno.
+import {validConversationContext,type ConversationContext} from './tenbot-conversation-context.ts';
 export type KnowledgeProof={id:string;digest:string};
 export type StoredGuidanceTurn={question:string;answer:string;sources:KnowledgeProof[]};
 export type StoredDisplayAnswer={conversationId:string;mode:'agent-experiment'|'assistant';contentScope:'workflow'|'scope';message:string;sources:never[];snapshot:{revision:string;verifiedAt:string};summary:null;suggestionAllowed:false;notices:never[]};
 export type StoredDisplayTurn={id:string;question:string;createdAt:string;answeredAt:string;answer:StoredDisplayAnswer;sources:KnowledgeProof[];scopeDigest:string};
-export type StoredAgentState={guidance:StoredGuidanceTurn[];display:StoredDisplayTurn[]};
+export type StoredAgentState={guidance:StoredGuidanceTurn[];display:StoredDisplayTurn[];context?:ConversationContext|null};
 export type AgentSessionLease={id:string;owner:string;revision:number;claim:string;expiresAt:number;state:StoredAgentState};
 export type AgentSessionStore={
  claim(owner:string,id?:string):Promise<AgentSessionLease>;
@@ -27,7 +31,7 @@ const empty=(value:unknown)=>Array.isArray(value)&&value.length===0;
 const proofs=(value:unknown):value is KnowledgeProof[]=>Array.isArray(value)&&value.length<=12&&value.every(item=>record(item)&&keys(item,['id','digest'])&&text(item.id,160)&&typeof item.digest==='string'&&digest.test(item.digest));
 /** Reject native continuations, live facts, tool payloads and arbitrary keys. */
 export function validateStoredAgentState(value:unknown):value is StoredAgentState{
- if(!record(value)||!keys(value,['guidance','display'])||new TextEncoder().encode(JSON.stringify(value)).byteLength>64000)return false;
+ if(!record(value)||!keys(value,Object.hasOwn(value,'context')?['guidance','display','context']:['guidance','display'])||new TextEncoder().encode(JSON.stringify(value)).byteLength>64000||value.context!==undefined&&value.context!==null&&!validConversationContext(value.context))return false;
  if(!Array.isArray(value.guidance)||value.guidance.length>3||!value.guidance.every(turn=>record(turn)&&keys(turn,['question','answer','sources'])&&text(turn.question,1200)&&text(turn.answer,2400)&&proofs(turn.sources)&&turn.sources.length>0))return false;
  if(!Array.isArray(value.display)||value.display.length>8)return false;
  return value.display.every(turn=>{

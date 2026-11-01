@@ -1,7 +1,7 @@
 /** Hosted read-only construction. Models receive neither a database client nor secrets. */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge imports require explicit extensions.
-import {createTenbotAgentSessions,HostedAgentUnavailable} from './tenbot-agent-session.ts';
+import {createTenbotAgentSessions} from './tenbot-agent-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge imports require explicit extensions.
 import {createTenbotAgentHistoryStore} from './tenbot-agent-history-store.ts';
@@ -45,6 +45,7 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
   can:(_owner,capability)=>_owner===owner?can(capability):Promise.resolve(false),
   jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,now,
   sessionStore:historyStore,
+  fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,qwen,undefined,tools,undefined,{context,history}),
   provider(){
    // Check on every turn and again before every network dispatch. An operator's
    // verified expiry is a hard upper bound, never evidence of key validity.
@@ -70,23 +71,7 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
   if(['ask','history','clear'].includes(String(body.action))){
    const allowed=body.action==='ask'?['action','question','context','conversationId']:['action','conversationId'];
    if(Object.keys(body).some(key=>!allowed.includes(key)))throw new TenbotError('Invalid read-only TenBot request.');
-   try{return await sessions(body,owner);}catch(error){
-    if(!(error instanceof HostedAgentUnavailable)||body.action!=='ask')throw error;
-    // Same authenticated conversation row, separate legacy context. No model
-    // continuation, operational evidence or client-replayed history is copied.
-    if(!await can('readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
-    // Reclaim before fallback so another ask/hydration cannot change the CAS
-    // version while Qwen is answering. No inference begins if reclaim fails.
-    const lease=await historyStore.claim(owner,error.conversationId);
-    try{
-     const fallback=await defaultHandler({...body,conversationId:error.conversationId});
-     return {...fallback,conversationId:error.conversationId,contentScope:'volatile',fallback:true};
-    }finally{
-     // Legacy ask appends exactly once, even if later metering fails. Release
-     // only our exact claim at the original or known next revision.
-     try{await historyStore.release(lease);}catch{await historyStore.release({...lease,revision:lease.revision+1});}
-    }
-   }
+   return sessions(body,owner);
   }
   if(body.action==='refresh-job'){
    if(Object.keys(body).some(key=>!['action','conversationId'].includes(key))||!await can('readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
