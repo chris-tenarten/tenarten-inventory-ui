@@ -1,0 +1,44 @@
+[
+  {
+    "path": "src/components/GlobalMessaging.tsx",
+    "sha256": "0815f043c08ce44cece4efef2bce22e5df529816f5d95c020cf9b887ee6e4f74",
+    "builtHash": "0815f043c08ce44cece4efef2bce22e5df529816f5d95c020cf9b887ee6e4f74",
+    "applicationBuildInput": true
+  },
+  {
+    "path": "src/modules/my-work/InboxDialog.tsx",
+    "sha256": "78853ff241f3ca5abc7ef9b868a51ef88e50f1ea6f80ae16f9c54777be8aa45b",
+    "builtHash": "78853ff241f3ca5abc7ef9b868a51ef88e50f1ea6f80ae16f9c54777be8aa45b",
+    "applicationBuildInput": true
+  },
+  {
+    "path": "src/modules/my-work/inbox.ts",
+    "sha256": "c0197b144cc204ec947790ae12e5407ddc4fc663fb7d7b59588877a69c4314e4",
+    "builtHash": "c0197b144cc204ec947790ae12e5407ddc4fc663fb7d7b59588877a69c4314e4",
+    "applicationBuildInput": true
+  },
+  {
+    "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+    "sha256": "f828dafa921988b3ca86bfd269102f326c4383326ec62f41cb470750d7427815",
+    "builtHash": "f828dafa921988b3ca86bfd269102f326c4383326ec62f41cb470750d7427815",
+    "applicationBuildInput": true
+  },
+  {
+    "path": "src/modules/tenbot/history-presentation.ts",
+    "sha256": "094ab208163bc86674bb8c89093c7dbec054c1917055aeb068a561d9ad2834cd",
+    "builtHash": "094ab208163bc86674bb8c89093c7dbec054c1917055aeb068a561d9ad2834cd",
+    "applicationBuildInput": true
+  },
+  {
+    "path": "scripts/verify-tenbot-employee-history.mts",
+    "sha256": "78600c8633588fdfbd4b1d07ef9ded274f8498bc62b181c5384de95cd3c08c9a",
+    "builtHash": "78600c8633588fdfbd4b1d07ef9ded274f8498bc62b181c5384de95cd3c08c9a",
+    "applicationBuildInput": false
+  },
+  {
+    "path": "scripts/verify-tenbot-context-browser.mjs",
+    "sha256": "12bf72d01e0ced4565551d2cb80b6395b5920e5273c026227c62ea127d9d07c1",
+    "builtHash": "8d891dd7db4b487064abbaeb8a2079e2215d6445242a19e88f15bb3cd987ec07",
+    "applicationBuildInput": false
+  }
+]

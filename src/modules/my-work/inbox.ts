@@ -40,7 +40,9 @@ export type ConversationSummary={groupId?:string;creatorUserId?:string;memberIds
 export function tenbotConversations(rows:ConversationSummary[],available:boolean):ConversationSummary[]{
   const conversations=rows.map(row=>isTenOpsSystemInboxUser(row.userId)?{...row,name:"TenBot",role:"AI-assisted TenOps helper"}:row);
   if(available&&!rows.some(row=>isTenOpsSystemInboxUser(row.userId)))conversations.unshift({userId:TENOPS_SYSTEM_INBOX_USER_ID,name:"TenBot",role:"AI-assisted TenOps helper",unread:0,latest:{id:"",createdAt:"",body:"Ask about TenOps workflows"}});
-  return conversations;
+  // Keep the system conversation discoverable without changing the server's
+  // existing recency order for employee/group conversations.
+  return [...conversations.filter(row=>isTenOpsSystemInboxUser(row.userId)),...conversations.filter(row=>!isTenOpsSystemInboxUser(row.userId))];
 }
 export async function loadConversationSummaries():Promise<ConversationSummary[]>{
   const {data,error}=await supabase.rpc("list_my_work_conversations_v12");if(error)throw error;return data??[];

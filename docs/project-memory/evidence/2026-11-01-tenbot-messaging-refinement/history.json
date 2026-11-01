@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "groups": 14,
+  "checks": [
+    "Stable owner thread is discovered with no browser locator; completed answer is archived atomically",
+    "Legacy unavailable results, revoked access, retryable checks and readable persistent answers remain distinct without inferring permission from prose",
+    "Later-session discovery preserves original timestamps and readable historical values despite changed live status, without inference",
+    "Count subject survives later sessions while Which Jobs are they rereads current authorized population",
+    "Named Job and period persist; changed hours remain historical while new questions report fresh6hours",
+    "Record revocation selectively redacts affected aggregate/Job answers and identifying questions; unrelated Job answers remain",
+    "Long-running transcript pages retain older answers beyond four/eight/twenty turns without feeding the archive to inference",
+    "Unavailable authorization never publishes prose and does not destroy the private historical record",
+    "Invalid source/contract evidence redacts both question and answer independently of data freshness",
+    "Cross-owner callers, including an otherwise fully capable account, cannot discover or hydrate another employee thread",
+    "Durable visible history remains outside bounded model context and raw results",
+    "Temporary context-authorization failure fails closed without deleting the privately retained subject",
+    "Primary multi-tool lookup and labor result receives the same concise deterministic quantitative presentation as fallback",
+    "Account capability revocation denies the entire conversation under current authentication"
+  ],
+  "actualDatabase": false,
+  "actualInference": false
+}
