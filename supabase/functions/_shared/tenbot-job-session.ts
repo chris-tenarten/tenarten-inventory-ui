@@ -5,7 +5,7 @@
 import {buildJobEvidence,renderJobEvidence,resolveExactJobReference,type JobEvidence,type JobIntent} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports.
-import type {JobToolResult,JobIdentity,TenbotJobToolName} from './tenbot-job-tools.ts';
+import type {JobToolResult,JobIdentity,JobFacts,TenbotJobToolName} from './tenbot-job-tools.ts';
 
 export type JobTools={execute(name:TenbotJobToolName,args:Record<string,unknown>):Promise<JobToolResult>};
 export const LIVE_QUESTION='[Live Production lookup]';
@@ -35,6 +35,20 @@ export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question
    return {intent:{kind:'search',tool:'find_jobs',args:{query:intent.reference.query,include_archived:intent.includeArchived===true}},result:found,evidence,
     message:choices.length?'Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. '+renderJobEvidence(evidence):renderJobEvidence(evidence),choices};
   }
+ }
+ if(intent.kind==='search'&&intent.selection?.statuses.length){
+  // Reuse bounded, caller-authorized browsing. Filter fresh canonical lifecycle
+  // data on the server; never reinterpret a saved count as the list of Jobs.
+  const jobs:JobFacts[]=[],all:JobToolResult[]=[];let cursor:unknown=undefined;
+  for(let page=0;page<3;page++){
+   const result=await tools.execute('find_jobs',{...intent.args,limit:20,...(cursor?{cursor}:{})});all.push(result);
+   const data=result.data as {jobs?:JobFacts[];has_more?:boolean;next_cursor?:string}|null;
+   if(result.status!=='ok'||!result.complete||!data?.jobs){const evidence=buildJobEvidence(result);return {intent,result,evidence,message:renderJobEvidence(evidence)};}
+   jobs.push(...data.jobs.filter(j=>intent.kind==='search'&&intent.selection!.statuses.includes(j.effective.status)));
+   cursor=data.has_more?data.next_cursor:undefined;if(!cursor||jobs.length>=20)break;
+  }
+  const last=all.at(-1)!,result:JobToolResult={...last,filters:{...last.filters,requested_statuses:intent.selection.statuses},data:{...(last.data as {jobs:JobFacts[];match:'browse';has_more:boolean;next_cursor:string|null}),jobs:jobs.slice(0,20),has_more:Boolean(cursor)||jobs.length>20},sources:all.flatMap(r=>r.sources),truncated:Boolean(cursor)||jobs.length>20,unknowns:[...last.unknowns,...(cursor||jobs.length>20?['Only a bounded portion of the matching scope is shown; this is not a complete count.']:[])]};
+  const evidence=buildJobEvidence(result);return {intent,result,evidence,message:renderJobEvidence(evidence,1400,question)};
  }
  const result=await tools.execute(intent.tool,intent.kind==='job'?{...intent.args,job_id:'jobId' in intent.reference?intent.reference.jobId:''}:intent.args);
  const evidence=buildJobEvidence(result);

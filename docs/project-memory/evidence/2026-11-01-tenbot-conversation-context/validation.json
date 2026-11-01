@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "riskTier": 3,
+  "testingLevel": 3,
+  "contextGroups": 11,
+  "historyGroups": 13,
+  "hostedFallbackGroups": 10,
+  "routingGroups": 20,
+  "actualPostgreSQLValidatorChecks": 14,
+  "actualLocalMessagingBrowserChecks": 4,
+  "typescript": "PASS",
+  "targetedEslintIncludingIgnoredEdgeSources": "PASS",
+  "diffCheck": "PASS",
+  "productionBuild": "PASS",
+  "liveModelInferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "syntheticRpcAndProviderTransports": true,
+  "newSignedJwtOrFullDatabaseHistoryLifecycleCertification": false,
+  "sharedMigrationApplied": false,
+  "pushOrDeployment": false,
+  "reviewUrl": "http://localhost:3000/my-work",
+  "apiPort": 55597
+}

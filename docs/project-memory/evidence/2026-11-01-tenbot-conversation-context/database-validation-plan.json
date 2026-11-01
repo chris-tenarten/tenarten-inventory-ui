@@ -1,0 +1,7 @@
+{
+  "fixture": "ahnqbzuhpwgmispwohwv",
+  "mode": "Real PostgreSQL exact migration + strict validator/ACL checks in one fully rolled-back transaction. Exact previous validators temporarily bootstrapped because this invoice fixture has no assistant-history schema. No histories/users/catalog/stock changes; not JWT/RLS certification.",
+  "checks": 14,
+  "migrationSha256": "a75ecd0eef035cc4a71cf944724c00588216aabae3fa9d98b161d7ea7b66bb52",
+  "sqlSha256": "27ffeea9403f6e80056c73bf8f7b8a41719a84237aa20c5252bc267736629196"
+}

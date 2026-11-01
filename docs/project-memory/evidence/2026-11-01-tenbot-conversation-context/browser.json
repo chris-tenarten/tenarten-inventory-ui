@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "checks": [
+    "Production count → Which ones in real Messaging UI",
+    "Reload restores owner conversation locator/topic without repeating inference",
+    "Browser storage contains no operational answer or Job label",
+    "Composer remains usable at mobile width"
+  ],
+  "actions": [
+    "status",
+    "ask",
+    "ask",
+    "status",
+    "history",
+    "ask"
+  ],
+  "errors": [],
+  "actualMessagingUi": true,
+  "syntheticAuthAndData": true,
+  "liveInference": false,
+  "realDatabase": false,
+  "hostedCalls": 0
+}

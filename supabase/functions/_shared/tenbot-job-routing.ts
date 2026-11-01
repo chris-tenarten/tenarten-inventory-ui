@@ -3,12 +3,15 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports; Next excludes Edge sources.
 import type {JobToolResult,JobFacts,JobIdentity,TenbotJobToolName} from './tenbot-job-tools.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit extension required by Deno.
+import type {ConversationContext} from './tenbot-conversation-context.ts';
 
-export type JobContext={jobId:string};
+export type JobContext={jobId:string;continuity?:ConversationContext};
 export type JobIntent=
  | {kind:'blocked';message:string}
  | {kind:'overview';tool:'get_production_overview';args:Record<string,unknown>}
- | {kind:'search';tool:'find_jobs';args:Record<string,unknown>}
+ | {kind:'search';tool:'find_jobs';args:Record<string,unknown>;selection?:{statuses:string[]}}
  | {kind:'job';tool:'get_job_summary'|'get_job_planning'|'get_job_labor_summary';reference:{jobId:string}|{query:string};args:Record<string,unknown>;includeArchived?:boolean}
  | {kind:'clarify';message:string};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -61,13 +64,28 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  // existing knowledge/conversation system. Neither is a live-record request.
  if(/\b(?:summari[sz]e|rewrite|rephrase|translate|proofread|analy[sz]e|evaluate|explain|review)\b/i.test(q)&&(/\n/.test(q)||/\b(?:pasted|provided|following|this text|this note)\b/i.test(q)))return null;
  if(isJobWorkflowQuestion(q)||/\bhow\s+(?:do|can|should|would)\s+(?:i|we)\b|\bwhere\s+(?:do|can|should|would)\s+(?:i|we)\b/i.test(q)&&!/^\s*how\s+(?:much|many)\b/i.test(q))return null;
+ if(/\b(?:salary|salaries|payroll|wages?|profits?|margins?|costs?|prices?|contract value|deposit|financial|payment|employee names?|personal tasks?|private (?:messages?|DMs?)|direct messages?|who (?:is|was|are|worked|works)|workers? (?:names?|identit))\b/i.test(q))return {kind:'blocked',message:'Job intelligence does not retrieve financial information, private messages, personal tasks or individual employee details. I can help with recorded Job status, dates, labor totals and material status.'};
+ // Other module references remain knowledge questions. A remembered Job must
+ // not fabricate a Bid/material relationship or acquire another read capability.
+ if(/\b(?:bid|intake|inventory|purchasing|catalog|messaging)\b/i.test(q)&&!/\b(?:status|hours?|labor|labour|schedule)\b/i.test(q))return null;
+ const continuity=context?.continuity,referential=/\b(?:it|its|that|those|these|ones|other)\b/i.test(q)&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
+ if(continuity&&referential&&continuity.subject==='Production'){
+  if(/\bother\b/i.test(q)&&continuity.resultType==='collection')return {kind:'clarify',message:'Which subset of the Production Jobs do you want to compare? I retained the search scope, not a copy of the previous result list.'};
+  const s=continuity.selection,args={...(s.includeArchived?{include_archived:true}:{}),...(s.startDate&&s.endDate?{start_date:s.startDate,end_date:s.endDate}:{})};
+  if(/\b(?:which|list|names?|ones|other)\b/i.test(q)&&!s.startDate)return {kind:'search',tool:'find_jobs',args:{...(s.query?{query:s.query}:{}),...(s.includeArchived?{include_archived:true}:{})},...(s.statuses.length?{selection:{statuses:s.statuses}}:{})};
+  return {kind:'overview',tool:'get_production_overview',args};
+ }
+ if(continuity&&referential&&continuity.subject==='Job'&&continuity.references.length!==1)return {kind:'clarify',message:'Which of the previously discussed Production Jobs do you mean? More than one Job was in context; please choose its number or name.'};
  const modulePattern='(?:Production(?:\\s+Pipeline)?|Inventory|Intake|Planning|Timeline|Manpower(?:\\s+Reporting)?|TenOps|Messaging|Rework|Purchasing|Samples?|Proposals?|Jobs?)';
  if(new RegExp(`^\\s*(?:what\\s+(?:does|do)|how\\s+(?:does|do))\\s+(?:the\\s+)?${modulePattern}\\s+(?:do|show|work|mean|support|include|offer|help|differ|handle|manage|track)\\b`,'i').test(q))return null;
  const hasJob=/\b(?:jobs?|production|projects?)\b/i.test(q)||Boolean(context&&uuid.test(context.jobId));
- const liveWords=/\b(?:current|status|scheduled?|unscheduled|planning|planned|completion|complete|finish|hours?|labor|labour|manpower|material|ready|readiness|shortage|incoming|rework|follow.up|blockers?|issues?|progress|overview|counts?|active|upcoming|recorded|find|show|list|tell me|what|which|how many|how much|analy[sz]e|evaluate)\b/i;
+ const liveWords=/\b(?:current|status|hold|scheduled?|unscheduled|planning|planned|completion|complete|finish|hours?|labor|labour|manpower|material|ready|readiness|shortage|incoming|rework|follow.up|blockers?|issues?|progress|overview|counts?|active|upcoming|recorded|find|show|list|tell me|what|which|how many|how much|analy[sz]e|evaluate)\b/i;
  if(!hasJob)return null;
- if(/\b(?:salary|salaries|payroll|wages?|profits?|margins?|costs?|prices?|contract value|deposit|financial|payment|employee names?|personal tasks?|private (?:messages?|DMs?)|direct messages?|who (?:is|was|are|worked|works)|workers? (?:names?|identit))\b/i.test(q))return {kind:'blocked',message:'Job intelligence does not retrieve financial information, private messages, personal tasks or individual employee details. I can help with recorded Job status, dates, labor totals and material status.'};
- if(!liveWords.test(q))return null;
+
+ if(!liveWords.test(q)){
+  if(referential&&context&&uuid.test(context.jobId)&&continuity&&['get_job_summary','get_job_planning','get_job_labor_summary'].includes(continuity.operation))return {kind:'job',tool:continuity.operation as 'get_job_summary'|'get_job_planning'|'get_job_labor_summary',reference:{jobId:context.jobId},args:continuity.operation==='get_job_labor_summary'&&continuity.selection.startDate&&continuity.selection.endDate?{start_date:continuity.selection.startDate,end_date:continuity.selection.endDate}:{}};
+  return null;
+ }
  const includeArchived=/\b(?:include|including|show|list|find)\b[^.!?]{0,30}\barchived\b/i.test(q);
  const args:Record<string,unknown>=includeArchived?{include_archived:true}:{};
  const period=jobReportingPeriod(q,now);
@@ -82,6 +100,7 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  if(overview)return {kind:'overview',tool:'get_production_overview',args:{...args,...period??{}}};
  const tool=/\b(?:labor|labour|manpower|hours?)\b/i.test(q)?'get_job_labor_summary':/\b(?:scheduled?|unscheduled|planning|planned|dates?|next|completion|finish)\b/i.test(q)?'get_job_planning':'get_job_summary';
  const detailArgs=tool==='get_job_labor_summary'&&period?period:{};
+ const contextualArgs=tool==='get_job_labor_summary'&&!requestedTemporal&&continuity?.selection.startDate&&continuity.selection.endDate?{start_date:continuity.selection.startDate,end_date:continuity.selection.endDate}:detailArgs;
  const directUuid=q.match(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i)?.[0];
  if(directUuid)return {kind:'job',tool,reference:{jobId:directUuid},args:detailArgs,...(includeArchived?{includeArchived:true}:{})};
  // Quotes are the least ambiguous way to preserve a multiword Job name.
@@ -95,14 +114,14 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  // Job references still require an explicit selection rather than a guess.
  const contextualJob=/\b(?:that|this|same)\s+(?:job|project)\b/i.test(q)&&(q.match(/\b(?:jobs?|projects?)\b/gi)?.length??0)<=1;
  const pronounSubject=/\b(?:it|its)\b/i.test(q)&&!/\b(?:job|project)\s+\S/i.test(q)&&(!forTarget||/^(?:it|its|that|this|same)\b/i.test(trimReference(forTarget)));
- if(context&&uuid.test(context.jobId)&&!quoted&&!numbered&&(contextualJob||pronounSubject))return {kind:'job',tool,reference:{jobId:context.jobId},args:detailArgs};
- if(context&&uuid.test(context.jobId)&&!quoted&&!numbered&&(/^(?:it|its|that|this|same)\b/i.test(candidate)||/\b(?:that|this|same)\s+job\b/i.test(q)&&/^(?:have|has|is|does|do|need|needs)$/i.test(candidate)))return {kind:'job',tool,reference:{jobId:context.jobId},args:detailArgs};
+ if(context&&uuid.test(context.jobId)&&!quoted&&!numbered&&(contextualJob||pronounSubject))return {kind:'job',tool,reference:{jobId:context.jobId},args:contextualArgs};
+ if(context&&uuid.test(context.jobId)&&!quoted&&!numbered&&(/^(?:it|its|that|this|same)\b/i.test(candidate)||/\b(?:that|this|same)\s+job\b/i.test(q)&&/^(?:have|has|is|does|do|need|needs)$/i.test(candidate)))return {kind:'job',tool,reference:{jobId:context.jobId},args:contextualArgs};
  const generic=/^(?:status|overview|counts?|planning|scheduled?|unscheduled|labor|labour|hours?|production|progress|readiness|material|materials|it|that|this|the job|job|jobs|all|all jobs|active jobs|archived jobs)$/i;
  if(candidate&&candidate.length<=120&&!generic.test(candidate)){
   const search=plural&&/\b(?:find|search|show|list)\b/i.test(q)&&!numbered&&!quoted;
   return search?{kind:'search',tool:'find_jobs',args:{...args,query:candidate}}:{kind:'job',tool,reference:{query:candidate},args:detailArgs,...(includeArchived?{includeArchived:true}:{})};
  }
- if(context&&uuid.test(context.jobId)&&/\b(?:it|its|that|this|same|job|hours|labor|labour|material|scheduled|planning|planned|dates|ready|readiness|next|status)\b/i.test(q))return {kind:'job',tool,reference:{jobId:context.jobId},args:detailArgs};
+ if(context&&uuid.test(context.jobId)&&/\b(?:it|its|that|this|same|job|hours|labor|labour|material|scheduled|planning|planned|dates|ready|readiness|next|status)\b/i.test(q))return {kind:'job',tool,reference:{jobId:context.jobId},args:contextualArgs};
  if(plural&&/\b(?:find|show|list|search)\b/i.test(q))return {kind:'search',tool:'find_jobs',args};
  return {kind:'clarify',message:'Which Production Job do you mean? Enter its Job number or exact project name, or choose a Job from the results.'};
 }

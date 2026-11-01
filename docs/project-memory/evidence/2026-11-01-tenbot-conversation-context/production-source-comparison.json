@@ -1,0 +1,51 @@
+{
+  "basis": "retained exact deployed Production candidate, not a new hosted check",
+  "files": [
+    {
+      "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+      "new": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "baseMatchesProductionCandidate": true,
+      "productionSha256": "88cb319df74eebb8d745904415527f01559dc329de4780c915b7a62ca74e2a20",
+      "localBaseSha256": "88cb319df74eebb8d745904415527f01559dc329de4780c915b7a62ca74e2a20"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "baseMatchesProductionCandidate": true,
+      "productionSha256": "bc637d02e84e2e7d2fc760899c7bb46453883ca9b60de071f2fde6c19d372d46",
+      "localBaseSha256": "bc637d02e84e2e7d2fc760899c7bb46453883ca9b60de071f2fde6c19d372d46"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "baseMatchesProductionCandidate": true,
+      "productionSha256": "0bea8de12d9f0f20ef7988953a0ea60b92ad5af5eeb89809b9fbd31232946db4",
+      "localBaseSha256": "0bea8de12d9f0f20ef7988953a0ea60b92ad5af5eeb89809b9fbd31232946db4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "baseMatchesProductionCandidate": true,
+      "productionSha256": "483362833b15de5fe985dcbdc3e1d07e57a2bb7576d8447d3be07530ebd3118b",
+      "localBaseSha256": "483362833b15de5fe985dcbdc3e1d07e57a2bb7576d8447d3be07530ebd3118b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "baseMatchesProductionCandidate": true,
+      "productionSha256": "c6b3fc9fabf4e5d741de42e592a15b7175dfab1995b14c3bb9b1951a2c2ce984",
+      "localBaseSha256": "c6b3fc9fabf4e5d741de42e592a15b7175dfab1995b14c3bb9b1951a2c2ce984"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "baseMatchesProductionCandidate": true,
+      "productionSha256": "e5eb34ee5b80ed41b2997026bad0d5f5b92f2abdfc96d945563a558272dc040b",
+      "localBaseSha256": "e5eb34ee5b80ed41b2997026bad0d5f5b92f2abdfc96d945563a558272dc040b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "baseMatchesProductionCandidate": true,
+      "productionSha256": "55913c591c2104865d7bc2f563cd187da7988c9bd8d3752663864e1a0e3d65b7",
+      "localBaseSha256": "55913c591c2104865d7bc2f563cd187da7988c9bd8d3752663864e1a0e3d65b7"
+    }
+  ]
+}

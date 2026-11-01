@@ -1,0 +1,21 @@
+{
+  "reason": "Exact accepted new candidate replaces prior candidate tuples; historical evidence preserved",
+  "rows": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "71bcc5d8f9c76a2d7a4a1bdc80f10b66e7ee6b52",
+      "sha256": "0bea8de12d9f0f20ef7988953a0ea60b92ad5af5eeb89809b9fbd31232946db4",
+      "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+        "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+      },
+      "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+    }
+  ]
+}

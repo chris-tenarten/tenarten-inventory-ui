@@ -10,11 +10,17 @@ import {resolveJobIntent,buildOperationalInferenceInput,validateOperationalExpla
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports.
 import {LIVE_QUESTION,retainedJobIntent,jobHistoryMarker,withoutLiveHistory,prepareJobRequest,operationalReply,type JobTools,type PreparedJobRequest} from './tenbot-job-session.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit extension required by Deno.
+import {conversationContextHint,type ConversationContext} from './tenbot-conversation-context.ts';
+type TrustedContinuity={context:ConversationContext|null;history:string[]};
 type Rpc=(name:string,args?:Record<string,unknown>)=>Promise<{data:unknown;error:unknown}>;
 type ExperimentalAgent=(body:Record<string,unknown>,owner:string)=>Promise<unknown>;
 export function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget:number|undefined,jobTools:JobTools|undefined,experimentalAgent:ExperimentalAgent):Promise<unknown>;
 export function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget?:number,jobTools?:JobTools):ReturnType<typeof handleTenbotDefault>;
-export async function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget?:number,jobTools?:JobTools,experimentalAgent?:ExperimentalAgent){
+export function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget:number|undefined,jobTools:JobTools|undefined,experimentalAgent:undefined,continuity:TrustedContinuity):ReturnType<typeof handleTenbotDefault>;
+export function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget?:number,jobTools?:JobTools,experimentalAgent?:ExperimentalAgent,continuity?:TrustedContinuity):ReturnType<typeof handleTenbotDefault>;
+export async function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget?:number,jobTools?:JobTools,experimentalAgent?:ExperimentalAgent,continuity?:TrustedContinuity){
  // Only the local review adapter supplies this dependency. Hosted construction,
  // Qwen metering, normal history and all other actions remain unchanged.
  if(experimentalAgent&&['ask','clear','history'].includes(String(body.action))){
@@ -22,9 +28,9 @@ export async function handleTenbot(body:Record<string,unknown>,userId:string,cal
   if(allowed.error||allowed.data!==true)throw new TenbotError('Your account is not authorized.',403);
   return experimentalAgent(body,userId);
  }
- return handleTenbotDefault(body,userId,caller,service,provider,legacyBudget,jobTools);
+ return handleTenbotDefault(body,userId,caller,service,provider,legacyBudget,jobTools,continuity);
 }
-async function handleTenbotDefault(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,_legacyBudget?:number,jobTools?:JobTools){
+async function handleTenbotDefault(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,_legacyBudget?:number,jobTools?:JobTools,continuity?:TrustedContinuity){
  // Retained call compatibility only; the atomic database policy is authoritative.
  void _legacyBudget;
  const call=async(rpc:Rpc,name:string,args:Record<string,unknown>={})=>{const r=await rpc(name,args);if(r.error)throw new TenbotError(name==='tenbot_reserve_usage'?'TenBot shared usage limit or inference budget reached. Please retry later.':'TenBot could not complete this action.',name==='tenbot_reserve_usage'?429:403);return r.data;};
@@ -69,9 +75,11 @@ async function handleTenbotDefault(body:Record<string,unknown>,userId:string,cal
   if(!jobTools||!previousLive)return {expired:true,conversationId:conversation.id};
   return {...operationalReply(await prepareJobRequest(previousLive,jobTools)),conversationId:conversation.id};
  }
- const history=serverConversationContext(withoutLiveHistory(conversation.turns));
+ const history=continuity?[...continuity.history,...(continuity.context?['Conversation context:\nEmployee: '+continuity.context.subject+' '+(continuity.context.subject==='Job'?'Production Job':'')+'\nTenBot: '+conversationContextHint(continuity.context)]:[])]:serverConversationContext(withoutLiveHistory(conversation.turns));
  const resolved=resolveInput(body,history),matches=[...resolved.entries,...resolved.directEntries];
- const jobIntent=body.action==='ask'&&!privacyBoundaryQuestion(resolved.question)?resolveJobIntent(resolved.question,previousLive?.kind==='job'&&'jobId' in previousLive.reference?{jobId:previousLive.reference.jobId}:null):null;
+ const seed=continuity?.context;
+ const jobSeed=continuity?(seed?{jobId:seed.references.length===1?seed.references[0]:'',continuity:seed}:null):previousLive?.kind==='job'&&'jobId' in previousLive.reference?{jobId:previousLive.reference.jobId}:null;
+ const jobIntent=body.action==='ask'&&!privacyBoundaryQuestion(resolved.question)?resolveJobIntent(resolved.question,jobSeed):null;
  for(const permission of jobIntent?[]:requiredInferencePermissions(matches)){
   const allowed=permission==='proposal.access'?await call(caller,'has_proposal_access'):await call(caller,'has_app_capability',{p_capability:permission});
   if(allowed===true)permissions.add(permission);

@@ -471,7 +471,7 @@ export function useTenbotConversation():TenbotConversation{
       <div className="space-y-1 border-t border-slate-100 pt-2">{m.answer.operational.facts.map(fact=><p key={fact.id}>{fact.text}</p>)}</div>
       {m.answer.operational.truncated?<p>Some records could not be included. Incomplete totals are not presented as exact.</p>:null}
      </details>:null}
-    </>:m.error===inactiveResponse?<p role="status" className="text-slate-600">{m.error}</p>:m.error?.startsWith('Live Job facts')?<p className="text-xs text-slate-500">Ask again to refresh this live answer.</p>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">{busy?'Working…':'No answer was displayed. Ask again to retry.'}</p>}
+    </>:m.error===inactiveResponse?<p role="status" className="text-slate-600">{m.error}</p>:m.error?.startsWith('Live Job facts')?<p className="text-xs text-slate-500">Previous live answer hidden. Ask a follow-up to refresh the subject.</p>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">{busy?'Working…':'No answer was displayed. Ask again to retry.'}</p>}
     {m.answeredAt?<time className="block text-[10px] text-slate-400">{messageTime(m.answeredAt)}</time>:null}
    </article>}]):[];
  const history=available?<div role="log" aria-label="TenBot conversation" aria-live="polite">{entries.map(entry=><div key={entry.id}>{entry.content}</div>)}</div>:null;
