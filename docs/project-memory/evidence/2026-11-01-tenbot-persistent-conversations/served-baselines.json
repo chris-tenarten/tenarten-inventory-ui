@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "at": "2026-11-01T19:58:39.016Z",
+  "checks": [
+    {
+      "site": "tenops",
+      "revision": "01c0b4576a61329d973ce65ca58437ce26627be1",
+      "exactServedRootMatches": true
+    },
+    {
+      "site": "tendev",
+      "revision": "c45f12a6b10aa01b524922b654ce61b12e7be9f8",
+      "exactServedRootMatches": true
+    }
+  ],
+  "authenticatedChecks": false,
+  "mutations": 0
+}

@@ -7,7 +7,12 @@ import {buildJobEvidence,renderJobEvidence,resolveExactJobReference,type JobEvid
 // @ts-ignore -- Deno requires explicit .ts imports.
 import type {JobToolResult,JobIdentity,JobFacts,TenbotJobToolName} from './tenbot-job-tools.ts';
 
-export type JobTools={execute(name:TenbotJobToolName,args:Record<string,unknown>):Promise<JobToolResult>};
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Deno import.
+import {presentJobResult} from './tenbot-job-presentation.ts';
+const present=(result:JobToolResult,evidence:JobEvidence,question='')=>presentJobResult(result,question)??renderJobEvidence(evidence,1400,question);
+
+export type JobTools={authorizeHistory?(ids:string[]):Promise<'authorized'|'denied'|'unavailable'>;execute(name:TenbotJobToolName,args:Record<string,unknown>):Promise<JobToolResult>};
 export const LIVE_QUESTION='[Live Production lookup]';
 const marker='tenbot-job-context.v1:';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -33,7 +38,7 @@ export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question
   else{
    const evidence=buildJobEvidence(found),choices=rows.map(job=>({job_id:job.job_id,reference:job.reference}));
    return {intent:{kind:'search',tool:'find_jobs',args:{query:intent.reference.query,include_archived:intent.includeArchived===true}},result:found,evidence,
-    message:choices.length?'Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. '+renderJobEvidence(evidence):renderJobEvidence(evidence),choices};
+    message:choices.length?'Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. '+present(found,evidence,question):present(found,evidence,question),choices};
   }
  }
  if(intent.kind==='search'&&intent.selection?.statuses.length){
@@ -43,7 +48,7 @@ export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question
   for(let page=0;page<3;page++){
    const result=await tools.execute('find_jobs',{...intent.args,limit:20,...(cursor?{cursor}:{})});all.push(result);
    const data=result.data as {jobs?:JobFacts[];has_more?:boolean;next_cursor?:string}|null;
-   if(result.status!=='ok'||!result.complete||!data?.jobs){const evidence=buildJobEvidence(result);return {intent,result,evidence,message:renderJobEvidence(evidence)};}
+   if(result.status!=='ok'||!result.complete||!data?.jobs){const evidence=buildJobEvidence(result);return {intent,result,evidence,message:present(result,evidence,question)};}
    if(data.jobs.some(j=>seenIds.has(j.job_id))){incomplete=true;break;}for(const j of data.jobs)seenIds.add(j.job_id);
    jobs.push(...data.jobs.filter(j=>intent.kind==='search'&&intent.selection!.statuses.includes(j.effective.status)));
    if(data.has_more&&(!data.next_cursor||data.next_cursor===cursor)){incomplete=true;break;}
@@ -51,11 +56,11 @@ export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question
   }
   const last=all.at(-1)!,result:JobToolResult={...last,filters:{...last.filters,requested_statuses:intent.selection.statuses},data:{...(last.data as {jobs:JobFacts[];match:'browse';has_more:boolean;next_cursor:string|null}),jobs:jobs.slice(0,20),has_more:incomplete||Boolean(cursor)||jobs.length>20},sources:all.flatMap(r=>r.sources),truncated:incomplete||Boolean(cursor)||jobs.length>20,unknowns:[...last.unknowns,...(incomplete||cursor||jobs.length>20?['Only a bounded portion of the matching scope is shown; this is not a complete count.']:[])]};
   if(result.truncated){result.status='partial';result.complete=false;}
-  const evidence=buildJobEvidence(result);return {intent,result,evidence,message:renderJobEvidence(evidence,1400,question)};
+  const evidence=buildJobEvidence(result);return {intent,result,evidence,message:present(result,evidence,question)};
  }
  const result=await tools.execute(intent.tool,intent.kind==='job'?{...intent.args,job_id:'jobId' in intent.reference?intent.reference.jobId:''}:intent.args);
  const evidence=buildJobEvidence(result);
- return {intent,result,evidence,message:renderJobEvidence(evidence,1400,question)};
+ return {intent,result,evidence,message:present(result,evidence,question)};
 }
 export function operationalReply(prepared:PreparedJobRequest,message=prepared.message,ai=false,fallback=false){
  const evidence=prepared.evidence;

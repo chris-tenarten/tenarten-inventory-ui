@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "tier": 3,
+  "testingLevel": 3,
+  "deterministicPersistenceGroups": 13,
+  "adjacentLegacyHistoryGroups": 15,
+  "realPostgreSQLJwtRlsGroups": 10,
+  "localMessagingBrowserGroups": 10,
+  "virtualBrowserTimeAdvancedMs": 61000,
+  "typeScript": true,
+  "targetedEslint": true,
+  "standardBuild": true,
+  "edgeImportModules": 39,
+  "actualTerraInference": false,
+  "actualQwenInference": false,
+  "inferenceCostUsd": 0,
+  "sharedMigrationsApplied": 0,
+  "deployed": false
+}

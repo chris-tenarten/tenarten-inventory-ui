@@ -59,7 +59,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Ex
   // The model selects find_jobs; the server preserves the employee's already
   // established population instead of treating a pronoun as a search term.
   let result:JobToolResult;if(spec.name==='find_jobs'&&followup){scoped=await prepareJobRequest(followup.intent,{execute},followup.question);result=scoped.result!;}else result=await execute(spec.name,argsFor(spec.name,args));
-  return {data:json(result)};
+  const {accessRefs:_references,...modelResult}=result;void _references;return {data:json(modelResult)};
  }}));
  return {tools,execute,scoped:()=>scoped,reads:()=>structuredClone([...reads.values()]),async fresh(){
   if(inconsistent)return false;

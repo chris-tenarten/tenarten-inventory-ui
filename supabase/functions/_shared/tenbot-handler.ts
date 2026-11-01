@@ -118,7 +118,7 @@ async function handleTenbotDefault(body:Record<string,unknown>,userId:string,cal
     // authenticated caller before publishing; old model prose is never authority.
     const fresh=jobTools&&prepared.intent?await prepareJobRequest(prepared.intent,jobTools,resolved.question):prepared;
     const unchanged=JSON.stringify(fresh.result?.data)===JSON.stringify(prepared.result?.data)&&fresh.result?.status===prepared.result?.status;
-    prepared=fresh;result=operationalReply(fresh,unchanged?validated.message:fresh.message,unchanged,!unchanged);
+    prepared=fresh;const quantitative=['get_production_overview','get_job_labor_summary'].includes(fresh.result?.tool??'');result=operationalReply(fresh,unchanged&&!quantitative?validated.message:fresh.message,unchanged,!unchanged);
    }
   }else result=await answer(body,permissions,provider,reserve,history);
  }catch(e){

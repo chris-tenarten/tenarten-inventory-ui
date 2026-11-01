@@ -7,11 +7,13 @@ import type {JobTools} from '../../supabase/functions/_shared/tenbot-job-session
 const archived=JSON.parse(readFileSync(new URL('../fixtures/tenbot-capability-history.synthetic.json',import.meta.url),'utf8'));
 type Conversation={id:string;owner:string;version:number;expires:number;claim:string|null;state:StoredAgentState;turns:{question:string;answer:string}[]};
 export function createHostedTenbotFixture(owner='11111111-1111-4111-8111-111111111111',scenario=archived){
+ const archives=new Map<string,{ordinal:number;turn:Record<string,unknown>}[]>();let displaySequence=0;
  const rows=new Map<string,Conversation>(),reservations=new Map<string,{reserved:number;actual?:number}>();
  const state={allowed:true,groupAllowed:true,budget:true,providerFailure:false,apiModel:'gpt-6.1-terra',serviceTier:'default',commitFailure:false,qwenPause:null as null|(()=>Promise<void>),jobTools:null as JobTools|null,qwenRequests:[] as unknown[],now:Date.now(),providerCalls:0,qwenCalls:0,jobCalls:0,steps:0,context:[] as unknown[],events:[] as string[]};
  const can=(capability:unknown)=>state.allowed&&(capability!=='messaging.write'||state.groupAllowed);
  const caller:HostedRpc=async(name,args={})=>{
   state.events.push(name);const id=String(args.p_conversation_id??''),row=rows.get(id);
+  if(name==='tenbot_employee_claim'){const selected=id||[...rows.values()].find(r=>r.owner===owner)?.id;const old=selected?rows.get(selected):undefined;if(old&&old.owner===owner)old.expires=state.now+3600000;return caller('tenbot_agent_claim',{p_conversation_id:selected??null});}
   if(name==='has_app_capability')return {data:can(args.p_capability),error:null};
   if(name==='has_proposal_access')return {data:state.allowed,error:null};
   if(name==='tenbot_agent_claim'){
@@ -35,6 +37,14 @@ export function createHostedTenbotFixture(owner='11111111-1111-4111-8111-1111111
  };
  const service:HostedRpc=async(name,args={})=>{
   state.events.push(name);const row=rows.get(String(args.p_conversation_id??''));
+  if(name==='tenbot_employee_page'){
+   if(!row||row.owner!==args.p_user||row.version!==args.p_revision||row.claim!==args.p_claim||!state.allowed)return{data:null,error:null};
+   const selected=(archives.get(row.id)??[]).filter(x=>!args.p_before||x.ordinal<Number(args.p_before)).slice(-20),first=selected[0]?.ordinal;
+   return{data:{turns:structuredClone(selected.map(x=>x.turn)),nextCursor:first&&(archives.get(row.id)??[]).some(x=>x.ordinal<first)?String(first):null,appendCursor:selected.length===20?String(selected[1].ordinal):null},error:null};
+  }
+  if(name==='tenbot_employee_commit'){
+   const result=await service('tenbot_agent_commit',args);if(result.data===true&&args.p_turn){const list=archives.get(row!.id)??[],turn=args.p_turn as Record<string,unknown>;if(!list.some(x=>x.turn.id===turn.id))list.push({ordinal:++displaySequence,turn:structuredClone(turn)});archives.set(row!.id,list);}return result;
+  }
   if(name==='tenbot_agent_load')return {data:row&&row.owner===args.p_user&&row.version===args.p_revision&&row.claim===args.p_claim?structuredClone(row.state):null,error:null};
   if(name==='tenbot_agent_commit'){
    if(state.commitFailure)return {data:false,error:null};
@@ -71,6 +81,6 @@ export function createHostedTenbotFixture(owner='11111111-1111-4111-8111-1111111
  const qwen=cloudflareProvider('fixture-account','fixture-key',async(_url,init)=>{
   state.qwenRequests.push(JSON.parse(String(init?.body)));state.qwenCalls++;await state.qwenPause?.();return Response.json({success:true,result:{response:JSON.stringify({ids:['group'],answer:'Open Messaging, choose New group, enter a group name, select another participant, then choose Create group.',summary:''}),usage:{prompt_tokens:110,completion_tokens:20}}});
  });
- const handler=(origin='https://tendev.pages.dev',config={})=>createHostedTenbot({owner,origin,config:{enabled:true,origins:['https://tendev.pages.dev','http://localhost:3000'],apiKey:'fixture-secret-never-real',keyExpiresAt:new Date(state.now+3600000).toISOString(),spendingAuthorized:true,...config},caller,service,jobTools:{async execute(name,args){state.jobCalls++;if(state.jobTools)return state.jobTools.execute(name,args);throw new TenbotError('Synthetic Job access unavailable.',403);}},qwen,fetcher,now:()=>state.now});
- return {handler,state,rows,reservations,owner,archived:scenario,caller,service,fetcher};
+ const handler=(origin='https://tendev.pages.dev',config={})=>createHostedTenbot({owner,origin,config:{enabled:true,origins:['https://tendev.pages.dev','http://localhost:3000'],apiKey:'fixture-secret-never-real',keyExpiresAt:new Date(state.now+3600000).toISOString(),spendingAuthorized:true,...config},caller,service,jobTools:{async authorizeHistory(ids){return state.jobTools?.authorizeHistory?state.jobTools.authorizeHistory(ids):'denied';},async execute(name,args){state.jobCalls++;if(state.jobTools)return state.jobTools.execute(name,args);throw new TenbotError('Synthetic Job access unavailable.',403);}},qwen,fetcher,now:()=>state.now});
+ return {handler,state,rows,archives,reservations,owner,archived:scenario,caller,service,fetcher};
 }

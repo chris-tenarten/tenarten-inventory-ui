@@ -18,7 +18,7 @@ const server=createServer(async(req,res)=>{
  if(url.pathname.startsWith('/auth/v1/'))return send(200,reviewSession.user);
  if(url.pathname==='/functions/v1/tenbot'){
   if(!['status','ask','history','clear'].includes(String(body.action)))return send(403,{error:'Only conversation read/review actions are available'});
-  try{f.state.now=Date.now();return send(200,await f.run()(body));}catch(e){return send(e&&typeof e==='object'&&'status' in e?Number(e.status):500,{error:e instanceof Error?e.message:'Local review unavailable'});}
+  try{f.state.now=Date.now();return send(200,await f.handler('https://tendev.pages.dev',{spendingAuthorized:false,persistentHistory:true})(body));}catch(e){return send(e&&typeof e==='object'&&'status' in e?Number(e.status):500,{error:e instanceof Error?e.message:'Local review unavailable'});}
  }
  if(url.pathname==='/review/status')return send(200,{mode:'synthetic-offline',liveInference:false,operationalWrites:false,conversationCount:f.rows.size,providerCalls:f.state.providerCalls});
  if(url.pathname.startsWith('/rest/v1/rpc/')){

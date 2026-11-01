@@ -39,6 +39,12 @@ import {operationalReceipt,operationalHistoryMeta,restoreOperationalHistory,type
 // @ts-ignore -- explicit extension for Deno.
 import {resolveJobIntent,isJobFollowupReference} from './tenbot-job-routing.ts';
 export type AgentDemoScenario='job-investigation'|'invoice-preparation'|'tool-recovery';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Deno import.
+import {presentJobResult} from './tenbot-job-presentation.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node
+// @ts-ignore -- explicit Edge extension
+import {employeeDisplay,restoreEmployeePage} from './tenbot-employee-history.ts';
 export type AgentSessionDependencies={
  can(owner:string,capability:string):Promise<boolean>;
  jobTools(owner:string):JobTools;
@@ -46,7 +52,7 @@ export type AgentSessionDependencies={
  mode:'offline-scripted'|'openai';
  invoice?:{document:TenbotInvoiceDocument;reader(owner:string):TenbotInvoiceReader};
  readOnlyHosted?:boolean;
- /** Server-only staged transport gate; legacy clients never receive private live history. */
+ /** Server-only staged display transport gate; no additional authority. */
  operationalHistory?:boolean;
  sessionStore?:AgentSessionStore;
  now?:()=>number;
@@ -76,10 +82,9 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  if(deps.sessionStore&&!deps.readOnlyHosted)throw new Error('Durable assistant sessions require read-only hosted mode.');
  if(deps.readOnlyHosted&&!deps.sessionStore)throw new Error('Hosted assistant sessions require durable storage.');
  const responseMode=deps.readOnlyHosted?'assistant':'agent-experiment';
- const operationalEnabled=deps.operationalHistory!==false;
- // Keep unexpired private receipts from a newer client without publishing them
- // to the old UI. This gate grants no read, tool or storage authority.
- const restoreHistory:typeof restoreOperationalHistory=(...args)=>operationalEnabled?restoreOperationalHistory(...args):Promise.resolve({kept:args[0].filter(t=>Date.parse(t.expiresAt)>args[2]),turns:[]});
+ const persistent=deps.sessionStore?.persistent===true;
+ const operationalEnabled=deps.operationalHistory!==false&&!persistent;
+ const restoreHistory:typeof restoreOperationalHistory=(...args)=>operationalEnabled?restoreOperationalHistory(...args):Promise.resolve({kept:[],retained:args[0].filter(t=>Date.parse(t.expiresAt)>args[2]),turns:[]});
  const storedState=(session:Session):StoredAgentState=>({guidance:structuredClone(session.guidance),display:structuredClone(session.display),...(session.operational.length?{operational:structuredClone(session.operational)}:{}),...(session.context?{context:structuredClone(session.context)}:{})});
  const sessions=new Map<string,Session>(),now=deps.now??Date.now;
  const publicationAllowed=async(check:()=>Promise<boolean>)=>{
@@ -104,13 +109,13 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  return async(body:Record<string,unknown>,owner:string)=>{
   if(!owner||!await deps.can(owner,'readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
   for(const [id,session] of sessions)if(now()-session.touched>3600000&&!session.busy)sessions.delete(id);
-  if(Object.keys(body).some(key=>!(deps.readOnlyHosted?['action','question','context','conversationId']:['action','question','context','conversationId','invoiceId','orderDetails','demoScenario']).includes(key)))throw new TenbotError('Invalid experimental request.');
+  if(Object.keys(body).some(key=>!(deps.readOnlyHosted?['action','question','context','conversationId',...(persistent?['before']:[])]:['action','question','context','conversationId','invoiceId','orderDetails','demoScenario']).includes(key)))throw new TenbotError('Invalid experimental request.');
   if(!['ask','clear','history'].includes(String(body.action)))throw new TenbotError('The experiment supports questions, history and clearing only. No execution action exists.');
-  const supplied=body.conversationId;
+  let supplied=body.conversationId;
   if(supplied!==undefined&&(typeof supplied!=='string'||!uuid.test(supplied)))throw new TenbotError('Invalid conversation request.');
   if(deps.readOnlyHosted){
    if(body.action==='ask')resolveInput(body);
-   else if(Object.keys(body).some(key=>!['action','conversationId'].includes(key))||!supplied)throw new TenbotError('Invalid conversation request.');
+   else if(Object.keys(body).some(key=>!['action','conversationId',...(persistent&&body.action==='history'?['before']:[])].includes(key))||!supplied&&!(persistent&&body.action==='history'))throw new TenbotError('Invalid conversation request.');
   }
   if(deps.sessionStore&&body.action==='clear'){
    if(typeof supplied!=='string')throw new TenbotError('Invalid conversation request.');
@@ -119,10 +124,13 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
   let lease:AgentSessionLease|undefined,committed=false,fallbackAttempted=false;
   if(deps.sessionStore){
    lease=await deps.sessionStore.claim(owner,typeof supplied==='string'?supplied:undefined);
+   if(persistent)supplied=lease.id;
    if(!validateStoredAgentState(lease.state))throw new TenbotError('Conversation storage is unavailable.',503);
    sessions.set(lease.id,{owner,touched:lease.expiresAt-3600000,questions:lease.state.guidance.map(turn=>turn.question),guidance:structuredClone(lease.state.guidance),display:structuredClone(lease.state.display),jobIds:[],context:lease.state.context??null,operational:structuredClone(lease.state.operational??[]),invoiceAttached:false,confirmation:{},busy:false});
   }
   try{
+  const archivePage=persistent&&lease?await deps.sessionStore!.page!(lease,body.action==='history'&&typeof body.before==='string'?body.before:undefined):null;
+  if(body.before!==undefined&&(body.action!=='history'||typeof body.before!=='string'))throw new TenbotError('Invalid history page.');
   let session=lease?sessions.get(lease.id):typeof supplied==='string'?sessions.get(supplied):undefined;
   if(supplied&&(!session||session.owner!==owner))throw new TenbotError('Conversation unavailable. Reopen TenBot and retry.',403);
   if(body.action==='clear'){
@@ -131,12 +139,20 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    return {cleared:true};
   }
   if(body.action==='history'){
-   if(Object.keys(body).some(key=>!['action','conversationId'].includes(key))||!supplied)throw new TenbotError('Invalid experimental history request.');
+   if(Object.keys(body).some(key=>!['action','conversationId',...(persistent?['before']:[])].includes(key))||!supplied)throw new TenbotError('Invalid experimental history request.');
    if(!session)throw new TenbotError('Conversation unavailable. Reopen TenBot and retry.',403);
    if(session.busy)throw new TenbotError('A request is already running in this conversation.',409);
    session.busy=true;
    try{
-    session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner));
+    if(persistent&&lease&&archivePage){
+     session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),p=>sourceIsCurrent(p,owner),true);
+     session.operational=[];
+     await deps.sessionStore!.commit(lease,storedState(session),false);committed=true;
+     const scope=await scopeDigest(owner);let turns:Awaited<ReturnType<typeof restoreEmployeePage>>=[];
+     if(!await publicationAllowed(async()=>{turns=await restoreEmployeePage(archivePage.turns,deps.jobTools(owner),scope,String(supplied),now(),p=>sourceIsCurrent(p,owner));return await deps.can(owner,'readOperationalData')&&await scopeDigest(owner)===scope;}))throw new TenbotError('Private history could not be reauthorized. Please retry.',503);
+     return {conversationId:String(supplied),mode:responseMode,persistentHistory:true,nextCursor:archivePage.nextCursor,turns};
+    }
+    session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner),persistent);
     const currentScope=await scopeDigest(owner),retained:DisplayTurn[]=[];
     for(const turn of session.display){
      if(turn.scopeDigest!==currentScope)continue;
@@ -155,7 +171,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     if(now()-session.touched>3600000||sessions.get(supplied as string)!==session)throw new TenbotError('Conversation unavailable. Reopen TenBot and retry.',403);
     session.display=published;
     const restored=await restoreHistory(session.operational,deps.jobTools(owner),now(),finalScope,String(supplied),responseMode,p=>sourceIsCurrent(p,owner));
-    session.operational=restored.kept;
+    session.operational=restored.retained;
     let operationalTurns=restored.turns;
     if(lease){await deps.sessionStore!.commit(lease,storedState(session),false);committed=true;}
     // Storage is asynchronous. A successful commit is not evidence that source
@@ -166,7 +182,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
      operationalTurns=(await restoreHistory(restored.kept,deps.jobTools(owner),now(),finalScope,String(supplied),responseMode,p=>sourceIsCurrent(p,owner))).turns.concat(restored.turns.filter(t=>t.answer.history.state==='redacted'));
      return await scopeDigest(owner)===finalScope&&deps.can(owner,'readOperationalData');
     }))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
-    return {conversationId:supplied,mode:responseMode,turns:[...published.map(({id,question,createdAt,answeredAt,answer})=>({id,question,createdAt,answeredAt,answer:structuredClone(answer)})),...operationalTurns].sort((a,b)=>a.createdAt.localeCompare(b.createdAt)).slice(-8)};
+    return {conversationId:String(supplied),mode:responseMode,turns:[...published.map(({id,question,createdAt,answeredAt,answer})=>({id,question,createdAt,answeredAt,answer:structuredClone(answer)})),...operationalTurns].sort((a,b)=>a.createdAt.localeCompare(b.createdAt)).slice(-8)};
    }finally{session.busy=false;}
   }
   // Preserve the existing input/privacy contract without using its intent router.
@@ -194,7 +210,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(body.invoiceId!==undefined){session.invoiceAttached=true;session.guidance=[];session.context=null;}
    if(details)session.confirmation={...session.confirmation,...details};
    const can=(capability:string)=>deps.can(owner,capability);
-   session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner));
+   session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner),persistent);
    const priorContext=session.context;
    const followup=deps.readOnlyHosted&&session.context?.subject==='Production'&&isJobFollowupReference(question)?resolveJobIntent(question,{jobId:'',continuity:session.context},new Date(now())):null;
    const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?.kind==='search'?{intent:followup,question}:undefined);
@@ -316,8 +332,16 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     const savedOperational=operationalEnabled&&!workflow?await operationalReceipt(job.reads(),question,String(fallback.message),createdAt,now(),await scopeDigest(owner),fallbackProofs):null;
     if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
     if(!await job.fresh()||!await can('readOperationalData'))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
-    if(lease){await deps.sessionStore!.commit(lease,storedState(session),true);committed=true;}
+    const archive=persistent?employeeDisplay(job.reads(),{id:historyTurnId??crypto.randomUUID(),question,message,createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:workflow?sourceProofs:fallbackProofs,contentScope:workflow?'workflow':'operational-history'}):undefined;
+    if(persistent&&!archive)throw new TenbotError('This answer could not be saved safely. Please retry.',503);
+    if(lease){await deps.sessionStore!.commit(lease,storedState(session),true,archive??undefined);committed=true;}
     if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await job.fresh())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    if(persistent&&archive&&archivePage){
+     const scope=await scopeDigest(owner),rows=[...archivePage.turns,archive].slice(-20);let turns:Awaited<ReturnType<typeof restoreEmployeePage>>=[];
+     if(!await publicationAllowed(async()=>{turns=await restoreEmployeePage(rows,deps.jobTools(owner),scope,id,now(),p=>sourceIsCurrent(p,owner));return await can('readOperationalData')&&await scopeDigest(owner)===scope;}))throw new TenbotError('Private history could not be reauthorized. Please retry.',503);
+     const current=turns.find(t=>t.id===archive.id);if(!current||current.answer.history.state!=='verified')throw new TenbotError('Your access changed. No answer was published.',403);current.answer.history.historical=false;
+     return {...fallback,...current.answer,conversationId:id,fallback:true,persistentHistory:true,nextCursor:archivePage.appendCursor,historyTurns:turns,historyTurnId:archive.id,createdAt,answeredAt};
+    }
     const rechecked=await restoreHistory(session.operational,deps.jobTools(owner),now(),await scopeDigest(owner),id,responseMode,p=>sourceIsCurrent(p,owner));
     if(!await can('readOperationalData')||savedOperational&&!rechecked.kept.some(t=>t.id===savedOperational.id))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
     return {...fallback,conversationId:id,contentScope:savedOperational?'operational-history':workflow?'workflow':'volatile',fallback:true,...(operationalEnabled?{historyTurns:rechecked.turns}:{}),...(savedOperational?{history:operationalHistoryMeta(savedOperational,now(),false)}:{}),...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};
@@ -344,7 +368,10 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     const jobData=item.data.data;
     return record(jobData.job)&&typeof jobData.job.job_id==='string'&&uuid.test(jobData.job.job_id)?[jobData.job.job_id]:[];
    }))].slice(0,4);
-   const message=followup?.kind==='search'?(job.scoped()?.message??'The authorized Job list was not retrieved. I cannot establish a matching count or enumerate those Jobs. Please retry the list.'):(result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.'));
+   const quantitativeReads=job.reads().filter(r=>['get_production_overview','get_job_labor_summary'].includes(r.name));
+   const singleRead=quantitativeReads.length===1?quantitativeReads[0]:undefined;
+   const quantitativeBrief=result.status==='completed'&&singleRead&&['get_production_overview','get_job_labor_summary'].includes(singleRead.name)?presentJobResult(singleRead.result,question):null;
+   const message=followup?.kind==='search'?(job.scoped()?.message??'The authorized Job list was not retrieved. I cannot establish a matching count or enumerate those Jobs. Please retry the list.'):(quantitativeBrief??result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.'));
    const answeredAt=new Date(now()).toISOString(),contentScope=knowledgeOnly?'workflow':scopeOnly?'scope':'volatile';
    let historyTurnId:string|undefined;
    if(contentScope!=='volatile'){
@@ -354,7 +381,9 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }
    const savedOperational=operationalEnabled&&deps.readOnlyHosted&&contentScope==='volatile'&&result.status==='completed'?await operationalReceipt(job.reads(),question,message,createdAt,now(),await scopeDigest(owner),[...ancestry.values()]):null;
    if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
-   if(lease){await deps.sessionStore!.commit(lease,storedState(session),true);committed=true;}
+   const archive=persistent&&result.status==='completed'?employeeDisplay(job.reads(),{id:historyTurnId??crypto.randomUUID(),question,message:message.slice(0,2400),createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:[...ancestry.values()],contentScope:contentScope==='volatile'?'operational-history':contentScope}):undefined;
+   if(persistent&&result.status==='completed'&&!archive)throw new TenbotError('This answer could not be saved safely. Please retry.',503);
+   if(lease){await deps.sessionStore!.commit(lease,storedState(session),true,archive??undefined);committed=true;}
    if(deps.readOnlyHosted&&!await publicationAllowed(async()=>{
     if(!await can('readOperationalData')||!await job.fresh())return false;
     for(const capability of knowledgeGrants)if(!await can(capability))return false;
@@ -364,6 +393,12 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     for(const capability of knowledgeGrants)if(!await can(capability))return false;
     return can('readOperationalData');
    }))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+   if(persistent&&archive&&archivePage){
+    const scope=await scopeDigest(owner),rows=[...archivePage.turns,archive].slice(-20);let turns:Awaited<ReturnType<typeof restoreEmployeePage>>=[];
+    if(!await publicationAllowed(async()=>{turns=await restoreEmployeePage(rows,deps.jobTools(owner),scope,id,now(),p=>sourceIsCurrent(p,owner));return await can('readOperationalData')&&await scopeDigest(owner)===scope;}))throw new TenbotError('Private history could not be reauthorized. Please retry.',503);
+    const current=turns.find(t=>t.id===archive.id);if(!current||current.answer.history.state!=='verified')throw new TenbotError('Your access changed. No answer was published.',403);current.answer.history.historical=false;
+    return {...current.answer,conversationId:id,persistentHistory:true,nextCursor:archivePage.appendCursor,historyTurns:turns,historyTurnId:archive.id,createdAt,answeredAt};
+   }
    if(deps.readOnlyHosted){const rechecked=await restoreHistory(session.operational,deps.jobTools(owner),now(),await scopeDigest(owner),id,responseMode,p=>sourceIsCurrent(p,owner));
    if(!await can('readOperationalData')||savedOperational&&!rechecked.kept.some(t=>t.id===savedOperational.id))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
    return {conversationId:id,mode:responseMode,contentScope:savedOperational?'operational-history':contentScope,...(operationalEnabled?{historyTurns:rechecked.turns}:{}),...(savedOperational?{history:operationalHistoryMeta(savedOperational,now(),false)}:{}),message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,notices:[],...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};}

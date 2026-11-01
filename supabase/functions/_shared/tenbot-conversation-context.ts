@@ -32,11 +32,15 @@ export const contextLive=(value:unknown,now:number):value is ConversationContext
 function resultJobId(result:JobToolResult):string|null{const data:unknown=result.data;return object(data)&&object(data.job)&&typeof data.job.job_id==='string'&&uuid.test(data.job.job_id)?data.job.job_id:null;}
 /** A reference grants nothing. Check current caller-visible records before using
  * a seed, even when it came from this owner's previous authorized turn. */
-export async function currentConversationContext(value:unknown,now:number,tools:JobTools,sourceCurrent:(p:{id:string;digest:string})=>Promise<boolean>):Promise<ConversationContext|null>{
- if(!contextLive(value,now))return null;
+export async function currentConversationContext(value:unknown,now:number,tools:JobTools,sourceCurrent:(p:{id:string;digest:string})=>Promise<boolean>,persistent=false):Promise<ConversationContext|null>{
+ if(!validConversationContext(value)||Date.parse(value.updatedAt)>now||!persistent&&Date.parse(value.expiresAt)<=now)return null;
  for(const proof of value.sources)if(!await sourceCurrent(proof))return null;
- for(const id of value.references){const r=await tools.execute('get_job_summary',{job_id:id});if(r.status!=='ok'||!r.complete||resultJobId(r)!==id)return null;}
- return structuredClone(value);
+ if(persistent&&value.references.length&&tools.authorizeHistory){
+  const access=await tools.authorizeHistory(value.references);
+  if(access==='unavailable')throw new Error('Current conversation access could not be verified.');
+  if(access!=='authorized')return null;
+ }else for(const id of value.references){const r=await tools.execute('get_job_summary',{job_id:id});if(r.status!=='ok'||!r.complete||resultJobId(r)!==id)return null;}
+ return persistent?{...structuredClone(value),updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()}:structuredClone(value);
 }
 function requestedStatuses(question:string):string[]{
  const q=question.toLowerCase();if(/\bactive\b/.test(q))return [...ACTIVE_PRODUCTION_STATUSES];

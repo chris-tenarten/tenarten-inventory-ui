@@ -1,0 +1,131 @@
+{
+  "reason": "Accepted persistent-history exact bytes supersede prior candidate tuples; historical authority retained",
+  "rows": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "blob": "d57da01127979b7a972a1f27e2ee130cb0671858",
+      "sha256": "4331e44183cabe79ee23f991b1a7383bc27b065f7eda815fea5db16e49f4784c",
+      "reviewedCandidate": "0d6d5466538761f0fa582f018853a79ade51055f",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-context-source-proof.md",
+        "revision": "0d6d5466538761f0fa582f018853a79ade51055f",
+        "heading": "## Accepted candidate source review — conversational context, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-operational-history.ts",
+      "blob": "43e7f98f10a3e91e5c9f48f07ced8e99df735ee8",
+      "sha256": "4d8435ae37aa6f95a1e5f3adf4583c7ad82cf7d8c8a5654ce01a949a09c4d2d0",
+      "reviewedCandidate": "444409fd681d3136d21a88053a141d3060b9ae9c",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a00d62e354f4c5086d2ca5ad9bb9c87d31a40a60",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-live-history-source-proof.md",
+        "revision": "444409fd681d3136d21a88053a141d3060b9ae9c",
+        "heading": "## Accepted candidate source review — bounded live history, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "blob": "f1a0eeccd9fd676416482bc643d5ed91f18c1c07",
+      "sha256": "d2d34a13c696b26a38880e004627f05a6b90bdf585c05c4ffce4862059f2421f",
+      "reviewedCandidate": "444409fd681d3136d21a88053a141d3060b9ae9c",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a00d62e354f4c5086d2ca5ad9bb9c87d31a40a60",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-live-history-source-proof.md",
+        "revision": "444409fd681d3136d21a88053a141d3060b9ae9c",
+        "heading": "## Accepted candidate source review — bounded live history, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "370a9be6c18c9a4edcb1589e78ce2503c3e2d60c",
+      "sha256": "791d47a97e9dddfb5b49093a7636ec264a192ff455d9880059ab19f002883388",
+      "reviewedCandidate": "444409fd681d3136d21a88053a141d3060b9ae9c",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-live-history-source-proof.md",
+        "revision": "444409fd681d3136d21a88053a141d3060b9ae9c",
+        "heading": "## Candidate technical source review — TenDev transport compatibility, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+      "blob": "8dc0ddf2b32a553dc442d091f43ee68328c40e1e",
+      "sha256": "72b99a701bc37c2e57ed12cb72d1984e40c6afb6c8bceb4b7b8ce12e38187cc9",
+      "reviewedCandidate": "444409fd681d3136d21a88053a141d3060b9ae9c",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a00d62e354f4c5086d2ca5ad9bb9c87d31a40a60",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-live-history-source-proof.md",
+        "revision": "444409fd681d3136d21a88053a141d3060b9ae9c",
+        "heading": "## Accepted candidate source review — bounded live history, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "blob": "04a943f15d0be767fba4bc8ede4b26389fee2680",
+      "sha256": "d147c0e05a8c0fd15583bd7a76f2e57d6a152bd7947da3d2a42a6c907462d20c",
+      "reviewedCandidate": "444409fd681d3136d21a88053a141d3060b9ae9c",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a00d62e354f4c5086d2ca5ad9bb9c87d31a40a60",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-live-history-source-proof.md",
+        "revision": "444409fd681d3136d21a88053a141d3060b9ae9c",
+        "heading": "## Accepted candidate source review — bounded live history, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "blob": "47426326a951f007ab9e56747b1a9d34c43da93a",
+      "sha256": "28d8f88895d12dcdb38c3f4a799323256da7cf03890304afb6f64d37c20e1a5a",
+      "reviewedCandidate": "444409fd681d3136d21a88053a141d3060b9ae9c",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "a00d62e354f4c5086d2ca5ad9bb9c87d31a40a60",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-live-history-source-proof.md",
+        "revision": "444409fd681d3136d21a88053a141d3060b9ae9c",
+        "heading": "## Accepted candidate source review — bounded live history, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "blob": "f3923f458e5cce2679a473704dac933f33fcfdfd",
+      "sha256": "046517b84ae57dec8c178d86d3e340c99923cb0932fbe83a895b1229fa97df4f",
+      "reviewedCandidate": "444409fd681d3136d21a88053a141d3060b9ae9c",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-live-history-source-proof.md",
+        "revision": "444409fd681d3136d21a88053a141d3060b9ae9c",
+        "heading": "## Candidate technical source review — TenDev transport compatibility, November 1, 2026"
+      }
+    }
+  ]
+}

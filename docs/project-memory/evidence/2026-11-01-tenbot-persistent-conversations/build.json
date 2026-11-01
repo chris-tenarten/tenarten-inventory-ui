@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "durationMs": 12567,
+  "source": "/private/tmp/tenops-tenbot-persistent-20261101/build-source",
+  "taskOnlySource": true,
+  "localReviewUrl": "http://localhost:3000/my-work",
+  "syntheticAuthAndData": true,
+  "liveInference": false,
+  "releaseProofClaimed": false,
+  "knowledgeRegenerated": false,
+  "hostedChanges": 0
+}

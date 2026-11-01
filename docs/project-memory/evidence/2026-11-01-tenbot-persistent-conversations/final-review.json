@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "applicationUrl": "http://localhost:3000/my-work",
+  "apiPort": 55597,
+  "apiPid": 52268,
+  "existingStaticServerPreserved": 79102,
+  "actualInference": false,
+  "hostedAccess": false,
+  "syntheticReview": true
+}
