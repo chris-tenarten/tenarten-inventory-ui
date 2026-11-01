@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "groups": 13,
+  "checks": [
+    "A Production count → Which ones reuses scope and freshly reads actual five-tool executor",
+    "Production status follow-ups refine the current population in legacy and persistent history without switching to My Work",
+    "Primary model-selected status enumeration uses the explicit On Deck selector, not the previous In Production filter or generated My Work prose",
+    "B named Job → labor retains canonical identity, requeries totals and never retains results",
+    "C original Bid remains a knowledge follow-up, never an invented relationship/tool",
+    "D Intake walkthrough and next-step context restore without provider invocation",
+    "E Inventory → incoming retains verified module context without enabling inventory reads/writes",
+    "F reopening on another handler preserves topic, identity and TTL without inference",
+    "G record and account revocation clear seeds or deny; legacy markers cannot resurrect them",
+    "H expired references, ambiguity, untrusted fields and arbitrary live payloads fail closed",
+    "retained collection context cannot bypass financial restrictions or persistence failures",
+    "Qwen source permission revoked during inference cannot publish or retain its answer",
+    "Terra orchestration receives only selectors after instance restoration, not prior live answers"
+  ],
+  "examples": [
+    {
+      "case": "A",
+      "first": "There are 8 active Jobs.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "followUp": "8 matching Jobs:\n• CTX-1 — Context Alpha — In Production\n• CTX-2 — Context Job 2 — In Production\n• CTX-3 — Context Job 3 — In Production\n• CTX-4 — Context Job 4 — In Production\n• CTX-5 — Context Job 5 — In Production\n• CTX-6 — Context Job 6 — In Production\n• CTX-7 — Context Job 7 — In Production\n• CTX-8 — Context Job 8 — In Production"
+    },
+    {
+      "case": "Production status refinement",
+      "persistentHistory": false,
+      "count": "There are 7 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "followUp": "There is 1 Job marked On Deck.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "list": "1 matching Job:\n• CTX-2 — Context Job 2 — On Deck",
+      "subject": "Production",
+      "reads": [
+        "has_app_capability",
+        "jobs",
+        "production_rework_cycles"
+      ]
+    },
+    {
+      "case": "Production status refinement",
+      "persistentHistory": true,
+      "count": "There are 7 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "followUp": "There is 1 Job marked On Deck.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "list": "1 matching Job:\n• CTX-2 — Context Job 2 — On Deck",
+      "subject": "Production",
+      "reads": [
+        "has_app_capability",
+        "jobs",
+        "production_rework_cycles",
+        "tenbot_authorize_history_jobs"
+      ]
+    },
+    {
+      "case": "B",
+      "followUp": "CTX-1 — Context Alpha has 5 hours of recorded labor.\nReporting period: Oct 2, 2026–Oct 31, 2026 (work dates).\n1 saved Manpower entry; latest work date Oct 30, 2026.\nRecorded hours do not include unreported work or forecast remaining effort.\nThese are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified."
+    },
+    {
+      "case": "C",
+      "answer": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+      "relationshipReadAvailable": false
+    }
+  ],
+  "mode": "actual hosted/session and authorized tool implementations with synthetic RPC/PostgREST and scripted model transports",
+  "actualPaidInference": false,
+  "realDatabase": false,
+  "productionCalls": 0
+}

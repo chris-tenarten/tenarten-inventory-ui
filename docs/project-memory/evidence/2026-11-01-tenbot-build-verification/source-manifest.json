@@ -1,0 +1,18 @@
+[
+  {
+    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+    "sha256": "3da8e3ae9346d34eea74d5be752f6848b02d96add71125d6b90ad2d10a232fc4"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+    "sha256": "8c73b45b326088b8ef7f6866151afe830128f687c46ff6c18d8530329975a5a7"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
+    "sha256": "e183f95316f2207f86541afde5f7237401d3109d25747036d003275e2ba48acc"
+  },
+  {
+    "path": "scripts/verify-tenbot-conversation-context.mts",
+    "sha256": "f05cb17d2083806ade1cd04230fa2ce4373ea284cb3338ba58f1efe804e2b805"
+  }
+]

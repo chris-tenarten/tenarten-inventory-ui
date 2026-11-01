@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "error": null,
+  "durationMs": 12719,
+  "source": "/private/tmp/tenops-tenbot-build-investigation-20261101/build-source",
+  "selectedPaths": [
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-conversation-context.ts",
+    "supabase/functions/_shared/tenbot-job-presentation.ts",
+    "scripts/verify-tenbot-conversation-context.mts"
+  ],
+  "taskOnlySource": true,
+  "localUiUnchangedFrom": "e61d333ccfb2fed1f1488ad8071d169cf67c73b7",
+  "syntheticAuthAndData": true,
+  "inferenceCalls": 0,
+  "hostedChanges": 0,
+  "knowledgeRegenerated": false,
+  "releaseProofClaimed": false
+}

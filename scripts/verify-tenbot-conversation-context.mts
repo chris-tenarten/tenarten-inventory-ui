@@ -4,20 +4,47 @@ import assert from 'node:assert/strict';
 import {writeFileSync} from 'node:fs';
 import {uuid} from './support/wave2-fixture.mjs';
 import {createContextFixture as fixture} from './support/tenbot-context-fixture.mjs';
-import {contextFromReads,contextLive,validConversationContext,CONTEXT_TTL_MS} from '../supabase/functions/_shared/tenbot-conversation-context';
+import {contextFromReads,contextLive,validConversationContext,workflowConversationContext,CONTEXT_TTL_MS} from '../supabase/functions/_shared/tenbot-conversation-context';
 import {validateStoredAgentState} from '../supabase/functions/_shared/tenbot-agent-history-store';
 import {createTenbotAgentSessions} from '../supabase/functions/_shared/tenbot-agent-session';
 import type {AgentProvider,AgentStep} from '../supabase/functions/_shared/tenbot-agent';
+import {resolveJobIntent,buildJobEvidence,buildOperationalInferenceInput} from '../supabase/functions/_shared/tenbot-job-routing';
 const checks:string[]=[],examples:unknown[]=[];const check=async(name:string,run:()=>Promise<void>)=>{await run();checks.push(name);};
 await check('A Production count → Which ones reuses scope and freshly reads actual five-tool executor',async()=>{
  const f=fixture(),a=await f.ask('How many active jobs are in Production?'),id=String(a.conversationId);assert.match(String(a.message),/8/);assert.equal(f.row(id).state.context?.subject,'Production');
  const before=f.trace.length,b=await f.ask('Which ones?',id);assert(f.trace.slice(before).some(x=>x.table==='jobs'));assert.match(String(b.message),/CTX-1/);assert(!String(b.message).includes('CTX-9'));assert(!String(b.message).includes('Which Production Job'));
  const saved=JSON.stringify({...f.row(id).state,operational:undefined});assert(!saved.includes('Context Alpha'));assert(!saved.includes('Active Production Jobs: 8'));assert.equal(f.state.providerCalls,0);examples.push({case:'A',first:a.message,followUp:b.message});
 });
+await check('Production status follow-ups refine the current population in legacy and persistent history without switching to My Work',async()=>{
+ for(const persistentHistory of [false,true]){
+  const f=fixture();f.tables.jobs[1].production_status='on_deck';
+  const run=(body:Record<string,unknown>)=>f.handler('https://tendev.pages.dev',{spendingAuthorized:false,persistentHistory})(body) as Promise<Record<string,unknown>>;
+  const first=await run({action:'ask',question:'How many Jobs are currently in Production?'}),id=String(first.conversationId);assert.match(String(first.message),/7 Jobs/);
+  const seed=structuredClone(f.row(id).state.context!);for(const question of ['On Deck','On-Deck','On  Deck','On\tDeck','What about On Deck?','How many are On Deck?'])assert.equal(resolveJobIntent(question,{jobId:'',continuity:seed})?.kind,'overview');
+  assert.equal(resolveJobIntent('Which ones are On Deck in My Work?',{jobId:'',continuity:seed}),null);assert.deepEqual(f.row(id).state.context,seed);
+  const before=f.trace.length,deck=await run({action:'ask',question:'On Deck',conversationId:id});assert.match(String(deck.message),/^There is 1 Job marked On Deck\./);assert(f.trace.slice(before).some(x=>x.table==='jobs'));assert(!String(deck.message).includes('My Work'));assert.equal(f.row(id).state.context?.subject,'Production');assert.deepEqual(f.row(id).state.context?.selection.statuses,['on_deck']);
+  const alias=await run({action:'ask',question:'On-Deck',conversationId:id});assert.match(String(alias.message),/^There is 1 Job marked On Deck\./);
+  const spaced=await run({action:'ask',question:'On  Deck',conversationId:id});assert.match(String(spaced.message),/^There is 1 Job marked On Deck\./);assert.deepEqual(f.row(id).state.context?.selection.statuses,['on_deck']);
+  const overview=await f.state.jobTools!.execute('get_production_overview',{});assert.equal(buildOperationalInferenceInput('On-Deck',buildJobEvidence(overview)).operational.facts[0].id,'overview_status_on_deck');
+  const requests=f.state.qwenCalls;await run({action:'history',conversationId:id});assert.equal(f.state.qwenCalls,requests);
+  const list=await run({action:'ask',question:'Which ones?',conversationId:id});assert.match(String(list.message),/CTX-2 — Context Job 2 — On Deck/);assert(!String(list.message).includes('CTX-1 —'));assert.equal(f.row(id).state.context?.subject,'Production');
+  await run({action:'ask',question:'How many Jobs are currently in Production?',conversationId:id});
+  const explicit=await run({action:'ask',question:'Which ones are On Deck?',conversationId:id});assert.match(String(explicit.message),/CTX-2 — Context Job 2 — On Deck/);assert(!String(explicit.message).includes('CTX-1 —'));assert.deepEqual(f.row(id).state.context?.selection.statuses,['on_deck']);
+  examples.push({case:'Production status refinement',persistentHistory,count:first.message,followUp:deck.message,list:explicit.message,subject:f.row(id).state.context?.subject,reads:[...new Set(f.trace.slice(before).map(x=>x.table))]});
+ }
+ const f=fixture();await f.ask('What does My Work show?');const row=[...f.rows.values()][0];row.state.context=workflowConversationContext('My Work',[],false,f.state.now);const before=f.trace.length;await f.ask('On Deck',row.id);assert.equal(f.trace.length,before);assert.equal(row.state.context?.subject,'My Work');
+});
+await check('Primary model-selected status enumeration uses the explicit On Deck selector, not the previous In Production filter or generated My Work prose',async()=>{
+ const f=fixture();f.tables.jobs[1].production_status='on_deck';const first=await f.handler('https://tendev.pages.dev',{spendingAuthorized:false,persistentHistory:true})({action:'ask',question:'How many Jobs are currently in Production?'}) as {conversationId:string};
+ const {createTenbotAgentHistoryStore}=await import('../supabase/functions/_shared/tenbot-agent-history-store');let step=0;const usage={inputTokens:0,cachedInputTokens:0,outputTokens:0,costUsd:0,reservedUsd:0};
+ const provider:AgentProvider={name:'OFFLINE status continuation',model:'no-inference',async step(){step++;if(step===1)return{calls:[{id:'d',name:'discover_capabilities',arguments:{names:['find_jobs']}}],continuation:[],usage};if(step===2)return{calls:[{id:'f',name:'find_jobs',arguments:{query:'On Deck',include_archived:false,limit:20,cursor:''}}],continuation:[],usage};return{calls:[],continuation:[],usage,final:{answer:'My Work has no On Deck tasks.',observations:[{text:'My Work has no On Deck tasks.',evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[]}} as AgentStep;}};
+ const run=createTenbotAgentSessions({readOnlyHosted:true,mode:'openai',sessionStore:createTenbotAgentHistoryStore(f.caller,f.service,{persistent:true}),can:async()=>true,jobTools:()=>f.state.jobTools!,now:()=>f.state.now,provider:()=>provider});
+ const reply=await run({action:'ask',question:'Which ones are On Deck?',conversationId:first.conversationId},f.owner) as {message:string};assert.match(reply.message,/CTX-2 — Context Job 2 — On Deck/);assert(!reply.message.includes('CTX-1 —'));assert(!reply.message.includes('My Work'));assert.equal(f.row(first.conversationId).state.context?.subject,'Production');assert.deepEqual(f.row(first.conversationId).state.context?.selection.statuses,['on_deck']);
+});
 await check('B named Job → labor retains canonical identity, requeries totals and never retains results',async()=>{
  const f=fixture(),a=await f.ask('What is the status of Job "Context Alpha"?'),id=String(a.conversationId);assert.deepEqual(f.row(id).state.context?.references,[f.tables.jobs[0].id]);
  const b=await f.ask('How many hours on that job?',id);assert.match(String(b.message),/5/);assert(f.trace.some(x=>x.table==='manpower_entries'));const saved=JSON.stringify({...f.row(id).state,operational:undefined});assert(!saved.includes('total_hours'));assert(!saved.includes('Context Alpha'));examples.push({case:'B',followUp:b.message});
- await f.ask('How many hours on that job on 2026-10-30?',id);await f.ask('Is it still on hold?',id);assert.equal(f.row(id).state.context?.selection.startDate,'2026-10-30');const again=await f.ask('Can you break its labor down?',id);assert.match(String(again.message),/2026-10-30 through 2026-10-30/);
+ await f.ask('How many hours on that job on 2026-10-30?',id);await f.ask('Is it still on hold?',id);assert.equal(f.row(id).state.context?.selection.startDate,'2026-10-30');const again=await f.ask('Can you break its labor down?',id);assert.match(String(again.message),/Reporting period: Oct 30, 2026–Oct 30, 2026/);
 });
 await check('C original Bid remains a knowledge follow-up, never an invented relationship/tool',async()=>{
  const f=fixture(),a=await f.ask('What is the status of Job "Context Alpha"?'),before=f.trace.length,b=await f.ask('What about the original Bid?',String(a.conversationId));

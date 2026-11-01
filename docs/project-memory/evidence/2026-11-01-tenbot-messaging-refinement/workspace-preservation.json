@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "baseline": "a96c89b7a7c2a12984b0746fbb88f5836be6fb88",
+  "indexUnchangedBeforeStaging": true,
+  "preexistingDirtyPaths": 14,
+  "preexistingDirtyBytesUnchanged": true,
+  "sourceOutsideTaskUnchanged": true,
+  "staticServerPreserved": 79102,
+  "apiServerPreserved": 52268,
+  "apiPort": 55597
+}

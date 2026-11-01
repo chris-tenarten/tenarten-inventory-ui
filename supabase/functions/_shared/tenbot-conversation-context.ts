@@ -42,8 +42,8 @@ export async function currentConversationContext(value:unknown,now:number,tools:
  }else for(const id of value.references){const r=await tools.execute('get_job_summary',{job_id:id});if(r.status!=='ok'||!r.complete||resultJobId(r)!==id)return null;}
  return persistent?{...structuredClone(value),updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()}:structuredClone(value);
 }
-function requestedStatuses(question:string):string[]{
- const q=question.toLowerCase();if(/\bactive\b/.test(q))return [...ACTIVE_PRODUCTION_STATUSES];
+export function requestedJobStatuses(question:string):string[]{
+ const q=question.toLowerCase().replace(/\s+/g,' ');if(/\bactive\b/.test(q))return [...ACTIVE_PRODUCTION_STATUSES];
  // These are existing canonical lifecycle labels, not an extensible intent router.
  return statuses.filter(s=>new RegExp('\\b'+s.replaceAll('_','[ -]')+'\\b','i').test(q));
 }
@@ -54,7 +54,7 @@ export function contextFromReads(reads:ContextRead[],question:string,now:number,
  // Do not turn a multi-record comparison into an arbitrary last-record focus.
  if(references.length>4)return null;
  const f=last.result.filters,a=last.args,period=typeof a.start_date==='string'&&a.start_date&&typeof a.end_date==='string'&&a.end_date?{startDate:a.start_date,endDate:a.end_date}:last.name==='get_job_labor_summary'&&typeof f.start_date==='string'&&typeof f.end_date==='string'?{startDate:f.start_date,endDate:f.end_date}:{startDate:null,endDate:null};
- const value:ConversationContext={version:1,subject:details.length?'Job':'Production',operation:last.name,resultType:details.length?'record':last.name==='get_production_overview'?'count':'collection',references,selection:{query:typeof a.query==='string'?a.query:'',includeArchived:a.include_archived===true,statuses:requestedStatuses(question),...period},sources:[],awaitingClarification:false,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
+ const value:ConversationContext={version:1,subject:details.length?'Job':'Production',operation:last.name,resultType:details.length?'record':last.name==='get_production_overview'?'count':'collection',references,selection:{query:typeof a.query==='string'?a.query:'',includeArchived:a.include_archived===true,statuses:requestedJobStatuses(question),...period},sources:[],awaitingClarification:false,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
  if(value.subject==='Job'&&previous?.subject==='Job'&&JSON.stringify(previous.references)===JSON.stringify(references)&&!value.selection.startDate&&last.name!=='get_job_labor_summary'){
   value.selection.startDate=previous.selection.startDate;value.selection.endDate=previous.selection.endDate;
  }

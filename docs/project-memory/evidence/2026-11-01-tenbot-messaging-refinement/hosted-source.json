@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "at": "2026-11-01T21:46:56.457Z",
+  "url": "https://tendev.pages.dev/_next/static/chunks/2930.2ace58bc0425857f.js",
+  "sha256": "51739c4df7efdc83f92e03e3e47616fa956e27d6814cf4031071ad92687e2928",
+  "exactStagedChunk": true,
+  "reportedPhrasePresent": false,
+  "persistentPathPresent": true,
+  "authenticatedCallerRuntimeCaptured": false,
+  "employeeHistoryRead": false,
+  "limitation": "Public staged chunk only; the affected employee tab and private history were not accessed. Older loaded client/state remains a hypothesis."
+}

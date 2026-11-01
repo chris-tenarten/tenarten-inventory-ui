@@ -5,7 +5,7 @@
 import type {JobToolResult,JobFacts,JobIdentity,TenbotJobToolName} from './tenbot-job-tools.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension required by Deno.
-import type {ConversationContext} from './tenbot-conversation-context.ts';
+import {requestedJobStatuses,type ConversationContext} from './tenbot-conversation-context.ts';
 
 export type JobContext={jobId:string;continuity?:ConversationContext};
 export type JobIntent=
@@ -56,7 +56,17 @@ export function jobReportingPeriod(question:string,now=new Date()):{start_date:s
  return null;
 }
 
-export const isJobFollowupReference=(q:string)=>/\b(?:it|its|that|those|these|they|them|ones|other)\b/i.test(q)&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
+/** A short canonical lifecycle selector can refine a retained Production
+ * population without repeating "Jobs". Other subjects and workflow prose do
+ * not become operational requests merely because they mention a status. */
+function isJobStatusFollowup(q:string):boolean{
+ const selected=requestedJobStatuses(q);if(selected.length!==1)return false;
+ let rest=q;for(const s of selected)rest=rest.replace(new RegExp('\\b'+s.replaceAll('_','(?:\\s+|-)')+'\\b','gi'),' ');
+ const words=rest.toLowerCase().replace(/[?.,!;:'"“”]/g,' ').trim().split(/\s+/).filter(Boolean);
+ const connectors=new Set(['what','about','how','many','are','is','which','ones','jobs','production','marked','status','statuses','show','list','find','the','and','or','please','currently','those','them','in','on','now','any','all','active']);
+ return words.every(word=>connectors.has(word));
+}
+export const isJobFollowupReference=(q:string)=>(/\b(?:it|its|that|those|these|they|them|ones|other)\b/i.test(q)||isJobStatusFollowup(q))&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
 
 /** Explicit canonical context is a lookup seed, never evidence or authorization. */
 export function resolveJobIntent(question:string,context?:JobContext|null,now=new Date()):JobIntent|null{
@@ -69,12 +79,13 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  if(/\b(?:salary|salaries|payroll|wages?|profits?|margins?|costs?|prices?|contract value|deposit|financial|payment|employee names?|personal tasks?|private (?:messages?|DMs?)|direct messages?|who (?:is|was|are|worked|works)|workers? (?:names?|identit))\b/i.test(q))return {kind:'blocked',message:'Job intelligence does not retrieve financial information, private messages, personal tasks or individual employee details. I can help with recorded Job status, dates, labor totals and material status.'};
  // Other module references remain knowledge questions. A remembered Job must
  // not fabricate a Bid/material relationship or acquire another read capability.
+ if(/\b(?:my\s+work|tasks?)\b/i.test(q))return null;
  if(/\b(?:bid|intake|inventory|purchasing|catalog|messaging)\b/i.test(q)&&!/\b(?:status|hours?|labor|labour|schedule)\b/i.test(q))return null;
  const continuity=context?.continuity,referential=isJobFollowupReference(q);
  if(continuity&&referential&&continuity.subject==='Production'){
   if(/\bother\b/i.test(q)&&continuity.resultType==='collection')return {kind:'clarify',message:'Which subset of the Production Jobs do you want to compare? I retained the search scope, not a copy of the previous result list.'};
-  const s=continuity.selection,args={...(s.includeArchived?{include_archived:true}:{}),...(s.startDate&&s.endDate?{start_date:s.startDate,end_date:s.endDate}:{})};
-  if(/\b(?:which|list|names?|ones|other)\b/i.test(q)&&!s.startDate)return {kind:'search',tool:'find_jobs',args:{...(s.query?{query:s.query}:{}),...(s.includeArchived?{include_archived:true}:{})},...(s.statuses.length?{selection:{statuses:s.statuses}}:{})};
+  const s=continuity.selection,selected=requestedJobStatuses(q),statuses=selected.length?selected:s.statuses,args={...(s.includeArchived?{include_archived:true}:{}),...(s.startDate&&s.endDate?{start_date:s.startDate,end_date:s.endDate}:{})};
+  if(/\b(?:which|list|show|find|names?|ones|other)\b/i.test(q)&&!s.startDate)return {kind:'search',tool:'find_jobs',args:{...(s.query?{query:s.query}:{}),...(s.includeArchived?{include_archived:true}:{})},...(statuses.length?{selection:{statuses}}:{})};
   return {kind:'overview',tool:'get_production_overview',args};
  }
  if(continuity&&referential&&continuity.subject==='Job'&&continuity.references.length!==1)return {kind:'clarify',message:'Which of the previously discussed Production Jobs do you mean? More than one Job was in context; please choose its number or name.'};
@@ -235,7 +246,7 @@ function requiredAnswerFacts(question:string,evidence:JobEvidence):string[]{
    if(/\bactive\b/.test(q))add('overview_active_jobs');
    if(/\bunscheduled\b/.test(q))add('overview_unscheduled');
    else if(/\bscheduled\b/.test(q))add('overview_scheduled');
-   for(const [status,label] of Object.entries(statuses))if(new RegExp(`\\b${label.replace(/ /g,'\\s+')}\\b`,'i').test(q))add(`overview_status_${status}`);
+   for(const [status,label] of Object.entries(statuses))if(new RegExp(`\\b${label.replace(/ /g,'(?:\\s+|-)')}\\b`,'i').test(q))add(`overview_status_${status}`);
    if(/\bby status\b/.test(q))for(const fact of evidence.facts.filter(fact=>fact.id.startsWith('overview_status_')))add(fact.id);
    if(!ids.length){add('overview_jobs');if(!/\b(?:how many|count)\b/.test(q))add('overview_active_jobs','overview_scheduled','overview_unscheduled');}
   }
