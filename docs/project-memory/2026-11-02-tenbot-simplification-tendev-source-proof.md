@@ -37,3 +37,16 @@ Business meaning, permission policy, lifecycle, and effects are unchanged for th
 The combined source path supabase/functions/_shared/tenbot-hosted.ts, Git blob f9958952617c1fee086ac4d3ccfb3962c257ecc4, SHA256 1b63cdd33529e1b9d44c1bdc5647e9ce7987a74206af864a7c7201ac14fadfe2, contains exactly accepted b5f7f66bfe924a2876834d0e698decf206eff9bb hosted orchestration plus the already deployed e71bd981a583e0a4e706f9953c6cc1fcc4d576e1 origin eligibility clause: options.origin==='https://tenops.pages.dev'||options.origin==='https://tendev.pages.dev'||options.origin==='http://localhost:3000'. The Production revision's hosted file differs from served TenDev only by this exact clause. It must remain because a shared Edge deployment must not remove Production's persistent owner-private conversation transport. Model-directed orchestration remains server controlled by the exact per-origin opt-in; Production is not opted in. Authentication, current capabilities, history privacy, read-only dispatch, paid spending OFF and every operational write gate remain unchanged. The shared legacy explicit-reference parser corrections are included as accepted source; the per-origin gate does not claim that parser bytes are unchanged on Production.
 
 This integration grants no hosted migration, provider spending, write activation or Production Pages deployment authority. The normal unchanged exact-source release gate and build must pass; source proof is not a substitute for actual deployment and signed-in behavior evidence.
+
+## Candidate technical source review — exact combined hosted integration
+
+Scope: tendev-preparation.
+This review is not evidence of hosted application or deployment.
+This review grants no migration application, write activation, push or deployment authority.
+Product acceptance remains pending for these technical changes.
+
+The functional orchestration input is exact accepted b5f7f66bfe924a2876834d0e698decf206eff9bb; its only integration change preserves the exact already deployed e71bd981a583e0a4e706f9953c6cc1fcc4d576e1 Production-origin history clause. The current request authorizes this focused release assembly and TenDev staging, while final Product acceptance follows signed-in conversational validation. Because no prior single accepted revision contains these combined bytes, the exact combined file uses technical-review rather than fabricating an accepted source authority SHA. This supersedes only the old hosted source-byte binding, preserving its historical release evidence. The unchanged gate correctly rejected the earlier infrastructure-only classification as insufficient for that historical source-byte hold; this exact technical review supplies the missing evidence without changing runtime or validation rules.
+
+| Path | Git blob | SHA256 | Authority | Kind | Accepted authority revision |
+|---|---|---|---|---|---|
+| supabase/functions/_shared/tenbot-hosted.ts | f9958952617c1fee086ac4d3ccfb3962c257ecc4 | 1b63cdd33529e1b9d44c1bdc5647e9ce7987a74206af864a7c7201ac14fadfe2 | technical-review | runtime | none |
