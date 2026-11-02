@@ -2066,22 +2066,6 @@
     "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
-    "blob": "69896337716dee4d79aa570332aec0cc3d8b5553",
-    "sha256": "847af9268b98a374809ad97c1b930febe4c2a2e61d036720f0f374803b270426",
-    "reviewedCandidate": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-    "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-job-read-source-proof.md",
-      "revision": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-      "heading": "## Accepted candidate source review — generalized Job reads, November 1, 2026"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-operational-history.ts",
     "blob": "b86b910d84ff5e692e6fcad382edb8c357f946c3",
     "sha256": "4ff3e8caf4f9a33d6be6d8b1e518f95a7797a42b9bddb2d9240bcd0756a24c9a",
@@ -2133,22 +2117,6 @@
     "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
     "blob": "ea7303a056779c52e987d7dae4bdc707346533dd",
     "sha256": "209ec2c0ffea93b5891c65ea3a29efc4d7301c335fb9dd7df7ae29489790e077",
-    "reviewedCandidate": "a87cf881d35cb962d04428ed19ce6110623f3403",
-    "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-job-intelligence-source-proof.md",
-      "revision": "a87cf881d35cb962d04428ed19ce6110623f3403",
-      "heading": "## Accepted candidate source review — consolidated Job Intelligence, November 1, 2026"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
-    "blob": "6f203aad77b93daddc82be10a5d2d4a19b044f26",
-    "sha256": "adc40480cab484c8bfc77f57a0519d098a4e009ed72f73c36df77f8dc11eff61",
     "reviewedCandidate": "a87cf881d35cb962d04428ed19ce6110623f3403",
     "scope": "tendev-preparation",
     "acceptedAuthorityRevision": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
@@ -2220,6 +2188,38 @@
       "path": "docs/project-memory/2026-11-01-tenbot-job-intelligence-source-proof.md",
       "revision": "a87cf881d35cb962d04428ed19ce6110623f3403",
       "heading": "## Accepted candidate source review — consolidated Job Intelligence, November 1, 2026"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+    "blob": "d6cab5eeb35f198b780987c7c98a7d2c7a57ebeb",
+    "sha256": "66a865ed7ecbe695966158ca322c3b26b7327aed70692433d49e2f92eb2df59d",
+    "reviewedCandidate": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+    "scope": "tendev-preparation",
+    "acceptedAuthorityRevision": "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-01-tenbot-direct-answer-source-proof.md",
+      "revision": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+      "heading": "## Accepted candidate source review — direct-answer consolidation, November 1, 2026"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
+    "blob": "a279215f6e3236e8825e2c409a6cdc2d42b717da",
+    "sha256": "9bbe435ea42429aa71edf94fdd92f73815f4d4d64ddcda03451ce6c22f28084b",
+    "reviewedCandidate": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+    "scope": "tendev-preparation",
+    "acceptedAuthorityRevision": "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-01-tenbot-direct-answer-source-proof.md",
+      "revision": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+      "heading": "## Accepted candidate source review — direct-answer consolidation, November 1, 2026"
     }
   }
 ]
