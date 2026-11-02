@@ -6,6 +6,7 @@ import {buildProposalPdfModel} from '../supabase/functions/generate-proposal-pdf
 import {createCallerReviewedOperations} from '../supabase/functions/_shared/tenbot-reviewed-operations';
 import type {BusinessOperationsDependencies} from '../supabase/functions/_shared/tenbot-business-operations';
 import type {InvoiceReceivalSource} from '../src/modules/inventory/invoice-receival-attachments';
+import {AgentToolError,safeInvestigationDiagnostic,type InvestigationDiagnostic} from '../supabase/functions/_shared/tenbot-investigation-diagnostics';
 
 // Model-free, no credentials, no network, no database or business writes.
 const owner='10000000-0000-4000-8000-000000000001';
@@ -195,6 +196,44 @@ await check('dynamic document evidence requires this run and current original ac
   if(scenario==='foreign_original')f.mutable.source.ownerId=companyId;
   const selected=scenario==='new_run'?f.registry():registry;
   await assert.rejects(()=>selected.tools.find(tool=>tool.name==='prepare_proposal_draft')!.execute(f.input,context));
+ }
+});
+await check('Proposal failures retain only fixed categories while every validation still rejects',async()=>{
+ const cases:Array<{code:string;input:Record<string,JsonValue>;extraSource?:{id:string;text:string}}>=[
+  {code:'proposal_invalid_schema',input:{...request(),id:companyId}},
+  {code:'proposal_invalid_identity',input:{...request(),customer_company_id:null}},
+  {code:'proposal_source_ref_unavailable',input:{...request(),fields:[evidence('project_name','Atrium Steps','private-unavailable-ref')]}},
+  {code:'proposal_value_not_literal_source',input:{...request(),fields:[evidence('project_name','private-invented-value')]}},
+  {code:'proposal_invalid_decimal',input:{...request(),lines:[{line_type:'product',fields:[evidence('quantity','1e1','private-decimal-ref')]}]},extraSource:{id:'private-decimal-ref',text:'Quantity 1e1.'}},
+  {code:'proposal_quote_rate_unproven',input:{...request(),lines:[{line_type:'product',fields:[evidence('rate','88','catalog:offer')]}]}},
+ ];
+ for(const item of cases){
+  const f=fixture(),tools=createProposalOperations({...f.deps,sources:[...sources,...(item.extraSource?[item.extraSource]:[])]});
+  await assert.rejects(()=>tools.at(-1)!.execute(item.input,{callerId:owner,signal:new AbortController().signal}),error=>{
+   assert(error instanceof AgentToolError);assert.equal(error.code,item.code);assert.equal(error.message,item.code);
+   const projected=safeInvestigationDiagnostic({stage:'tool',tool:'prepare_proposal_draft',outcome:'error',durationMs:0,reasonCode:error.code,arguments:item.input} as InvestigationDiagnostic);
+   assert.deepEqual(projected,{stage:'tool',tool:'prepare_proposal_draft',outcome:'error',durationMs:0,reasonCode:item.code});
+   return true;
+  });
+  assert(f.calls.every(call=>readRpcs.has(call.name)));
+ }
+});
+await check('recorded 430-character question with manually derived canonical arguments isolates the unchanged quote guard',async()=>{
+ // The live model arguments were not retained. These are manually derived
+ // canonical arguments, so this classifies only this reproduction, not the live failure.
+ const question="Prepare a Proposal draft for Synthetic TenDev Acceptance Customer, for the Synthetic Lobby Review project. Quote two white terrazzo treads, each 48 by 12 by 2 inches, at $12.50 each. We do not have the customer's address or contact details yet, and freight has not been quoted. Leave those unknown and do not link a Production Job. Show me the review and preview before saving anything. This is approved synthetic acceptance data.";
+ assert.equal(question.length,430);
+ const copied=(path:string,value:string)=>evidence(path,value,'employee');
+ const manualArguments:Record<string,JsonValue>={customer_company_id:null,customer_contact_id:null,fields:[copied('customer_name','Synthetic TenDev Acceptance Customer'),copied('project_name','Synthetic Lobby Review')],lines:[{line_type:'product',fields:[copied('description','white terrazzo treads'),copied('quantity','2'),copied('unit','each'),copied('length','48'),copied('width','12'),copied('height_thickness','2'),copied('rate','12.50')]}]};
+ const f=fixture(),tools=createProposalOperations({...f.deps,sources:[{id:'employee',text:question}]}),prepare=tools.at(-1)!;
+ assert(validateStrictSchema(manualArguments,prepare.parameters));
+ await assert.rejects(()=>prepare.execute(manualArguments,{callerId:owner,signal:new AbortController().signal}),error=>error instanceof AgentToolError&&error.code==='proposal_quote_rate_unproven');
+ assert(f.calls.every(call=>['has_app_capability','has_proposal_access'].includes(call.name)));
+});
+await check('every currently assembled reusable operation name survives the closed diagnostic projection',()=>{
+ for(const tool of combinedFixture().registry().tools){
+  const projected=safeInvestigationDiagnostic({stage:'tool',tool:tool.name,outcome:'ok',durationMs:0,reasonCode:'ok'});
+  assert.equal(projected.tool,tool.name);
  }
 });
 console.log(`Proposal operations: ${checks.length} focused model-free groups passed.`);
