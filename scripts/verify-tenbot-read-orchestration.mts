@@ -11,7 +11,9 @@ import {isSimpleJobRead} from '../supabase/functions/_shared/tenbot-read-routing
 import {resolveJobIntent} from '../supabase/functions/_shared/tenbot-job-routing';
 import {type InferenceInput,type InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
 import {defaultModel,measuredUsage} from '../supabase/functions/_shared/tenbot-models';
-import type {AgentFinal} from '../supabase/functions/_shared/tenbot-agent';
+import {emptyUsage,type AgentFinal,type AgentResult} from '../supabase/functions/_shared/tenbot-agent';
+import {publishModelReadAnswer,TERRA_READ_FINAL_INSTRUCTIONS} from '../supabase/functions/_shared/tenbot-read-investigation';
+import {safeInvestigationDiagnostic} from '../supabase/functions/_shared/tenbot-investigation-diagnostics';
 import type {JobTools} from '../supabase/functions/_shared/tenbot-job-session';
 const qa=JSON.parse(fs.readFileSync(new URL('./fixtures/tenbot-conversational-qa.json',import.meta.url),'utf8')) as {turns:{id:string;question:string}[]};
 const question=(id:string)=>qa.turns.find(t=>t.id===id)!.question;
@@ -38,7 +40,7 @@ function setup(){
  const inputs:InferenceInput[]=[],selected:{round:number;calls:unknown[]}[]=[],executed:{name:string;args:Record<string,unknown>}[]=[],meter:{name:string;args:Record<string,unknown>}[]=[];
  const measurements=new WeakMap<InferenceInput,ReturnType<typeof measuredUsage>>(),deniedCapabilities=new Set<string>(),permissionChecks:string[]=[];
  const caller:typeof f.caller=async(name,args={})=>{if(name==='has_app_capability'){const capability=String(args.p_capability);permissionChecks.push(capability);if(deniedCapabilities.has(capability))return {data:false,error:null};}return f.caller(name,args);};
- const provider:InferenceProvider={name:'OFFLINE scripted Qwen-shaped transport',reserveEstimate(){return{model:defaultModel,neurons:2};},usage:input=>measurements.get(input)??null,async infer(input){assert(input.agent,'Agent receives capability schemas, not legacy prose input');inputs.push(structuredClone(input));total++;const result=await plan(input,++round,f);measurements.set(input,measuredUsage(defaultModel,{prompt_tokens:111,completion_tokens:44}));if(object(result)&&Array.isArray(result.calls))selected.push({round,calls:structuredClone(result.calls)});return result;}};
+ const provider:InferenceProvider={name:'OFFLINE scripted Qwen-shaped transport',reserveEstimate(){return{model:defaultModel,neurons:2};},usage:input=>measurements.get(input)??null,async infer(input){assert(input.agent,'Agent receives capability schemas, not legacy prose input');assert(!input.agent.instructions.includes(TERRA_READ_FINAL_INSTRUCTIONS),'Qwen instructions must not receive the Terra-only final contract');inputs.push(structuredClone(input));total++;const result=await plan(input,++round,f);measurements.set(input,measuredUsage(defaultModel,{prompt_tokens:111,completion_tokens:44}));if(object(result)&&Array.isArray(result.calls))selected.push({round,calls:structuredClone(result.calls)});return result;}};
  const real=f.state.jobTools!;let decorated:JobTools=real;
  const tools:JobTools={authorizeHistory:ids=>decorated.authorizeHistory!(ids),async execute(name,args){executed.push({name,args:structuredClone(args)});return decorated.execute(name,args);}};
  const service:typeof f.service=async(name,args={})=>{if(name==='tenbot_reserve_usage'||name==='tenbot_finish_usage')meter.push({name,args:structuredClone(args)});return f.service(name,args);};
@@ -174,6 +176,23 @@ await test('Malformed or empty explicit Job quotes cannot reuse a previous canon
   const f=setup(),id=f.tables.jobs[0].id,seed=await f.ask('Show status for Job "chris-dev-test".',undefined,seedPlan('chris-dev-test',id));
   const r=await f.ask(malformed,seed.reply.conversationId,(_input,n)=>n===1?discover('get_job_summary'):n===2?step(call('old','get_job_summary',{job_id:id})):final([],'Which exact Job do you mean?',['Which exact Job do you mean?']));assert(!r.executed.length);assert.match(r.reply.message,/Which exact Job/);assert(!r.reply.fallback);
  }
+});
+await test('Strict read publication preserves exact facts across claim arrays and reports only finite rejection reasons',async()=>{
+ const first='Recorded Production status: On Deck.',second='Recorded material status: Ordered.';
+ const make=(changes:Partial<AgentFinal>={}):AgentResult=>({status:'completed',final:{answer:first,observations:[{text:first,evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[],...changes},evidence:[{id:'e1',tool:'get_job_summary',data:{answer_facts:[{id:'status',text:first},{id:'material',text:second}]}}],proposals:[],trace:[],usage:emptyUsage()});
+ const reasons:string[]=[],publish=(result:AgentResult)=>publishModelReadAnswer(result,'Current operational facts',undefined,new Set(),reason=>reasons.push(reason));
+ assert.equal(publish(make({observations:[{text:first,evidence_ids:['e1']},{text:second,evidence_ids:['e1']}]})),first+' '+second);assert.equal(reasons.length,0);
+ for(const array of ['observations','inferences','recommendations'] as const){
+  assert.equal(publish(make({observations:[],[array]:[{text:first,evidence_ids:['e1']}]})),first);
+  for(const text of ['This Job appears ready.',first+' '+second]){assert.equal(publish(make({observations:[],[array]:[{text,evidence_ids:['e1']}]})),null);assert.equal(reasons.at(-1),'read-final-non-fact-claim');}
+ }
+ assert.equal(publish(make({observations:[{text:first,evidence_ids:['unknown']}]})),null);assert.equal(reasons.at(-1),'read-final-missing-evidence');
+ assert.equal(publish(make({questions:['The Job has been approved, okay?']})),null);assert.equal(reasons.at(-1),'read-final-question');
+ assert.equal(publish(make({observations:[]})),null);assert.equal(reasons.at(-1),'read-final-empty-answer');
+ assert.equal(publishModelReadAnswer(make({observations:[{text:'SECRET unsupported claim',evidence_ids:['e1']}]}),'Question',undefined,new Set(),()=>{throw Error('Unavailable diagnostic observer');}),null);
+ const before=reasons.length;assert.equal(publish({...make(),status:'limit',final:null}),null);assert.equal(reasons.length,before);
+ for(const reasonCode of ['read-final-question','read-final-missing-evidence','read-final-non-fact-claim','read-final-workflow-wording','read-final-workflow-permission','read-final-empty-answer','read-final-too-long'])assert.equal(safeInvestigationDiagnostic({stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode}).reasonCode,reasonCode);
+ assert(!JSON.stringify(reasons).includes('SECRET'));assert(reasons.every(reason=>reason.startsWith('read-final-')));
 });
 const result={passed:true,groups:checks.length,checks,comparisons,examples,actualHostedSessionToolCode:true,syntheticAuthAndDatabase:true,scriptedProviderChoices:true,actualModelDirectedInference:false,actualInferenceCalls:0,actualInferenceUsd:0,actualNetworkRequests:0,operationalWrites:0,scope:'Independent QA failed/partial conversations only, plus directly adjacent resource/freshness/limits contracts'};
 const evidencePath=process.env.TENBOT_READ_ORCHESTRATION_EVIDENCE??process.argv[2];if(evidencePath)fs.writeFileSync(evidencePath,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));

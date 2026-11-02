@@ -19,6 +19,8 @@ const reasons = new Set([
   ...toolReasons, 'ok', 'received', 'completed', 'runtime-error', 'authorization-denied', 'invalid-usage', 'cost-limit',
   'context-limit', 'invalid-input', 'invalid-context', 'invalid-limits', 'invalid-registry', 'deadline',
   'invalid-provider-step', 'invalid-final', 'unknown-evidence', 'missing-workflow-evidence', 'empty-provider-step',
+  'read-final-question', 'read-final-missing-evidence', 'read-final-non-fact-claim', 'read-final-workflow-wording',
+  'read-final-workflow-permission', 'read-final-empty-answer', 'read-final-too-long',
   'call-limit', 'invalid-call', 'result-limit', 'round-limit', 'error-limit',
   'model-not-allowed', 'invalid-output-budget', 'oversized-response', 'empty-response', 'provider-timeout',
   'incomplete-provider-response', 'invalid-provider-response', 'incomplete-function-call', 'invalid-function-call',
