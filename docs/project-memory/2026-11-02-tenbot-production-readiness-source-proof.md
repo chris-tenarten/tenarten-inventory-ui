@@ -94,6 +94,15 @@ src/modules/tenbot/history-presentation.ts: e5ddaa3b540e4994b8d80e3369997bdadf0d
 
 These exact reviewed bytes are committed with this receipt. Semantic knowledge records/pins remain unchanged; no new business permission or lifecycle claim is manufactured. Existing Load received items is preserved; it reads received history and does not mutate business data.
 
+The accepted global-header integration preserves Inventory/Activity navigation, Manpower filtering and the existing intake/Bid entry points. The exact four original accepted record reviews below cover that existing shared-shell source dependency; no new intake/Bid lifecycle or permission behavior is selected.
+
+| Record | Path | Original semantic blob | Selected blob | Record digest |
+|---|---|---|---|---|
+| inventory-activity | src/app/client-layout-shell.tsx | 08e52e6de00c69e6607feb25c934a421bbb45974 | 2172930e869b301f5a1ee41d0bc3ef38a71ec4c6 | 40628496c5ba32a1eea471262593f20502117e2629e604af970dd5168be60436 |
+| inventory-stock-search | src/app/client-layout-shell.tsx | 08e52e6de00c69e6607feb25c934a421bbb45974 | 2172930e869b301f5a1ee41d0bc3ef38a71ec4c6 | 44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a |
+| manpower-job-filter | src/app/client-layout-shell.tsx | 08e52e6de00c69e6607feb25c934a421bbb45974 | 2172930e869b301f5a1ee41d0bc3ef38a71ec4c6 | 1287c0fb1b17e84a4df57887b7b1570dc460849bb4593330f25583afe26b430f |
+| workflow-intake-bid | src/app/client-layout-shell.tsx | 08e52e6de00c69e6607feb25c934a421bbb45974 | 2172930e869b301f5a1ee41d0bc3ef38a71ec4c6 | 8c83d76ba135c143b4afe613e9c7aa72f10997692cb350a9571e20fbef2dc5f7 |
+
 ## Accepted infrastructure review — explicit employee cohort and Production transport
 
 Chris approves the explicitly configured initial cohort of Chris, Pat/Patrick, Gio, Anthony and Marcos through existing authenticated accounts, existing permissions and administrator controls, with ordinary availability independent of temporary acceptance windows. Chris also approves necessary local Production compatibility corrections and selective candidate preparation in attachment56b986b3. This records supplied implementation authority; final candidate acceptance and Production rollout remain separate Product decisions.
