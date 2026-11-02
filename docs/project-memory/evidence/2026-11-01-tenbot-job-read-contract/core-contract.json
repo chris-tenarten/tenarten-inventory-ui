@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "groups": 9,
+  "checks": [
+    "Four canonical lifecycle equivalence classes share exact effective-status/archive populations between count and all paged lists",
+    "Filter precedes page offsets and includes matches after row60; active Rework overrides original while closed Rework does not",
+    "Canonical status unions and omitted/empty selectors preserve legacy direct-call data and omitted-status result filter digests",
+    "Malformed, duplicate, oversized and stale/out-of-range page selectors fail closed",
+    "An incomplete population yields unknown count/unavailable enumeration, never an asserted zero",
+    "Current capability denial prevents reads; final capability and scoped-row revocation discard the aggregate",
+    "Discoverable strict schemas and scope descriptions describe exactly five registered read tools and canonical filters without server-only access references",
+    "Compiled employee population constrains primary count/list while model limit/cursors remain usable; first-page warnings survive later pages and retained name scopes cannot widen to overview",
+    "A complete20-Job page with long names warns when the displayed message omits rows and preserves tool caveats within the character bound"
+  ],
+  "actualPostgreSQL": false,
+  "actualJwtRls": false,
+  "actualInference": false,
+  "hostedRequests": 0
+}

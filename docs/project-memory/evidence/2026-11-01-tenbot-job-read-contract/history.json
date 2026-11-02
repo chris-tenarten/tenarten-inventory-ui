@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "groups": 5,
+  "checks": [
+    "Exact additive descriptor bridge preserves the accepted history digest; changed tool identity/kind/hard boundaries or unknown descriptions still invalidate it",
+    "Existing owner-private scope remains readable after the additive capability update, while current record revocation still selectively redacts both question and answer",
+    "Legacy bounded receipts retain/revalidate native canonical status arguments and reject invalid, duplicate, oversized or non-array selectors",
+    "Standalone primary-selected enumeration uses the compiled employee population and canonical answer even when generated filter arguments/prose are wrong; no literal-question handler",
+    "A failed overview cannot publish or archive generated false-zero prose, even when the same unavailable result repeats during freshness checks"
+  ],
+  "actualDatabase": false,
+  "actualInference": false,
+  "hostedRequests": 0
+}

@@ -8,11 +8,14 @@ import type {JobToolResult,TenbotJobToolName} from './tenbot-job-tools.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension required by Deno.
 import {ACTIVE_PRODUCTION_STATUSES} from './production-job-facts.mjs';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Edge extension.
+import {JOB_LIFECYCLE_STATUSES,parseJobStatuses} from './tenbot-job-filters.ts';
 
 export const CONTEXT_TTL_MS=30*60*1000;
 const subjects=['Production','Job','Intake','Inventory','Purchasing','Planning','Messaging','My Work','Settings','Contacts','Samples','Proposals','Manpower Reporting','TenOps'];
 const operations=['get_production_overview','find_jobs','get_job_summary','get_job_planning','get_job_labor_summary','guidance','scope'];
-const statuses=['not_started','on_deck','in_production','on_hold','shipped','complete','cancelled'];
+const statuses:readonly string[]=JOB_LIFECYCLE_STATUSES;
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const object=(x:unknown):x is Record<string,unknown>=>!!x&&typeof x==='object'&&!Array.isArray(x);
 const keys=(x:Record<string,unknown>,names:string[])=>Object.keys(x).length===names.length&&Object.keys(x).every(k=>names.includes(k));
@@ -43,9 +46,11 @@ export async function currentConversationContext(value:unknown,now:number,tools:
  return persistent?{...structuredClone(value),updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()}:structuredClone(value);
 }
 export function requestedJobStatuses(question:string):string[]{
- const q=question.toLowerCase().replace(/\s+/g,' ');if(/\bactive\b/.test(q))return [...ACTIVE_PRODUCTION_STATUSES];
+ const q=question.toLowerCase().replace(/\s+/g,' ');
  // These are existing canonical lifecycle labels, not an extensible intent router.
- return statuses.filter(s=>new RegExp('\\b'+s.replaceAll('_','[ -]')+'\\b','i').test(q));
+ const selected=statuses.filter(s=>new RegExp('\\b'+s.replaceAll('_','[ -]')+'\\b','i').test(q));
+ if(/\bactive\b/.test(q)){const narrowed=selected.filter(s=>s!=='in_production');return narrowed.length&&narrowed.every(s=>ACTIVE_PRODUCTION_STATUSES.includes(s))?narrowed:[...ACTIVE_PRODUCTION_STATUSES];}
+ return selected;
 }
 export function contextFromReads(reads:ContextRead[],question:string,now:number,previous:ConversationContext|null=null):ConversationContext|null{
  const successful=reads.filter(x=>x.result.status==='ok'&&x.result.complete&&x.result.data);if(!successful.length)return null;
@@ -54,11 +59,11 @@ export function contextFromReads(reads:ContextRead[],question:string,now:number,
  // Do not turn a multi-record comparison into an arbitrary last-record focus.
  if(references.length>4)return null;
  const f=last.result.filters,a=last.args,period=typeof a.start_date==='string'&&a.start_date&&typeof a.end_date==='string'&&a.end_date?{startDate:a.start_date,endDate:a.end_date}:last.name==='get_job_labor_summary'&&typeof f.start_date==='string'&&typeof f.end_date==='string'?{startDate:f.start_date,endDate:f.end_date}:{startDate:null,endDate:null};
- const value:ConversationContext={version:1,subject:details.length?'Job':'Production',operation:last.name,resultType:details.length?'record':last.name==='get_production_overview'?'count':'collection',references,selection:{query:typeof a.query==='string'?a.query:'',includeArchived:a.include_archived===true,statuses:requestedJobStatuses(question),...period},sources:[],awaitingClarification:false,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
+ const value:ConversationContext={version:1,subject:details.length?'Job':'Production',operation:last.name,resultType:details.length?'record':last.name==='get_production_overview'?'count':'collection',references,selection:{query:typeof f.query==='string'?f.query:typeof a.query==='string'?a.query:'',includeArchived:f.include_archived===undefined?a.include_archived===true:f.include_archived===true,statuses:f.statuses===undefined?requestedJobStatuses(question):parseJobStatuses(f.statuses)??[],...period},sources:[],awaitingClarification:false,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
  if(value.subject==='Job'&&previous?.subject==='Job'&&JSON.stringify(previous.references)===JSON.stringify(references)&&!value.selection.startDate&&last.name!=='get_job_labor_summary'){
   value.selection.startDate=previous.selection.startDate;value.selection.endDate=previous.selection.endDate;
  }
- if(last.name==='find_jobs'&&previous?.subject==='Production'&&!value.selection.statuses.length)value.selection.statuses=[...previous.selection.statuses];
+ if(last.name==='find_jobs'&&previous?.subject==='Production'&&f.statuses===undefined&&!value.selection.statuses.length)value.selection.statuses=[...previous.selection.statuses];
  // Overview dates bound upcoming completions, never the current count population.
  if(last.name==='get_production_overview'&&!/\b(?:upcoming|finish|finishing|due|completion dates?)\b/i.test(question)){value.selection.startDate=null;value.selection.endDate=null;}
  return validConversationContext(value)?value:null;

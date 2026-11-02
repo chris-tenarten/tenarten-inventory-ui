@@ -1,0 +1,11 @@
+{
+  "taskRecordsRemoved": true,
+  "taskAuthUsersRemoved": 2,
+  "taskAuthAlreadyAbsent": 0,
+  "taskAuthIdentitiesResolved": 2,
+  "expectedAttemptedAuth": 2,
+  "policiesOwnedByMarker": "tenbot-job-read-20261101-0abbe50103dc",
+  "priorFixtureReset": false,
+  "migrationsApplied": 0,
+  "ProductionChanges": 0
+}

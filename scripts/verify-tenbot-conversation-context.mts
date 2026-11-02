@@ -34,10 +34,39 @@ await check('Production status follow-ups refine the current population in legac
  }
  const f=fixture();await f.ask('What does My Work show?');const row=[...f.rows.values()][0];row.state.context=workflowConversationContext('My Work',[],false,f.state.now);const before=f.trace.length;await f.ask('On Deck',row.id);assert.equal(f.trace.length,before);assert.equal(row.state.context?.subject,'My Work');
 });
+await check('Canonical status count/list equivalence and operation-preserving refinements share native filters',async()=>{
+ const classes=[['in_production','In Production'],['on_deck','On Deck'],['on_hold','On Hold'],['shipped','Shipped']] as const;
+ for(const [selected,label]of classes){
+  const f=fixture();for(const [index,[status]]of classes.entries())f.tables.jobs[index].production_status=status;
+  const count=await f.ask(`How many Jobs are ${label}?`),id=String(count.conversationId),expected=f.tables.jobs.filter(j=>j.production_status===selected).length;
+  assert.match(String(count.message),new RegExp(`\\b${expected} Jobs?\\b`));assert.deepEqual(f.row(id).state.context?.selection.statuses,[selected]);
+  const listed=await f.ask(`Which Jobs are ${label}?`,id);assert.equal(f.row(id).state.context?.operation,'find_jobs');assert.deepEqual(f.row(id).state.context?.selection.statuses,[selected]);
+  for(const j of f.tables.jobs)assert.equal(String(listed.message).includes(j.job_number+' —'),j.production_status===selected);
+  const refine=await f.ask('What about On Hold?',id);assert.equal(f.row(id).state.context?.operation,'find_jobs');assert.match(String(refine.message),/CTX-3 — Context Job 3 — On Hold/);
+ }
+ const standalone=fixture();standalone.tables.jobs[1].production_status='on_deck';const direct=await standalone.ask('Can you list Jobs that are On Deck?');assert.match(String(direct.message),/CTX-2 — Context Job 2 — On Deck/);assert(!String(direct.message).includes('outside'));
+});
+await check('A bare lifecycle selector without a subject clarifies generically while definition and other-module context remain guidance',async()=>{
+ for(const status of ['Not Started','On Deck','In Production','On Hold','Shipped','Complete','Cancelled']){
+  const f=fixture();assert.equal(resolveJobIntent(status)?.kind,'clarify');await f.ask(status);assert.equal(f.trace.length,0,status);
+  assert.equal(resolveJobIntent(`What does ${status} mean?`),null,status);
+ }
+ for(const subject of ['My Work','Inventory'])assert.equal(resolveJobIntent('On Deck',{jobId:'',continuity:workflowConversationContext(subject,[],false,Date.now())}),null,subject);
+ assert.equal(resolveJobIntent('On Deck tasks in My Work'),null);
+});
+await check('Archive inclusion is explicit, reversible and consistent across count/list; unsupported historical/material scopes clarify',async()=>{
+ const f=fixture();f.tables.jobs[1].production_status='on_deck';Object.assign(f.tables.jobs[1],{archived_at:'2026-10-01T00:00:00Z'});f.tables.jobs[2].production_status='on_deck';
+ const first=await f.ask('How many On Deck Jobs are there including archived?'),id=String(first.conversationId);assert.match(String(first.message),/2 Jobs marked On Deck/);assert.equal(f.row(id).state.context?.selection.includeArchived,true);
+ const both=await f.ask('Which ones?',id);assert(String(both.message).includes('CTX-2 —')&&String(both.message).includes('CTX-3 —'));assert.match(String(both.message),/Archived/);
+ const current=await f.ask('Without archived',id);assert(!String(current.message).includes('CTX-2 —')&&String(current.message).includes('CTX-3 —'));assert.equal(f.row(id).state.context?.selection.includeArchived,false);
+ for(const q of ['Which Jobs are only archived?','Which ones On Deck in 2020?','Which ones are ready?','Which Jobs are not On Deck?','How many active Shipped Jobs?'])assert.equal(resolveJobIntent(q,{jobId:'',continuity:f.row(id).state.context!})?.kind,'clarify',q);
+ assert.equal(resolveJobIntent('On Deck Jobs')?.kind,'clarify');
+ const search=resolveJobIntent('Find Jobs for Context Alpha');assert(search?.kind==='search'&&search.args.query==='Context Alpha');
+});
 await check('Primary model-selected status enumeration uses the explicit On Deck selector, not the previous In Production filter or generated My Work prose',async()=>{
  const f=fixture();f.tables.jobs[1].production_status='on_deck';const first=await f.handler('https://tendev.pages.dev',{spendingAuthorized:false,persistentHistory:true})({action:'ask',question:'How many Jobs are currently in Production?'}) as {conversationId:string};
  const {createTenbotAgentHistoryStore}=await import('../supabase/functions/_shared/tenbot-agent-history-store');let step=0;const usage={inputTokens:0,cachedInputTokens:0,outputTokens:0,costUsd:0,reservedUsd:0};
- const provider:AgentProvider={name:'OFFLINE status continuation',model:'no-inference',async step(){step++;if(step===1)return{calls:[{id:'d',name:'discover_capabilities',arguments:{names:['find_jobs']}}],continuation:[],usage};if(step===2)return{calls:[{id:'f',name:'find_jobs',arguments:{query:'On Deck',include_archived:false,limit:20,cursor:''}}],continuation:[],usage};return{calls:[],continuation:[],usage,final:{answer:'My Work has no On Deck tasks.',observations:[{text:'My Work has no On Deck tasks.',evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[]}} as AgentStep;}};
+ const provider:AgentProvider={name:'OFFLINE status continuation',model:'no-inference',async step(){step++;if(step===1)return{calls:[{id:'d',name:'discover_capabilities',arguments:{names:['find_jobs']}}],continuation:[],usage};if(step===2)return{calls:[{id:'f',name:'find_jobs',arguments:{query:'On Deck',include_archived:false,statuses:[],limit:20,cursor:''}}],continuation:[],usage};return{calls:[],continuation:[],usage,final:{answer:'My Work has no On Deck tasks.',observations:[{text:'My Work has no On Deck tasks.',evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[]}} as AgentStep;}};
  const run=createTenbotAgentSessions({readOnlyHosted:true,mode:'openai',sessionStore:createTenbotAgentHistoryStore(f.caller,f.service,{persistent:true}),can:async()=>true,jobTools:()=>f.state.jobTools!,now:()=>f.state.now,provider:()=>provider});
  const reply=await run({action:'ask',question:'Which ones are On Deck?',conversationId:first.conversationId},f.owner) as {message:string};assert.match(reply.message,/CTX-2 — Context Job 2 — On Deck/);assert(!reply.message.includes('CTX-1 —'));assert(!reply.message.includes('My Work'));assert.equal(f.row(first.conversationId).state.context?.subject,'Production');assert.deepEqual(f.row(first.conversationId).state.context?.selection.statuses,['on_deck']);
 });

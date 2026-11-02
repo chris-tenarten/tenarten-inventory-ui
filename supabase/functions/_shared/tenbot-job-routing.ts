@@ -56,17 +56,24 @@ export function jobReportingPeriod(question:string,now=new Date()):{start_date:s
  return null;
 }
 
-/** A short canonical lifecycle selector can refine a retained Production
- * population without repeating "Jobs". Other subjects and workflow prose do
- * not become operational requests merely because they mention a status. */
-function isJobStatusFollowup(q:string):boolean{
- const selected=requestedJobStatuses(q);if(selected.length!==1)return false;
+/** Population refinements reuse canonical status/archive selectors. These are
+ * lookup constraints only, never evidence of authorization or retained facts. */
+const listOperation=/\b(?:which|list|show|find|search|enumerate|names?|ones)\b/i;
+const countOperation=/\b(?:how many|counts?|overview|by status)\b/i;
+function archiveSelection(q:string):boolean|undefined{
+ if(/\b(?:exclude|excluding|without)\b[^.!?]{0,20}\barchived\b|\b(?:unarchived|non[- ]?archived|not\s+archived)\b/i.test(q))return false;
+ if(/\b(?:include|including|with)\b[^.!?]{0,20}\barchived\b/i.test(q))return true;
+ return undefined;
+}
+function isJobPopulationRefinement(q:string):boolean{
+ const selected=requestedJobStatuses(q);if(!selected.length&&archiveSelection(q)===undefined)return false;
  let rest=q;for(const s of selected)rest=rest.replace(new RegExp('\\b'+s.replaceAll('_','(?:\\s+|-)')+'\\b','gi'),' ');
+ rest=rest.replace(/\b(?:not\s+archived|non[- ]?archived|active|archived|unarchived)\b/gi,' ');
  const words=rest.toLowerCase().replace(/[?.,!;:'"“”]/g,' ').trim().split(/\s+/).filter(Boolean);
- const connectors=new Set(['what','about','how','many','are','is','which','ones','jobs','production','marked','status','statuses','show','list','find','the','and','or','please','currently','those','them','in','on','now','any','all','active']);
+ const connectors=new Set(['what','about','how','many','are','is','which','ones','jobs','production','marked','status','statuses','show','list','find','search','enumerate','the','and','or','please','currently','those','them','in','on','now','any','all','include','including','exclude','excluding','with','without']);
  return words.every(word=>connectors.has(word));
 }
-export const isJobFollowupReference=(q:string)=>(/\b(?:it|its|that|those|these|they|them|ones|other)\b/i.test(q)||isJobStatusFollowup(q))&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
+export const isJobFollowupReference=(q:string)=>(/\b(?:it|its|that|those|these|they|them|ones|other)\b/i.test(q)||isJobPopulationRefinement(q))&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
 
 /** Explicit canonical context is a lookup seed, never evidence or authorization. */
 export function resolveJobIntent(question:string,context?:JobContext|null,now=new Date()):JobIntent|null{
@@ -82,35 +89,53 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  if(/\b(?:my\s+work|tasks?)\b/i.test(q))return null;
  if(/\b(?:bid|intake|inventory|purchasing|catalog|messaging)\b/i.test(q)&&!/\b(?:status|hours?|labor|labour|schedule)\b/i.test(q))return null;
  const continuity=context?.continuity,referential=isJobFollowupReference(q);
- if(continuity&&referential&&continuity.subject==='Production'){
-  if(/\bother\b/i.test(q)&&continuity.resultType==='collection')return {kind:'clarify',message:'Which subset of the Production Jobs do you want to compare? I retained the search scope, not a copy of the previous result list.'};
-  const s=continuity.selection,selected=requestedJobStatuses(q),statuses=selected.length?selected:s.statuses,args={...(s.includeArchived?{include_archived:true}:{}),...(s.startDate&&s.endDate?{start_date:s.startDate,end_date:s.endDate}:{})};
-  if(/\b(?:which|list|show|find|names?|ones|other)\b/i.test(q)&&!s.startDate)return {kind:'search',tool:'find_jobs',args:{...(s.query?{query:s.query}:{}),...(s.includeArchived?{include_archived:true}:{})},...(statuses.length?{selection:{statuses}}:{})};
-  return {kind:'overview',tool:'get_production_overview',args};
- }
  if(continuity&&referential&&continuity.subject==='Job'&&continuity.references.length!==1)return {kind:'clarify',message:'Which of the previously discussed Production Jobs do you mean? More than one Job was in context; please choose its number or name.'};
  const modulePattern='(?:Production(?:\\s+Pipeline)?|Inventory|Intake|Planning|Timeline|Manpower(?:\\s+Reporting)?|TenOps|Messaging|Rework|Purchasing|Samples?|Proposals?|Jobs?)';
  if(new RegExp(`^\\s*(?:what\\s+(?:does|do)|how\\s+(?:does|do))\\s+(?:the\\s+)?${modulePattern}\\s+(?:do|show|work|mean|support|include|offer|help|differ|handle|manage|track)\\b`,'i').test(q))return null;
- const hasJob=/\b(?:jobs?|production|projects?)\b/i.test(q)||Boolean(context&&uuid.test(context.jobId));
+ const populationSeed=continuity?.subject==='Production'&&referential?continuity:null;
+ const hasJob=/\b(?:jobs?|production|projects?)\b/i.test(q)||Boolean(context&&uuid.test(context.jobId))||Boolean(populationSeed);
+ const definition=q.match(/^what\s+does\s+(.+?)\s+mean[?.!]*$/i)?.[1];
+ if(definition&&requestedJobStatuses(definition).length&&isJobPopulationRefinement(definition))return null;
  const liveWords=/\b(?:current|status|hold|scheduled?|unscheduled|planning|planned|completion|complete|finish|hours?|labor|labour|manpower|material|ready|readiness|shortage|incoming|rework|follow.up|blockers?|issues?|progress|overview|counts?|active|upcoming|recorded|find|show|list|tell me|what|which|how many|how much|analy[sz]e|evaluate)\b/i;
- if(!hasJob)return null;
+ if(!hasJob){
+  if(!continuity&&requestedJobStatuses(q).length&&isJobPopulationRefinement(q))return {kind:'clarify',message:'Are you asking about Production Jobs or another workflow? For Production, would you like a current count or a Job list?'};
+  return null;
+ }
 
- if(!liveWords.test(q)){
+ if(!liveWords.test(q)&&!populationSeed){
+  if(isJobPopulationRefinement(q))return {kind:'clarify',message:'Would you like a current Job count or a list for that lifecycle status?'};
   if(referential&&context&&uuid.test(context.jobId)&&continuity&&['get_job_summary','get_job_planning','get_job_labor_summary'].includes(continuity.operation))return {kind:'job',tool:continuity.operation as 'get_job_summary'|'get_job_planning'|'get_job_labor_summary',reference:{jobId:context.jobId},args:continuity.operation==='get_job_labor_summary'&&continuity.selection.startDate&&continuity.selection.endDate?{start_date:continuity.selection.startDate,end_date:continuity.selection.endDate}:{}};
   return null;
  }
- const includeArchived=/\b(?:include|including|show|list|find)\b[^.!?]{0,30}\barchived\b/i.test(q);
- const args:Record<string,unknown>=includeArchived?{include_archived:true}:{};
+ const archive=archiveSelection(q),archiveMention=/\barchived\b/i.test(q);
+ if(archiveMention&&archive===undefined)return {kind:'clarify',message:'Do you want current Jobs only, or current and archived Jobs together? The available archive filter includes archived Jobs; it does not select only archived Jobs.'};
+ const includeArchived=archive??populationSeed?.selection.includeArchived??false;
+ const args:Record<string,unknown>={...(includeArchived?{include_archived:true}:{})};
  const period=jobReportingPeriod(q,now);
- const requestedTemporal=/\b\d{4}-\d{2}-\d{2}\b|\b(?:tomorrow|yesterday|tonight|lifetime|all[\s-]+time|all history|ever|since)\b|\b(?:this|next|last|past|previous)\s+(?:(?:\d+|[a-z]+)\s+)?(?:days?|weeks?|months?|years?)\b/i.test(q);
+ const requestedTemporal=/\b\d{4}-\d{2}-\d{2}\b|\b(?:tomorrow|yesterday|tonight|lifetime|all[\s-]+time|all history|ever|since)\b|\b(?:this|next|last|past|previous)\s+(?:(?:\d+|[a-z]+)\s+)?(?:days?|weeks?|months?|years?)\b|\b(?:in|during|for|from|since|before|after)\s+(?:19|20)\d{2}\b/i.test(q);
  if(/\b(?:lifetime|all[\s-]+time|all history|ever|since|last year)\b/i.test(q)||requestedTemporal&&!period)return {kind:'clarify',message:'Please specify a supported calendar period of at most 366 days, two YYYY-MM-DD boundaries, or one date using “on YYYY-MM-DD”. Saved records cannot establish unrecorded work.'};
- const plural=/\b(?:jobs|production overview|production count|shop overview)\b/i.test(q);
+ const plural=/\b(?:jobs|production overview|production count|shop overview)\b/i.test(q)||Boolean(populationSeed);
  const overview=plural&&/\b(?:how many|counts?|overview|by status|scheduled|unscheduled|active|upcoming|completion|complete|finish|finishing|due)\b/i.test(q);
  if(plural&&period&&/\b(?:how many|counts?|completed|finished|shipped)\b/i.test(q)&&!/\b(?:labor|labour|hours|manpower)\b/i.test(q))return {kind:'clarify',message:'Production Job counts describe the current visible Jobs. Historical period counts and status transitions are outside this read-only contract; I can show current counts or upcoming persisted planned completion dates.'};
  if(/\bactive\s+jobs\s+(?:(?:that|which)\s+)?(?:are\s+)?(?:un)?scheduled\b|\b(?:active\s+(?:un)?scheduled|(?:un)?scheduled\s+active)\s+jobs\b/i.test(q))return {kind:'clarify',message:'I can report active Job counts and scheduled or unscheduled Job counts separately. The combined active-and-scheduled filter is outside this first read-only tool contract.'};
  if(plural&&/\b(?:how many|counts?)\b/i.test(q)&&/\b(?:ready|readiness|ordered|material status|shortages?)\b/i.test(q))return {kind:'clarify',message:'I can report current visible Production Job counts by lifecycle status. Counts filtered by material condition or physical readiness are outside these read-only tools; I can check the recorded material status of a specific Job.'};
- if(plural&&!/\b(?:how many|counts?|overview|upcoming|finish|finishing|due)\b/i.test(q)&&/\b(?:which|list|show|find)\b/i.test(q)&&/\b(?:on hold|in production|not started|on deck|complete|cancelled|ready|ordered)\b/i.test(q))return {kind:'clarify',message:'I can report current visible Production Job counts by status or look up a specific Job. Listing Jobs filtered by status or material condition is outside these read-only tools.'};
- if(overview)return {kind:'overview',tool:'get_production_overview',args:{...args,...period??{}}};
+ if(plural&&/\bactive\b/i.test(q)&&requestedJobStatuses(q.replace(/\bactive\b/gi,'')).some(s=>['shipped','complete','cancelled'].includes(s)))return {kind:'clarify',message:'Active Jobs exclude Shipped, Complete and Cancelled lifecycles. Do you want the active population, or the named terminal status?'};
+ const selectedStatuses=requestedJobStatuses(q),statuses=selectedStatuses.length?selectedStatuses:populationSeed?.selection.statuses??[];
+ const explicitReference=/["“]/.test(q)||/\bjob\s+(?:number\s+)?#?\s*(?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*/i.test(q);
+ const populationList=plural&&!explicitReference&&(listOperation.test(q)||!countOperation.test(q)&&populationSeed?.resultType==='collection');
+ const populationCount=overview||Boolean(populationSeed&&!populationList);
+ if(plural&&/\b(?:not|except|excluding)\b/i.test(q.replace(/\bnot(?:\s+|-)started\b/gi,''))&&selectedStatuses.length&&!archiveMention)return {kind:'clarify',message:'Which lifecycle statuses should be included? I can count or list the current authorized Jobs for one or more explicit statuses.'};
+ if(populationSeed&&/\bother\b/i.test(q)&&populationSeed.resultType==='collection')return {kind:'clarify',message:'Which subset of the Production Jobs do you want to compare? I retained the search scope, not a copy of the previous result list.'};
+ if(populationList&&(/\b(?:ready|readiness|ordered|material status|shortages?)\b/i.test(q)))return {kind:'clarify',message:'The available population filters are lifecycle status and archive inclusion. Material condition and physical readiness are not population filters; I can check recorded material status for an exact Job.'};
+ if(populationList&&(period||populationSeed?.selection.startDate))return {kind:'clarify',message:'Status-filtered Job lists describe the current authorized population. Date windows apply to the separate upcoming planned-finish overview, not historical status lists.'};
+ if(populationList){
+  const namedSearch=q.match(/\b(?:for|named|called)\s+(.+?)(?=[?!;]|$)/i)?.[1];
+  let query=namedSearch?trimReference(namedSearch):populationSeed?.selection.query??'';
+  if(!namedSearch&&!query){let remainder=q.match(/\bjobs?\s+(.+?)(?=[?!;]|$)/i)?.[1]??'';for(const status of selectedStatuses)remainder=remainder.replace(new RegExp('\\b'+status.replaceAll('_','(?:\\s+|-)')+'\\b','gi'),' ');remainder=remainder.replace(/\b(?:are|is|currently|in|on|the|all|active|and|or|include|including|with|exclude|excluding|without|archived|unarchived|please)\b/gi,' ').trim();if(remainder)query=trimReference(remainder);}
+  return {kind:'search',tool:'find_jobs',args:{...args,statuses,...(query?{query}:{})}};
+ }
+ if(populationCount&&populationSeed?.selection.query)return {kind:'clarify',message:'The overview counts lifecycle and archive populations, not a prior name/customer search. I can list those matches, or give a status count across your visible Jobs.'};
+ if(populationCount)return {kind:'overview',tool:'get_production_overview',args:{...args,statuses,...period??{}}};
  const tool=/\b(?:labor|labour|manpower|hours?)\b/i.test(q)?'get_job_labor_summary':/\b(?:scheduled?|unscheduled|planning|planned|dates?|next|completion|finish)\b/i.test(q)?'get_job_planning':'get_job_summary';
  const detailArgs=tool==='get_job_labor_summary'&&period?period:{};
  const contextualArgs=tool==='get_job_labor_summary'&&!requestedTemporal&&continuity?.selection.startDate&&continuity.selection.endDate?{start_date:continuity.selection.startDate,end_date:continuity.selection.endDate}:detailArgs;
@@ -180,9 +205,9 @@ export function buildJobEvidence(result:JobToolResult):JobEvidence{
  }
  if(result.tool==='find_jobs'&&Array.isArray(data.jobs))for(const [i,value] of data.jobs.slice(0,20).entries()){
   const item=object(value),effective=object(item.effective),label=statuses[String(effective.status)]??'Unknown';
-  add(`match_${i+1}`,'identity',`Matching Production Job: ${clean(item.reference)}; recorded status: ${label}.`,[clean(item.reference),'status',label]);
+  add(`match_${i+1}`,'identity',`Matching Production Job: ${clean(item.reference)}; effective status: ${label}.`,[clean(item.reference),'status',label]);
  }
- if(result.tool==='find_jobs'&&Array.isArray(data.jobs)&&data.jobs.length===0&&result.status==='ok'&&result.complete&&!result.truncated&&data.has_more!==true)add('no_matches','limitation','No visible Production Jobs match the requested search scope.',['No','visible','Production Jobs','requested','search','scope']);
+ if(result.tool==='find_jobs'&&Array.isArray(data.jobs)&&data.jobs.length===0&&result.status==='ok'&&result.complete&&!result.truncated&&data.has_more!==true&&Number(result.filters.cursor??0)===0)add('no_matches','limitation','No visible Production Jobs match the requested search scope.',['No','visible','Production Jobs','requested','search','scope']);
  if(result.tool==='get_job_summary'){
   const counts=object(data.counts);
   for(const [key,title] of [['rework_cycles','Recorded Rework cycles'],['active_rework_cycles','Active Rework cycles'],['open_follow_ups','Unresolved recorded follow-ups']] as const){const value=count(counts[key]);if(value!==null)add(key,'count',`${title}: ${value}.`,[title]);}
@@ -203,10 +228,10 @@ export function buildJobEvidence(result:JobToolResult):JobEvidence{
  }
  if(result.tool==='get_production_overview'){
   const counts=object(data.counts);
-  add('overview_scope','limitation','Production overview counts describe current visible Jobs in the selected archive scope; the date window applies only to upcoming persisted planned completions.',['current','visible Jobs','archive scope','only','upcoming','persisted','planned completions']);
+  add('overview_scope','limitation','Production overview counts describe current visible Jobs in the selected lifecycle-status and archive scope; the date window applies only to upcoming persisted planned completions.',['current','visible Jobs','lifecycle-status','archive scope','only','upcoming','persisted','planned completions']);
   if(validDate(String(result.filters.start_date))&&validDate(String(result.filters.end_date)))add('overview_window','schedule',`Upcoming planned completion window: ${result.filters.start_date} through ${result.filters.end_date}, using America/Chicago calendar dates.`,['Upcoming','planned','completion','window','through','America/Chicago','calendar dates']);
   for(const [key,title] of [['jobs','Production Jobs in scope'],['active_jobs','Active Production Jobs'],['scheduled','Scheduled Production Jobs across all statuses in scope'],['unscheduled','Unscheduled Production Jobs across all statuses in scope']] as const){const value=count(counts[key]);if(value!==null)add(`overview_${key}`,'count',`${title}: ${value}.`,[title]);}
-  for(const [status,value] of Object.entries(object(counts.by_status))){const quantity=count(value),label=statuses[status];if(quantity!==null&&label)add(`overview_status_${status}`,'count',`Production Jobs with recorded status ${label}: ${quantity}.`,['Production Jobs','status',label]);}
+  for(const [status,value] of Object.entries(object(counts.by_status))){const quantity=count(value),label=statuses[status];if(quantity!==null&&label)add(`overview_status_${status}`,'count',`Production Jobs with effective status ${label}: ${quantity}.`,['Production Jobs','status',label]);}
   if(Array.isArray(data.upcoming))for(const [i,value] of data.upcoming.slice(0,8).entries()){const row=object(value);add(`upcoming_${i+1}`,'schedule',`Upcoming persisted planned completion: ${clean(row.reference)} on ${clean(row.planned_end,10)}${row.lifecycle==='rework'?' for Rework':''}.`,['Upcoming','persisted','planned','completion',clean(row.reference),...(row.lifecycle==='rework'?['Rework']:[])]);}
   if(result.complete&&!result.truncated&&Array.isArray(data.upcoming)&&data.upcoming.length===0)add('overview_no_upcoming','schedule','No active Production Jobs in scope have persisted planned completion dates in the requested window.',['No','active','Production Jobs','persisted','planned completion','requested window']);
  }

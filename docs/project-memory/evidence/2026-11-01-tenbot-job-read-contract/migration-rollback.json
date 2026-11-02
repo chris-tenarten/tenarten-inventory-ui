@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "migration": "supabase/migrations/20261101210000_job_read_status_receipts.sql",
+  "sha256": "d07a8588ccf3b4a847a4b378274f77f26d4cc7b5594c238addf1011df4880177",
+  "cases": 21,
+  "actualPostgreSQL": true,
+  "ownerAclSignaturePreserved": true,
+  "originalDefinitionRestored": true,
+  "persistentApplication": false,
+  "migrationLedgerChanged": false
+}

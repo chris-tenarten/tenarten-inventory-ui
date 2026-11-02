@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "url": "http://localhost:3000/my-work",
+  "staticPid": 79102,
+  "apiPid": 27054,
+  "apiPort": 55597,
+  "dataset": "Synthetic4status/archive/activeRework",
+  "expected": {
+    "in_production": 3,
+    "on_deck": 3,
+    "on_hold": 1,
+    "shipped": 1,
+    "on_deck_including_archived": 4
+  },
+  "priorApiPreservedAsEvidence": 22919,
+  "realInference": false,
+  "realDatabase": false,
+  "hostedRequests": 0,
+  "operationalWrites": false
+}

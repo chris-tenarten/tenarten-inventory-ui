@@ -6,6 +6,12 @@ import {createContextFixture} from './support/tenbot-context-fixture.mjs';
 import {reviewSession,REVIEW_EMAIL} from './support/messaging-groups-review-fixture.mjs';
 import {wave2Response} from './support/wave2-fixture.mjs';
 const port=55597,origin='http://localhost:3000',f=createContextFixture(reviewSession.user.id),directory='/private/tmp/tenops-tenbot-context-20261031';
+// Optional synthetic read-contract dataset; no hosted records or inference.
+if(process.env.TENBOT_REVIEW_JOB_FILTERS==='true'){
+ const states=['in_production','in_production','on_deck','on_deck','on_hold','shipped','complete','shipped','on_deck','complete'];
+ f.tables.jobs.forEach((job,i)=>{job.production_status=states[i];job.archived_at=i===8?'2026-10-31T12:00:00Z':null;});
+ f.tables.production_rework_cycles=[6,7].map((index,i)=>({id:'11902026-0000-4000-8000-00000000030'+i,job_id:f.tables.jobs[index].id,sequence_number:1,production_status:i===0?'on_deck':'in_production',planned_start:'2026-11-01',planned_end:'2026-11-10',updated_at:'2026-11-01T12:00:00Z'}));
+}
 const server=createServer(async(req,res)=>{
  const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info,x-supabase-api-version,prefer,range,range-unit','Access-Control-Allow-Methods':'GET,HEAD,POST,OPTIONS','Access-Control-Expose-Headers':'content-range'};
  const send=(status:number,value:unknown,extra={})=>{res.writeHead(status,{...headers,...extra});res.end(JSON.stringify(value));};

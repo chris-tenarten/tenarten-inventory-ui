@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "fixture": "jltgxcfiprocydhbrahz",
+  "groups": 10,
+  "checks": [
+    "Real PostgreSQL rollback-only receipt compatibility accepts legacy/canonical filters, rejects invalid widening and preserves exact owner/ACL/signature/original function",
+    "Genuine synthetic Member/Admin JWTs use existing isolated RLS/capability contracts; setup credentials are never used for tool reads",
+    "Four lifecycle count/list equivalence classes agree through real PostgreSQL for Member/Admin, archived excluded/included and one-row pagination",
+    "Effective active Rework overrides original status before filtering; terminal Rework leaves original lifecycle; archived Rework remains archive-scoped",
+    "Composed status unions and omitted/empty-status compatibility share the same authorized population",
+    "Exact-name ambiguity returns both canonical choices; invalid lifecycle arguments return no facts",
+    "Anonymous tool and direct REST access cannot reveal fixture Job records",
+    "Real actor-specific record RLS revocation changes both populations and blocks exact identity; Admin remains scoped by its own JWT",
+    "Record permission revoked after initial PostgreSQL rows but before final authorization suppresses the entire count, not a stale or zero answer",
+    "Current capability revocation denies tool facts under a still-valid signed employee JWT"
+  ],
+  "realPostgreSQL": true,
+  "genuineSignedJwtRls": true,
+  "syntheticIdentities": 2,
+  "syntheticJobs": 13,
+  "syntheticReworks": 5,
+  "paginationLimit": 1,
+  "actualInferenceCalls": 0,
+  "ProductionRequests": 0,
+  "inventoryWrites": 0,
+  "assistantHistoryWrites": 0,
+  "migrationsApplied": 0,
+  "httpCalls": 380
+}
