@@ -35,3 +35,9 @@ After activation, use the service-only `tenbot_openai_meter_status()` for curren
 - `node --check scripts/verify-tenbot-monthly-allowance.mjs` and `git diff --check` pass.
 
 The local Docker fixture was unavailable to a bounded readiness probe, so the existing isolated Free fixture supplied the real database gate. Scratch SQL only is retained under `/private/tmp/tenops-monthly-allowance-*`; no new service, database, branch, worktree or paid resource was created. The broader implementation receipt owns application/browser/build evidence and the final local commit boundary.
+
+## Applied for scoped TenDev acceptance — November 2, 2026
+
+The [real Terra acceptance receipt](2026-11-02-tenbot-real-terra-acceptance.md) supersedes the earlier unapplied/paid-OFF status only for this explicit finite evaluation. Actual stale-open admission proved the existing migration necessary; exact SHA-256 `2336e07e712e0728119d582a05525db45cd180da1707236b516baf62028690c8` was applied at16:27:55UTC, disabled first, preserving all94 prior usage rows, service-only grants/RLS and prior ledger. Two wrapper attempts rolled back; only a catalog alias in the wrapper changed.
+
+The evidenced import remains558679cumulative/18723unresolved microUSD datedOctober29. Policy7 was separately funded, paused on providerquota, then resumed unchanged after Chris added credits. Its conservative cap4213829micros, request250000, Terra-only and18UTCexpiry preserve the effective$5 ceiling including historical costs/holds. Ordinary Production spending remainsfalse and the server gate permits only the authorized owner/exactTenDev. At17:18UTC, configured remaining3984767micros; no reset, refund, unknown settlement or original journal/lock mutation. This grants no ordinary recurring monthly or Production activation.
