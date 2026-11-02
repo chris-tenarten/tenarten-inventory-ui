@@ -3,6 +3,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
 import type {AgentTool,JsonValue,StrictSchema} from './tenbot-agent.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Deno extension.
+import {AgentToolError} from './tenbot-investigation-diagnostics.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
 import type {JobTools} from './tenbot-job-session.ts';
@@ -45,11 +48,11 @@ function argsFor(name:TenbotJobToolName,args:Record<string,JsonValue>){
 import {prepareJobRequest,type PreparedJobRequest} from './tenbot-job-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension for Deno.
-import type {JobIntent} from './tenbot-job-routing.ts';
+import {resolveExactJobReference,completeJobLookup,type JobIntent} from './tenbot-job-routing.ts';
 function comparable(result:JobToolResult){return JSON.stringify({data:result.data,status:result.status,complete:result.complete,truncated:result.truncated,unknowns:result.unknowns,filters:result.filters});}
 
 /** Reuses the five real authorized executors; freshness is a caller check, never model policy. */
-export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Extract<JobIntent,{kind:'search'|'overview'}>;question:string}){
+export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:JobIntent;question:string}){
  const reads=new Map<string,{name:TenbotJobToolName;args:Record<string,unknown>;result:JobToolResult}>();
  let inconsistent=false,scoped:PreparedJobRequest|undefined;
  const execute:JobTools['execute']=async(name,canonical)=>{
@@ -63,9 +66,30 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Ex
   // The model still chooses tools and pages. Only the employee's compiled
   // population selectors override model guesses, for count and list alike.
   let result:JobToolResult;const canonical=argsFor(spec.name,args);
-  if(followup&&['find_jobs','get_production_overview'].includes(spec.name)){
-   const selected=followup.intent.args,query=followup.intent.kind==='search'&&typeof selected.query==='string'?selected.query:'';
-   const population={statuses:selected.statuses??(followup.intent.kind==='search'?followup.intent.selection?.statuses:undefined)??[],include_archived:selected.include_archived===true};
+  const intent=followup?.intent;
+  let references=intent?.kind==='job'&&'jobId' in intent.reference?[intent.reference.jobId]:intent?.kind==='jobs'?intent.references:[];
+  if(intent?.kind==='clarify'||intent?.kind==='blocked')throw new AgentToolError('invalid-arguments');
+  if(intent?.kind==='job'&&'query' in intent.reference){
+   const query=intent.reference.query;
+   if(spec.name==='find_jobs'){canonical.query=query;canonical.statuses=[];canonical.include_archived=intent.includeArchived===true;}
+   else if(spec.name==='get_production_overview')throw new AgentToolError('invalid-arguments');
+   else{const found=[...reads.values()].find(r=>r.name==='find_jobs'&&r.args.query===query)?.result;
+    if(!found||!completeJobLookup(found)||!found.data||!('jobs' in found.data))throw new AgentToolError('invalid-arguments');
+    const resolved=resolveExactJobReference(query,found.data.jobs);if(resolved.kind!=='selected')throw new AgentToolError('invalid-arguments');references=[resolved.jobId];
+   }
+  }
+
+  if(references.length){
+   if(['find_jobs','get_production_overview'].includes(spec.name))throw new AgentToolError('invalid-arguments');
+   if(references.length===1)canonical.job_id=references[0];
+   else if(!references.includes(String(canonical.job_id)))throw new AgentToolError('invalid-arguments');
+   if(spec.name==='get_job_labor_summary'&&intent&&(intent.kind==='job'||intent.kind==='jobs')&&intent.tool===spec.name){for(const key of ['start_date','end_date']){delete canonical[key];if(typeof intent.args[key]==='string'&&intent.args[key])canonical[key]=intent.args[key];}}
+   // Population filters never flow into an exact identity read. The original
+   // executor still validates arguments and authorizes the caller each time.
+  }
+  if(followup&&(intent?.kind==='search'||intent?.kind==='overview')&&['find_jobs','get_production_overview'].includes(spec.name)){
+   const selected=intent.args,query=intent.kind==='search'&&typeof selected.query==='string'?selected.query:'';
+   const population={statuses:selected.statuses??(intent.kind==='search'?intent.selection?.statuses:undefined)??[],include_archived:selected.include_archived===true};
    if(spec.name==='find_jobs'){
     const prepared=await prepareJobRequest({kind:'search',tool:'find_jobs',args:{...canonical,...population,query}},{execute},followup.question);
     // Preserve the first scoped page's has_more/unknowns; a later final page

@@ -47,3 +47,6 @@ The [model-free prepared-draft correction](project-memory/2026-10-30-tenbot-mode
 
 
 - [Generalized TenBot operational Job reads, November 1](project-memory/2026-11-01-tenbot-job-read-contract.md): local native status/archive count-list contracts, effective Rework, bounded discovery/enumeration, compatible private history and focused real JWT/RLS validation. No hosted release or operational writes.
+
+
+- [TenBot canonical resource references and tool orchestration, November1](project-memory/2026-11-01-tenbot-resource-orchestration.md): local list-to-record continuity, bounded plural reads and model/fallback operation binding; focused real JWT/RLS validation, no migration or deployment.

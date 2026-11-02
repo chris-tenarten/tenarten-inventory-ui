@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "url": "http://localhost:3000/my-work",
+  "staticPid": 79102,
+  "apiPid": 17411,
+  "apiPort": 55597,
+  "dataset": "Synthetic singleton/multi resource continuation",
+  "expected": {
+    "in_production": 7,
+    "on_deck": 1,
+    "on_deck_job": "CTX-2",
+    "recorded_hours": 5
+  },
+  "priorApiPreservedAsEvidence": 14885,
+  "realInference": false,
+  "realDatabase": false,
+  "hostedRequests": 0,
+  "operationalWrites": false
+}

@@ -40,7 +40,7 @@ import {contextFromReads,currentConversationContext,conversationContextHint,work
 import {operationalReceipt,operationalHistoryMeta,restoreOperationalHistory,type OperationalReceipt} from './tenbot-operational-history.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension for Deno.
-import {resolveJobIntent} from './tenbot-job-routing.ts';
+import {resolveJobIntent,resolveExactJobReference,completeJobLookup,buildJobEvidence,renderJobEvidence} from './tenbot-job-routing.ts';
 export type AgentDemoScenario='job-investigation'|'invoice-preparation'|'tool-recovery';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Deno import.
@@ -215,8 +215,9 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const can=(capability:string)=>deps.can(owner,capability);
    session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner),persistent);
    const priorContext=session.context;
-   const followup=deps.readOnlyHosted?resolveJobIntent(question,{jobId:session.context?.subject==='Job'&&session.context.references.length===1?session.context.references[0]:'',continuity:session.context??undefined},new Date(now())):null;
-   const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?.kind==='search'||followup?.kind==='overview'?{intent:followup,question}:undefined);
+   const followup=deps.readOnlyHosted?resolveJobIntent(question,{jobId:session.context?.references.length===1?session.context.references[0]:'',continuity:session.context??undefined},new Date(now())):null;
+   const pendingContext=followup?.kind==='clarify'&&priorContext?{...priorContext,...(followup.operation?{operation:followup.operation}:{}),resultType:'clarification' as const,awaitingClarification:true,selection:{...priorContext.selection,...(followup.operation==='get_job_labor_summary'&&typeof followup.args?.start_date==='string'&&typeof followup.args?.end_date==='string'?{startDate:followup.args.start_date,endDate:followup.args.end_date}:{})}}:null;
+   const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?{intent:followup,question}:undefined);
    const mayPrepareNow=()=>deps.canPrepareInvoice?deps.canPrepareInvoice(owner):(async()=>await can('writeBusinessData')&&await can('adjustInventory'))();
    const mayPrepare=!deps.readOnlyHosted&&await mayPrepareNow();
    const sourceReader=deps.readOnlyHosted?undefined:deps.invoice?.reader(owner),invoiceReads=new Map<string,string>();let inconsistentInvoice=false;
@@ -277,6 +278,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     return {question:previous,answer:turn?'Prior assistant workflow guidance, retained only as conversation context. Re-fetch current knowledge and cite newly issued evidence IDs before giving guidance: '+turn.answer:'Previous live answer omitted. Reauthorize and reread all operational facts. Canonical lookup seeds: '+session!.jobIds.join(', ')};
    });
    if(session.context)retainedContext.push({question:'Current conversation subject',answer:conversationContextHint(session.context)});
+   if(followup?.kind==='job'&&'jobId' in followup.reference||followup?.kind==='jobs'){const ids=followup.kind==='jobs'?followup.references:['jobId' in followup.reference?followup.reference.jobId:''];retainedContext.push({question:'Current requested Job operation',answer:JSON.stringify({tool:followup.tool,job_ids:ids,args:followup.args})+'. These canonical references were reauthorized as lookup seeds, not facts. Discover and call the requested existing exact-Job tool for each reference; do not search pronouns or carry collection filters into an exact read. Re-fetch current fields; unavailable results and unsaved fields are different from no matching records.'});}
    if(session.invoiceAttached&&deps.invoice)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:(deps.invoice.document.extraction?'Actual OpenAI image preprocessing produced this transcription. Check read_invoice extraction provenance and compare it against the original image. ':'Synthetic text fixture only. ')+'Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
    const result=await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic:deps.onDiagnostic,...(deps.readOnlyHosted?{limits:{maxDurationMs:75000}}:{}),async authorize(check){
     if(!await can('readOperationalData'))return false;
@@ -305,7 +307,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     const fallbackProofs=session.guidance.flatMap(t=>t.sources);
     const history=session.guidance.length?['Conversation context:\n'+session.guidance.map(t=>`Employee: ${t.question}\nTenBot: ${t.answer}`).join('\n')]:[];
     fallbackAttempted=true;
-    const fallback=await deps.fallback({...body,conversationId:id},{execute:job.execute},session.context,history);
+    const fallback=await deps.fallback({...body,conversationId:id},{execute:job.execute,authorizeHistory:deps.jobTools(owner).authorizeHistory},session.context,history);
     // The canonical legacy handler appended exactly one turn and advanced the
     // shared conversation revision under our existing claim. Never reclaim or
     // guess another caller's revision; a stale commit fails its original CAS.
@@ -331,7 +333,9 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
      const savedAnswer:DisplayAnswer={conversationId:id,mode:responseMode,contentScope:'workflow',message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,notices:[]};
      session.display=[...session.display,{id:historyTurnId,question,createdAt,answeredAt,answer:savedAnswer,sources:proofs,scopeDigest:await scopeDigest(owner)}].slice(-8);
      const entry=agentKnowledgeEntries().find(x=>x.id===sourceProofs[0].id);session.context=workflowConversationContext(entry?.modules[0]??'TenOps',proofs,false,now());
-    }else{session.guidance=[];session.context=contextFromReads(job.reads(),question,now(),session.context)??(!job.reads().length&&session.context&&!/\b(?:new topic|switch(?:ing)? to)\b/i.test(question)?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);}
+    }else{session.guidance=[];session.context=contextFromReads(job.reads(),question,now(),session.context,followup??undefined)??(!job.reads().length&&session.context&&!/\b(?:new topic|switch(?:ing)? to)\b/i.test(question)?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);}
+    if(pendingContext)session.context=pendingContext;
+    if(followup?.kind==='jobs'&&(!record(fallback.operational)||fallback.operational.complete!==true))session.context=null;
     const savedOperational=operationalEnabled&&!workflow?await operationalReceipt(job.reads(),question,String(fallback.message),createdAt,now(),await scopeDigest(owner),fallbackProofs):null;
     if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
     if(!await job.fresh()||!await can('readOperationalData'))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
@@ -361,9 +365,10 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(!session.invoiceAttached&&result.status==='completed'){
     if(knowledgeOnly){const entry=agentKnowledgeEntries().find(x=>x.id===[...knowledgeProofs.keys()][0]);session.context=workflowConversationContext(entry?.modules[0]??'TenOps',[...ancestry.values()],Boolean(result.final?.questions.length),now());}
     else if(scopeOnly)session.context={...workflowConversationContext('TenOps',[],false,now()),operation:'scope',resultType:'scope'};
-    else session.context=contextFromReads(job.reads(),question,now(),session.context)??(!job.reads().length&&result.final?.questions.length&&session.context?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);
+    else session.context=contextFromReads(job.reads(),question,now(),session.context,followup??undefined)??(!job.reads().length&&result.final?.questions.length&&session.context?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);
    }
    if(followup?.kind==='search'&&!job.scoped())session.context=priorContext;
+   if(pendingContext)session.context=pendingContext;
    session.guidance=knowledgeOnly?[...session.guidance,{question,answer:result.final!.answer,sources:[...ancestry.values()]}].slice(-3):[];
    // IDs are lookup seeds only; future requests receive no retained facts/prose.
    session.jobIds=[...new Set(result.evidence.flatMap(item=>{
@@ -376,7 +381,18 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const quantitativeBrief=result.status==='completed'&&singleRead&&['find_jobs','get_production_overview','get_job_labor_summary'].includes(singleRead.name)?presentJobResult(singleRead.result,question)??'The current authorized operational result is unavailable. I cannot establish an exact total or matching list.':null;
    const overviewRead=job.reads().find(r=>r.name==='get_production_overview');
    const countBrief=followup?.kind==='overview'?(result.status==='completed'&&overviewRead?presentJobResult(overviewRead.result,question):null)??'The current authorized Job count is unavailable. I cannot establish an exact total.':null;
-   const message=followup?.kind==='search'?(job.scoped()?.message??'The authorized Job list was not retrieved. I cannot establish a matching count or enumerate those Jobs. Please retry the list.'):(countBrief??quantitativeBrief??result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.'));
+   let exactRefs=followup?.kind==='job'&&'jobId' in followup.reference?[followup.reference.jobId]:followup?.kind==='jobs'?followup.references:[];
+   let queryBrief:string|null=null;
+   if(followup?.kind==='job'&&'query' in followup.reference){const query=followup.reference.query,found=job.reads().find(r=>r.name==='find_jobs'&&r.args.query===query)?.result;
+    if(found&&completeJobLookup(found)&&found.data&&'jobs' in found.data){const resolved=resolveExactJobReference(query,found.data.jobs);if(resolved.kind==='selected')exactRefs=[resolved.jobId];else queryBrief=found.data.jobs.length?'Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. '+(presentJobResult(found,question)??''):presentJobResult(found,question);}
+    else queryBrief='The authorized Job lookup is incomplete or unavailable. I cannot establish a unique record identity.';
+   }
+   const exactReads=exactRefs.map(id=>job.reads().find(r=>r.name===(followup as {tool:string}).tool&&r.args.job_id===id));
+   const groupComplete=followup?.kind!=='jobs'||result.status==='completed'&&exactRefs.length>0&&exactReads.every((r,i)=>{const data:unknown=r?.result.data;return r?.result.status==='ok'&&r.result.complete&&record(data)&&record(data.job)&&data.job.job_id===exactRefs[i];});
+   if(!groupComplete)session.context=null;
+   const exactBriefRaw=!groupComplete?'I could not verify every requested Job. No grouped answer is shown; choose an exact Job or retry after access and data availability are confirmed.':exactRefs.length?(exactReads.every(Boolean)&&result.status==='completed'?exactReads.map(r=>presentJobResult(r!.result,question)??renderJobEvidence(buildJobEvidence(r!.result),1400,question)).join('\n\n'):'The requested authorized Job read did not complete. I cannot establish its current fields. Please retry or clarify the Job.'):null;
+   const exactBrief=exactBriefRaw&&exactBriefRaw.length>2400?'Those Job results exceed the response limit. Please choose fewer Jobs; no combined result was published.':exactBriefRaw;
+   const message=followup?.kind==='clarify'||followup?.kind==='blocked'?followup.message:queryBrief??exactBrief??(followup?.kind==='search'?(job.scoped()?.message??'The authorized Job list was not retrieved. I cannot establish a matching count or enumerate those Jobs. Please retry the list.'):(countBrief??quantitativeBrief??result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.')));
    const answeredAt=new Date(now()).toISOString(),contentScope=knowledgeOnly?'workflow':scopeOnly?'scope':'volatile';
    let historyTurnId:string|undefined;
    if(contentScope!=='volatile'){

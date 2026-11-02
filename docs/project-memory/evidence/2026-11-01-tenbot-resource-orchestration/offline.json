@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "groups": 15,
+  "checks": [
+    "Complete list identity -> status refinement -> exact fresh planning -> labor, without inherited list filters or provider attribution errors",
+    "Reopening restores canonical lookup seeds without prior live facts or inference; current fields refresh",
+    "Multiple complete candidates require singular clarification, retain pending operation, and explicit selection continues planning",
+    "Explicit plural references sequence the same authorized detail tool for each bounded ID",
+    "Paged/incomplete/oversized populations cannot become a unique referent or silently select the first record",
+    "Current row/account revocation invalidates retained IDs and cannot expose a new exact read",
+    "Missing fields, failed retrieval and unauthorized/nonexistent identities remain distinct without false-zero lists",
+    "Primary discovery recovers from wrong population call, binds exact identity, then publishes requested planning instead of generated no-match prose",
+    "Incomplete primary detail execution cannot publish a lookup list or generated no-result conclusion",
+    "Primary plural planning sequences existing discovered tools for the complete bounded reference set",
+    "Clarification preserves the requested labor reporting period through explicit record selection",
+    "A new named Job investigation resolves identity then planning without inheriting prior population filters or publishing the intermediate list",
+    "An auxiliary lookup cannot overwrite the completed requested detail operation or canonical focus",
+    "Primary grouped failures and omitted members suppress every grouped fact and cannot collapse context to a successful subset",
+    "A paged exact-name lookup is not proof of uniqueness in fallback, primary binding or primary answer construction"
+  ],
+  "examples": [
+    {
+      "path": "Terra disabled -> legacy operational handler; synthetic Qwen explanation rejected",
+      "questions": [
+        "7 matching Jobs:\n• CTX-1 — Context Alpha — In Production\n• CTX-3 — Context Job 3 — In Production\n• CTX-4 — Context Job 4 — In Production\n• CTX-5 — Context Job 5 — In Production\n• CTX-6 — Context Job 6 — In Production\n• CTX-7 — Context Job 7 — In Production\n• CTX-8 — Context Job 8 — In Production",
+        "1 matching Job:\n• CTX-2 — Context Job 2 — On Deck",
+        "CTX-2 — Context Job 2 is In Production.\nPlanned: Oct 1, 2026–Nov 15, 2026.\nPhase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+        "CTX-2 — Context Job 2 has 5 hours of recorded labor.\nReporting period: Oct 2, 2026–Oct 31, 2026 (work dates).\n1 saved Manpower entry; latest work date Oct 30, 2026.\nRecorded hours do not include unreported work or forecast remaining effort.\nThese are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified."
+      ],
+      "realModel": false
+    }
+  ],
+  "actualCode": true,
+  "syntheticDatabaseAndAuth": true,
+  "actualDatabase": false,
+  "actualInference": false,
+  "hostedRequests": 0,
+  "operationalWrites": 0
+}

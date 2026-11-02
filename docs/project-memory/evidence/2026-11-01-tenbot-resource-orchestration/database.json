@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "fixture": "jltgxcfiprocydhbrahz",
+  "groups": 7,
+  "checks": [
+    "Genuine synthetic Member/Admin JWTs use existing isolated capability/RLS contracts; setup key never reads operational tools",
+    "Actual singleton lookup survives JSON restoration/current authorization and drives exact planning plus deterministic5-hour labor without inference",
+    "Actual multi-candidate lookup retains bounded canonical choices without an arbitrary selected record or operational snapshot",
+    "Existing real PostgreSQL context/state validators accept the unchanged v1 selector shape; no migration applied",
+    "Real actor-specific RLS revocation between restoration/detail denies facts and clears context while the separate Admin JWT remains scoped",
+    "Current account/capability revocation denies restoration and detail under the still-valid signed employee JWT",
+    "Unauthenticated direct REST and allowlisted tools reveal no synthetic Job facts"
+  ],
+  "realPostgreSQL": true,
+  "genuineSignedJwtRls": true,
+  "syntheticIdentities": 2,
+  "syntheticJobs": 2,
+  "syntheticLaborEntries": 1,
+  "modelInferenceCalls": 0,
+  "ProductionRequests": 0,
+  "inventoryWrites": 0,
+  "assistantHistoryWrites": 0,
+  "migrationsApplied": 0,
+  "httpCalls": 48
+}

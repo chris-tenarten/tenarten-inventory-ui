@@ -12,6 +12,11 @@ if(process.env.TENBOT_REVIEW_JOB_FILTERS==='true'){
  f.tables.jobs.forEach((job,i)=>{job.production_status=states[i];job.archived_at=i===8?'2026-10-31T12:00:00Z':null;});
  f.tables.production_rework_cycles=[6,7].map((index,i)=>({id:'11902026-0000-4000-8000-00000000030'+i,job_id:f.tables.jobs[index].id,sequence_number:1,production_status:i===0?'on_deck':'in_production',planned_start:'2026-11-01',planned_end:'2026-11-10',updated_at:'2026-11-01T12:00:00Z'}));
 }
+// Focused single-resource continuation fixture; alternative to the status matrix.
+if(process.env.TENBOT_REVIEW_RESOURCE_REFERENCES==='true'){
+ f.tables.jobs[1].production_status='on_deck';
+ f.tables.manpower_entries.push({id:'00000000-0000-4000-8000-000009999999',job_id:f.tables.jobs[1].id,rework_cycle_id:null,work_date:'2026-10-30',am_hours:3,pm_hours:2,updated_at:'2026-10-31T12:00:00Z'});
+}
 const server=createServer(async(req,res)=>{
  const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info,x-supabase-api-version,prefer,range,range-unit','Access-Control-Allow-Methods':'GET,HEAD,POST,OPTIONS','Access-Control-Expose-Headers':'content-range'};
  const send=(status:number,value:unknown,extra={})=>{res.writeHead(status,{...headers,...extra});res.end(JSON.stringify(value));};
