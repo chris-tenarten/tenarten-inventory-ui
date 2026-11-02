@@ -1778,22 +1778,6 @@
     "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-handler.ts",
-    "blob": "e8ea1983135ddcf08991d9e7662296416ac06fb1",
-    "sha256": "01e32c5c874667a3e1533e536b6b7b421caa5ba5207d088d0f4ce9e7826525f9",
-    "reviewedCandidate": "6502924bc66d2c9110ab5506513c9edfcbbd42d2",
-    "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "a96c89b7a7c2a12984b0746fbb88f5836be6fb88",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-persistent-source-proof.md",
-      "revision": "6502924bc66d2c9110ab5506513c9edfcbbd42d2",
-      "heading": "## Accepted candidate source review — private employee history, November 1, 2026"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-employee-history.ts",
     "blob": "6f1854b3734c41cfdb6cda4dbefc52c9c4e03aef",
     "sha256": "f4d4661292b2f2e3c6dfc17eb29cbef9e120d3142538b3e09b5233101c7c5981",
@@ -2066,22 +2050,6 @@
     "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
-    "blob": "7760d20ce60ee113e3bc63d6b1c179e83463dc25",
-    "sha256": "2061e3a89649eeb0b941cc272850f74782cec085dd522c1e01b83b4a7198b247",
-    "reviewedCandidate": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-    "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-job-read-source-proof.md",
-      "revision": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-      "heading": "## Accepted candidate source review — generalized Job reads, November 1, 2026"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-job-filters.ts",
     "blob": "fab29b601684989334b532c3c527ae94a5daaf86",
     "sha256": "7ec39eff8077d9663e4d02e42b3fe1dec150df8c985b4cbb9f9a8d7838e1a465",
@@ -2098,73 +2066,9 @@
     "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
-    "blob": "9488e98b9e3222a1b944e608c35235a01d457a42",
-    "sha256": "2726f42f61afe8e339dee8f0e02a02b2872040787e63b3c3c7fae6cf28d921f3",
-    "reviewedCandidate": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-    "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-job-read-source-proof.md",
-      "revision": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-      "heading": "## Accepted candidate source review — generalized Job reads, November 1, 2026"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-job-session.ts",
-    "blob": "9c1c392fb4c99257e0248cb4fb8fd422386fda4d",
-    "sha256": "19386c9b5969ad7fe8aea1d0cfbae21ee124d68f061d22549b32aa5481d7c18f",
-    "reviewedCandidate": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-    "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-job-read-source-proof.md",
-      "revision": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-      "heading": "## Accepted candidate source review — generalized Job reads, November 1, 2026"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
-    "blob": "f360bdc815bacd9e7a7e7e55f9608389ab569a99",
-    "sha256": "0f19179cc80a2b5a1f5cf8d9ff218c19f103dfea7a814698f4c6f187f189ccd2",
-    "reviewedCandidate": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-    "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-job-read-source-proof.md",
-      "revision": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-      "heading": "## Accepted candidate source review — generalized Job reads, November 1, 2026"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
     "blob": "69896337716dee4d79aa570332aec0cc3d8b5553",
     "sha256": "847af9268b98a374809ad97c1b930febe4c2a2e61d036720f0f374803b270426",
-    "reviewedCandidate": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-    "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-job-read-source-proof.md",
-      "revision": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
-      "heading": "## Accepted candidate source review — generalized Job reads, November 1, 2026"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
-    "blob": "f6a55a6b820e8f0b91608608cbdcaf492b7ac08e",
-    "sha256": "f5eff96ae6050fe100c29892bb826ff485b18dda1cc9ea35289c73cedceb0ca3",
     "reviewedCandidate": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
     "scope": "tendev-preparation",
     "acceptedAuthorityRevision": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
@@ -2220,6 +2124,102 @@
       "path": "docs/project-memory/2026-11-01-tenbot-job-read-source-proof.md",
       "revision": "af56a9da60405df7e4a3018ba3fd94a4e1688aa9",
       "heading": "## Accepted candidate source review — generalized Job reads, November 1, 2026"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+    "blob": "ea7303a056779c52e987d7dae4bdc707346533dd",
+    "sha256": "209ec2c0ffea93b5891c65ea3a29efc4d7301c335fb9dd7df7ae29489790e077",
+    "reviewedCandidate": "a87cf881d35cb962d04428ed19ce6110623f3403",
+    "scope": "tendev-preparation",
+    "acceptedAuthorityRevision": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-01-tenbot-job-intelligence-source-proof.md",
+      "revision": "a87cf881d35cb962d04428ed19ce6110623f3403",
+      "heading": "## Accepted candidate source review — consolidated Job Intelligence, November 1, 2026"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+    "blob": "6f203aad77b93daddc82be10a5d2d4a19b044f26",
+    "sha256": "adc40480cab484c8bfc77f57a0519d098a4e009ed72f73c36df77f8dc11eff61",
+    "reviewedCandidate": "a87cf881d35cb962d04428ed19ce6110623f3403",
+    "scope": "tendev-preparation",
+    "acceptedAuthorityRevision": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-01-tenbot-job-intelligence-source-proof.md",
+      "revision": "a87cf881d35cb962d04428ed19ce6110623f3403",
+      "heading": "## Accepted candidate source review — consolidated Job Intelligence, November 1, 2026"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-job-session.ts",
+    "blob": "dd5a0d0db29a2b570359d275a1d3da2a7c761694",
+    "sha256": "718205cdbd37b07c23ee467cfab61160464093b1aeb73b4a06728bfb39c6ad35",
+    "reviewedCandidate": "a87cf881d35cb962d04428ed19ce6110623f3403",
+    "scope": "tendev-preparation",
+    "acceptedAuthorityRevision": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-01-tenbot-job-intelligence-source-proof.md",
+      "revision": "a87cf881d35cb962d04428ed19ce6110623f3403",
+      "heading": "## Accepted candidate source review — consolidated Job Intelligence, November 1, 2026"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "blob": "2f1e1e4622b3f68fd2b6c398fb81b7c43fb3aea3",
+    "sha256": "e452e15feb4b325bdd4b460ba3f71f890ffd19029a2271e62a7cbfbda6b8f24d",
+    "reviewedCandidate": "a87cf881d35cb962d04428ed19ce6110623f3403",
+    "scope": "tendev-preparation",
+    "acceptedAuthorityRevision": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-01-tenbot-job-intelligence-source-proof.md",
+      "revision": "a87cf881d35cb962d04428ed19ce6110623f3403",
+      "heading": "## Accepted candidate source review — consolidated Job Intelligence, November 1, 2026"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+    "blob": "7961541c6c962321923c662c82515d070da24ae4",
+    "sha256": "8d2f7e7c1e9cc316cee0d4c032e68f2829f1fbacb328c73f156f0fe6755f66ee",
+    "reviewedCandidate": "a87cf881d35cb962d04428ed19ce6110623f3403",
+    "scope": "tendev-preparation",
+    "acceptedAuthorityRevision": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-01-tenbot-job-intelligence-source-proof.md",
+      "revision": "a87cf881d35cb962d04428ed19ce6110623f3403",
+      "heading": "## Accepted candidate source review — consolidated Job Intelligence, November 1, 2026"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "product-accepted",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-handler.ts",
+    "blob": "131ebd3fe27ffb56de16e58c31ae69f7ffecd0d6",
+    "sha256": "af1cced926e719da6e4318704f432b731f2ef58d87786f9bd56260517a038ae8",
+    "reviewedCandidate": "a87cf881d35cb962d04428ed19ce6110623f3403",
+    "scope": "tendev-preparation",
+    "acceptedAuthorityRevision": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-01-tenbot-job-intelligence-source-proof.md",
+      "revision": "a87cf881d35cb962d04428ed19ce6110623f3403",
+      "heading": "## Accepted candidate source review — consolidated Job Intelligence, November 1, 2026"
     }
   }
 ]
