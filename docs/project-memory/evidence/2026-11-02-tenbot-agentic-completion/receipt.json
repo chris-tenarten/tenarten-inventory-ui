@@ -1,0 +1,440 @@
+{
+  "recordedAt": "2026-11-02T21:21:33.615Z",
+  "status": "focused correction required; Product review; no Production promotion",
+  "riskTier": 3,
+  "testingLevel": "focused 3",
+  "authority": "Chris: TENDEV — AGENTIC ACTION COMPLETION & NORMAL EMPLOYEE AVAILABILITY, November 2, 2026; supplied Product prompt; separate Advisory thread unavailable",
+  "source": {
+    "deployedImplementation": "5f32795c66cf230b4d001485a3097be5e802376e",
+    "localEvidenceExposure": "231046e5a5eb6930549070efb8469f0dd2a48920",
+    "localEvidenceExposureDeployed": false
+  },
+  "release": {
+    "tenDev": {
+      "sha": "a1831baf145f2be320cbb5d9160781231ffd826a",
+      "deploymentId": "f1119ae6-39b9-4a69-947a-e8089b4b1bd9",
+      "url": "https://tendev.pages.dev"
+    },
+    "edge": {
+      "version": 64,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "sourceHash": "497444764f18ec2af89a11c5877e3a9bf8132402e7a53e5262ee717a15cc55fb",
+      "sourceDeploymentVersion": 62,
+      "acceptanceVersion": null,
+      "acceptanceVersionLimitation": "Intermediate settings-refresh version was not independently captured; source hash remained verified at release and final closure",
+      "closureVersion": 64
+    },
+    "production": {
+      "sha": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+      "deploymentId": "eb191ab7-6e40-4275-b0a1-c616044b89a5",
+      "pagesConfigUnchanged": true
+    },
+    "tenDevConfigUnchanged": true,
+    "exactEdgeModules": 55,
+    "servedAssets": 99,
+    "exportArtifacts": 288,
+    "newMigrations": [],
+    "reusedMigrations": [
+      "20261102120000",
+      "20261102130000",
+      "20261102140000",
+      "20261102150000"
+    ],
+    "productionDeployment": false,
+    "remotePush": false
+  },
+  "employee": {
+    "genuineSignedIn": true,
+    "passwordHandledByHuman": true,
+    "proposal": {
+      "state": "completed",
+      "pending": null,
+      "actionId": "29d5d277-617e-4865-9b4f-8df3c3f88122",
+      "proposal": {
+        "id": "cf702bf9-71d2-4219-beea-a348d4cbe41f",
+        "jobId": null,
+        "status": "draft",
+        "issuedAt": null,
+        "lineCount": 1,
+        "createdByOwner": true,
+        "issuedPdfRecords": 0,
+        "unknownRateCount": 0,
+        "unknownQuantityCount": 0,
+        "issuedSnapshotPresent": false
+      },
+      "revision": 2,
+      "createdAt": "2026-11-02T20:58:37.93321+00:00",
+      "expiresAt": "2026-11-02T21:13:37.93321+00:00",
+      "operation": "proposal.save_draft",
+      "completedAt": "2026-11-02T21:06:06.322813+00:00",
+      "passwordVerified": true,
+      "archiveReferences": 1,
+      "createdProposalId": "cf702bf9-71d2-4219-beea-a348d4cbe41f",
+      "authorizationConsumed": true,
+      "differentExecutionSession": true,
+      "number": "Q26-1102-1.0",
+      "url": "https://tendev.pages.dev/proposals?open=cf702bf9-71d2-4219-beea-a348d4cbe41f",
+      "preview": "Inline reviewed unissued one-page PDF rendered; complete PDF content/layout and download export not verified",
+      "initialUnitOmitted": true,
+      "explicitCorrectionUnit": "each",
+      "reloadVerified": true
+    },
+    "pending": {
+      "state": "prepared",
+      "pending": null,
+      "actionId": "11ba9eb8-47c9-4ba6-8138-fbdaf6f8344c",
+      "proposal": null,
+      "revision": 1,
+      "createdAt": "2026-11-02T21:15:40.31015+00:00",
+      "expiresAt": "2026-11-02T21:30:40.31015+00:00",
+      "operation": "inventory.create_pending_receivals",
+      "completedAt": null,
+      "passwordVerified": false,
+      "archiveReferences": 1,
+      "createdProposalId": null,
+      "authorizationConsumed": false,
+      "differentExecutionSession": false,
+      "reviewCardPublished": true,
+      "confirmationBlocked": true,
+      "createdRecords": 0,
+      "quantityComparison": {
+        "readOnly": true,
+        "at": "2026-11-02T21:18:19.718Z",
+        "sqlSha256": "0e3fb1e17fadd7424b7879b89a61d6ccb236839eb860a2abcfd40c173621d4c4",
+        "sourceRows": [
+          {
+            "actualUnit": "LB",
+            "sourceLineId": "c9cc8e49-ea16-4a26-b142-ffb237a76d1d:L5",
+            "actualQuantity": "50",
+            "sourceTextMatchesOriginalLine": true
+          }
+        ],
+        "actionFound": true,
+        "sourceFound": true,
+        "preparedLines": [
+          {
+            "unit": "",
+            "sourceLineId": "c9cc8e49-ea16-4a26-b142-ffb237a76d1d:L5",
+            "sourceQuantity": {
+              "unit": "",
+              "quantity": ""
+            },
+            "quantityExpected": "",
+            "matchingSourceRows": [
+              {
+                "actualUnit": "LB",
+                "lineIdMatches": true,
+                "actualQuantity": "50",
+                "sourceQuantityMatches": false,
+                "sourceTextEqualsPrepared": true
+              }
+            ]
+          }
+        ],
+        "actionSourceMatchesOriginal": true,
+        "rawSourceTextProjected": false,
+        "businessWrites": 0,
+        "providerCalls": 0
+      },
+      "canonicalPureProbe": {
+        "readOnly": true,
+        "at": "2026-11-02T21:19:45.233Z",
+        "actualHeldIntentMetadataPath": "/private/tmp/tenops-agentic-completion-20261102/source-attestation/held-b-quantity-comparison.json",
+        "actualHeldIntentMetadataSha256": "2f79353332ec0be3a30d48221c167975265a742b2328de7b2b3d27e9b2bb4259",
+        "functionMd5": "c9616fb63241ce96de7c186f8a8c40e2",
+        "packageSizeGuardRejected": true,
+        "sqlState": "22023",
+        "canonicalAccepted": false,
+        "querySha256": {
+          "held-b-quantity-function-read.sql": "f25862456ffeedebc67fb82845030780d60b4d44419c81b1e82a201e28b7d79a",
+          "held-b-quantity-pure-probe.sql": "93d3333e9dc65adaf366ac507ec7c28d7a2636d8599d535705eb06842e25a551"
+        },
+        "rawExceptionOrSourceTextProjected": false,
+        "roleOrAuthClaimsChanged": false,
+        "businessWrites": 0,
+        "technicalAttestations": 0,
+        "providerCalls": 0
+      }
+    },
+    "originalEvidence": "Reused approved private PDF and pre-existing deterministic human-reviewed synthetic transcription, not OCR/vision; original source remains ready/unbound/version1",
+    "upload": "First readback Storage HTTP500; ordinary same-file retry succeeded. Automated chooser lacked local-file permission; native control failed to start; human used paperclip.",
+    "uxFinding": "Attaching a file alone leaves Send disabled; accompanying text is required. No unrelated UI change."
+  },
+  "inference": {
+    "requests": [
+      {
+        "label": "a-corrected",
+        "requestId": "e2060b0a-9d27-47dc-a022-07cad455b552",
+        "model": "gpt-6.1-terra",
+        "steps": 3,
+        "http200Completed": true,
+        "chargedMicrousd": 10516,
+        "outstandingHeldMicrousd": 0,
+        "toolAttempts": {
+          "discover_capabilities": 1,
+          "prepare_proposal_draft": 1
+        },
+        "toolOutcomes": {
+          "ok": 2
+        },
+        "stopReasons": {
+          "completed": 1
+        },
+        "usage": {
+          "inputTokens": 14316,
+          "outputTokens": 454,
+          "cachedInputTokens": 8040,
+          "cacheWriteTokens": 6267,
+          "reasoningTokens": null
+        }
+      },
+      {
+        "label": "a-initial",
+        "requestId": "1750112e-d33d-4091-83a5-f04a3b4b6764",
+        "model": "gpt-6.1-terra",
+        "steps": 3,
+        "http200Completed": true,
+        "chargedMicrousd": 14167,
+        "outstandingHeldMicrousd": 0,
+        "toolAttempts": {
+          "discover_capabilities": 1,
+          "prepare_proposal_draft": 1
+        },
+        "toolOutcomes": {
+          "ok": 2
+        },
+        "stopReasons": {
+          "completed": 1
+        },
+        "usage": {
+          "inputTokens": 15356,
+          "outputTokens": 402,
+          "cachedInputTokens": 5864,
+          "cacheWriteTokens": 9483,
+          "reasoningTokens": null
+        }
+      },
+      {
+        "label": "b-initial",
+        "requestId": "2a878c4b-aba6-4b4f-9f6f-64e95ba16d46",
+        "model": "gpt-6.1-terra",
+        "steps": 7,
+        "http200Completed": true,
+        "chargedMicrousd": 17499,
+        "outstandingHeldMicrousd": 0,
+        "toolAttempts": {
+          "discover_capabilities": 1,
+          "describe_assistant_scope": 1,
+          "read_supplied_document": 1,
+          "search_material_catalog": 1,
+          "find_receivals": 1,
+          "prepare_pending_receivals": 1
+        },
+        "toolOutcomes": {
+          "ok": 6
+        },
+        "stopReasons": {
+          "completed": 1
+        },
+        "usage": {
+          "inputTokens": 46140,
+          "outputTokens": 729,
+          "cachedInputTokens": 36517,
+          "cacheWriteTokens": 9602,
+          "reasoningTokens": null
+        }
+      },
+      {
+        "label": "b-upload-ack",
+        "requestId": "a29db86b-c85b-4657-93d7-f2be114c7ee1",
+        "model": "gpt-6.1-terra",
+        "steps": 3,
+        "http200Completed": true,
+        "chargedMicrousd": 13600,
+        "outstandingHeldMicrousd": 0,
+        "toolAttempts": {
+          "discover_capabilities": 1,
+          "read_supplied_document": 1
+        },
+        "toolOutcomes": {
+          "ok": 2
+        },
+        "stopReasons": {
+          "completed": 1
+        },
+        "usage": {
+          "inputTokens": 15213,
+          "outputTokens": 312,
+          "cachedInputTokens": 5813,
+          "cacheWriteTokens": 9391,
+          "reasoningTokens": null
+        }
+      }
+    ],
+    "tokens": {
+      "inputTokens": 91025,
+      "outputTokens": 1897,
+      "cachedInputTokens": 56234,
+      "cacheWriteTokens": 34743,
+      "reasoningTokens": null
+    },
+    "newAuthorizedMicrousd": 500000,
+    "requestCeilingMicrousd": 250000,
+    "chargedMicrousd": 55782,
+    "outstandingNewReservationsMicrousd": 0,
+    "unspentClosedMicrousd": 444218,
+    "usageRows": 165,
+    "historicalRows": 149,
+    "historical149Unchanged": true,
+    "historicalPrefixHash": "da6e62ff474188c51f36da8bdf508d0b",
+    "historicalHeldMicrousd": 142953,
+    "legacyUnresolvedMicrousd": 18723,
+    "monthlyAccountedMicrousd": 342208,
+    "monthlyLimitMicrousd": 786426,
+    "policyEnabled": false,
+    "policyVersion": 11
+  },
+  "controls": {
+    "closedAt": "2026-11-02T21:18:10.317633+00:00",
+    "temporaryEnrollment": [],
+    "activePermits": 0,
+    "activeGrants": 0,
+    "reviewedOperationsEnabled": false,
+    "reviewedActionsEnabled": false,
+    "receivalPilotEnabled": false,
+    "receivalExecutionEnabled": false,
+    "ordinaryProductionTerraSpend": false,
+    "invoicePreparationSpend": false,
+    "employeeModeEnabled": false,
+    "recordsAndAccountingPreserved": true,
+    "operationHistory": "Retained; operation-linked content redacts while rollout gate is OFF"
+  },
+  "integrity": {
+    "capsHash": "21d8fb476573b12bbb122469794d463a",
+    "jobCount": 46,
+    "stockRows": 187,
+    "profileHash": "c29d6c8a23bed64fc324e08470e179e7",
+    "pendingCount": 76,
+    "proposalCount": 9,
+    "jobIdentityHash": "b1c4f175d00a47ca8b71a5b1dc6948b8",
+    "stockFingerprint": "d674637c213397c6f5c1f3c726594f73",
+    "proposalAccessHash": "c7caea1a9687a2fc70fdbe98ed8df2ef",
+    "inventoryTransactions": 102,
+    "inventoryTransactionsHash": "0c67fee51b45f4299d698b88380fb9cf"
+  },
+  "validation": {
+    "deployed": {
+      "source": "5f32795c66cf230b4d001485a3097be5e802376e",
+      "tier": 3,
+      "testingLevel": 3,
+      "proposalGroups": 25,
+      "availabilityGroups": 22,
+      "hostedSessionGroups": 10,
+      "hostedOperationGroups": 9,
+      "typeScript": {
+        "command": "npx tsc --noEmit",
+        "exitCode": 0
+      },
+      "targetedEslint": {
+        "command": "npx eslint --no-ignore [nine owned source/test paths]",
+        "exitCode": 0
+      },
+      "diffCheck": "pass",
+      "genericAgentDirtyWorkPreserved": true,
+      "hostedSessionAndAdapterPin": "accepted generic module SHA256 f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98",
+      "modelCalls": 0,
+      "hostedMutations": 0,
+      "independentDiffReview": "No added trust/publication concern; Pending permanent mode still requires separate migration contract"
+    },
+    "localEvidenceExposure": {
+      "recordedAt": "2026-11-02T21:20:20.880Z",
+      "status": "Validated locally; root committed after worker validation; not deployed",
+      "changedPaths": [
+        {
+          "path": "supabase/functions/_shared/tenbot-business-operations.ts",
+          "sha256": "267fe07b04e88065c797628193c39f87ca2fc954d233ffca81f0fe66264a508e"
+        },
+        {
+          "path": "scripts/verify-tenbot-business-operations.mts",
+          "sha256": "da8086dc06fb4a2588fa17cd4cc129c68dfddc02952cbd8baa6845df45349624"
+        }
+      ],
+      "delta": "Expose a fresh source_quantity projection only from existing attested source rows with exact line ID/text and original hash binding. Retain fresh owner-authorized original download and final authorization. Missing, stale, duplicate or malformed evidence remains null. Clarify source quantity versus package/catalog ordering quantity; do not auto-fill preparation.",
+      "validation": [
+        {
+          "command": "npx tsx scripts/verify-tenbot-business-operations.mts",
+          "exitCode": 0,
+          "outcome": "PASS",
+          "groupsPassed": 19,
+          "originalGroupsRetained": 16,
+          "newGroups": 3,
+          "mode": "model-free injected reads; no database transaction or live inference claim",
+          "inferenceCalls": 0,
+          "operationalWrites": 0
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "outcome": "PASS",
+          "diagnostics": []
+        },
+        {
+          "command": "npx eslint --no-ignore supabase/functions/_shared/tenbot-business-operations.ts scripts/verify-tenbot-business-operations.mts",
+          "exitCode": 0,
+          "outcome": "PASS",
+          "diagnostics": []
+        },
+        {
+          "command": "git diff --check -- supabase/functions/_shared/tenbot-business-operations.ts scripts/verify-tenbot-business-operations.mts",
+          "exitCode": 0,
+          "outcome": "PASS",
+          "diagnostics": []
+        }
+      ],
+      "focusedAssertions": [
+        "Only exact line-bound attested quantity/unit is exposed; model-visible projection cannot mutate host evidence.",
+        "Every read downloads again; mismatched line ID/text, stale original hash, missing attestation/quantity/row, duplicate row, malformed quantity/unit or non-string quantity stays unavailable.",
+        "Blank preparation input remains blank and held; source exposure never auto-fills a business action.",
+        "The existing equal-total/package example still blocks with source_quantity_is_package_size and quantity_unresolved even when exact attested quantity is copied; source_evidence_unverified is absent in that case."
+      ],
+      "retainedBlocker": {
+        "description": "Existing canonical quantity guard rejects an attested material total equal to a parenthetical per-container quantity.",
+        "rootHostedPureSqlProbe": "/private/tmp/tenops-agentic-completion-20261102/source-attestation/held-b-quantity-pure-probe.json",
+        "reportedSqlstate": "22023",
+        "reportedFingerprint": "c9616fb63241ce96de7c186f8a8c40e2",
+        "probeExecutedByThisWorker": false,
+        "typedQuantityHelperChanged": false,
+        "sqlChanged": false,
+        "fixtureOrAttestationChanged": false
+      },
+      "boundaries": {
+        "checksRerunToWriteReceipt": 0,
+        "hostedCallsForThisPatch": 0,
+        "hostedMutations": 0,
+        "providerCalls": 0,
+        "aiInferenceCalls": 0,
+        "commits": 0,
+        "pushes": 0,
+        "deployments": 0,
+        "migrationsCreatedOrApplied": 0,
+        "authorizationChanges": 0
+      },
+      "workerBoundaryCountersOnly": true,
+      "rootCommittedAfterWorkerValidation": true,
+      "commit": "231046e5a5eb6930549070efb8469f0dd2a48920"
+    },
+    "reused": "Existing isolated Auth/RLS/real canonical transaction, replay/concurrency and unchanged desktop/mobile/Messaging evidence; no broad rerun",
+    "unrelatedDirtyPathsPreserved": 8
+  },
+  "limits": [
+    "Pending password/execution/canonical record and actual created-record link not reached",
+    "Duplicate tool ran, but the employee card did not explicitly summarize its findings; compound-answer completeness is not established",
+    "Local source-quantity exposure has no hosted inference proof",
+    "Quantity rule requires separately approved narrow TS/SQL compatibility correction; no migration authored/applied",
+    "Permanent Pending execution still depends on pilot/enrollment/window and needs separate narrow approval",
+    "Normal financial policy lifetime and rollout require Product approval; no automatic renewal",
+    "No active desktop capture; two native startup attempts failed; browser-only screenshots/DOM used; no new native screenshot"
+  ],
+  "recommendation": "Accept deployed Proposal/publication/failure/availability work as bounded evidence; require focused quantity-contract correction and one Pending completion before Production readiness. Preserve rollout OFF and stop for Product."
+}

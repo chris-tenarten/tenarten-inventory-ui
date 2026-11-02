@@ -1,5 +1,7 @@
 # TenBot integrated TenDev staging and real employee acceptance — November 2, 2026
 
+Later hosted state and acceptance are recorded in the [focused completion receipt](2026-11-02-tenbot-agentic-completion.md): Proposal completed; Pending trusted publication reached but quantity held; TenDev `a1831baf` / final Edge64; all temporary gates closed. The original failures and evidence below retain their historical scope.
+
 **Deployed to TenDev; operational acceptance failed; revise before Production.** Temporary Terra allowance and operational gates closed at 20:31:18Z. No Proposal, Pending Receival or trusted action was created. The successful final absence check is not an employee-acceptance pass.
 
 Authority: Chris's **TENDEV — INTEGRATED TENBOT STAGING & REAL EMPLOYEE ACCEPTANCE**, accepting integrated `28005dc70d086a2a68830165c4f299ba51bc63ba`. Separate Advisory context was unavailable; the supplied Product contract governed. Tier 3 / focused Testing Level 3. This supersedes the hosted-state boundary of the [local integration receipt](2026-11-02-tenbot-workspace-integration.md), preserving its original evidence. [Sanitized machine receipt](evidence/2026-11-02-tenbot-integrated-staging/receipt.json).

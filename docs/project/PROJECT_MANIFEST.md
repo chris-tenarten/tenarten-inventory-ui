@@ -68,6 +68,8 @@ Employee TenBot questions and completed answers form a persistent, owner-private
 
 Chris's [November 2 Product direction](../project-memory/2026-11-02-infrastructure-tenbot-simplification.md#deferred-assistant-home--november-2-product-direction) moves TenBot's primary home, after the infrastructure/orchestration pass, to a dedicated global header icon: a right-side desktop assistant panel expandable into a full workspace, and a full-screen assistant on mobile. Persistent conversation history must remain intact. Conversation/session contracts should remain independent of Messaging presentation where practical. Relocation is deferred; it grants no anticipatory UI refactor or additional testing scope to the current pass.
 
+Chris's November 2 normal-availability decision requires released TenBot capabilities to be available to eligible employees whenever TenOps is available, using existing permissions and administrator capability controls. Normal access must not depend on developer enrollment or temporary acceptance deadlines. Financial authorization/monthly limits and consequential action review, existing-account password confirmation, exact approval binding and replay protection remain independent controls; funding never renews automatically. See the [focused completion and outstanding rollout boundary](../project-memory/2026-11-02-tenbot-agentic-completion.md).
+
 ### Allow incomplete operational handoff
 
 A job may enter Production before every identifier, material detail, or schedule date exists. Project name is the minimum identity. The UI should expose missing planning information without blocking useful early entry.
