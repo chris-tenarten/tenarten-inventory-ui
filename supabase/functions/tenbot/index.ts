@@ -55,7 +55,12 @@ Deno.serve(async(request:Request)=>{
      if(!reviewedAuthorized()){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
      if(input.operation!=='inventory.create_pending_receivals')return;
      const config={enabled:Deno.env.get('TENBOT_RECEIVAL_PILOT_ENABLED')==='true',executionEnabled:Deno.env.get('TENBOT_RECEIVAL_EXECUTION_ENABLED')==='true',origins:(Deno.env.get('TENBOT_RECEIVAL_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean),employeeIds:(Deno.env.get('TENBOT_RECEIVAL_EMPLOYEE_IDS')||'').split(',').map(s=>s.trim()).filter(Boolean),expiresAt:Deno.env.get('TENBOT_RECEIVAL_PILOT_EXPIRES_AT')||''};
-     if(!config.executionEnabled||!hostedReceivalPilotEnabled(config,input.ownerId,origin)){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
+     if(!config.executionEnabled){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
+     // Normal cohort execution uses the exact password-authorized action and
+     // private canonical stage/dispatch; its availability has no pilot expiry.
+     if(employeeModeAuthorized){await actions.stageReceivals(input.reference);return;}
+     // Finite acceptance retains its existing Edge pilot/permit restrictions.
+     if(!hostedReceivalPilotEnabled(config,input.ownerId,origin)){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
      const staged=await actions.stageReceivals(input.reference);
      await mintHostedReceivalExecutionPermit({owner:input.ownerId,draftId:staged.draftId,hash:staged.hash,approvalId:staged.approvalId,origin,async service(name,args){
       const permit=await metadata.rpc(name,args);

@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
+import ts from 'typescript';
 import {createReviewedActionService,parseActionReceipt,ReviewedActionError,type ActionReference,type ActionCard,type ActionRpc} from '../supabase/functions/_shared/tenbot-actions';
 import {confirmReviewedActionPassword,type ActionPasswordDependencies} from '../supabase/functions/_shared/tenbot-action-auth';
 
@@ -14,7 +15,8 @@ const card:ActionCard={kind:'proposed_action',contract:'tenbot.actions.v1',refer
 const result={draftId:stage.draftId,hash:draftHash,createdRecordIds:[createdId],createdCatalogRecords:[],idempotent:false,executedAt:new Date(now+1000).toISOString(),onHandChangedByCreation:false,url:'/inventory#pending-receivals'};
 const receipt={contract:'tenbot.actions.v1',kind:'action_result',reference,operation:card.operation,status:'completed',idempotent:false,result,completedAt:new Date(now+1000).toISOString()};
 const jwt=(session:string)=>[Buffer.from('{"alg":"HS256"}').toString('base64url'),Buffer.from(JSON.stringify({sub:owner,role:'authenticated',session_id:session,aal:'aal1',exp:now/1000+3600})).toString('base64url'),'offline-signature'].join('.');
-const checks:string[]=[];async function check(name:string,run:()=>unknown|Promise<unknown>){await run();checks.push(name);}
+const permanentOnly=process.argv.includes('--permanent-only');
+const checks:string[]=[];async function check(name:string,run:()=>unknown|Promise<unknown>){if(permanentOnly&&!name.startsWith('permanent:'))return;await run();checks.push(name);}
 
 function fixture(){
  const calls:Array<{name:string;args?:unknown}>=[];
@@ -57,5 +59,53 @@ await check('canonical stage rechecks source, human-reviewed material and packag
  const stageSql=sql.slice(sql.indexOf('create function public.stage_tenbot_reviewed_receivals'),sql.indexOf('create function public.tenbot_action_guard_receival_execution'));
  assert(stageSql.includes('public.prepare_invoice_receival_draft_with_source'));assert(stageSql.includes('public.approve_invoice_receival_draft'));assert(stageSql.includes("reviewed->'sourceQuantity' is distinct from line->'sourceQuantity'"));assert(stageSql.includes("reviewed->'package'->>'quantity'"));assert(stageSql.includes("reviewed->>'vendorSku'"));assert(stageSql.includes('public.tenbot_action_require_authorized(action)'));assert(!/insert into public\.(?:pending_receivals|inventory_items|inventory_transactions)/i.test(stageSql));
 });
-const report={passed:true,groups:checks.length,checks,mode:'Offline injected trusted-auth/RPC and static forward-migration checks only',actualNetworkCalls:0,actualDatabase:false,businessWrites:0,inferenceCalls:0,migration:{path:migrationPath,sha256:createHash('sha256').update(sql).digest('hex'),appliedByThisVerifier:false},requiredGate:'Separate real isolated canonical PostgreSQL/Auth/RLS/lifecycle/concurrency evidence required.'};
-const directory='/private/tmp/tenops-tenbot-canonical-action-receivals-20261102';mkdirSync(directory,{recursive:true,mode:0o700});writeFileSync(directory+'/offline.json',JSON.stringify(report,null,2)+'\n',{mode:0o600});console.log(JSON.stringify(report,null,2));
+const permanentPath='supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql',permanentSql=readFileSync(permanentPath,'utf8');
+await check('permanent: forward correction replaces exactly the new-execution Pending call; reconciliation and every other source byte stay intact',()=>{
+ const body=sql.slice(sql.indexOf('create or replace function public.execute_tenbot_reviewed_action')).split('as $$')[1].split('$$;')[0];
+ assert(permanentSql.includes(createHash('md5').update(body).digest('hex')));
+ const oldClause=permanentSql.split('old_clause:=$old$')[1].split('$old$;')[0],newClause=permanentSql.split('new_clause:=$new$')[1].split('$new$;')[0];
+ assert.equal(body.split(oldClause).length,2);const changed=body.replace(oldClause,newClause);
+ assert.equal(changed.match(/result:=public.tenbot_execute_invoice_receival_core\(/g)?.length,1);
+ assert.equal(changed.match(/perform public.execute_invoice_receival_draft\(/g)?.length,1);
+ assert.equal(body.split('result:=public.execute_invoice_receival_draft')[0].split('perform public.tenbot_action_require_authorized(action)').length,2);
+ assert(changed.indexOf('insert into public.tenbot_reviewed_action_dispatches')<changed.indexOf('result:=public.tenbot_execute_invoice_receival_core'));
+ assert.equal(changed.match(/perform public.tenbot_action_require_authorized\(action\)/g)?.length,2);
+ assert(changed.includes("failure_code='business_rejected',authorization_consumed_at="));assert(changed.includes("jsonb_build_object('onHandChangedByCreation',false"));assert(changed.includes('public.tenbot_action_receipt(action,true)'));
+ assert(permanentSql.includes('proowner=original.proowner and proacl is not distinct from original.proacl'));
+ assert(permanentSql.includes('prosrc=replacement_source'));assert(permanentSql.includes('original.proconfig'));
+});
+await check('permanent: application requires exact owner/ACL/predecessor, live commit guard and disabled controls without changing roles, tables, grants or activation',()=>{
+ assert(permanentSql.includes("array['authenticated=X/postgres','postgres=X/postgres']"));assert(permanentSql.includes("original.proowner<>'postgres'::regrole"));
+ assert(permanentSql.includes("tgenabled='O'"));assert(permanentSql.includes("tgfoid='public.tenbot_action_guard_receival_execution()'::regprocedure"));
+ assert(permanentSql.includes('where singleton and not receivals_enabled for share'));assert(permanentSql.includes('where singleton and not execution_enabled for share'));
+ const commands=permanentSql.split('\n').filter(line=>!line.trimStart().startsWith('--')).join('\n');
+ assert(!/\b(?:create|alter|grant|revoke)\s+(?:table|role|policy)\b/i.test(commands));assert(!/\b(?:grant|revoke)\b/i.test(commands));
+ assert(!/\b(?:insert into|update|delete from)\s+public\.(?:app_users|app_role_capabilities|tenbot_action_control|tenbot_receival_pilot_policy|tenbot_receival_pilot_employees|tenbot_receival_execution_control)\b/i.test(commands));
+ assert(!/set_config|set role|tenbot_openai/i.test(commands));
+});
+const edge=readFileSync('supabase/functions/tenbot/index.ts','utf8');
+const beforeExecute=edge.slice(edge.indexOf('async beforeExecute(input){'),edge.indexOf('\n    }},\n   async preview(reference)'));
+assert(beforeExecute.startsWith('async beforeExecute(input){'));
+const edgeMethod=ts.transpileModule('const handler={'+beforeExecute+'\n}};',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText;
+async function edgeBefore(options:{normal?:boolean;acceptance?:boolean;execution?:boolean;pilot?:boolean;operation?:string;stageFails?:boolean}={}){
+ const calls:string[]=[];
+ const run=new Function('createReviewedActionService','reviewedAuthorized','employeeModeAuthorized','Deno','hostedReceivalPilotEnabled','origin','mintHostedReceivalExecutionPermit','metadata','ReviewedActionError',edgeMethod+';return handler.beforeExecute;')(
+  ()=>({async revoke(value:ActionReference){assert.deepEqual(value,reference);calls.push('revoke');},async stageReceivals(value:ActionReference){assert.deepEqual(value,reference);calls.push('stage');if(options.stageFails)throw new ReviewedActionError('rejected');return stage;}}),
+  ()=>options.normal===true||options.acceptance===true,options.normal===true,{env:{get:(name:string)=>name==='TENBOT_RECEIVAL_EXECUTION_ENABLED'&&options.execution===true?'true':''}},
+  ()=>{calls.push('pilot-check');return options.pilot===true;},options.normal?'https://tenops.pages.dev':'https://tendev.pages.dev',async()=>{calls.push('pilot-permit');},null,ReviewedActionError) as (input:unknown)=>Promise<void>;
+ let rejected=false;try{await run({caller:{},reference,ownerId:owner,operation:options.operation??'inventory.create_pending_receivals'});}catch(error){assert(error instanceof ReviewedActionError);rejected=true;}
+ return {calls,rejected};
+}
+await check('permanent: actual Edge branch stages normal eligible exact actions without pilot/enrollment/window/permit and retains execution disablement',async()=>{
+ assert.deepEqual(await edgeBefore({normal:true,execution:true}),{calls:['stage'],rejected:false});
+ for(const options of [{normal:true,execution:false},{normal:false,acceptance:false,execution:true}])assert.deepEqual(await edgeBefore(options),{calls:['revoke'],rejected:true});
+ assert.deepEqual(await edgeBefore({normal:true,execution:true,stageFails:true}),{calls:['stage'],rejected:true});
+ assert.deepEqual(await edgeBefore({normal:true,execution:false,operation:'proposal.save_draft'}),{calls:[],rejected:false});
+});
+await check('permanent: actual Edge finite acceptance retains pilot denial and permit ordering; it cannot enter the normal branch',async()=>{
+ assert.deepEqual(await edgeBefore({acceptance:true,execution:true,pilot:false}),{calls:['pilot-check','revoke'],rejected:true});
+ assert.deepEqual(await edgeBefore({acceptance:true,execution:true,pilot:true}),{calls:['pilot-check','stage','pilot-permit'],rejected:false});
+ assert.deepEqual(await edgeBefore({acceptance:true,execution:false,pilot:true}),{calls:['revoke'],rejected:true});
+});
+const report={passed:true,groups:checks.length,checks,mode:'Offline injected trusted-auth/RPC and static forward-migration checks only',actualNetworkCalls:0,actualDatabase:false,businessWrites:0,inferenceCalls:0,migration:{path:permanentOnly?permanentPath:migrationPath,sha256:createHash('sha256').update(permanentOnly?permanentSql:sql).digest('hex'),appliedByThisVerifier:false},requiredGate:'Separate real isolated canonical PostgreSQL/Auth/RLS/lifecycle/concurrency evidence required.'};
+const directory='/private/tmp/tenops-tenbot-canonical-action-receivals-20261102';mkdirSync(directory,{recursive:true,mode:0o700});writeFileSync(directory+(permanentOnly?'/permanent-offline.json':'/offline.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});console.log(JSON.stringify(report,null,2));
