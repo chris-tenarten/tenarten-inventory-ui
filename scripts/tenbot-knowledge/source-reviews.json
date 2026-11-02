@@ -464,19 +464,6 @@
   },
   {
     "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
-    "blob": "bea0e13636c95718fb35d08da4b30e01c85f1395",
-    "release": {
-      "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
-      "receipt": {
-        "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
-        "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
-        "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
     "path": "supabase/functions/_shared/tenbot-invoice-catalog.ts",
     "blob": "e25dc58ba1edac7488f4ead934ce2a227856365a",
     "release": {
@@ -516,19 +503,6 @@
   },
   {
     "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-openai.ts",
-    "blob": "9eee1e6256f5e88168eeafea1be1f93e7f50f53d",
-    "release": {
-      "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
-      "receipt": {
-        "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
-        "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
-        "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
     "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
     "blob": "74c992d6e04f18dc7f16c0bdd56f6e2f24629fe8",
     "release": {
@@ -544,19 +518,6 @@
     "classification": "historical-deployed",
     "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
     "blob": "18a8776166c69184246d90d6b0ca971042786486",
-    "release": {
-      "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
-      "receipt": {
-        "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
-        "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
-        "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
-    "path": "supabase/functions/tenbot/index.ts",
-    "blob": "96852bc575846a4928d11787a48edb6005af46d6",
     "release": {
       "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
       "receipt": {
@@ -802,60 +763,8 @@
   },
   {
     "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
-    "blob": "2f1e1e4622b3f68fd2b6c398fb81b7c43fb3aea3",
-    "release": {
-      "revision": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
-      "receipt": {
-        "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-        "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-        "heading": "## Executed accepted TenDev source reconciliation — November 1, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
-    "blob": "7961541c6c962321923c662c82515d070da24ae4",
-    "release": {
-      "revision": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
-      "receipt": {
-        "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-        "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-        "heading": "## Executed accepted TenDev source reconciliation — November 1, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
     "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
     "blob": "ea7303a056779c52e987d7dae4bdc707346533dd",
-    "release": {
-      "revision": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
-      "receipt": {
-        "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-        "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-        "heading": "## Executed accepted TenDev source reconciliation — November 1, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-employee-history.ts",
-    "blob": "6f1854b3734c41cfdb6cda4dbefc52c9c4e03aef",
-    "release": {
-      "revision": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
-      "receipt": {
-        "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-        "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-        "heading": "## Executed accepted TenDev source reconciliation — November 1, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-handler.ts",
-    "blob": "131ebd3fe27ffb56de16e58c31ae69f7ffecd0d6",
     "release": {
       "revision": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
       "receipt": {
@@ -895,19 +804,6 @@
     "classification": "historical-deployed",
     "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
     "blob": "a279215f6e3236e8825e2c409a6cdc2d42b717da",
-    "release": {
-      "revision": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
-      "receipt": {
-        "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-        "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-        "heading": "## Executed accepted TenDev source reconciliation — November 1, 2026"
-      }
-    }
-  },
-  {
-    "classification": "historical-deployed",
-    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
-    "blob": "d6cab5eeb35f198b780987c7c98a7d2c7a57ebeb",
     "release": {
       "revision": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
       "receipt": {
@@ -1009,16 +905,386 @@
     }
   },
   {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-action-auth.ts",
+    "blob": "4a6dd2ed278449ac0983a21f31c57bf8d45c9a63",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-actions.ts",
+    "blob": "2d1c7202a4235d16d35cfb28c004e472c6bf5fff",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "blob": "71cedbef2d7e4fade0924ee63cfa6e9fe2882d44",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-business-operations.ts",
+    "blob": "3dc5a9fb8dfd76f6cc596f072febb3e3b4f1739d",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-core.ts",
+    "blob": "2a9ccfc3c45f94ddb0a59cf5235f4cba4d4d5f0d",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-employee-history.ts",
+    "blob": "b77f8fcacbbe6d89cae36e11aae50c7ab3160207",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-handler.ts",
+    "blob": "1b357ea25eeb2600ab33e825f53792b00c733926",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+    "blob": "2cf630931ae8e84bf626e75d63d31c094a131cb4",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+    "blob": "3d7b92594a990f6de57d7c39c9edec9362d74cb5",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-openai.ts",
+    "blob": "5fefd1bdbab029b121bb32b00c0839e507b9d7c0",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-proposal-operations.ts",
+    "blob": "a8cc7b4e6dd8bc86b50be1bf2a7fac81ce1f2f68",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-qwen-agent.ts",
+    "blob": "37e331899d72414863d0a9730a3b9060fd64f229",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-read-investigation.ts",
+    "blob": "221c9d9f59a6f1359d4b57dc2563fd6544ddce77",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-read-routing.ts",
+    "blob": "8485f4c0d2cb384fcba7abb8d61e239666cc807e",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-reviewed-operations.ts",
+    "blob": "0423aeaa4e1f6d667b24e0249d7e1e22007540ff",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/functions/_shared/tenbot-terra-acceptance.ts",
+    "blob": "66537cbccc1ecb0713ab4f22e3327f413402004d",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261102120000_tenbot_reviewed_actions.sql",
+    "blob": "f22369ca3e5be5ccd40e3ab58d98af87ed1c1a81",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261102130000_tenbot_action_canonical_receivals.sql",
+    "blob": "6fdfebe49e068ca06efcfa797cc0c5005d77a1e3",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261102140000_tenbot_operation_history.sql",
+    "blob": "367451c9bed464d5eee866184a8dd77cfe73c35c",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261102150000_tenbot_canary_deferred_record_boundary.sql",
+    "blob": "e20462654be96c37895be552797380eb8d38daec",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261102160000_tenbot_invoice_quantity_total_evidence.sql",
+    "blob": "d331f7a28cd3b4907613f6cfbae80d5dae91fd62",
+    "release": {
+      "revision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261102100000_tenbot_monthly_allowance.sql",
+    "blob": "f6f5a8d85482e78028f73e50b140c604c9fcd765",
+    "release": {
+      "revision": "7a0243e1f33840c29ebe0a7f836f95c301181291",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+        "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+        "heading": "## Executed accepted TenDev source reconciliation — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-pending-create",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "240867443b00f8f12d50578963ff6337c5a38701c9d5833f7ea0f2a384c70a00",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-pending-receive",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "53015734080f00d2a16f67984ef72f44b1de3a4695be5bfd831f423704e1257f",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-movement",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "2b74456d88bd763a77940da9ff284938b21aa4288bd834465677bae46dfc1f36",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-reservation",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "1d52c259c505a87b45313a6fcd635126f64e40c375a6dcd906fb8f4b9893fdd0",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "inventory-stock-search",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "knowledge-inventory",
+    "path": "src/app/inventory/page.tsx",
+    "beforeBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+    "afterBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+    "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
+    }
+  },
+  {
     "classification": "record-no-claim-impact",
     "recordId": "dm",
     "path": "src/modules/my-work/InboxDialog.tsx",
     "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "44c2d1a6d06c4280bb7a94c2e79b64e408c4b594",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
     "recordDigest": "bc307fd6417f038fcff168d590a4ad46b7107ea36665e67a71fc5a6d55c16910",
     "additionalDependencies": [
       {
         "path": "src/components/GlobalMessaging.tsx",
-        "blob": "2d305a5f6f2ecb55aa2d2fa57d6f5032056665bb"
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
       },
       {
         "path": "src/modules/my-work/inbox.ts",
@@ -1026,18 +1292,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "9dac5a2fe2689c471837ac0a849900eb7bdf9fe9"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "721b41401cded4cdfa6f6e2599554526c26a2cba",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
     "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-      "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-      "heading": "## Accepted record source review — consolidated Messaging, November 1, 2026"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
     }
   },
   {
@@ -1045,12 +1311,12 @@
     "recordId": "group",
     "path": "src/modules/my-work/InboxDialog.tsx",
     "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "44c2d1a6d06c4280bb7a94c2e79b64e408c4b594",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
     "recordDigest": "6e87c76817da022ca9355b2d1596ae9548df742613d915c75db6b4e88e293e9b",
     "additionalDependencies": [
       {
         "path": "src/components/GlobalMessaging.tsx",
-        "blob": "2d305a5f6f2ecb55aa2d2fa57d6f5032056665bb"
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
       },
       {
         "path": "src/modules/my-work/inbox.ts",
@@ -1058,18 +1324,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "9dac5a2fe2689c471837ac0a849900eb7bdf9fe9"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "721b41401cded4cdfa6f6e2599554526c26a2cba",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
     "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-      "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-      "heading": "## Accepted record source review — consolidated Messaging, November 1, 2026"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
     }
   },
   {
@@ -1077,12 +1343,12 @@
     "recordId": "message-attachments",
     "path": "src/modules/my-work/InboxDialog.tsx",
     "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "44c2d1a6d06c4280bb7a94c2e79b64e408c4b594",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
     "recordDigest": "a6855e912e9f78b26d9305924519b1c0cf53f27dd4459f7694d551a0bd454282",
     "additionalDependencies": [
       {
         "path": "src/components/GlobalMessaging.tsx",
-        "blob": "2d305a5f6f2ecb55aa2d2fa57d6f5032056665bb"
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
       },
       {
         "path": "src/modules/my-work/inbox.ts",
@@ -1090,18 +1356,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "9dac5a2fe2689c471837ac0a849900eb7bdf9fe9"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "721b41401cded4cdfa6f6e2599554526c26a2cba",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
     "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-      "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-      "heading": "## Accepted record source review — consolidated Messaging, November 1, 2026"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
     }
   },
   {
@@ -1109,12 +1375,12 @@
     "recordId": "message-reply",
     "path": "src/modules/my-work/InboxDialog.tsx",
     "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "44c2d1a6d06c4280bb7a94c2e79b64e408c4b594",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
     "recordDigest": "065244fc9a7c4116d49cc1b1d89b058d01632ebc41fbfff3cb2c31433eae01c7",
     "additionalDependencies": [
       {
         "path": "src/components/GlobalMessaging.tsx",
-        "blob": "2d305a5f6f2ecb55aa2d2fa57d6f5032056665bb"
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
       },
       {
         "path": "src/modules/my-work/inbox.ts",
@@ -1122,18 +1388,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "9dac5a2fe2689c471837ac0a849900eb7bdf9fe9"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "721b41401cded4cdfa6f6e2599554526c26a2cba",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
     "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-      "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-      "heading": "## Accepted record source review — consolidated Messaging, November 1, 2026"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
     }
   },
   {
@@ -1141,12 +1407,12 @@
     "recordId": "share-job",
     "path": "src/modules/my-work/InboxDialog.tsx",
     "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "44c2d1a6d06c4280bb7a94c2e79b64e408c4b594",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
     "recordDigest": "fc4df7a747c85087a62ad91cf7b8e7988ed857a445366406ea9704549dde436b",
     "additionalDependencies": [
       {
         "path": "src/components/GlobalMessaging.tsx",
-        "blob": "2d305a5f6f2ecb55aa2d2fa57d6f5032056665bb"
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
       },
       {
         "path": "src/modules/my-work/inbox.ts",
@@ -1154,18 +1420,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "9dac5a2fe2689c471837ac0a849900eb7bdf9fe9"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "721b41401cded4cdfa6f6e2599554526c26a2cba",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
     "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-      "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-      "heading": "## Accepted record source review — consolidated Messaging, November 1, 2026"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
     }
   },
   {
@@ -1173,12 +1439,12 @@
     "recordId": "workflow-message-drafts",
     "path": "src/modules/my-work/InboxDialog.tsx",
     "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "44c2d1a6d06c4280bb7a94c2e79b64e408c4b594",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
     "recordDigest": "2dfa7d12fe043f2e664cfb790afe5e42f079aece85a86c3d9e1649367db51cae",
     "additionalDependencies": [
       {
         "path": "src/components/GlobalMessaging.tsx",
-        "blob": "2d305a5f6f2ecb55aa2d2fa57d6f5032056665bb"
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
       },
       {
         "path": "src/modules/my-work/inbox.ts",
@@ -1186,18 +1452,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "9dac5a2fe2689c471837ac0a849900eb7bdf9fe9"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "721b41401cded4cdfa6f6e2599554526c26a2cba",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
     "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-      "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-      "heading": "## Accepted record source review — consolidated Messaging, November 1, 2026"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
     }
   },
   {
@@ -1205,12 +1471,12 @@
     "recordId": "workflow-message-edit",
     "path": "src/modules/my-work/InboxDialog.tsx",
     "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "44c2d1a6d06c4280bb7a94c2e79b64e408c4b594",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
     "recordDigest": "7dcffd764fbb864982286711333092b30d6f73fccb0c195797a8bc1a60791628",
     "additionalDependencies": [
       {
         "path": "src/components/GlobalMessaging.tsx",
-        "blob": "2d305a5f6f2ecb55aa2d2fa57d6f5032056665bb"
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
       },
       {
         "path": "src/modules/my-work/inbox.ts",
@@ -1218,18 +1484,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "9dac5a2fe2689c471837ac0a849900eb7bdf9fe9"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "721b41401cded4cdfa6f6e2599554526c26a2cba",
+    "reviewedCandidate": "d05d552352470a46872c69e7589654792c5b1f36",
     "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-      "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-      "heading": "## Accepted record source review — consolidated Messaging, November 1, 2026"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
     }
   }
 ]

@@ -41,26 +41,6 @@
   },
   {
     "classification": "infrastructure-only",
-    "path": "supabase/functions/_shared/tenbot-core.ts",
-    "blob": "eaa9f9c108c10a72801602c1c87ca19bc84d5973",
-    "receipt": {
-      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
-      "heading": "## Accepted infrastructure review — October 29, 2026"
-    }
-  },
-  {
-    "classification": "infrastructure-only",
-    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
-    "blob": "4bfd5f350e783118bb1d3bc043c242e920d74464",
-    "receipt": {
-      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
-      "heading": "## Accepted infrastructure review — October 29, 2026"
-    }
-  },
-  {
-    "classification": "infrastructure-only",
     "path": "supabase/functions/_shared/tenbot-job-session.ts",
     "blob": "7a3b25454b1d0790cbd05f234e02c7e540920de4",
     "receipt": {
@@ -131,42 +111,52 @@
   },
   {
     "classification": "infrastructure-only",
-    "path": "supabase/functions/_shared/tenbot-handler.ts",
-    "blob": "c9e0d8c80ad936c7e62b046fba991c8bb3580eac",
+    "path": "supabase/functions/_shared/tenbot-action-transport.ts",
+    "blob": "6878469b18643d8ccd5d87d44422646105ab310b",
     "receipt": {
-      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-      "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
-      "heading": "## Accepted infrastructure review — October 29, 2026"
-    }
-  },
-  {
-    "classification": "infrastructure-only",
-    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
-    "blob": "0b90dd83531e6b95363322f888b5637c530bca1c",
-    "receipt": {
-      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
-      "heading": "## Accepted infrastructure review — selective knowledge preparation"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted infrastructure review — explicit employee cohort and Production transport"
     }
   },
   {
     "classification": "infrastructure-only",
     "path": "supabase/functions/_shared/tenbot-agent-session.ts",
-    "blob": "c521fad047d387b226568f33a9213e9f4e564d3a",
+    "blob": "1a7e4e36702ca90a038590689065462aa2622e32",
     "receipt": {
-      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
-      "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
-      "heading": "## Accepted infrastructure review — selective knowledge preparation"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted infrastructure review — explicit employee cohort and Production transport"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/_shared/tenbot-hosted-operations.ts",
+    "blob": "16a7b0508d3965a310f253051a68062f06161d12",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted infrastructure review — explicit employee cohort and Production transport"
     }
   },
   {
     "classification": "infrastructure-only",
     "path": "supabase/functions/_shared/tenbot-hosted.ts",
-    "blob": "87df8c952a4c4cfcf3c5b31105f0aec113fedfc5",
+    "blob": "e5a59d2af63e593c80612916129320550a0c5c8b",
     "receipt": {
-      "path": "docs/project-memory/2026-11-01-tenbot-consolidated-production-source-proof.md",
-      "revision": "721b41401cded4cdfa6f6e2599554526c26a2cba",
-      "heading": "## Accepted infrastructure review — Production persistent-history transport"
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted infrastructure review — explicit employee cohort and Production transport"
+    }
+  },
+  {
+    "classification": "infrastructure-only",
+    "path": "supabase/functions/tenbot/index.ts",
+    "blob": "0d9c3e5a7c0dcb6bda4a788a5609b401df13d2c5",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+      "revision": "d05d552352470a46872c69e7589654792c5b1f36",
+      "heading": "## Accepted infrastructure review — explicit employee cohort and Production transport"
     }
   }
 ]
