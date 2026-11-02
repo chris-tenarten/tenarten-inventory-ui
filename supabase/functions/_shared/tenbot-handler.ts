@@ -13,7 +13,10 @@ import {LIVE_QUESTION,retainedJobIntent,jobHistoryMarker,withoutLiveHistory,prep
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension required by Deno.
 import {conversationContextHint,type ConversationContext} from './tenbot-conversation-context.ts';
-type TrustedContinuity={context:ConversationContext|null;history:string[]};
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {isSimpleJobRead,CONVERSATIONAL_READ_UNAVAILABLE} from './tenbot-read-routing.ts';
+type TrustedContinuity={context:ConversationContext|null;history:string[];completeRequestsOnly?:boolean};
 type Rpc=(name:string,args?:Record<string,unknown>)=>Promise<{data:unknown;error:unknown}>;
 type ExperimentalAgent=(body:Record<string,unknown>,owner:string)=>Promise<unknown>;
 export function handleTenbot(body:Record<string,unknown>,userId:string,caller:Rpc,service:Rpc,provider:InferenceProvider|null,legacyBudget:number|undefined,jobTools:JobTools|undefined,experimentalAgent:ExperimentalAgent):Promise<unknown>;
@@ -106,7 +109,11 @@ async function handleTenbotDefault(body:Record<string,unknown>,userId:string,cal
  try{
  let result;
  try{
-  if(jobIntent){
+  if(jobIntent&&jobIntent.kind!=='blocked'&&continuity?.completeRequestsOnly&&!isSimpleJobRead(resolved.question,jobIntent)){
+   // A failed reasoning turn must not look successful after answering just one
+   // matching intent. No operational read or second inference is dispatched.
+   result={mode:'guide',resolution:'unavailable' as const,message:CONVERSATIONAL_READ_UNAVAILABLE,sources:[],snapshot:{revision:'tenbot-read-routing.v1',verifiedAt:new Date().toISOString()},summary:null,suggestionAllowed:false,notices:[]};
+  }else if(jobIntent){
    prepared=jobTools?await prepareJobRequest(jobIntent,jobTools,resolved.question):{intent:null,result:null,evidence:null,message:'Live Job information is temporarily unavailable. Workflow guidance and the rest of TenOps remain available.'};
    result=operationalReply(prepared);
    if(provider&&!prepared.results&&prepared.evidence?.facts.length&&!prepared.choices?.length&&['ok','partial'].includes(prepared.evidence.status)&&canExplainOperationally(resolved.question,prepared.evidence)){
@@ -121,7 +128,14 @@ async function handleTenbotDefault(body:Record<string,unknown>,userId:string,cal
     const unchanged=JSON.stringify(signature(fresh))===JSON.stringify(signature(prepared));
     prepared=fresh;const quantitative=['get_production_overview','get_job_labor_summary'].includes(fresh.result?.tool??'');result=operationalReply(fresh,unchanged&&!quantitative?validated.message:fresh.message,unchanged,!unchanged);
    }
-  }else result=await answer(body,permissions,provider,reserve,history);
+  }else{
+   result=await answer(body,permissions,provider,reserve,history);
+   if(continuity?.completeRequestsOnly){
+    // Mixed how-to/operational goals can have no deterministic Job intent.
+    // Keep useful permitted guide text, but never present it as full coverage.
+    result={...result,mode:'direct-guidance',resolution:'partial' as const,message:CONVERSATIONAL_READ_UNAVAILABLE+(result.sources.length?' Verified workflow guidance: '+result.message:'')};
+   }
+  }
  }catch(e){
   if(reservation)await finish('failed').catch(()=>{});
   // Reuse this authenticated owner's loaded history/version and permissions.
