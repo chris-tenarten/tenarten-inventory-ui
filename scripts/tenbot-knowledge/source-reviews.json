@@ -2065,70 +2065,6 @@
   },
   {
     "classification": "record-no-claim-impact",
-    "recordId": "dm",
-    "path": "src/modules/my-work/InboxDialog.tsx",
-    "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
-    "recordDigest": "bc307fd6417f038fcff168d590a4ad46b7107ea36665e67a71fc5a6d55c16910",
-    "additionalDependencies": [
-      {
-        "path": "src/components/GlobalMessaging.tsx",
-        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
-      },
-      {
-        "path": "src/modules/my-work/inbox.ts",
-        "blob": "75a07f550fd894b3572b7648c83d684a52fe0684"
-      },
-      {
-        "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "940602b4a51150d46f37d51531a812603c5f227f"
-      },
-      {
-        "path": "src/modules/tenbot/history-presentation.ts",
-        "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
-      }
-    ],
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted record source review \u2014 shared Workspace integration"
-    }
-  },
-  {
-    "classification": "record-no-claim-impact",
-    "recordId": "group",
-    "path": "src/modules/my-work/InboxDialog.tsx",
-    "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
-    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
-    "recordDigest": "6e87c76817da022ca9355b2d1596ae9548df742613d915c75db6b4e88e293e9b",
-    "additionalDependencies": [
-      {
-        "path": "src/components/GlobalMessaging.tsx",
-        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
-      },
-      {
-        "path": "src/modules/my-work/inbox.ts",
-        "blob": "75a07f550fd894b3572b7648c83d684a52fe0684"
-      },
-      {
-        "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "940602b4a51150d46f37d51531a812603c5f227f"
-      },
-      {
-        "path": "src/modules/tenbot/history-presentation.ts",
-        "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
-      }
-    ],
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted record source review \u2014 shared Workspace integration"
-    }
-  },
-  {
-    "classification": "record-no-claim-impact",
     "recordId": "inventory-activity",
     "path": "src/app/client-layout-shell.tsx",
     "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
@@ -2171,6 +2107,84 @@
   },
   {
     "classification": "record-no-claim-impact",
+    "recordId": "workflow-intake-bid",
+    "path": "src/app/client-layout-shell.tsx",
+    "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+    "afterBlob": "2172930e869b301f5a1ee41d0bc3ef38a71ec4c6",
+    "recordDigest": "8c83d76ba135c143b4afe613e9c7aa72f10997692cb350a9571e20fbef2dc5f7",
+    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
+      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+      "heading": "## Accepted record source review \u2014 shared Workspace integration"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "dm",
+    "path": "src/modules/my-work/InboxDialog.tsx",
+    "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
+    "recordDigest": "bc307fd6417f038fcff168d590a4ad46b7107ea36665e67a71fc5a6d55c16910",
+    "additionalDependencies": [
+      {
+        "path": "src/components/GlobalMessaging.tsx",
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
+      },
+      {
+        "path": "src/modules/my-work/inbox.ts",
+        "blob": "75a07f550fd894b3572b7648c83d684a52fe0684"
+      },
+      {
+        "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
+      },
+      {
+        "path": "src/modules/tenbot/history-presentation.ts",
+        "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
+      }
+    ],
+    "reviewedCandidate": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-workspace-pages-mode-source-proof.md",
+      "revision": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+      "heading": "## Accepted record source review \u2014 reviewed action mode precedence"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
+    "recordId": "group",
+    "path": "src/modules/my-work/InboxDialog.tsx",
+    "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+    "afterBlob": "edfda5849a7349e5544ba4031651639bbcb35576",
+    "recordDigest": "6e87c76817da022ca9355b2d1596ae9548df742613d915c75db6b4e88e293e9b",
+    "additionalDependencies": [
+      {
+        "path": "src/components/GlobalMessaging.tsx",
+        "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
+      },
+      {
+        "path": "src/modules/my-work/inbox.ts",
+        "blob": "75a07f550fd894b3572b7648c83d684a52fe0684"
+      },
+      {
+        "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
+      },
+      {
+        "path": "src/modules/tenbot/history-presentation.ts",
+        "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
+      }
+    ],
+    "reviewedCandidate": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-workspace-pages-mode-source-proof.md",
+      "revision": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+      "heading": "## Accepted record source review \u2014 reviewed action mode precedence"
+    }
+  },
+  {
+    "classification": "record-no-claim-impact",
     "recordId": "message-attachments",
     "path": "src/modules/my-work/InboxDialog.tsx",
     "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
@@ -2187,18 +2201,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "940602b4a51150d46f37d51531a812603c5f227f"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+    "reviewedCandidate": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted record source review \u2014 shared Workspace integration"
+      "path": "docs/project-memory/2026-11-02-tenbot-workspace-pages-mode-source-proof.md",
+      "revision": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+      "heading": "## Accepted record source review \u2014 reviewed action mode precedence"
     }
   },
   {
@@ -2219,18 +2233,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "940602b4a51150d46f37d51531a812603c5f227f"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+    "reviewedCandidate": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted record source review \u2014 shared Workspace integration"
+      "path": "docs/project-memory/2026-11-02-tenbot-workspace-pages-mode-source-proof.md",
+      "revision": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+      "heading": "## Accepted record source review \u2014 reviewed action mode precedence"
     }
   },
   {
@@ -2251,32 +2265,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "940602b4a51150d46f37d51531a812603c5f227f"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+    "reviewedCandidate": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted record source review \u2014 shared Workspace integration"
-    }
-  },
-  {
-    "classification": "record-no-claim-impact",
-    "recordId": "workflow-intake-bid",
-    "path": "src/app/client-layout-shell.tsx",
-    "beforeBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
-    "afterBlob": "2172930e869b301f5a1ee41d0bc3ef38a71ec4c6",
-    "recordDigest": "8c83d76ba135c143b4afe613e9c7aa72f10997692cb350a9571e20fbef2dc5f7",
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted record source review \u2014 shared Workspace integration"
+      "path": "docs/project-memory/2026-11-02-tenbot-workspace-pages-mode-source-proof.md",
+      "revision": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+      "heading": "## Accepted record source review \u2014 reviewed action mode precedence"
     }
   },
   {
@@ -2297,18 +2297,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "940602b4a51150d46f37d51531a812603c5f227f"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+    "reviewedCandidate": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted record source review \u2014 shared Workspace integration"
+      "path": "docs/project-memory/2026-11-02-tenbot-workspace-pages-mode-source-proof.md",
+      "revision": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+      "heading": "## Accepted record source review \u2014 reviewed action mode precedence"
     }
   },
   {
@@ -2329,18 +2329,18 @@
       },
       {
         "path": "src/modules/tenbot/TenbotWorkspace.tsx",
-        "blob": "940602b4a51150d46f37d51531a812603c5f227f"
+        "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
       },
       {
         "path": "src/modules/tenbot/history-presentation.ts",
         "blob": "e5ddaa3b540e4994b8d80e3369997bdadf0d036d"
       }
     ],
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+    "reviewedCandidate": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted record source review \u2014 shared Workspace integration"
+      "path": "docs/project-memory/2026-11-02-tenbot-workspace-pages-mode-source-proof.md",
+      "revision": "044940ef8d9d5a42a62eb5145bf964a89c34aa78",
+      "heading": "## Accepted record source review \u2014 reviewed action mode precedence"
     }
   }
 ]
