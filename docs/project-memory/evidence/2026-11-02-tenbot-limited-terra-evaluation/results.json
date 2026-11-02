@@ -1,0 +1,540 @@
+{
+  "status": "blocked-by-expired-local-api-credential-not-model-quality",
+  "acceptedBaseline": "179e74b91649fd9ea52ac79fdc8ed7518a7d8f75",
+  "authorization": {
+    "runId": "6dce9700-683a-4c19-8684-3a45dc550b30",
+    "taskIds": [
+      "job-schedule-labor",
+      "compound-production-briefing"
+    ],
+    "hardRunLimitUsd": 0.25,
+    "originalCumulativeLimitUsd": 5,
+    "oneTime": true,
+    "ordinarySpendingRemainsFalse": true,
+    "expiresAtUtc": "2026-11-02T14:07:17.945Z"
+  },
+  "sourceManifest": {
+    "base": "179e74b91649fd9ea52ac79fdc8ed7518a7d8f75",
+    "noWorktreeOrBranch": true,
+    "unrelatedGenericAgentDirtyEditsExcluded": true,
+    "overlayHashes": {
+      "scripts/support/tenbot-scoped-evaluation-budget.mts": "b7d41ed19e8082c224adb69125bb917bd349d4b1a59e7bc27c7f45bc31a228aa",
+      "scripts/verify-tenbot-scoped-evaluation-budget.mts": "340b11ee6f4204ee5813ebb64d5c4b126b56c55b8ab25a4923350693f847173b",
+      "scripts/evaluate-tenbot-terra-tools-live.mts": "51bca978acb61c58314711f08715c0d1a26f38cdbfea6d3912e359510b729934"
+    },
+    "acceptedRuntimePinsVerified": 30,
+    "baselinePinsVerified": 8
+  },
+  "scope": "Only new isolated evaluation scripts/allowance mechanism and evidence; no application, provider adapter or routing changes",
+  "financialValidation": {
+    "riskTier": 3,
+    "focusedScopedBudgetGroups": 17,
+    "syntheticOnly": true,
+    "realMultiprocessConcurrencyTest": true,
+    "targetedStrictTypes": "PASS",
+    "targetedEslint": "PASS",
+    "independentReadOnlyFinancialReview": "PASS with runner conditions verified",
+    "ordinaryGateRemainsFalse": true,
+    "originalLedgerUnchangedBeforeRun": true,
+    "archiveRuntimePins": 30,
+    "baselinePins": 8,
+    "applicationBuild": "Prior accepted179e74b build reused; only new CLI/testing files, no application change"
+  },
+  "financialReview": "Independent read-only reviewer found no blocking cap/crash/accounting issue; runner pins original ledger, real clock, full source closure and active task reservation",
+  "expiredInitialWindow": {
+    "beforeBudgetOpen": true,
+    "apiCalls": 0,
+    "stateCreated": false,
+    "sameUnusedAuthorization": true,
+    "oldProcess": {
+      "exitCode": 1,
+      "timedOut": false,
+      "elapsedSeconds": 0.342
+    },
+    "newWindowEstablishedBeforeAnyFunding": true
+  },
+  "realPreflight": {
+    "signedSyntheticEmployee": true,
+    "getUserVerified": true,
+    "freshReadOperationalData": true,
+    "authorizedJobDiscoveryPlanningAndLabor": true,
+    "fixture": "jltgxcfiprocydhbrahz",
+    "serviceCredentialUse": 0,
+    "expectedFactsNeverFedToModel": true,
+    "modelDirectedReads": true,
+    "partialDeterministicRouteNotAppliedToTerra": true,
+    "persistentHistory": "Existing contract using owner-scoped CAS memory; no history database writes"
+  },
+  "apiAttempt": {
+    "taskId": "job-schedule-labor",
+    "requests": 1,
+    "successfulModelResponses": 0,
+    "httpStatus": 401,
+    "error": {
+      "type": "invalid_request_error",
+      "code": "expired_secret_key",
+      "httpStatus": 401,
+      "requestId": "req_72323cc05d6e41e7b1ebbb9b49eb5c04"
+    },
+    "providerFailure": "provider-http-error",
+    "responseHeadersLatencyMs": 647,
+    "providerStepLatencyMs": 817,
+    "taskAbortLatencyMs": 1106,
+    "modelSelectedTools": [],
+    "billedInputTokens": null,
+    "billedOutputTokens": null,
+    "measuredBilledUsd": null,
+    "usageTelemetryReturned": false,
+    "chargedOrReservedAdapterPlaceholderNotActualUsage": {
+      "reservedUsd": 0.0187225
+    },
+    "conservativeRetainedHoldUsd": 0.018723,
+    "actualModelReasoningLatency": null
+  },
+  "taskComparison": [
+    {
+      "task": "Specific Job \u2192 schedule and labor",
+      "terra": "No model response: expired_secret_key",
+      "completed": false,
+      "measurableAccuracy": null,
+      "deterministicControl": {
+        "intent": {
+          "kind": "job",
+          "tool": "get_job_labor_summary",
+          "reference": {
+            "query": "SYN-PERMIT-c7724eac-policy"
+          },
+          "args": {
+            "start_date": "2026-10-01",
+            "end_date": "2026-10-31"
+          }
+        },
+        "message": "SYN-PERMIT-c7724eac-policy \u2014 Synthetic permit policy c7724eac has 0 hours of recorded labor.\nReporting period: Oct 1, 2026\u2013Oct 31, 2026 (work dates).\n0 saved Manpower entries.\nRecorded hours do not include unreported work or forecast remaining effort.\nThese are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+        "durationMs": 1001
+      },
+      "controlCoverage": "Actual legacy resolver selected labor only; requested schedule portion omitted. Not supplied to Terra."
+    },
+    {
+      "task": "Compound Production briefing",
+      "terra": "Not run: stopped immediately after API authentication failure",
+      "completed": null,
+      "deterministicControl": "Not run"
+    }
+  ],
+  "qwenComparison": {
+    "source": "179e74b accepted live protocol receipt",
+    "samePrompts": false,
+    "historicalCount": {
+      "completed": true,
+      "latencyMs": 9167,
+      "modelCalls": 4,
+      "neurons": 76.456
+    },
+    "historicalCountList": {
+      "completed": false,
+      "reason": "round-limit",
+      "latencyMs": 19587,
+      "modelCalls": 6,
+      "neurons": 187.965
+    },
+    "newQwenCalls": 0,
+    "conclusion": "No new Terra capability or performance comparison is possible; no live Qwen evidence exists for these two target prompts."
+  },
+  "accounting": {
+    "before": {
+      "reservedOrSpentUsd": 0.5399555000000006,
+      "attempts": 367,
+      "settled": 367
+    },
+    "after": {
+      "reservedOrSpentUsd": 0.5586785000000006,
+      "attempts": 368,
+      "settled": 367
+    },
+    "retainedRunMicrousd": 18723,
+    "measuredRunUsd": null,
+    "reservations": [
+      {
+        "id": 1,
+        "taskId": "job-schedule-labor",
+        "reservedMicrousd": 18723,
+        "actualMicrousd": null,
+        "status": "uncertain"
+      }
+    ],
+    "closed": true,
+    "stoppedReason": "unknown-outcome-full-reservation-retained",
+    "pendingTransaction": null,
+    "permanentSingleUseStateRetained": true,
+    "lockRetained": true,
+    "noRefundOrReset": true,
+    "credentialFileUnchanged": true
+  },
+  "safeDiagnosticEvents": [
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": null,
+      "method": "POST",
+      "path": "/auth/v1/token",
+      "status": 200,
+      "durationMs": 1258
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": null,
+      "method": "GET",
+      "path": "/auth/v1/user",
+      "status": 200,
+      "durationMs": 88
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": null,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 600
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": null,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 130
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": null,
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 166
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": null,
+      "method": "GET",
+      "path": "/rest/v1/production_rework_cycles",
+      "status": 200,
+      "durationMs": 120
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": null,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 71
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": null,
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 177
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 77
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 73
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/production_rework_cycles",
+      "status": 200,
+      "durationMs": 74
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 90
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 70
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 72
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 74
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/production_rework_cycles",
+      "status": 200,
+      "durationMs": 72
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/manpower_entries",
+      "status": 200,
+      "durationMs": 86
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 75
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "preflight",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 74
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 84
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 76
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 131
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/production_rework_cycles",
+      "status": 200,
+      "durationMs": 72
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 72
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 81
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 75
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 76
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/production_rework_cycles",
+      "status": 200,
+      "durationMs": 68
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/manpower_entries",
+      "status": 200,
+      "durationMs": 99
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 67
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "deterministic-control",
+      "taskId": "job-schedule-labor",
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 68
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "agent",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 75
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "agent",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 68
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "agent",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 105
+    },
+    {
+      "kind": "caller-read-only",
+      "phase": "agent",
+      "taskId": "job-schedule-labor",
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 74
+    },
+    {
+      "kind": "agent-diagnostic",
+      "taskId": "job-schedule-labor",
+      "stage": "model",
+      "tool": null,
+      "outcome": "error",
+      "durationMs": 828,
+      "reasonCode": "provider-http-error"
+    },
+    {
+      "kind": "agent-diagnostic",
+      "taskId": "job-schedule-labor",
+      "stage": "stop",
+      "tool": null,
+      "outcome": "stopped",
+      "durationMs": 0,
+      "reasonCode": "provider-http-error"
+    }
+  ],
+  "finalHarnessState": {
+    "runId": "6dce9700-683a-4c19-8684-3a45dc550b30",
+    "budgetCloseInvoked": true,
+    "budgetCloseReturned": true,
+    "budgetLockRetained": true,
+    "modelCalls": 1,
+    "ordinarySpendingAuthorized": false,
+    "operationalWrites": 0,
+    "fixtureSetupWrites": 0,
+    "historyDatabaseWrites": 0,
+    "serviceCredentialUse": 0,
+    "authUserMutations": 0,
+    "grantActivations": 0,
+    "enrollmentChanges": 0,
+    "providerConfigurationChanges": 0
+  },
+  "process": {
+    "exitCode": 1,
+    "timedOut": false,
+    "elapsedSeconds": 6.052
+  },
+  "remainingBlockers": [
+    "Securely replace expired local evaluation API key through the established private entry procedure; never paste or commit it, and do not borrow the hosted key.",
+    "Review retained $0.018723 hold and lock before any future local run; preserve audit evidence and do not automatically refund/reset.",
+    "A renewed one-shot retry must be explicitly authorized and retain both cumulative ceilings.",
+    "Complete genuine two-task model evaluation before proposing selective TenDev agent staging."
+  ],
+  "recommendation": "HOLD TenDev/model-directed Terra staging until credentials and bounded retry are approved and live task completeness is measured. Existing deterministic Production behavior remains unchanged.",
+  "privateEvidence": [
+    "/private/tmp/tenops-tenbot-terra-limited-evaluation-20261101",
+    "/private/tmp/tenops-tenbot-terra-tools-live-YWmcKs"
+  ]
+}

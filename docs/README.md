@@ -97,3 +97,5 @@ The [October31 consolidated TenBot release readiness](project-memory/2026-10-30-
 - [Qwen evaluation transport correction and quota blocker — November 1, 2026](project-memory/2026-11-01-tenbot-qwen-evaluation-transport.md).
 
 - [Qwen tool-call protocol correction and live retest — November 1, 2026](project-memory/2026-11-01-tenbot-qwen-tool-protocol.md): server-owned call mapping and clear discovery contract; real count succeeds, follow-up reaches round limit. 264.421 Neurons/$0; TenDev remains HOLD.
+
+- [Limited Terra live evaluation — November 2, 2026](project-memory/2026-11-02-tenbot-limited-terra-evaluation.md): single-use $0.25/$5 guard passes 17 focused groups; the first real API request failed with `expired_secret_key`. No model result or second task; $0.018723 remains held pending review. No ordinary spending activation or deployment.
