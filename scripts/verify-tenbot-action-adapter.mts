@@ -5,6 +5,7 @@ import {mkdtempSync,readFileSync,writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
+import ts from 'typescript';
 import {ACTION_CONTRACT,actionRecordLink,parseActionCard,parseActionReceipt,parseActionReference,parseActionStatus,type ActionCard,type ActionReceipt,type ActionReference,type JsonValue} from '../src/modules/tenbot/actions/contract';
 import {ActionAdapterError,createTrustedActionAdapter,unavailableActionAdapter,type ActionSessionSnapshot,type PrivateActionSession} from '../src/modules/tenbot/actions/adapter';
 
@@ -138,5 +139,14 @@ const expired=harness();await assert.rejects(expired.adapter.preview({...referen
 const aborted=harness(),controller=new AbortController();controller.abort();await assert.rejects(aborted.adapter.preview(reference,controller.signal));assert.equal(aborted.requests.length,0);
 checks.push('Expired previews and already-aborted requests do not issue network calls');
 
+const bridge=readFileSync('src/modules/tenbot/actions/ActionWorkspaceBridge.tsx','utf8');
+const endpointSource=bridge.slice(bridge.indexOf('export function configuredActionEndpoint()'),bridge.indexOf('/** Decode only an opaque lifecycle discriminator.'));
+assert(endpointSource.startsWith('export function configuredActionEndpoint()'));
+const endpointCode=ts.transpileModule(endpointSource.replace('export function','function'),{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText;
+const endpoint=(origin:string,enabled='true',project='https://synthetic.supabase.co')=>new Function('process','window',endpointCode+'; return configuredActionEndpoint();')({env:{NEXT_PUBLIC_TENBOT_ACTIONS_ENABLED:enabled,NEXT_PUBLIC_SUPABASE_URL:project}},{location:{origin,hostname:new URL(origin).hostname}}) as string|null;
+for(const origin of ['https://tenops.pages.dev','https://tendev.pages.dev'])assert.equal(endpoint(origin),'https://synthetic.supabase.co/functions/v1/tenbot');
+for(const origin of ['https://tenops.pages.dev:444','https://tenops.pages.dev.evil.test','http://tenops.pages.dev','https://tendev.pages.dev.evil.test'])assert.equal(endpoint(origin),null);
+assert.equal(endpoint('https://tenops.pages.dev','false'),null);assert.equal(endpoint('https://tenops.pages.dev','true','http://synthetic.supabase.co'),null);
+checks.push('Actual frontend endpoint function enables only exact hosted TenOps/TenDev origins with the existing flag and HTTPS project');
 const source=readFileSync('src/modules/tenbot/actions/adapter.ts','utf8');assert(!source.includes('console.'));assert(!source.includes('localStorage'));assert(!source.includes('sessionStorage'));assert(!source.includes('signInWithPassword'));
 console.log(JSON.stringify({passed:true,checks,groups:checks.length,backendContract:backendCommit,syntheticAuth:true,hostedCalls:0,createdRecords:0,inferenceCalls:0,scratch:temporary}));

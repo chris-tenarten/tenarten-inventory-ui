@@ -39,7 +39,7 @@ Deno.serve(async(request:Request)=>{
  // Auth.getUser verified the bearer above. This claim is only a selector; SQL
  // independently checks the live same-owner session at every write boundary.
  try{actionSessionId=JSON.parse(atob(authorization.replace(/^Bearer\s+/i,'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).session_id??'';}catch{/* Reviewed operations remain unavailable without a valid session. */}
- const employeeModeAuthorized=normalEmployeeModeAuthorized({enabled:Deno.env.get('TENBOT_EMPLOYEE_MODE_ENABLED')==='true',...acceptanceScope,sessionId:actionSessionId});
+ const employeeModeAuthorized=normalEmployeeModeAuthorized({enabled:Deno.env.get('TENBOT_EMPLOYEE_MODE_ENABLED')==='true',employeeIds:(Deno.env.get('TENBOT_EMPLOYEE_IDS')||'').split(',').map(s=>s.trim()).filter(Boolean),...acceptanceScope,sessionId:actionSessionId});
  const reviewedAuthorized=()=>employeeModeAuthorized||acceptanceAuthorized();
  // Password input is confined to this trusted branch before any provider is
  // constructed. Existing database controls and the transport gate default OFF.
@@ -47,7 +47,7 @@ Deno.serve(async(request:Request)=>{
   const actionService=createClient(url,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{global:{fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
   const callerForToken=(token:string)=>createClient(url,anon,{global:{headers:{Authorization:`Bearer ${token}`},fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
   const metadata={rpc:(name:string,args:Record<string,unknown>)=>['stamp_tenbot_action_password','tenbot_receival_mint_execution_permit'].includes(name)?actionService.rpc(name,args):Promise.resolve({data:null,error:{code:'42501'}})};
-  const trusted=createReviewedActionTransport({enabled:Deno.env.get('TENBOT_REVIEWED_ACTIONS_ENABLED')==='true'&&reviewedAuthorized(),origin,caller,
+  const trusted=createReviewedActionTransport({enabled:Deno.env.get('TENBOT_REVIEWED_ACTIONS_ENABLED')==='true'&&reviewedAuthorized(),normalEmployeeAuthorized:employeeModeAuthorized,origin,caller,
    password:{authenticate:async()=>({user:data.user,token:authorization.replace(/^Bearer\s+/i,''),caller}),
     createPasswordClient:()=>createClient(url,anon,{global:{fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}),callerForToken,service:metadata,
     async beforeExecute(input){
@@ -97,7 +97,7 @@ Deno.serve(async(request:Request)=>{
  // runtime above, an employee-selected provider, or a Production-origin call.
  const requestId=acceptanceAuthorized()?crypto.randomUUID():undefined;
  const hosted=createHostedTenbot({owner:data.user.id,origin,
-  config:{...openAI,modelDirectedReads,reviewedOperationsEnabled:Deno.env.get('TENBOT_REVIEWED_OPERATIONS_ENABLED')==='true'&&reviewedAuthorized()},reviewedCaller:caller,actionSessionId,acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
+  config:{...openAI,normalEmployeeAuthorized:employeeModeAuthorized,modelDirectedReads,reviewedOperationsEnabled:Deno.env.get('TENBOT_REVIEWED_OPERATIONS_ENABLED')==='true'&&reviewedAuthorized()},reviewedCaller:caller,actionSessionId,acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
   onDiagnostic:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_acceptance',{requestId,...safeInvestigationDiagnostic(event)});}:undefined,
   onResponseMetadata:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_provider',{requestId,...safeOpenAIResponseMetadata(event)});}:undefined,
   caller:async(n,a)=>await caller.rpc(n,a),service:async(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?await service.rpc(n,a):{data:null,error:{message:'Metering action unavailable'}},qwen:provider,jobTools:createTenbotJobTools(caller)});

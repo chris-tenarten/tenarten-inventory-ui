@@ -43,14 +43,15 @@ import type {JobToolCaller} from './tenbot-job-tools.ts';
 import type {InvoiceReceivalStorageCaller} from '../../../src/modules/inventory/invoice-receival-attachments.ts';
 
 export type HostedRpc=(name:string,args?:Record<string,unknown>)=>Promise<{data:unknown;error:unknown}>;
-export type HostedTenbotConfig={persistentHistory?:boolean;modelDirectedReads?:boolean;reviewedOperationsEnabled?:boolean;enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
+export type HostedTenbotConfig={persistentHistory?:boolean;modelDirectedReads?:boolean;reviewedOperationsEnabled?:boolean;normalEmployeeAuthorized?:boolean;enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
 /** Administrator rollout authority, independent of inference funding and action
  * expiry. Auth.getUser verifies the caller; every operation still checks current
  * capabilities and SQL independently verifies the live session before a write.
- * This local mode remains confined to the already supported TenDev surface. */
-export function normalEmployeeModeAuthorized(config:{enabled:boolean;owner:string;origin:string;hostedEnabled:boolean;modelDirectedReads:boolean;sessionId:string}):boolean{
+ * Membership is persistent administrator configuration, never a role grant or
+ * an expiring acceptance enrollment. Empty/default-OFF denies normal Terra. */
+export function normalEmployeeModeAuthorized(config:{enabled:boolean;employeeIds?:readonly string[];owner:string;origin:string;hostedEnabled:boolean;modelDirectedReads:boolean;sessionId:string}):boolean{
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
- return config.enabled===true&&config.origin==='https://tendev.pages.dev'&&config.hostedEnabled===true&&config.modelDirectedReads===true&&uuid.test(config.owner)&&uuid.test(config.sessionId);
+ return config.enabled===true&&['https://tendev.pages.dev','https://tenops.pages.dev'].includes(config.origin)&&config.hostedEnabled===true&&config.modelDirectedReads===true&&uuid.test(config.owner)&&uuid.test(config.sessionId)&&config.employeeIds?.includes(config.owner)===true;
 }
 export const TENBOT_HOSTED_SERVICE_RPCS=new Set([
  'tenbot_reserve_usage','tenbot_finish_usage','tenbot_append_conversation_turn',
@@ -60,7 +61,8 @@ export const TENBOT_HOSTED_SERVICE_RPCS=new Set([
 ]);
 export function createHostedTenbot(options:{owner:string;origin:string;config:HostedTenbotConfig;caller:HostedRpc;service:HostedRpc;jobTools:JobTools;qwen:InferenceProvider|null;reviewedCaller?:JobToolCaller&InvoiceReceivalStorageCaller;actionSessionId?:string;fetcher?:typeof fetch;now?:()=>number;acceptanceSpendingAuthorized?:()=>boolean;requestId?:string;onDiagnostic?:InvestigationDiagnosticSink;onResponseMetadata?:(metadata:OpenAIResponseMetadata)=>void|Promise<void>}){
  const {owner,caller,service,jobTools,qwen,config}=options,now=options.now??Date.now;
- const canSpend=()=>config.spendingAuthorized||options.acceptanceSpendingAuthorized?.()===true;
+ const terraAuthorized=()=>config.normalEmployeeAuthorized===true||options.acceptanceSpendingAuthorized?.()===true;
+ const canSpend=()=>terraAuthorized()&&(config.spendingAuthorized||options.acceptanceSpendingAuthorized?.()===true);
  const enabled=config.enabled&&Boolean(options.origin)&&config.origins.includes(options.origin);
  const can=async(capability:string)=>{
   const result=capability==='proposal.access'?await caller('has_proposal_access'):await caller('has_app_capability',{p_capability:capability});
@@ -70,7 +72,7 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
  const defaultHandler=(body:Record<string,unknown>)=>handleTenbot(body,owner,caller,service,qwen,undefined,jobTools);
  const expires=Date.parse(config.keyExpiresAt);
  const historyStore=createTenbotAgentHistoryStore(caller,service,{persistent:config.persistentHistory??(options.origin==='https://tenops.pages.dev'||options.origin==='https://tendev.pages.dev'||options.origin==='http://localhost:3000')});
- const operationsEnabled=enabled&&config.reviewedOperationsEnabled===true&&config.modelDirectedReads===true&&options.origin==='https://tendev.pages.dev'&&historyStore.persistent===true&&Boolean(options.reviewedCaller)&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(options.actionSessionId??'');
+ const operationsEnabled=enabled&&terraAuthorized()&&config.reviewedOperationsEnabled===true&&config.modelDirectedReads===true&&['https://tendev.pages.dev','https://tenops.pages.dev'].includes(options.origin)&&historyStore.persistent===true&&Boolean(options.reviewedCaller)&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(options.actionSessionId??'');
  const sessions=enabled?createTenbotAgentSessions({
   can:(_owner,capability)=>_owner===owner?can(capability):Promise.resolve(false),
   jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,modelDirectedReads:config.modelDirectedReads===true,now,
@@ -78,7 +80,10 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
   operationalHistory:options.origin==='https://tendev.pages.dev',
   sessionStore:historyStore,
   ...(operationsEnabled?{
-   reviewedOperations:({question,documentIds}:{question:string;documentIds:string[]})=>createHostedOperations({owner,question,documentIds,caller:options.reviewedCaller!,service:actionRpc(service),sessionId:options.actionSessionId!,can}),
+   reviewedOperations:async({question,documentIds}:{question:string;documentIds:string[]})=>{
+    const operations=createHostedOperations({owner,question,documentIds,caller:options.reviewedCaller!,service:actionRpc(service),sessionId:options.actionSessionId!,can});
+    return {...operations,tools:await operations.authorizedTools()};
+   },
    operationHistory:{authorizeAccess:(access:Parameters<typeof authorizeHostedOperationHistory>[1])=>authorizeHostedOperationHistory({owner,caller:options.reviewedCaller!,can},access),getAction:(reference:Parameters<ReturnType<typeof createReviewedActionService>['get']>[0])=>createReviewedActionService(actionRpc(caller)).get(reference)},
   }:{}),
   onDiagnostic:options.onDiagnostic,

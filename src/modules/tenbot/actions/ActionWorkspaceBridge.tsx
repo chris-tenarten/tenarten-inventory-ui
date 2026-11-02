@@ -29,7 +29,7 @@ export function configuredActionEndpoint():string|null{
  if(process.env.NEXT_PUBLIC_TENBOT_ACTIONS_ENABLED!=='true'||typeof window==='undefined')return null;
  try{
   const project=new URL(process.env.NEXT_PUBLIC_SUPABASE_URL||'');
-  if(window.location.hostname==='tendev.pages.dev'&&project.protocol==='https:')return new URL('/functions/v1/tenbot',project).href;
+  if(['https://tendev.pages.dev','https://tenops.pages.dev'].includes(window.location.origin)&&project.protocol==='https:')return new URL('/functions/v1/tenbot',project).href;
   const local=new URL(process.env.NEXT_PUBLIC_TENBOT_REVIEW_URL||'');
   if(window.location.hostname==='localhost'&&['localhost','127.0.0.1','[::1]'].includes(project.hostname)&&local.origin===project.origin&&local.protocol==='http:'&&local.pathname==='/functions/v1/tenbot'&&!local.search&&!local.hash)return local.href;
  }catch{/* Default-off on invalid or cross-environment configuration. */}

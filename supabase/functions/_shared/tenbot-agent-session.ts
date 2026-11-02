@@ -71,7 +71,7 @@ export type AgentSessionDependencies={
  operationalHistory?:boolean;
  sessionStore?:AgentSessionStore;
  /** Disabled-first host injection. No model write/auth capability. */
- reviewedOperations?(input:{owner:string;question:string;documentIds:string[]}):SessionOperations;
+ reviewedOperations?(input:{owner:string;question:string;documentIds:string[]}):SessionOperations|Promise<SessionOperations>;
  operationHistory?:OperationHistory;
  now?:()=>number;
  onDiagnostic?:InvestigationDiagnosticSink;
@@ -280,7 +280,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const authorizedQuestionPage=questionCandidates.length?await restoreEmployeePage(questionCandidates,deps.jobTools(owner),await scopeDigest(owner),id,now(),proof=>sourceIsCurrent(proof,owner)):[];
    const authorizedQuestionRows=questionCandidates.filter(row=>authorizedQuestionPage.some(turn=>turn.id===row.id&&turn.question===row.question&&turn.answer.history.state==='verified'));
    const operationDocuments=[...new Set([...(documentIds as string[]),...authorizedQuestionRows.flatMap(row=>row.operationAccess?.documentIds??[])])].slice(0,8);
-   const operations=deps.reviewedOperations?.({owner,question,documentIds:operationDocuments});
+   const operations=await deps.reviewedOperations?.({owner,question,documentIds:operationDocuments});
    let transmittedQuestionRows:typeof authorizedQuestionRows=[];
    const modelContextCurrent=async()=>{
     if(!modelDirected)return true;

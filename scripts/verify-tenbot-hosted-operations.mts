@@ -19,11 +19,11 @@ const question='Prepare a Proposal for Sample Customer at Lobby using the suppli
 const ev=(path:string,value:string,source_ref='employee')=>({path,value,source_ref});
 const proposalArgs:Record<string,JsonValue>={customer_company_id:null,customer_contact_id:null,fields:[ev('customer_name','Sample Customer'),ev('project_name','Lobby')],lines:[{line_type:'product',fields:[ev('description','White aggregate',`${sourceId}:L3`),ev('quantity','100',`${sourceId}:L3`),ev('unit','LB',`${sourceId}:L3`),ev('rate','12.50',`${sourceId}:L4`)]}]};
 function fixture(){
- const state={allowed:true,proposal:true,source:structuredClone(original),blob:bytes,catalog:[structuredClone(catalog)],receivals:[] as Record<string,unknown>[],publications:[] as Record<string,unknown>[],reads:[] as string[],revoked:[] as string[],afterPrepare:null as (()=>void)|null,uncertainPrepare:false};
+ const state={allowed:true,proposal:true,deniedCapabilities:new Set<string>(),source:structuredClone(original),blob:bytes,catalog:[structuredClone(catalog)],receivals:[] as Record<string,unknown>[],publications:[] as Record<string,unknown>[],reads:[] as string[],revoked:[] as string[],afterPrepare:null as (()=>void)|null,uncertainPrepare:false};
  const caller={
   async rpc(name:string,args:Record<string,unknown>={}){
    state.reads.push(name);
-   if(name==='has_app_capability')return {data:state.allowed,error:null};
+   if(name==='has_app_capability')return {data:state.allowed&&!state.deniedCapabilities.has(String(args.p_capability)),error:null};
    if(name==='has_proposal_access')return {data:state.proposal,error:null};
    if(name==='get_invoice_receival_source'){assert.equal(args.p_source_id,sourceId);return {data:structuredClone(state.source),error:null};}
    if(name==='revoke_tenbot_reviewed_action'){state.revoked.push(String(args.p_action_id));return {data:{id:args.p_action_id,revoked:true},error:null};}
@@ -38,7 +38,7 @@ function fixture(){
    }};return query;
   },
  } as unknown as HostedOperationsDependencies['caller'];
- const deps:HostedOperationsDependencies={owner,question,documentIds:[sourceId],caller,sessionId,async can(){return state.allowed;},service:{async rpc(name,args){assert.equal(name,'prepare_tenbot_reviewed_action');assert.equal(args.p_owner,owner);assert.equal(args.p_session_id,sessionId);state.publications.push(args);if(state.uncertainPrepare)throw Error('Synthetic unknown metadata outcome');state.afterPrepare?.();const intent=args.p_intent as {operation:ActionCard['operation'];review:ActionCard['review']};return {data:{kind:'proposed_action',contract:'tenbot.actions.v1',reference:ref,operation:intent.operation,review:intent.review,confirmation:{kind:'account_password',available:false}},error:null};}}};
+ const deps:HostedOperationsDependencies={owner,question,documentIds:[sourceId],caller,sessionId,async can(capability){return state.allowed&&!state.deniedCapabilities.has(capability);},service:{async rpc(name,args){assert.equal(name,'prepare_tenbot_reviewed_action');assert.equal(args.p_owner,owner);assert.equal(args.p_session_id,sessionId);state.publications.push(args);if(state.uncertainPrepare)throw Error('Synthetic unknown metadata outcome');state.afterPrepare?.();const intent=args.p_intent as {operation:ActionCard['operation'];review:ActionCard['review']};return {data:{kind:'proposed_action',contract:'tenbot.actions.v1',reference:ref,operation:intent.operation,review:intent.review,confirmation:{kind:'account_password',available:false}},error:null};}}};
  return {state,deps,operations:createHostedOperations(deps)};
 }
 const checks:string[]=[];
@@ -50,6 +50,19 @@ await check('existing eleven tools remain read/prepare; selected documents and c
  const f=fixture();assert.equal(f.operations.tools.length,11);assert(f.operations.tools.every(tool=>tool.kind==='read'||tool.kind==='prepare'));
  await assert.rejects(execute(f,'read_supplied_document',{source_id:id(99)}));
  await assert.rejects(f.operations.tools[0].execute({source_id:sourceId},{callerId:id(99),signal:new AbortController().signal}));assert.equal(f.state.reads.length,0);
+});
+await check('discovery uses current existing permissions; Proposal access does not follow cohort eligibility and revocation stops publication',async()=>{
+ const lead=fixture();lead.state.proposal=false;
+ const names=(await lead.operations.authorizedTools()).map(tool=>tool.name);
+ assert(!names.includes('prepare_proposal_draft'));assert(names.includes('prepare_pending_receivals'));assert(names.includes('search_customers'));
+ await assert.rejects(execute(lead,'prepare_proposal_draft',proposalArgs));assert.equal(lead.state.publications.length,0);
+ const readOnly=fixture();readOnly.state.deniedCapabilities.add('writeBusinessData');
+ assert((await readOnly.operations.authorizedTools()).every(tool=>tool.kind==='read'));
+ await assert.rejects(execute(readOnly,'prepare_proposal_draft',proposalArgs));
+ const noInventory=fixture();noInventory.state.deniedCapabilities.add('adjustInventory');
+ assert(!(await noInventory.operations.authorizedTools()).some(tool=>tool.name==='prepare_pending_receivals'));
+ const revoked=fixture();assert.equal((await revoked.operations.authorizedTools()).length,11);revoked.state.proposal=false;assert.equal(await revoked.operations.fresh(),false);
+ const denied=fixture();denied.state.allowed=false;assert.deepEqual(await denied.operations.authorizedTools(),[]);
 });
 await check('document and catalog facts are host-derived, human-readable and preserve source-only qualification',async()=>{
  const f=fixture(),document=await read(f),catalog=await execute(f,'search_material_catalog',{query:'White aggregate'});

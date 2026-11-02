@@ -115,11 +115,29 @@ export function createHostedOperations(deps:HostedOperationsDependencies){
   const result=await bounded(Promise.resolve(deps.caller.rpc(name,args)),signal);return {data:result.data,error:result.error};
  }}});
  const observed:Array<{tool:AgentTool;args:Record<string,JsonValue>;snapshot:string}>=[];
+ const allowed=async(tool:AgentTool,checks=new Map<string,Promise<boolean>>())=>{
+  try{
+   // Deduplicate only within this one discovery/freshness pass. The next
+   // execution/model/publication phase always reads current permissions again.
+   const can=(capability:string)=>{
+    if(!checks.has(capability))checks.set(capability,capability==='proposal.access'?proposalAllowed(deps.caller):deps.can(capability));
+    return checks.get(capability)!;
+   };
+   if(!await can('readOperationalData'))return false;
+   if(tool.kind!=='prepare')return true;
+   if(!await can('writeBusinessData'))return false;
+   if(tool.name==='prepare_proposal_draft')return await can('proposal.access');
+   return tool.name==='prepare_pending_receivals'&&await can('adjustInventory');
+  }catch{return false;}
+ };
+ let advertised:AgentTool[]|null=null;
  const access=():HostedOperationAccess=>({documentIds:[...documents.keys()],proposalAccess:needsProposal});
  const tools=registry.tools.map(tool=>({...tool,async execute(args:Record<string,JsonValue>,context:Parameters<AgentTool['execute']>[1]){
   if(context.callerId!==deps.owner||!validateStrictSchema(args,tool.parameters))denied();
+  if(!await allowed(tool))denied();
   if((tool.name==='read_supplied_document'||tool.name==='prepare_pending_receivals')&&!selected.has(String(args.source_id)))denied();
   const value=await tool.execute(args,context);
+  if(!await allowed(tool))denied();
   if(tool.name==='prepare_proposal_draft')needsProposal=true;
   if(observed.length>=20)denied();
   observed.push({tool,args:copy(args),snapshot:JSON.stringify(value)});
@@ -129,6 +147,10 @@ export function createHostedOperations(deps:HostedOperationsDependencies){
   const signal=AbortSignal.timeout(4000);
   try{
    if(!await bounded(authorizeHostedOperationHistory(deps,access()),signal))return false;
+   // Revocation after registry construction stops the next discovery/model
+   // step; an already-advertised capability is never treated as a grant.
+   const checks=new Map<string,Promise<boolean>>();
+   for(const tool of advertised??[])if(!await bounded(allowed(tool,checks),signal))return false;
    for(const [id,sha]of documents){const result=await bounded(download(id),signal);if(result.source.ownerId!==deps.owner||result.source.sha256!==sha)return false;}
    for(const operation of observed){
     const value=await bounded(operation.tool.execute(copy(operation.args),{callerId:deps.owner,signal}),signal);
@@ -139,6 +161,12 @@ export function createHostedOperations(deps:HostedOperationsDependencies){
  };
  return {
   tools,access,fresh,revoke,
+  async authorizedTools(){
+   const permitted:AgentTool[]=[],checks=new Map<string,Promise<boolean>>();
+   for(const tool of tools)if(await allowed(tool,checks))permitted.push(tool);
+   advertised=permitted;
+   return permitted;
+  },
   async publish(result:AgentResult,conversationId:string,supersedes?:ActionReference){
    return registry.publish(result,conversationId,{...createTrustedActionPublisher({ownerId:deps.owner,sessionId:deps.sessionId,service:deps.service}),revoke},fresh,supersedes);
   },

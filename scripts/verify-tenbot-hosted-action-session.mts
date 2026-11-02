@@ -62,12 +62,12 @@ function fixture(){
   const step=plan(document,clarify,options.scopeReads,undefined,options),provider:AgentProvider={name:'local injected session provider',model:'offline-scripted',async step(request){return step(request);}};
   return createTenbotAgentSessions({readOnlyHosted:true,modelDirectedReads:true,mode:'openai',sessionStore:createTenbotAgentHistoryStore(caller,service,{persistent:true}),can:async()=>f.state.allowed,jobTools:()=>f.state.jobTools!,provider:()=>provider,now:()=>f.state.now,reviewedOperations:operations,operationHistory});
  }
- function hosted(options:{enabled?:boolean;origin?:string;document?:boolean;clarify?:boolean;scopeReads?:number;scopeOnly?:boolean}={}){
+ function hosted(options:{enabled?:boolean;employeeEligible?:boolean;origin?:string;document?:boolean;clarify?:boolean;scopeReads?:number;scopeOnly?:boolean}={}){
   const step=plan(options.document,options.clarify,options.scopeReads,options.scopeOnly),fetcher:typeof fetch=async(_url,init)=>{
    const request=JSON.parse(String(init?.body));requests.push(request);f.state.providerCalls++;assert.equal(request.model,'gpt-6.1-terra');
    const response=step();return Response.json({status:'completed',model:'gpt-6.1-terra',service_tier:'default',usage:{input_tokens:80,output_tokens:10,total_tokens:90,input_tokens_details:{cached_tokens:0,cache_write_tokens:0}},output:response.calls.length?response.calls.map(call=>({type:'function_call',call_id:call.id,name:call.name,arguments:JSON.stringify(call.arguments)})):[{type:'message',role:'assistant',content:[{type:'output_text',text:JSON.stringify(response.final)}]}]});
   };
-  return createHostedTenbot({owner:f.owner,origin:options.origin??'https://tendev.pages.dev',config:{enabled:true,origins:['https://tendev.pages.dev','https://tenops.pages.dev'],persistentHistory:true,modelDirectedReads:true,reviewedOperationsEnabled:options.enabled??true,apiKey:'offline-provider-placeholder',keyExpiresAt:'2099-11-03T00:00:00Z',spendingAuthorized:true},caller,service,reviewedCaller,actionSessionId:sessionId,jobTools:f.state.jobTools!,qwen:null,fetcher,now:()=>f.state.now});
+  return createHostedTenbot({owner:f.owner,origin:options.origin??'https://tendev.pages.dev',config:{enabled:true,normalEmployeeAuthorized:options.employeeEligible??true,origins:['https://tendev.pages.dev','https://tenops.pages.dev'],persistentHistory:true,modelDirectedReads:true,reviewedOperationsEnabled:options.enabled??true,apiKey:'offline-provider-placeholder',keyExpiresAt:'2099-11-03T00:00:00Z',spendingAuthorized:true},caller,service,reviewedCaller,actionSessionId:sessionId,jobTools:f.state.jobTools!,qwen:null,fetcher,now:()=>f.state.now});
  }
  return {...f,source,statuses,published,requests,session,hosted,failCommit(){failCommit=true;}};
 }
@@ -81,10 +81,11 @@ await check('ordinary persistent session publishes trusted statuses and hydrates
  const raw=JSON.stringify([...f.rows.values()].map(row=>row.state));assert(!raw.includes('actionStatuses')&&!raw.includes('p_estimate_inputs')&&!raw.includes('actionReferences'));
  assert(!JSON.stringify(f.requests).includes('"contract":"tenbot.actions.v1"'));assert(!JSON.stringify(f.requests).includes('p_estimate_inputs'));assert.equal(f.published.length,1);
 });
-await check('actual hosted constructor/provider transport discovers the real registry; gate OFF/Production reject additions',async()=>{
+await check('actual hosted constructor/provider discovers the authorized registry on TenDev and Production; gate OFF/ineligible reject additions',async()=>{
  const f=fixture(),reply=await f.hosted()({action:'ask',question}) as Reply;assert.equal(reply.actionStatuses?.length,1);assert(f.state.providerCalls>0);assert.equal(f.published.length,1);
  const serialized=JSON.stringify(f.requests);assert(serialized.includes('prepare_proposal_draft'));assert(serialized.includes('Employee-provided text uses source_ref employee'));assert(!serialized.includes('"contract":"tenbot.actions.v1"'));
- for(const options of [{enabled:false},{enabled:true,origin:'https://tenops.pages.dev'}]){const denied=fixture();await assert.rejects(denied.hosted(options)({action:'ask',question,documentIds:[sourceId]}),/Invalid read-only/);await assert.rejects(denied.hosted(options)({action:'ask',question,supersedes:reply.actionStatuses![0].card.reference}),/Invalid read-only/);assert.equal(denied.state.providerCalls,0);assert.equal(denied.published.length,0);}
+ const production=fixture(),productionReply=await production.hosted({origin:'https://tenops.pages.dev'})({action:'ask',question}) as Reply;assert.equal(productionReply.actionStatuses?.length,1);assert(production.state.providerCalls>0);
+ for(const options of [{enabled:false},{enabled:true,employeeEligible:false},{enabled:true,origin:'https://tenops.pages.dev.evil.test'},{enabled:true,origin:'https://tenops.pages.dev/'}]){const denied=fixture();await assert.rejects(denied.hosted(options)({action:'ask',question,documentIds:[sourceId]}));await assert.rejects(denied.hosted(options)({action:'ask',question,supersedes:reply.actionStatuses![0].card.reference}));assert.equal(denied.state.providerCalls,0);assert.equal(denied.published.length,0);}
  for(const extra of [{password:'PRIVATE-AUTH-PASSWORD'},{parameters:{}},{actionCards:[]}])await assert.rejects(f.hosted()({action:'ask',question,...extra}),/Invalid read-only/);
 });
 await check('hosted operations can finish after six sequential tool rounds while both round limits remain finite',async()=>{

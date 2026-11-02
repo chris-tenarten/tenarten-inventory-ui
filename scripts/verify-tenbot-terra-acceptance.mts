@@ -17,7 +17,7 @@ const scope:TerraAcceptanceScope={owner,origin,hostedEnabled:true,modelDirectedR
 const checks:string[]=[];
 async function check(name:string,fn:()=>void|Promise<void>){await fn();checks.push(name);}
 const fact='This assistant has no execution tool. It cannot save schedule changes or send messages; an employee must use the authorized TenOps workflows.';
-function fixture(changes:Partial<TerraAcceptanceScope>={},configChanges:Partial<TerraAcceptanceConfig>={},ordinarySpend=false){
+function fixture(changes:Partial<TerraAcceptanceScope>={},configChanges:Partial<TerraAcceptanceConfig>={},ordinarySpend=false,employeeEligible=false){
  const archived=JSON.parse(readFileSync(new URL('./fixtures/tenbot-capability-history.synthetic.json',import.meta.url),'utf8'));
  archived.modelSteps[2].final={answer:fact,observations:[{text:fact,evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[]};
  const f=createHostedTenbotFixture(owner,archived);f.state.now=starts+1000;
@@ -32,7 +32,7 @@ function fixture(changes:Partial<TerraAcceptanceScope>={},configChanges:Partial<
   return result;
  };
  const handler=()=>createHostedTenbot({owner:currentScope.owner,origin:currentScope.origin,
-  config:{persistentHistory:false,enabled:true,origins:[origin,'https://tenops.pages.dev'],apiKey:'synthetic-never-a-real-key',keyExpiresAt:new Date(expires+3_600_000).toISOString(),spendingAuthorized:ordinarySpend,modelDirectedReads:currentScope.modelDirectedReads},
+  config:{persistentHistory:false,enabled:true,normalEmployeeAuthorized:employeeEligible,origins:[origin,'https://tenops.pages.dev'],apiKey:'synthetic-never-a-real-key',keyExpiresAt:new Date(expires+3_600_000).toISOString(),spendingAuthorized:ordinarySpend,modelDirectedReads:currentScope.modelDirectedReads},
   acceptanceSpendingAuthorized:allowed,requestId,onDiagnostic:event=>{if(allowed())diagnostics.push({requestId,event:safeInvestigationDiagnostic(event)});},
   onResponseMetadata:event=>{if(allowed())responseMetadata.push(safeOpenAIResponseMetadata(event));if(observeThrows)throw Error('Synthetic metadata observer unavailable');},
   caller:f.caller,service,qwen:null,jobTools:{async execute(){throw Error('Unexpected operational read');}},now:()=>f.state.now,
@@ -61,7 +61,10 @@ await check('With normal employee rollout OFF, reviewed discovery and trusted ac
  for(const candidate of cases){
   const allowed=terraAcceptanceSpendingAuthorized(candidate.config,candidate.scope,candidate.now),f=createHostedTenbotFixture(candidate.scope.owner,archived);
   const handler=createHostedTenbot({owner:candidate.scope.owner,origin:candidate.scope.origin,config:{enabled:true,origins:[origin,'https://tenops.pages.dev'],apiKey:'',keyExpiresAt:'',spendingAuthorized:false,persistentHistory:true,modelDirectedReads:true,reviewedOperationsEnabled:allowed},caller:f.caller,service:f.service,qwen:null,jobTools:{async execute(){throw Error('Unexpected operational read');}},reviewedCaller:{async rpc(){throw Error('Unexpected reviewed operation');},from(){throw Error('Unexpected business reader');},storage:{from(){throw Error('Unexpected Storage operation');}}},actionSessionId:requestId,now:()=>candidate.now});
-  const status=await handler({action:'status'}) as {reviewedActionsAvailable?:boolean;historyAvailable:boolean;persistentHistoryAvailable:boolean;readOnly:boolean};
+  const accepted=createHostedTenbot({owner:candidate.scope.owner,origin:candidate.scope.origin,config:{enabled:true,origins:[origin,'https://tenops.pages.dev'],apiKey:'',keyExpiresAt:'',spendingAuthorized:false,persistentHistory:true,modelDirectedReads:true,reviewedOperationsEnabled:allowed},caller:f.caller,service:f.service,qwen:null,jobTools:{async execute(){throw Error('Unexpected operational read');}},reviewedCaller:{async rpc(){throw Error('Unexpected reviewed operation');},from(){throw Error('Unexpected business reader');},storage:{from(){throw Error('Unexpected Storage operation');}}},actionSessionId:requestId,now:()=>candidate.now,acceptanceSpendingAuthorized:()=>allowed});
+  // A reviewed flag alone cannot substitute for the separate rollout authority.
+  assert.equal((await handler({action:'status'}) as {reviewedActionsAvailable?:boolean}).reviewedActionsAvailable,undefined);
+  const status=await accepted({action:'status'}) as {reviewedActionsAvailable?:boolean;historyAvailable:boolean;persistentHistoryAvailable:boolean;readOnly:boolean};
   assert.equal(status.reviewedActionsAvailable===true,candidate.expected);assert(status.historyAvailable&&status.persistentHistoryAvailable&&status.readOnly);assert.equal(f.state.providerCalls,0);
   let rpcCalls=0;
   const caller={async rpc(){rpcCalls++;return {data:null,error:{code:'42501'}};}};
@@ -78,10 +81,10 @@ await check('With normal employee rollout OFF, reviewed discovery and trusted ac
  assert(beforeExecute.includes("if(!reviewedAuthorized()){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}"));
  assert(beforeExecute.indexOf('if(!reviewedAuthorized())')<beforeExecute.indexOf("if(input.operation!=='inventory.create_pending_receivals')return;"));
 });
-await check('Normal employee mode needs explicit administrator authority, exact TenDev, authenticated owner/session and the existing hosted/model-read lane',()=>{
- const normal={enabled:true,...scope,sessionId:requestId};
- assert(normalEmployeeModeAuthorized(normal));assert(normalEmployeeModeAuthorized({...normal,owner:other}));
- for(const change of [{enabled:false},{origin:'https://tenops.pages.dev'},{origin:origin+'/'},{origin:origin+'.evil.test'},{origin:'http://localhost:3000'},{hostedEnabled:false},{modelDirectedReads:false},{owner:'forged'},{sessionId:''},{sessionId:'forged'}])assert(!normalEmployeeModeAuthorized({...normal,...change}));
+await check('Normal employee mode needs explicit persistent UUID membership, exact TenOps/TenDev and the authenticated hosted/model-read lane',()=>{
+ const normal={enabled:true,employeeIds:[owner],...scope,sessionId:requestId};
+ assert(normalEmployeeModeAuthorized(normal));assert(normalEmployeeModeAuthorized({...normal,origin:'https://tenops.pages.dev'}));
+ for(const change of [{enabled:false},{employeeIds:[]},{employeeIds:undefined},{employeeIds:[other]},{owner:other},{origin:'https://tenops.pages.dev:443'},{origin:origin+'/'},{origin:origin+'.evil.test'},{origin:'http://localhost:3000'},{hostedEnabled:false},{modelDirectedReads:false},{owner:'forged'},{sessionId:''},{sessionId:'forged'}])assert(!normalEmployeeModeAuthorized({...normal,...change}));
  assert(!terraAcceptanceSpendingAuthorized({...config,enabled:false},scope,expires));
  assert(normalEmployeeModeAuthorized(normal));
  const edge=readFileSync(new URL('../supabase/functions/tenbot/index.ts',import.meta.url),'utf8');
@@ -92,8 +95,8 @@ await check('Normal employee mode needs explicit administrator authority, exact 
 await check('Normal reviewed availability outlives acceptance without enabling spend, and current read permission plus the capability switch still deny access',async()=>{
  const archived=JSON.parse(readFileSync(new URL('./fixtures/tenbot-capability-history.synthetic.json',import.meta.url),'utf8'));
  for(const capabilityEnabled of [true,false]){
-  const f=createHostedTenbotFixture(other,archived),normal=normalEmployeeModeAuthorized({enabled:true,...scope,owner:other,sessionId:requestId});
-  const handler=createHostedTenbot({owner:other,origin,config:{enabled:true,origins:[origin],apiKey:'',keyExpiresAt:'',spendingAuthorized:false,persistentHistory:true,modelDirectedReads:true,reviewedOperationsEnabled:capabilityEnabled&&normal},caller:f.caller,service:f.service,qwen:null,jobTools:{async execute(){throw Error('Unexpected read');}},reviewedCaller:{async rpc(){throw Error('Unexpected operation');},from(){throw Error('Unexpected reader');},storage:{from(){throw Error('Unexpected Storage');}}},actionSessionId:requestId,now:()=>expires+86_400_000,acceptanceSpendingAuthorized:()=>false});
+ const f=createHostedTenbotFixture(other,archived),normal=normalEmployeeModeAuthorized({enabled:true,employeeIds:[other],...scope,owner:other,sessionId:requestId});
+  const handler=createHostedTenbot({owner:other,origin,config:{enabled:true,normalEmployeeAuthorized:normal,origins:[origin],apiKey:'',keyExpiresAt:'',spendingAuthorized:false,persistentHistory:true,modelDirectedReads:true,reviewedOperationsEnabled:capabilityEnabled&&normal},caller:f.caller,service:f.service,qwen:null,jobTools:{async execute(){throw Error('Unexpected read');}},reviewedCaller:{async rpc(){throw Error('Unexpected operation');},from(){throw Error('Unexpected reader');},storage:{from(){throw Error('Unexpected Storage');}}},actionSessionId:requestId,now:()=>expires+86_400_000,acceptanceSpendingAuthorized:()=>false});
   const status=await handler({action:'status'}) as {reviewedActionsAvailable?:boolean;persistentHistoryAvailable:boolean};
   assert.equal(status.reviewedActionsAvailable===true,capabilityEnabled);assert(status.persistentHistoryAvailable);
   f.state.allowed=false;await assert.rejects(handler({action:'status'}));
@@ -101,14 +104,29 @@ await check('Normal reviewed availability outlives acceptance without enabling s
  }
 });
 await check('Ordinary paid inference can use existing monthly funding with acceptance disabled; exhausting the atomic allowance blocks provider dispatch',async()=>{
- const funded=fixture({},{enabled:false},true);assert(!funded.allowed());
+ const funded=fixture({},{enabled:false},true,true);assert(!funded.allowed());
  const response=await funded.handler()({action:'ask',question:funded.archived.question}) as {message:string};
  assert.equal(response.message,fact);assert.equal(funded.state.providerCalls,3);assert.equal(funded.reservations.size,3);
- const exhausted=fixture({},{enabled:false},true);exhausted.state.budget=false;
+ const exhausted=fixture({},{enabled:false},true,true);exhausted.state.budget=false;
  await exhausted.handler()({action:'ask',question:exhausted.archived.question});
  assert.equal(exhausted.state.providerCalls,0);assert.equal(exhausted.reservations.size,0);
  const unfunded=fixture({},{enabled:false});await unfunded.handler()({action:'ask',question:unfunded.archived.question});
  assert.equal(unfunded.state.providerCalls,0);assert.equal(unfunded.reservations.size,0);
+});
+await check('Funding alone never activates Terra for an ineligible owner; persistent eligible Production access needs no acceptance window',async()=>{
+ for(const target of [origin,'https://tenops.pages.dev']){
+  const denied=fixture({origin:target},{enabled:false},true,false);
+  await denied.handler()({action:'ask',question:denied.archived.question});assert.equal(denied.state.providerCalls,0);assert.equal(denied.reservations.size,0);
+  const eligible=fixture({origin:target},{enabled:false},true,true);
+  await eligible.handler()({action:'ask',question:eligible.archived.question});assert.equal(eligible.state.providerCalls,3);assert.equal(eligible.reservations.size,3);
+ }
+});
+await check('Production trusted transport needs both existing action flag and normal employee eligibility; malformed origins fail before RPC/Auth',async()=>{
+ for(const [target,eligible,enabled,expected] of [['https://tenops.pages.dev',true,true,true],['https://tenops.pages.dev',false,true,false],['https://tenops.pages.dev',true,false,false],['https://tenops.pages.dev/',true,true,false],['https://tenops.pages.dev:443',true,true,false],['https://tenops.pages.dev.evil.test',true,true,false]] as const){
+  let calls=0;const caller={async rpc(){calls++;return {data:null,error:{code:'42501'}};}};
+  const transport=createReviewedActionTransport({enabled,normalEmployeeAuthorized:eligible,origin:target,caller,password:{async authenticate(){throw Error('No password expected');},createPasswordClient(){throw Error('No password expected');},callerForToken(){throw Error('No execution expected');},service:caller}});
+  await transport({workspace:'tenbot.actions.v1',action:'status',reference:{id:requestId,revision:1,hash:'a'.repeat(64),expiresAt:new Date(expires).toISOString()}});assert.equal(calls,expected?1:0);
+ }
 });
 await check('Normal employee availability preserves short action/password expiry and the canonical Pending pilot/permit boundary',()=>{
  const edge=readFileSync(new URL('../supabase/functions/tenbot/index.ts',import.meta.url),'utf8');

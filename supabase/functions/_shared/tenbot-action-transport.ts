@@ -8,7 +8,7 @@ import {confirmReviewedActionPassword,ActionPasswordError,type ActionPasswordDep
 
 export const TENBOT_ACTION_WORKSPACE='tenbot.actions.v1';
 export type ActionTransportDependencies={
- enabled:boolean;origin:string;caller:ActionRpc;password:ActionPasswordDependencies;
+ enabled:boolean;normalEmployeeAuthorized?:boolean;origin:string;caller:ActionRpc;password:ActionPasswordDependencies;
  /** Loads the exact saved review snapshot and renders through TenOps's existing
   * authorized PDF-preview service. No client snapshot or arbitrary URL. */
  preview?(reference:ReturnType<typeof parseActionReference>):Promise<Uint8Array>;
@@ -18,9 +18,9 @@ export function createReviewedActionTransport(deps:ActionTransportDependencies){
  const service=createReviewedActionService(deps.caller);
  return async(body:unknown):Promise<{body:unknown;status:number;pdf?:Uint8Array}>=>{
   try{
-   // The additional application gate cannot activate Production-origin writes.
-   // Database action and existing domain execution policies independently gate.
-   if(!deps.enabled||deps.origin!=='https://tendev.pages.dev')throw new ReviewedActionError('not_available');
+   // Production also requires normal cohort eligibility. Database action and
+   // existing domain execution policies remain independent write authorities.
+   if(!deps.enabled||!(deps.origin==='https://tendev.pages.dev'||deps.origin==='https://tenops.pages.dev'&&deps.normalEmployeeAuthorized===true))throw new ReviewedActionError('not_available');
    if(!record(body)||body.workspace!==TENBOT_ACTION_WORKSPACE||!['status','cancel','confirm','preview'].includes(String(body.action)))throw new ReviewedActionError('invalid_action');
    const allowed=['workspace','action','reference',...(body.action==='confirm'?['password']:[])];
    if(Object.keys(body).some(key=>!allowed.includes(key)))throw new ReviewedActionError('invalid_action');
