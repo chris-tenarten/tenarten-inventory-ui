@@ -8,13 +8,19 @@ import type {JobToolResult,JobFacts,JobIdentity,TenbotJobToolName} from './tenbo
 import {requestedJobStatuses,type ConversationContext} from './tenbot-conversation-context.ts';
 
 export type JobContext={jobId:string;continuity?:ConversationContext};
+export type JobDetailTool='get_job_summary'|'get_job_planning'|'get_job_labor_summary';
+export const isJobDetailTool=(value:unknown):value is JobDetailTool=>typeof value==='string'&&['get_job_summary','get_job_planning','get_job_labor_summary'].includes(value);
 export type JobIntent=
  | {kind:'blocked';message:string}
  | {kind:'overview';tool:'get_production_overview';args:Record<string,unknown>}
  | {kind:'search';tool:'find_jobs';args:Record<string,unknown>;selection?:{statuses:string[]}}
- | {kind:'job';tool:'get_job_summary'|'get_job_planning'|'get_job_labor_summary';reference:{jobId:string}|{query:string};args:Record<string,unknown>;includeArchived?:boolean}
- | {kind:'clarify';message:string};
+ | {kind:'jobs';tool:JobDetailTool;references:string[];args:Record<string,unknown>}
+ | {kind:'job';tool:JobDetailTool;reference:{jobId:string}|{query:string};args:Record<string,unknown>;includeArchived?:boolean}
+ | {kind:'clarify';message:string;operation?:JobDetailTool;args?:Record<string,unknown>};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/** Internal references only; external callers still select existing fixed tools. */
+export function detailJobIds(intent:JobIntent|null|undefined):string[]{return intent?.kind==='jobs'?intent.references.filter(id=>uuid.test(id)):intent?.kind==='job'&&'jobId' in intent.reference&&uuid.test(intent.reference.jobId)?[intent.reference.jobId]:[];}
+const detailOperation=(question:string):JobDetailTool=>/\b(?:labor|labour|manpower|hours?)\b/i.test(question)?'get_job_labor_summary':/\b(?:scheduled?|unscheduled|planning|planned|dates?|next|completion|finish)\b/i.test(question)?'get_job_planning':'get_job_summary';
 const normalized=(value:string)=>value.trim().replace(/\s+/g,' ').toLocaleLowerCase('en-US');
 const trimReference=(value:string)=>value.trim().replace(/^[#\s:]+|[?.!,;\s]+$/g,'').replace(/^(?:the\s+)?(?:job|project)\s+(?:number\s+)?#?\s*/i,'').replace(/["“”'‘’]$/,'').trim();
 const datePattern=/^\d{4}-\d{2}-\d{2}$/;
@@ -88,8 +94,30 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  // not fabricate a Bid/material relationship or acquire another read capability.
  if(/\b(?:my\s+work|tasks?)\b/i.test(q))return null;
  if(/\b(?:bid|intake|inventory|purchasing|catalog|messaging)\b/i.test(q)&&!/\b(?:status|hours?|labor|labour|schedule)\b/i.test(q))return null;
+ const period=jobReportingPeriod(q,now);
+ const requestedTemporal=/\b\d{4}-\d{2}-\d{2}\b|\b(?:tomorrow|yesterday|tonight|lifetime|all[\s-]+time|all history|ever|since)\b|\b(?:this|next|last|past|previous)\s+(?:(?:\d+|[a-z]+)\s+)?(?:days?|weeks?|months?|years?)\b|\b(?:in|during|for|from|since|before|after)\s+(?:19|20)\d{2}\b/i.test(q);
  const continuity=context?.continuity,referential=isJobFollowupReference(q);
- if(continuity&&referential&&continuity.subject==='Job'&&continuity.references.length!==1)return {kind:'clarify',message:'Which of the previously discussed Production Jobs do you mean? More than one Job was in context; please choose its number or name.'};
+ const recordScope=continuity&&['Job','Production'].includes(continuity.subject)?continuity:null;
+ if((recordScope||/\b(?:jobs?|production|projects?)\b/i.test(q))&&(/\b(?:lifetime|all[\s-]+time|all history|ever|since|last year)\b/i.test(q)||requestedTemporal&&!period))return {kind:'clarify',message:'Please specify a supported calendar period of at most 366 days, two YYYY-MM-DD boundaries, or one date using “on YYYY-MM-DD”. Saved records cannot establish unrecorded work.'};
+ const quotedSelection=q.match(/^["“]([^"”\n]{1,120})["”][?.!]*$/)?.[1];
+ const plainSelection=!/[?!;:]/.test(q)&&!/[\n]/.test(q)&&!/\b(?:what|how|why|where|when|which|who|show|list|find|search|count|about|it|its|that|this|those|these|them|their|ones?|other|first|second|last)\b/i.test(q)&&!isJobPopulationRefinement(q);
+ if(recordScope?.awaitingClarification&&isJobDetailTool(recordScope.operation)&&(quotedSelection||plainSelection)){
+  const selected=trimReference(quotedSelection??q);
+  if(selected&&selected.length<=120)return {kind:'job',tool:recordScope.operation,reference:uuid.test(selected)?{jobId:selected}:{query:selected},args:recordScope.operation==='get_job_labor_summary'&&recordScope.selection.startDate&&recordScope.selection.endDate?{start_date:recordScope.selection.startDate,end_date:recordScope.selection.endDate}:{}};
+ }
+ const singularReference=/\b(?:that|this|same)\s+(?:job|project)\b|\b(?:that|this)\s+one\b|\b(?:it|its)\b/i.test(q);
+ const pluralReference=/\b(?:those|these|both)\s+(?:jobs|projects)\b|\b(?:their|them)\b/i.test(q)||/\bthe\s+(?:jobs|projects)\b/i.test(q)&&/\b(?:labor|labour|hours?|scheduled?|planning|planned|dates?|status|summary|materials?|issues?)\b/i.test(q);
+ const requestedRecordDetails=/\b(?:labor|labour|manpower|hours?|scheduled?|unscheduled|planning|planned|dates?|status|summary|materials?|issues?|follow.?ups?)\b/i.test(q)||requestedJobStatuses(q).length>0;
+ if(recordScope&&(singularReference||pluralReference&&requestedRecordDetails)){
+  const operation=detailOperation(q);
+  if(requestedTemporal&&operation==='get_job_summary')return {kind:'clarify',operation,message:'I can read current recorded Job status and details. Historical status events are not available from these tools.'};
+  const args=operation==='get_job_labor_summary'?(period??(recordScope.selection.startDate&&recordScope.selection.endDate?{start_date:recordScope.selection.startDate,end_date:recordScope.selection.endDate}:{})):{};
+  const ids=recordScope.references.filter(id=>uuid.test(id));
+  if(singularReference&&ids.length===1)return {kind:'job',tool:operation,reference:{jobId:ids[0]},args};
+  if(!singularReference&&pluralReference&&ids.length>0&&ids.length<=4)return ids.length===1?{kind:'job',tool:operation,reference:{jobId:ids[0]},args}:{kind:'jobs',tool:operation,references:[...ids],args};
+  return {kind:'clarify',operation,args,message:'Which Production Job'+(pluralReference?'s':'')+' do you mean? Choose '+(pluralReference?'up to four exact Job numbers or full project names':'an exact Job number or full project name')+'. I cannot use an incomplete or ambiguous list as a record selection.'};
+ }
+ if(continuity&&referential&&continuity.subject==='Job'&&continuity.references.length!==1)return {kind:'clarify',operation:detailOperation(q),message:'Which of the previously discussed Production Jobs do you mean? More than one Job was in context; please choose its number or name.'};
  const modulePattern='(?:Production(?:\\s+Pipeline)?|Inventory|Intake|Planning|Timeline|Manpower(?:\\s+Reporting)?|TenOps|Messaging|Rework|Purchasing|Samples?|Proposals?|Jobs?)';
  if(new RegExp(`^\\s*(?:what\\s+(?:does|do)|how\\s+(?:does|do))\\s+(?:the\\s+)?${modulePattern}\\s+(?:do|show|work|mean|support|include|offer|help|differ|handle|manage|track)\\b`,'i').test(q))return null;
  const populationSeed=continuity?.subject==='Production'&&referential?continuity:null;
@@ -111,9 +139,6 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  if(archiveMention&&archive===undefined)return {kind:'clarify',message:'Do you want current Jobs only, or current and archived Jobs together? The available archive filter includes archived Jobs; it does not select only archived Jobs.'};
  const includeArchived=archive??populationSeed?.selection.includeArchived??false;
  const args:Record<string,unknown>={...(includeArchived?{include_archived:true}:{})};
- const period=jobReportingPeriod(q,now);
- const requestedTemporal=/\b\d{4}-\d{2}-\d{2}\b|\b(?:tomorrow|yesterday|tonight|lifetime|all[\s-]+time|all history|ever|since)\b|\b(?:this|next|last|past|previous)\s+(?:(?:\d+|[a-z]+)\s+)?(?:days?|weeks?|months?|years?)\b|\b(?:in|during|for|from|since|before|after)\s+(?:19|20)\d{2}\b/i.test(q);
- if(/\b(?:lifetime|all[\s-]+time|all history|ever|since|last year)\b/i.test(q)||requestedTemporal&&!period)return {kind:'clarify',message:'Please specify a supported calendar period of at most 366 days, two YYYY-MM-DD boundaries, or one date using “on YYYY-MM-DD”. Saved records cannot establish unrecorded work.'};
  const plural=/\b(?:jobs|production overview|production count|shop overview)\b/i.test(q)||Boolean(populationSeed);
  const overview=plural&&/\b(?:how many|counts?|overview|by status|scheduled|unscheduled|active|upcoming|completion|complete|finish|finishing|due)\b/i.test(q);
  if(plural&&period&&/\b(?:how many|counts?|completed|finished|shipped)\b/i.test(q)&&!/\b(?:labor|labour|hours|manpower)\b/i.test(q))return {kind:'clarify',message:'Production Job counts describe the current visible Jobs. Historical period counts and status transitions are outside this read-only contract; I can show current counts or upcoming persisted planned completion dates.'};
@@ -131,12 +156,12 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  if(populationList){
   const namedSearch=q.match(/\b(?:for|named|called)\s+(.+?)(?=[?!;]|$)/i)?.[1];
   let query=namedSearch?trimReference(namedSearch):populationSeed?.selection.query??'';
-  if(!namedSearch&&!query){let remainder=q.match(/\bjobs?\s+(.+?)(?=[?!;]|$)/i)?.[1]??'';for(const status of selectedStatuses)remainder=remainder.replace(new RegExp('\\b'+status.replaceAll('_','(?:\\s+|-)')+'\\b','gi'),' ');remainder=remainder.replace(/\b(?:are|is|currently|in|on|the|all|active|and|or|include|including|with|exclude|excluding|without|archived|unarchived|please)\b/gi,' ').trim();if(remainder)query=trimReference(remainder);}
+  if(!namedSearch&&!query&&!referential){let remainder=q.match(/\bjobs?\s+(.+?)(?=[?!;]|$)/i)?.[1]??'';for(const status of selectedStatuses)remainder=remainder.replace(new RegExp('\\b'+status.replaceAll('_','(?:\\s+|-)')+'\\b','gi'),' ');remainder=remainder.replace(/\b(?:are|is|currently|in|on|the|all|active|and|or|include|including|with|exclude|excluding|without|archived|unarchived|please)\b/gi,' ').trim();if(remainder)query=trimReference(remainder);}
   return {kind:'search',tool:'find_jobs',args:{...args,statuses,...(query?{query}:{})}};
  }
  if(populationCount&&populationSeed?.selection.query)return {kind:'clarify',message:'The overview counts lifecycle and archive populations, not a prior name/customer search. I can list those matches, or give a status count across your visible Jobs.'};
  if(populationCount)return {kind:'overview',tool:'get_production_overview',args:{...args,statuses,...period??{}}};
- const tool=/\b(?:labor|labour|manpower|hours?)\b/i.test(q)?'get_job_labor_summary':/\b(?:scheduled?|unscheduled|planning|planned|dates?|next|completion|finish)\b/i.test(q)?'get_job_planning':'get_job_summary';
+ const tool=detailOperation(q);
  const detailArgs=tool==='get_job_labor_summary'&&period?period:{};
  const contextualArgs=tool==='get_job_labor_summary'&&!requestedTemporal&&continuity?.selection.startDate&&continuity.selection.endDate?{start_date:continuity.selection.startDate,end_date:continuity.selection.endDate}:detailArgs;
  const directUuid=q.match(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i)?.[0];
@@ -164,6 +189,8 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  return {kind:'clarify',message:'Which Production Job do you mean? Enter its Job number or exact project name, or choose a Job from the results.'};
 }
 
+/** Uniqueness is a property of the entire lookup, never a partial page. */
+export function completeJobLookup(result:JobToolResult):boolean{const data=result.data;return result.tool==='find_jobs'&&result.status==='ok'&&result.complete&&!result.truncated&&Number(result.filters.cursor??0)===0&&!!data&&'jobs' in data&&data.has_more===false&&data.next_cursor===null;}
 export type JobResolution={kind:'selected';jobId:string}|{kind:'choose';jobs:JobIdentity[]}|{kind:'missing'};
 /** Never auto-select a merely similar or single fuzzy search result. */
 export function resolveExactJobReference(query:string,jobs:JobIdentity[]):JobResolution{

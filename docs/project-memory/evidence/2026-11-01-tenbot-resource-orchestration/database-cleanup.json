@@ -1,0 +1,11 @@
+{
+  "taskRecordsRemoved": true,
+  "taskAuthUsersRemoved": 2,
+  "taskAuthAlreadyAbsent": 0,
+  "taskAuthIdentitiesResolved": 2,
+  "expectedAttemptedAuth": 2,
+  "policyMarker": "tenbot-resource-reference-20261101-64c15f64b7a9",
+  "priorFixtureReset": false,
+  "migrationsApplied": 0,
+  "ProductionChanges": 0
+}

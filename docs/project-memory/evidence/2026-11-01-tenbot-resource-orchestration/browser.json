@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "groups": 4,
+  "checks": [
+    "Status list -> unique canonical identity -> planning -> recorded labor through actual Messaging and corrected handler",
+    "Close/reopen and reload preserve identity/operation and timestamped private history",
+    "Exact Job operations do not become another status search",
+    "Desktop/mobile composer usable without horizontal overflow"
+  ],
+  "answers": [
+    {
+      "question": "Which Jobs are in Production?",
+      "message": "7 matching Jobs:\n• CTX-1 — Context Alpha — In Production\n• CTX-3 — Context Job 3 — In Production\n• CTX-4 — Context Job 4 — In Production\n• CTX-5 — Context Job 5 — In Production\n• CTX-6 — Context Job 6 — In Production\n• CTX-7 — Context Job 7 — In Production\n• CTX-8 — Context Job 8 — In Production",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "What about On Deck?",
+      "message": "1 matching Job:\n• CTX-2 — Context Job 2 — On Deck",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "What are the scheduled dates for that Job?",
+      "message": "CTX-2 — Context Job 2 is On Deck.\nPlanned: Oct 1, 2026–Nov 15, 2026.\nPhase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "How many hours on it?",
+      "message": "CTX-2 — Context Job 2 has 5 hours of recorded labor.\nReporting period: Oct 3, 2026–Nov 1, 2026 (work dates).\n1 saved Manpower entry; latest work date Oct 30, 2026.\nRecorded hours do not include unreported work or forecast remaining effort.\nThese are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Show its planned dates",
+      "message": "CTX-2 — Context Job 2 is On Deck.\nPlanned: Oct 1, 2026–Nov 15, 2026.\nPhase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+      "persistent": true,
+      "status": 200
+    },
+    {
+      "question": "Is it still On Deck?",
+      "message": "CTX-2 — Context Job 2 is On Deck.\nPlanning completeness and recorded Material Status do not establish physical readiness or absence of blockers.",
+      "persistent": true,
+      "status": 200
+    }
+  ],
+  "actualApplicationUi": true,
+  "syntheticDatabaseAndAuth": true,
+  "actualInference": false,
+  "realDatabase": false,
+  "hostedRequests": 0,
+  "operationalWrites": 0
+}

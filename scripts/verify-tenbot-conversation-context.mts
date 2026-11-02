@@ -101,7 +101,7 @@ await check('H expired references, ambiguity, untrusted fields and arbitrary liv
  await assert.rejects(f.run()({action:'ask',question:'Which ones?',conversationContext:{subject:'Job',references:[f.tables.jobs[0].id]}}),/Invalid/);
  const c=contextFromReads([{name:'get_job_summary',args:{job_id:uuid(1)},result:{status:'ok',complete:true,data:{job:{job_id:uuid(1)}},filters:{}} as never}], 'status',f.state.now)!;
  assert(validConversationContext(c));assert(!validConversationContext({...c,liveFacts:{hours:5}}));assert(!validConversationContext({...c,expiresAt:new Date(f.state.now+CONTEXT_TTL_MS+1).toISOString()}));assert(!contextLive(structuredClone(c),f.state.now+CONTEXT_TTL_MS));assert(!validateStoredAgentState({guidance:[],display:[],context:{...c,sql:'select *'}}));
- f.row(id).state.context={...c,references:[f.tables.jobs[0].id,f.tables.jobs[1].id]};f.row(id).expires=f.state.now+3600000;f.hidden.clear();const ambiguous=await f.ask('How many hours on that job?',id);assert.match(String(ambiguous.message),/Which of the previously discussed/);
+ f.row(id).state.context={...c,references:[f.tables.jobs[0].id,f.tables.jobs[1].id]};f.row(id).expires=f.state.now+3600000;f.hidden.clear();const ambiguous=await f.ask('How many hours on that job?',id);assert.match(String(ambiguous.message),/Which.*Production Job|ambiguous/);
 });
 await check('retained collection context cannot bypass financial restrictions or persistence failures',async()=>{
  const f=fixture(),a=await f.ask('How many active Jobs are there?'),id=String(a.conversationId),before=f.trace.length;

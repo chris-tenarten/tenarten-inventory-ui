@@ -1,0 +1,50 @@
+[
+  {
+    "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+    "sha256": "209ec2c0ffea93b5891c65ea3a29efc4d7301c335fb9dd7df7ae29489790e077"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+    "sha256": "adc40480cab484c8bfc77f57a0519d098a4e009ed72f73c36df77f8dc11eff61"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-job-session.ts",
+    "sha256": "718205cdbd37b07c23ee467cfab61160464093b1aeb73b4a06728bfb39c6ad35"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "sha256": "e452e15feb4b325bdd4b460ba3f71f890ffd19029a2271e62a7cbfbda6b8f24d"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+    "sha256": "8d2f7e7c1e9cc316cee0d4c032e68f2829f1fbacb328c73f156f0fe6755f66ee"
+  },
+  {
+    "path": "supabase/functions/_shared/tenbot-handler.ts",
+    "sha256": "af1cced926e719da6e4318704f432b731f2ef58d87786f9bd56260517a038ae8"
+  },
+  {
+    "path": "scripts/verify-tenbot-resource-orchestration.mts",
+    "sha256": "c7f9ea65b7eb558d393a6ae12cb9bc741e793a40724c2ced0c0cb7d64aa20d90"
+  },
+  {
+    "path": "scripts/verify-tenbot-resource-reference-database.mts",
+    "sha256": "848c9303f5b20d68353e8d094cadcd97725f8a9997f2600e671800af04faddce"
+  },
+  {
+    "path": "scripts/verify-tenbot-conversation-context.mts",
+    "sha256": "d7766f16e34e5214639ded2049f9cb68f7d5f2b2b001c9e7f0f4669f88a63a30"
+  },
+  {
+    "path": "scripts/verify-tenbot-employee-history.mts",
+    "sha256": "b8f315f4c51f17785f796a636e849969f540507a20d42837127a1278a13c188f"
+  },
+  {
+    "path": "scripts/support/tenbot-context-fixture.mts",
+    "sha256": "ef9f4886914db6c4ce6d51d3f6573e5ef3d8d962f9112324681984068bf49bda"
+  },
+  {
+    "path": "scripts/start-tenbot-context-review.mts",
+    "sha256": "1d16d344988234fb3ba8a3dba0df7583dd1ba7b5ecfcb2bf931d0acd13768b60"
+  }
+]

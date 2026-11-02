@@ -11,6 +11,9 @@ import {ACTIVE_PRODUCTION_STATUSES} from './production-job-facts.mjs';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Edge extension.
 import {JOB_LIFECYCLE_STATUSES,parseJobStatuses} from './tenbot-job-filters.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Edge extension, type-only dependency.
+import type {JobIntent} from './tenbot-job-routing.ts';
 
 export const CONTEXT_TTL_MS=30*60*1000;
 const subjects=['Production','Job','Intake','Inventory','Purchasing','Planning','Messaging','My Work','Settings','Contacts','Samples','Proposals','Manpower Reporting','TenOps'];
@@ -52,14 +55,26 @@ export function requestedJobStatuses(question:string):string[]{
  if(/\bactive\b/.test(q)){const narrowed=selected.filter(s=>s!=='in_production');return narrowed.length&&narrowed.every(s=>ACTIVE_PRODUCTION_STATUSES.includes(s))?narrowed:[...ACTIVE_PRODUCTION_STATUSES];}
  return selected;
 }
-export function contextFromReads(reads:ContextRead[],question:string,now:number,previous:ConversationContext|null=null):ConversationContext|null{
+function collectionReferences(result:JobToolResult):string[]{
+ const data:unknown=result.data;
+ if(result.tool!=='find_jobs'||result.status!=='ok'||!result.complete||result.truncated||Number(result.filters.cursor??0)!==0||!object(data)||data.has_more!==false||data.next_cursor!==null||!Array.isArray(data.jobs)||data.jobs.length>4)return [];
+ const ids=data.jobs.map(j=>object(j)&&typeof j.job_id==='string'&&uuid.test(j.job_id)?j.job_id:null);
+ return ids.every((id):id is string=>id!==null)&&new Set(ids).size===ids.length?ids:[];
+}
+const detailTools=['get_job_summary','get_job_planning','get_job_labor_summary'];
+export function contextFromReads(reads:ContextRead[],question:string,now:number,previous:ConversationContext|null=null,requested?:JobIntent):ConversationContext|null{
+ // A partial batch must not turn its last successful record into the group's
+ // focus, or retain IDs from a denied/missing detail operation.
+ if(reads.some(r=>detailTools.includes(r.name)&&(r.result.status!=='ok'||!r.result.complete||!resultJobId(r.result))))return null;
  const successful=reads.filter(x=>x.result.status==='ok'&&x.result.complete&&x.result.data);if(!successful.length)return null;
- const last=successful.at(-1)!,details=successful.filter(x=>resultJobId(x.result));
- const references=[...new Set(details.map(x=>resultJobId(x.result)!))];
- // Do not turn a multi-record comparison into an arbitrary last-record focus.
+ const requestedDetail=requested&&(requested.kind==='job'||requested.kind==='jobs')?requested.tool:null;
+ // Auxiliary lookups must not replace the operation the employee requested.
+ const last=(requestedDetail?[...successful].reverse().find(r=>r.name===requestedDetail):undefined)??successful.at(-1)!,isDetail=detailTools.includes(last.name),details=successful.filter(x=>resultJobId(x.result));
+ const references=isDetail?[...new Set(details.map(x=>resultJobId(x.result)!) )]:last.name==='find_jobs'?collectionReferences(last.result):[];
  if(references.length>4)return null;
- const f=last.result.filters,a=last.args,period=typeof a.start_date==='string'&&a.start_date&&typeof a.end_date==='string'&&a.end_date?{startDate:a.start_date,endDate:a.end_date}:last.name==='get_job_labor_summary'&&typeof f.start_date==='string'&&typeof f.end_date==='string'?{startDate:f.start_date,endDate:f.end_date}:{startDate:null,endDate:null};
- const value:ConversationContext={version:1,subject:details.length?'Job':'Production',operation:last.name,resultType:details.length?'record':last.name==='get_production_overview'?'count':'collection',references,selection:{query:typeof f.query==='string'?f.query:typeof a.query==='string'?a.query:'',includeArchived:f.include_archived===undefined?a.include_archived===true:f.include_archived===true,statuses:f.statuses===undefined?requestedJobStatuses(question):parseJobStatuses(f.statuses)??[],...period},sources:[],awaitingClarification:false,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
+ const pending=requested?.kind==='job'&&last.name==='find_jobs';
+ const f=last.result.filters,a=last.args,periodArgs=pending?requested.args:a,period=typeof periodArgs.start_date==='string'&&periodArgs.start_date&&typeof periodArgs.end_date==='string'&&periodArgs.end_date?{startDate:periodArgs.start_date,endDate:periodArgs.end_date}:last.name==='get_job_labor_summary'&&typeof f.start_date==='string'&&typeof f.end_date==='string'?{startDate:f.start_date,endDate:f.end_date}:{startDate:null,endDate:null};
+ const value:ConversationContext={version:1,subject:isDetail||pending?'Job':'Production',operation:pending?requested.tool:last.name,resultType:pending?'clarification':isDetail?'record':last.name==='get_production_overview'?'count':'collection',references,selection:{query:isDetail?'':typeof f.query==='string'?f.query:typeof a.query==='string'?a.query:'',includeArchived:f.include_archived===undefined?a.include_archived===true:f.include_archived===true,statuses:isDetail?[]:f.statuses===undefined?requestedJobStatuses(question):parseJobStatuses(f.statuses)??[],...period},sources:[],awaitingClarification:pending,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
  if(value.subject==='Job'&&previous?.subject==='Job'&&JSON.stringify(previous.references)===JSON.stringify(references)&&!value.selection.startDate&&last.name!=='get_job_labor_summary'){
   value.selection.startDate=previous.selection.startDate;value.selection.endDate=previous.selection.endDate;
  }
@@ -71,4 +86,4 @@ export function contextFromReads(reads:ContextRead[],question:string,now:number,
 export function workflowConversationContext(subject:string,sources:ConversationContext['sources'],clarify:boolean,now:number):ConversationContext{
  return {version:1,subject:subjects.find(x=>x.toLowerCase()===subject.toLowerCase())??'TenOps',operation:'guidance',resultType:clarify?'clarification':'guidance',references:[],selection:{query:'',includeArchived:false,statuses:[],startDate:null,endDate:null},sources:structuredClone(sources),awaitingClarification:clarify,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
 }
-export function conversationContextHint(context:ConversationContext){const {subject,operation,resultType,references,selection,awaitingClarification}=context;return 'Conversation subject and lookup selectors only (not current facts or permission): '+JSON.stringify({subject,operation,resultType,references,selection,awaitingClarification})+'. Requery current tools before answering operational follow-ups. Do not treat the prior count, statuses or hours as known. Multiple references require a clear selection. Never invent Bid/material relationships: no Bid or live Inventory read tool is available. Verified prior workflow dialogue describes the walkthrough step, not a completed database action.';}
+export function conversationContextHint(context:ConversationContext){const {subject,operation,resultType,references,selection,awaitingClarification}=context;return 'Conversation subject and lookup selectors only (not current facts or permission): '+JSON.stringify({subject,operation,resultType,references,selection,awaitingClarification})+'. Requery current tools before answering operational follow-ups. Do not treat the prior count, statuses or hours as known. References identify only previously resolved canonical Jobs, never authorization. A complete small collection may retain up to four IDs while its subject stays Production. A singular reference requires exactly one current ID; explicit plural detail requests may use the whole retained set. Partial/paginated collections do not imply a unique Job. A pending clarification retains only the requested operation and period until an exact Job selection is authorized. Never invent Bid/material relationships: no Bid or live Inventory read tool is available. Verified prior workflow dialogue describes the walkthrough step, not a completed database action.';}

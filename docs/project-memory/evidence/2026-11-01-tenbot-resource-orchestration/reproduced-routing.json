@@ -1,0 +1,90 @@
+{
+  "actualCode": true,
+  "syntheticData": true,
+  "lastQuestion": "What are the scheduled dates for that Job?",
+  "wrongReads": [
+    {
+      "name": "find_jobs",
+      "args": {
+        "statuses": [
+          "on_deck"
+        ],
+        "query": "that Job"
+      },
+      "status": "ok",
+      "complete": true
+    },
+    {
+      "name": "find_jobs",
+      "args": {
+        "statuses": [
+          "on_deck"
+        ],
+        "query": "that Job"
+      },
+      "status": "ok",
+      "complete": true
+    },
+    {
+      "name": "find_jobs",
+      "args": {
+        "statuses": [
+          "on_deck"
+        ],
+        "query": "that Job"
+      },
+      "status": "ok",
+      "complete": true
+    },
+    {
+      "name": "find_jobs",
+      "args": {
+        "statuses": [
+          "on_deck"
+        ],
+        "query": "that Job"
+      },
+      "status": "ok",
+      "complete": true
+    },
+    {
+      "name": "find_jobs",
+      "args": {
+        "statuses": [
+          "on_deck"
+        ],
+        "query": "that Job"
+      },
+      "status": "ok",
+      "complete": true
+    },
+    {
+      "name": "find_jobs",
+      "args": {
+        "statuses": [
+          "on_deck"
+        ]
+      },
+      "status": "ok",
+      "complete": true
+    },
+    {
+      "name": "find_jobs",
+      "args": {
+        "statuses": [
+          "in_production"
+        ]
+      },
+      "status": "ok",
+      "complete": true
+    }
+  ],
+  "literalPronounLookupObserved": true,
+  "planningReadMissing": true,
+  "originalHostedErrorTextCaptured": false,
+  "oldSyntheticFixtureIgnoredOrFilters": true,
+  "openAiTransportCalls": 0,
+  "syntheticQwenTransportCalls": 3,
+  "actualInference": false,
+  "hostedRequests": 0
+}
