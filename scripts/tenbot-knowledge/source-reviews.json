@@ -1553,5 +1553,31 @@
       "revision": "3fb80972adeb762946c894a165adba1f6d4a1607",
       "heading": "## Accepted record source review — preserved Messaging and Inventory contracts"
     }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+    "blob": "e175df0aa0a49fc72c56a3e1d173c56b75b3ccee",
+    "release": {
+      "revision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-initial-production-source-proof.md",
+        "revision": "a7d4fe96737bd5c079ee771409edd4987ec9b345",
+        "heading": "## Executed shared TenBot release migrations — November 2, 2026"
+      }
+    }
+  },
+  {
+    "classification": "historical-deployed",
+    "path": "supabase/migrations/20261102180000_tenbot_monthly_allowance_ceiling_ten.sql",
+    "blob": "b8350118a2fb5209cec3a800a24d3539fc1827e8",
+    "release": {
+      "revision": "98309d2e6376a5df5790640d074e62e361d6c410",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-initial-production-source-proof.md",
+        "revision": "a7d4fe96737bd5c079ee771409edd4987ec9b345",
+        "heading": "## Executed shared TenBot release migrations — November 2, 2026"
+      }
+    }
   }
 ]
