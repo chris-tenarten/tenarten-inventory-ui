@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "groups": 10,
+  "checks": [
+    "Existing Cloudflare transport receives callable schemas and same-input metering; paid allowance remains unused",
+    "Model-selected call arguments are preserved for the existing loop to validate, not rewritten by intent routing",
+    "Existing shared quota rejection dispatches no inference and creates no settlement retry",
+    "Authorization revoked after admission prevents dispatch and closes the reservation conservatively",
+    "Malformed model JSON preserves measured consumption and finishes failed exactly once",
+    "Mixed calls/final and malformed call envelopes are rejected after measured usage",
+    "Missing provider usage is not reported as measured zero and leaves conservative reservation accounting",
+    "Settlement failure never retries accounting or the provider",
+    "Abort and smaller output budgets reach transport without enabling extra output or calls",
+    "Existing knowledge and operational prose transports retain their prior wire shape and640-token bound"
+  ],
+  "actualProviderAdapter": true,
+  "scriptedHttpResponses": true,
+  "actualInference": false,
+  "networkRequests": 0,
+  "operationalWrites": 0
+}

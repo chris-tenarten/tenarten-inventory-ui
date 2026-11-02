@@ -1,0 +1,828 @@
+{
+  "actualBrowser": "Native Chrome accessibility automation; no screenshots",
+  "origin": "http://localhost:3000",
+  "route": "/my-work?qaReadTools=1",
+  "status": {
+    "mode": "synthetic-scripted-read-orchestration",
+    "notice": "Synthetic records and simulated tool planning; no live inference",
+    "liveInference": false,
+    "actualModelReasoning": false,
+    "operationalWrites": false,
+    "simulatedProviderSteps": 20,
+    "actualInferenceTokens": 0,
+    "actualInferenceCostUsd": 0,
+    "conversationCount": 1,
+    "examples": [
+      "Give me a quick handoff for Job \"chris-dev-test\": saved dates, labor hours, and unresolved follow-ups.",
+      "Show labor for Job \"chris-dev-test\" from 2026-10-26 through 2026-11-01, including the days reported.",
+      "Was any of that rework, or all the original run?",
+      "For Job \"chris-dev-test\", is the planned finish before its requested delivery?",
+      "What about the other one?"
+    ],
+    "syntheticRecords": [
+      {
+        "jobNumber": "DEV-20260803",
+        "name": "chris-dev-test"
+      },
+      {
+        "jobNumber": "QA-7102",
+        "name": "Synthetic Other Job"
+      }
+    ]
+  },
+  "trace": {
+    "notice": "Synthetic records and simulated tool planning; no live inference",
+    "traces": [
+      {
+        "sequence": 1,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_1_0",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "find_jobs",
+                "get_job_summary",
+                "get_job_labor_summary"
+              ]
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 2,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_2_0",
+            "name": "find_jobs",
+            "arguments": {
+              "query": "chris-dev-test",
+              "statuses": [],
+              "include_archived": false,
+              "limit": 20,
+              "cursor": ""
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 3,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 4,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 5,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_3_0",
+            "name": "get_job_summary",
+            "arguments": {
+              "job_id": "00000000-0000-4000-8000-000000000100"
+            }
+          },
+          {
+            "id": "scripted_3_1",
+            "name": "get_job_labor_summary",
+            "arguments": {
+              "job_id": "00000000-0000-4000-8000-000000000100",
+              "start_date": "",
+              "end_date": ""
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 6,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 7,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 8,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 9,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 10,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 11,
+        "kind": "scripted-plan",
+        "calls": [],
+        "outcome": "final"
+      },
+      {
+        "sequence": 12,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 13,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 14,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 15,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 16,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 17,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 18,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_5_0",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "find_jobs",
+                "get_job_labor_summary"
+              ]
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 19,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_6_0",
+            "name": "find_jobs",
+            "arguments": {
+              "query": "chris-dev-test",
+              "statuses": [],
+              "include_archived": false,
+              "limit": 20,
+              "cursor": ""
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 20,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 21,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 22,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_7_0",
+            "name": "get_job_labor_summary",
+            "arguments": {
+              "job_id": "00000000-0000-4000-8000-000000000100",
+              "start_date": "2026-10-26",
+              "end_date": "2026-11-01"
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 23,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100",
+          "start_date": "2026-10-26",
+          "end_date": "2026-11-01"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 24,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 25,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100",
+          "start_date": "2026-10-26",
+          "end_date": "2026-11-01"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 26,
+        "kind": "scripted-plan",
+        "calls": [],
+        "outcome": "final"
+      },
+      {
+        "sequence": 27,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 28,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100",
+          "start_date": "2026-10-26",
+          "end_date": "2026-11-01"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 29,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 30,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100",
+          "start_date": "2026-10-26",
+          "end_date": "2026-11-01"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 31,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_9_0",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "find_jobs",
+                "get_job_labor_summary"
+              ]
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 32,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_10_0",
+            "name": "get_job_labor_summary",
+            "arguments": {
+              "job_id": "00000000-0000-4000-8000-000000000100",
+              "start_date": "2026-10-26",
+              "end_date": "2026-11-01"
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 33,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100",
+          "start_date": "2026-10-26",
+          "end_date": "2026-11-01"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 34,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100",
+          "start_date": "2026-10-26",
+          "end_date": "2026-11-01"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 35,
+        "kind": "scripted-plan",
+        "calls": [],
+        "outcome": "final"
+      },
+      {
+        "sequence": 36,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100",
+          "start_date": "2026-10-26",
+          "end_date": "2026-11-01"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 37,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_labor_summary",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100",
+          "start_date": "2026-10-26",
+          "end_date": "2026-11-01"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 38,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_12_0",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "find_jobs",
+                "get_job_planning"
+              ]
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 39,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_13_0",
+            "name": "find_jobs",
+            "arguments": {
+              "query": "QA-7102",
+              "statuses": [],
+              "include_archived": false,
+              "limit": 20,
+              "cursor": ""
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 40,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "QA-7102",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 41,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "QA-7102",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 42,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_14_0",
+            "name": "get_job_planning",
+            "arguments": {
+              "job_id": "00000000-0000-4000-8000-000000000101"
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 43,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_planning",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000101"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 44,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "QA-7102",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 45,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_planning",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000101"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 46,
+        "kind": "scripted-plan",
+        "calls": [],
+        "outcome": "final"
+      },
+      {
+        "sequence": 47,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "QA-7102",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 48,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_planning",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000101"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 49,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "QA-7102",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 50,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_planning",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000101"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 51,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_16_0",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "find_jobs",
+                "get_job_planning"
+              ]
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 52,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_17_0",
+            "name": "find_jobs",
+            "arguments": {
+              "query": "chris-dev-test",
+              "statuses": [],
+              "include_archived": false,
+              "limit": 20,
+              "cursor": ""
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 53,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 54,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 55,
+        "kind": "scripted-plan",
+        "calls": [
+          {
+            "id": "scripted_18_0",
+            "name": "get_job_planning",
+            "arguments": {
+              "job_id": "00000000-0000-4000-8000-000000000100"
+            }
+          }
+        ],
+        "outcome": "calls"
+      },
+      {
+        "sequence": 56,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_planning",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 57,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 58,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_planning",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 59,
+        "kind": "scripted-plan",
+        "calls": [],
+        "outcome": "final"
+      },
+      {
+        "sequence": 60,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 61,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_planning",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 62,
+        "kind": "authorized-synthetic-read",
+        "name": "find_jobs",
+        "args": {
+          "query": "chris-dev-test",
+          "statuses": [],
+          "include_archived": false,
+          "limit": 20
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 63,
+        "kind": "authorized-synthetic-read",
+        "name": "get_job_planning",
+        "args": {
+          "job_id": "00000000-0000-4000-8000-000000000100"
+        },
+        "status": "ok"
+      },
+      {
+        "sequence": 64,
+        "kind": "scripted-plan",
+        "calls": [],
+        "outcome": "final"
+      }
+    ]
+  },
+  "browserChecks": [
+    {
+      "case": "E1",
+      "result": "pass",
+      "observed": "One answer contains saved dates,7 recorded hours and1 unresolved follow-up; simulation notice visible."
+    },
+    {
+      "case": "B1",
+      "result": "pass",
+      "observed": "Exact Oct26\u2013Nov1 period;5 original/unclassified+2 Rework hours and two saved work dates."
+    },
+    {
+      "case": "B2",
+      "result": "pass",
+      "observed": "Follow-up retains reporting period and5/2 attribution rather than switching to summary."
+    },
+    {
+      "case": "alternate-reference-setup",
+      "result": "setup",
+      "observed": "QA-7102 / Synthetic Other Job selected before A3; no saved dates were invented."
+    },
+    {
+      "case": "A3",
+      "result": "pass",
+      "observed": "Quoted chris-dev-test overrides previously selectedQA-7102; correct canonical identity and saved finish-before-delivery comparison, with forecast caveat."
+    },
+    {
+      "case": "reopen",
+      "result": "pass",
+      "observed": "Close/reload/reopen restores all five prior turns, original timestamps and simulation notices."
+    },
+    {
+      "case": "D3",
+      "result": "pass",
+      "observed": "What about the other one? produces a focused exact Job clarification, with no guessed record."
+    }
+  ],
+  "actualCandidateInferenceCalls": 0,
+  "actualCandidateInferenceUsd": 0,
+  "screenshots": 0,
+  "browserOutputCapture": "Native accessibility observations; long reply text is excerpted by the accessibility snapshot. Complete synthetic responses are separately preserved by the contract verifier."
+}

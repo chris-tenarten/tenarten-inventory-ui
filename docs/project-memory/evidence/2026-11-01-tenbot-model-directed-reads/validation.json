@@ -1,0 +1,123 @@
+{
+  "newFocusedGroups": 34,
+  "adjacentPassingGroups": 36,
+  "newFocusedResults": {
+    "identity": 7,
+    "qwenAdapter": 10,
+    "orchestration": 17
+  },
+  "adjacentPassingResults": {
+    "resourceOrchestration": 15,
+    "directAnswers": 8,
+    "hostedHistory": 13
+  },
+  "latestCommands": [
+    {
+      "name": "identity",
+      "exitCode": 0,
+      "durationMs": 287,
+      "log": "identity.log"
+    },
+    {
+      "name": "qwen-adapter",
+      "exitCode": 0,
+      "durationMs": 153,
+      "log": "qwen-adapter.log"
+    },
+    {
+      "name": "orchestration",
+      "exitCode": 0,
+      "durationMs": 316,
+      "log": "orchestration.log"
+    },
+    {
+      "name": "context",
+      "exitCode": 1,
+      "durationMs": 347,
+      "log": "context.log"
+    },
+    {
+      "name": "resources",
+      "exitCode": 0,
+      "durationMs": 325,
+      "log": "resources.log"
+    },
+    {
+      "name": "direct-answers",
+      "exitCode": 0,
+      "durationMs": 317,
+      "log": "direct-answers.log"
+    },
+    {
+      "name": "history",
+      "exitCode": 0,
+      "durationMs": 202,
+      "log": "history.log"
+    },
+    {
+      "name": "hosted",
+      "exitCode": 1,
+      "durationMs": 138,
+      "log": "hosted.log"
+    },
+    {
+      "name": "knowledge",
+      "exitCode": 0,
+      "durationMs": 190,
+      "log": "knowledge.log"
+    },
+    {
+      "name": "types",
+      "exitCode": 0,
+      "log": "types-final.log",
+      "source": "Final exact-candidate project TypeScript command after17-group fixture header/type correction"
+    },
+    {
+      "name": "lint",
+      "exitCode": 0,
+      "durationMs": 1797,
+      "log": "lint.log"
+    },
+    {
+      "name": "build",
+      "exitCode": 0,
+      "durationMs": 18348,
+      "log": "build.log"
+    }
+  ],
+  "knownBaselineFailures": [
+    {
+      "verifier": "scripts/verify-tenbot-conversation-context.mts",
+      "baseExitCode": 1,
+      "candidateExitCode": 1,
+      "base": "8d590343df8506169e9944beffe84feccbce5c88",
+      "failure": "Standalone Can you list Jobs that are On Deck? compiles a literal search for that and misses.",
+      "baseLog": "context-baseline.log",
+      "candidateLog": "context.log",
+      "scope": "Existing deterministic population query parsing; unchanged and deferred."
+    },
+    {
+      "verifier": "scripts/verify-tenbot-hosted.mts",
+      "baseExitCode": 1,
+      "candidateExitCode": 1,
+      "base": "8d590343df8506169e9944beffe84feccbce5c88",
+      "failure": "Legacy status assertion omits existing persistentHistoryAvailable:true field.",
+      "baseLog": "hosted-baseline.log",
+      "candidateLog": "hosted.log",
+      "scope": "Existing stale test contract; unchanged and deferred."
+    }
+  ],
+  "productionBuild": {
+    "passed": true,
+    "durationMs": 18348,
+    "mode": "Next production Webpack build in clean HEAD archive plus task overlays; public synthetic localhost configuration, no real provider secrets."
+  },
+  "projectTypesPassed": true,
+  "targetedLintPassed": true,
+  "knowledgePackagedIntegrityPassed": true,
+  "diffCheckPassed": true,
+  "noNewDatabaseOrAuthorizationCampaign": true,
+  "rawLogs": "/private/tmp/tenbot-read-orchestration-20261101",
+  "originalDirtyAgentExcluded": true,
+  "releaseAttestationClaimed": false
+}

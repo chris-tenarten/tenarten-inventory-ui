@@ -23,9 +23,12 @@ import {TenbotError,type InferenceProvider} from './tenbot-core.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge imports require explicit extensions.
 import type {JobTools} from './tenbot-job-session.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {createQwenAgentProvider} from './tenbot-qwen-agent.ts';
 
 export type HostedRpc=(name:string,args?:Record<string,unknown>)=>Promise<{data:unknown;error:unknown}>;
-export type HostedTenbotConfig={persistentHistory?:boolean;enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
+export type HostedTenbotConfig={persistentHistory?:boolean;modelDirectedReads?:boolean;enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
 export const TENBOT_HOSTED_SERVICE_RPCS=new Set([
  'tenbot_reserve_usage','tenbot_finish_usage','tenbot_append_conversation_turn',
  'tenbot_openai_reserve','tenbot_openai_settle','tenbot_openai_meter_status',
@@ -43,15 +46,17 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
  const historyStore=createTenbotAgentHistoryStore(caller,service,{persistent:config.persistentHistory??(options.origin==='https://tendev.pages.dev'||options.origin==='http://localhost:3000')});
  const sessions=enabled?createTenbotAgentSessions({
   can:(_owner,capability)=>_owner===owner?can(capability):Promise.resolve(false),
-  jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,now,
+  jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,modelDirectedReads:config.modelDirectedReads===true,now,
   // Only the staged TenDev UI understands bounded, reauthorized live history.
   operationalHistory:options.origin==='https://tendev.pages.dev',
   sessionStore:historyStore,
-  fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,qwen,undefined,tools,undefined,{context,history}),
+  // A Qwen orchestration failure must never dispatch a second inference through
+  // the legacy explanation path. Direct guidance remains available without it.
+  fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,config.modelDirectedReads?null:qwen,undefined,tools,undefined,{context,history}),
   provider(){
    // Check on every turn and again before every network dispatch. An operator's
    // verified expiry is a hard upper bound, never evidence of key validity.
-   if(!config.spendingAuthorized||config.apiKey.length<16||!Number.isFinite(expires)||expires<=now())return {name:'OpenAI Responses',model:'gpt-6.1-terra',async step(){throw new AgentStepError('provider-not-configured');}};
+   if(!config.spendingAuthorized||config.apiKey.length<16||!Number.isFinite(expires)||expires<=now())return config.modelDirectedReads&&qwen?createQwenAgentProvider({provider:qwen,owner,rpc:service,can:()=>can('readOperationalData')}):{name:'OpenAI Responses',model:'gpt-6.1-terra',async step(){throw new AgentStepError('provider-not-configured');}};
    const meter=createHostedOpenAIMetering({owner,model:'gpt-6.1-terra',requestId:crypto.randomUUID(),rpc:service});
    return createOpenAIProvider({model:'gpt-6.1-terra',apiKey:config.apiKey,spendingAuthorized:true,pricing:OPENAI_EXPERIMENT_PRICING['gpt-6.1-terra'],reserveBudget:meter.reserveBudget,requireResponseMetadata:true,
     async fetcher(url,init){

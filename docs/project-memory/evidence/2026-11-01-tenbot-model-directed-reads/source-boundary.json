@@ -1,0 +1,58 @@
+{
+  "base": "8d590343df8506169e9944beffe84feccbce5c88",
+  "files": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "6c2b95c2e47a8cd7b3c7ff65947a30ed3bc2c4bb766dd220e442db9ad78f22c8"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "16bdfc1401ef8336f5011b3122be7e045d39a599f2d239bb97db1ea15ad5c367"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "a29c355acb7705a244a96e2d7da4fcff2836d7aa12e7976b3de6986849b026ea"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "sha256": "aead2df2eb28b32e0e1b133bcee473f4b3cba0ff392ebe03fb52c9a950cbb105"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "sha256": "98d4d02ea068cfd4e829beabc04361dcdee3c7d4af6837513ba59f2ff956a384"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-qwen-agent.ts",
+      "sha256": "5b94998cbc47e0e4f4879ae4418e74d0fbb539de7b0d7342f49d86806b320138"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-read-investigation.ts",
+      "sha256": "632f906c0ae5d3c7b9e7c1b632dad2768ebf8e028598ec83adfcb7e2ba699ed1"
+    },
+    {
+      "path": "scripts/verify-tenbot-resource-identity.mts",
+      "sha256": "f73d4c32e22ad14aa3a308fcca9c885d1c576dd1055790bc03470f77ad23d6d6"
+    },
+    {
+      "path": "scripts/verify-tenbot-qwen-agent.mts",
+      "sha256": "c80086b1ed617ae9713dd59216a1b14c0f314b6f4d24a466bf40b156802ed141"
+    },
+    {
+      "path": "scripts/verify-tenbot-read-orchestration.mts",
+      "sha256": "bc7708ee80c08567f05d67676a6c9e65b13b11955259aff81a5d1f489540fba6"
+    },
+    {
+      "path": "scripts/start-tenbot-read-orchestration-review.mts",
+      "sha256": "acfa3aca7d5eeb090728c373992a53ed5cc455946cc3f0a7e623ded9d8e992b8"
+    },
+    {
+      "path": "scripts/fixtures/tenbot-conversational-qa.json",
+      "sha256": "07a850133c0f5eb17aa6e9504d81e13355f247a8ddac4f1fe754a813b5a93aa1"
+    }
+  ],
+  "qaInputs": [
+    "scripts/fixtures/tenbot-conversational-qa.json"
+  ],
+  "originalDirtyAgentExcluded": true,
+  "plainSourceArchiveNotWorktree": true
+}

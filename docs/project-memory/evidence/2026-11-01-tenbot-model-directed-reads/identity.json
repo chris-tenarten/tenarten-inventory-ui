@@ -1,0 +1,149 @@
+{
+  "passed": true,
+  "groups": 7,
+  "checks": [
+    "A1 and A3 explicit number/name override no, zero, one different and multiple prior identities",
+    "A2 explanatory clarification normalizes explicit number and retains requested operation and period",
+    "Unquoted names, quoted generic names and explicit UUIDs never borrow a previous Job",
+    "Other/another/ordinal identities clarify; ordinary exact contextual follow-ups still work",
+    "Resource extraction is bounded and does not mistake report dates or workflow condition words for identities",
+    "Explicit lookup reads the newly selected canonical Job and effective Rework schedule, never the prior ID",
+    "Duplicate explicit names remain a choice and never silently fall back to the old canonical ID"
+  ],
+  "examples": [
+    {
+      "question": "Quick handoff on Job DEV-20260803: where's it at, and do the planned dates cover its delivery date?",
+      "prior": null,
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "DEV-20260803"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "Quick handoff on Job DEV-20260803: where's it at, and do the planned dates cover its delivery date?",
+      "prior": [],
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "DEV-20260803"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "Quick handoff on Job DEV-20260803: where's it at, and do the planned dates cover its delivery date?",
+      "prior": [
+        "10000000-0000-4000-8000-000000000001"
+      ],
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "DEV-20260803"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "Quick handoff on Job DEV-20260803: where's it at, and do the planned dates cover its delivery date?",
+      "prior": [
+        "10000000-0000-4000-8000-000000000001",
+        "10000000-0000-4000-8000-000000000002"
+      ],
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "DEV-20260803"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "Quick handoff on Job DEV-20260803: where's it at, and do the planned dates cover its delivery date?",
+      "prior": [],
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "DEV-20260803"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "For Job \"chris-dev-test\", is the planned finish before its requested delivery?",
+      "prior": null,
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "chris-dev-test"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "For Job \"chris-dev-test\", is the planned finish before its requested delivery?",
+      "prior": [],
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "chris-dev-test"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "For Job \"chris-dev-test\", is the planned finish before its requested delivery?",
+      "prior": [
+        "10000000-0000-4000-8000-000000000001"
+      ],
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "chris-dev-test"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "For Job \"chris-dev-test\", is the planned finish before its requested delivery?",
+      "prior": [
+        "10000000-0000-4000-8000-000000000001",
+        "10000000-0000-4000-8000-000000000002"
+      ],
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "chris-dev-test"
+        },
+        "args": {}
+      }
+    },
+    {
+      "question": "For Job \"chris-dev-test\", is the planned finish before its requested delivery?",
+      "prior": [],
+      "intent": {
+        "kind": "job",
+        "tool": "get_job_planning",
+        "reference": {
+          "query": "chris-dev-test"
+        },
+        "args": {}
+      }
+    }
+  ],
+  "actualInference": false,
+  "actualDatabase": false,
+  "hostedRequests": 0,
+  "operationalWrites": 0
+}

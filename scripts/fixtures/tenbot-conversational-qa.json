@@ -1,0 +1,114 @@
+{
+  "sourceRuntime": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "sourceEvidenceSha256": "128092b5670c38901de6d9b9e82420a0290882fd30b2e1117db58ab0e7ff00bf",
+  "sourceDescription": "Independent read-only Production QA, November 1, 2026; only DEV-20260803 internal test Job and synthetic questions. Exact employee turns and displayed answers copied for regression reuse.",
+  "baselineWasActualHostedQwenOrFallback": true,
+  "baselineCounts": {
+    "pass": 4,
+    "partial": 3,
+    "fail": 8
+  },
+  "baselineUsage": {
+    "qwenAttempts": 13,
+    "completed": 8,
+    "failed": 5,
+    "inputTokens": 9267,
+    "outputTokens": 1589,
+    "measuredNeurons": 91.29,
+    "reservedUsd": 0,
+    "openaiCalls": 0,
+    "openaiActualMicrousd": 0
+  },
+  "turns": [
+    {
+      "id": "A1",
+      "question": "Quick handoff on Job DEV-20260803: where's it at, and do the planned dates cover its delivery date?",
+      "actualBaselineResponse": "Which Production Job do you mean? Choose an exact Job number or full project name. I cannot use an incomplete or ambiguous list as a record selection.",
+      "result": "fail"
+    },
+    {
+      "id": "A2",
+      "question": "DEV-20260803 \u2014 the internal chris-dev-test Job.",
+      "actualBaselineResponse": "No visible Production Jobs match the requested search scope.",
+      "result": "fail"
+    },
+    {
+      "id": "A3",
+      "question": "For Job \"chris-dev-test\", is the planned finish before its requested delivery?",
+      "actualBaselineResponse": "Which Production Job do you mean? Choose an exact Job number or full project name. I cannot use an incomplete or ambiguous list as a record selection.",
+      "result": "fail"
+    },
+    {
+      "id": "B1",
+      "question": "Show labor for Job \"chris-dev-test\" from 2026-10-26 through 2026-11-01, including the days reported.",
+      "actualBaselineResponse": "DEV-20260803 \u2014 chris-dev-test has 0 hours of recorded labor.\nReporting period: Oct 26, 2026\u2013Nov 1, 2026 (work dates).\n0 saved Manpower entries.\nRecorded hours do not include unreported work or forecast remaining effort.\nThese are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+      "result": "pass"
+    },
+    {
+      "id": "B2",
+      "question": "Was any of that rework, or all the original run?",
+      "actualBaselineResponse": "Production Job: DEV-20260803 \u2014 chris-dev-test. Recorded Rework cycles: 0. Active Rework cycles: 0. Unresolved recorded follow-ups: 0. Recorded Production status: In Production. Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers.",
+      "result": "partial"
+    },
+    {
+      "id": "B3",
+      "question": "What changed on it after the latest labor report?",
+      "actualBaselineResponse": "DEV-20260803 \u2014 chris-dev-test has 0 hours of recorded labor.\nReporting period: Oct 26, 2026\u2013Nov 1, 2026 (work dates).\n0 saved Manpower entries.\nRecorded hours do not include unreported work or forecast remaining effort.\nThese are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+      "result": "fail"
+    },
+    {
+      "id": "C1",
+      "question": "Suppose a PO is allocated to a test Job but hasn't been received. Does Ordered mean the shop can start, and what planning details still matter?",
+      "actualBaselineResponse": "No visible Production Jobs match the requested search scope.",
+      "result": "fail"
+    },
+    {
+      "id": "C2",
+      "question": "So would I still need an Inventory outtake after reporting the mix on Material Usage, or would that count twice?",
+      "actualBaselineResponse": "Reporting a mix on Material Usage does not count as an Inventory outtake. A Material Usage report is a production planning action, while an Inventory outtake is a separate stock movement action. You would still need to perform an Inventory outtake if you are removing material from stock for a specific purpose, such as a job or shipment. The two actions are distinct and serve different purposes in the workflow.",
+      "result": "pass"
+    },
+    {
+      "id": "C3",
+      "question": "Can you check which incoming PO is holding up Job \"chris-dev-test\"?",
+      "actualBaselineResponse": "Production Job: DEV-20260803 \u2014 chris-dev-test. Recorded Production status: In Production. Recorded material status: Unknown. Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers. Persisted planned dates: 2026-08-03 through 2026-09-07. Requested delivery date: 2026-10-05.",
+      "result": "fail"
+    },
+    {
+      "id": "D1",
+      "question": "Show the saved schedule for Job \"chris-dev-test\".",
+      "actualBaselineResponse": "DEV-20260803 \u2014 chris-dev-test is In Production.\nPlanned: Aug 3, 2026\u2013Sep 7, 2026.\nPhase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+      "result": "pass"
+    },
+    {
+      "id": "D2",
+      "question": "Is it still set to finish then?",
+      "actualBaselineResponse": "DEV-20260803 \u2014 chris-dev-test is In Production.\nPlanned: Aug 3, 2026\u2013Sep 7, 2026.\nPhase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+      "result": "pass"
+    },
+    {
+      "id": "D3",
+      "question": "What about the other one?",
+      "actualBaselineResponse": "No visible Production Jobs match the requested search scope.",
+      "result": "fail"
+    },
+    {
+      "id": "E1",
+      "question": "Give me a quick handoff for Job \"chris-dev-test\": saved dates, labor hours, and unresolved follow-ups.",
+      "actualBaselineResponse": "DEV-20260803 \u2014 chris-dev-test has 0 hours of recorded labor.\nReporting period: Oct 3, 2026\u2013Nov 1, 2026 (work dates).\n0 saved Manpower entries.\nRecorded hours do not include unreported work or forecast remaining effort.\nThese are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+      "result": "partial"
+    },
+    {
+      "id": "E2",
+      "question": "Could two people finish that test Job tomorrow, or what information is missing for you to judge?",
+      "actualBaselineResponse": "No visible Production Jobs match the requested search scope.",
+      "result": "fail"
+    },
+    {
+      "id": "E3",
+      "question": "Could you move that Job to next Monday and message Purchasing to expedite it, or do I have to do those steps myself?",
+      "actualBaselineResponse": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+      "result": "partial"
+    }
+  ]
+}

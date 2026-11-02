@@ -23,6 +23,37 @@ export function detailJobIds(intent:JobIntent|null|undefined):string[]{return in
 const detailOperation=(question:string):JobDetailTool=>/\b(?:labor|labour|manpower|hours?)\b/i.test(question)?'get_job_labor_summary':/\b(?:scheduled?|unscheduled|planning|planned|dates?|next|completion|finish)\b/i.test(question)?'get_job_planning':'get_job_summary';
 const normalized=(value:string)=>value.trim().replace(/\s+/g,' ').toLocaleLowerCase('en-US');
 const trimReference=(value:string)=>value.trim().replace(/^[#\s:]+|[?.!,;\s]+$/g,'').replace(/^(?:the\s+)?(?:job|project)\s+(?:number\s+)?#?\s*/i,'').replace(/["“”'‘’]$/,'').trim();
+/** Resource identity only: this does not select an operation or authorize a
+ * record. Explicit identities must be freshly resolved before context is used. */
+export function explicitJobReferences(question:string):string[]{
+ if(typeof question!=='string'||question.length>1200)return [];
+ const refs=new Map<string,string>(),add=(value:string,literal=false)=>{const ref=literal?value.trim():trimReference(value);if(ref&&ref.length<=120&&!/[\u0000-\u001f\u007f]/.test(ref))refs.set(normalized(ref),ref);};
+ const outsideQuotes=question.replace(/["“][^"”\n]*["”]/g,value=>' '.repeat(value.length));
+ for(const match of outsideQuotes.matchAll(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi))add(match[0]);
+ for(const match of question.matchAll(/\b(?:job|project|for|about|of)\s+(?:(?:named|called)\s+)?["“]([^"”\n]{1,120})["”]/gi))add(match[1],true);
+ const bareQuoted=question.trim().match(/^["“]([^"”\n]{1,120})["”][?.!]*$/);if(bareQuoted)add(bareQuoted[1],true);
+ for(const match of outsideQuotes.matchAll(/\b(?:job|project)\s+(?:number\s+)?#?\s*((?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*)\b/gi))add(match[1]);
+ // A clarification may contain a number followed by explanatory prose. Date
+ // boundaries alone are not Job identities.
+ const bareNumber=question.trim().match(/^#?((?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*)(?=\s|[?!,:;]|$)/)?.[1];
+ if(bareNumber&&!/^\d{4}-\d{2}-\d{2}$/.test(bareNumber)&&/[A-Za-z/-]/.test(bareNumber))add(bareNumber);
+ const generic=/^(?:number|status|production|planning|scheduled?|ready|readiness|tomorrow|today|yesterday|in|on|but|is|has|have|with|at|to|from|and|for|needs?|whose|where|do|does|that|this|same|other|one|test)$/i;
+ for(const match of outsideQuotes.matchAll(/(?=\b(?:job|project)\s+(?:(?:named|called)\s+)?([^?!.;:\n"“”]+))/gi)){
+  const candidate=trimReference(match[1].split(/\s+(?:is|has|have|was|were|does|do|with|from|between|during|today|tomorrow|this|last|next|for|and|but|in|on|to)\b|[,]|['’]s\s+/i)[0]);
+  const extendsNumber=[...refs.values()].some(ref=>/\d/.test(ref)&&normalized(candidate).startsWith(normalized(ref)+' '));
+  if(candidate&&!extendsNumber&&!generic.test(candidate.split(/\s+/)[0])&&!refs.has(normalized(candidate)))add(candidate);
+ }
+ return [...refs.values()];
+}
+export function explicitJobReference(question:string):string|null{const refs=explicitJobReferences(question);return refs.length===1?refs[0]:null;}
+export function ambiguousJobReference(question:string):boolean{
+ if(/\b(?:other|another|different|first|second|last)\s+(?:one|job|project)\b/i.test(question)&&!explicitJobReferences(question).length)return true;
+ for(const match of question.matchAll(/\b(?:job|project)\s+(?:(?:named|called)\s+)?["“]/gi)){
+  const remainder=question.slice(match.index!+match[0].length),closing=remainder.search(/["”]/);
+  if(closing<1||!remainder.slice(0,closing).trim())return true;
+ }
+ return false;
+}
 const datePattern=/^\d{4}-\d{2}-\d{2}$/;
 function validDate(value:string){return datePattern.test(value)&&Number.isFinite(Date.parse(`${value}T12:00:00Z`))&&new Date(`${value}T12:00:00Z`).toISOString().slice(0,10)===value;}
 function chicagoDate(now:Date){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);return `${p.find(x=>x.type==='year')?.value}-${p.find(x=>x.type==='month')?.value}-${p.find(x=>x.type==='day')?.value}`;}
@@ -103,16 +134,20 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  const continuity=context?.continuity,referential=isJobFollowupReference(q);
  const recordScope=continuity&&['Job','Production'].includes(continuity.subject)?continuity:null;
  if((recordScope||/\b(?:jobs?|production|projects?)\b/i.test(q))&&(/\b(?:lifetime|all[\s-]+time|all history|ever|since|last year)\b/i.test(q)||requestedTemporal&&!period))return {kind:'clarify',message:'Please specify a supported calendar period of at most 366 days, two YYYY-MM-DD boundaries, or one date using “on YYYY-MM-DD”. Saved records cannot establish unrecorded work.'};
+ const explicitReferences=explicitJobReferences(q),explicitIdentity=explicitReferences.length===1?explicitReferences[0]:null;
+ if(ambiguousJobReference(q))return {kind:'clarify',operation:detailOperation(q),message:'Which Production Job do you mean? Please name its exact Job number or full project name; I cannot infer another Job from the previous selection.'};
+ if(explicitReferences.length>1)return {kind:'clarify',operation:detailOperation(q),message:'More than one explicit Production Job was named. Choose one exact Job number or full project name for this lookup.'};
  const quotedSelection=q.match(/^["“]([^"”\n]{1,120})["”][?.!]*$/)?.[1];
  const plainSelection=!/[?!;:]/.test(q)&&!/[\n]/.test(q)&&!/\b(?:what|how|why|where|when|which|who|show|list|find|search|count|about|it|its|that|this|those|these|them|their|ones?|other|first|second|last)\b/i.test(q)&&!isJobPopulationRefinement(q);
- if(recordScope?.awaitingClarification&&isJobDetailTool(recordScope.operation)&&(quotedSelection||plainSelection)){
-  const selected=trimReference(quotedSelection??q);
+ const selectionOnly=quotedSelection||plainSelection&&!/\b(?:status|summary|planning|scheduled?|planned|dates?|hours?|labor|labour|manpower|follow.?ups?|materials?|ready|readiness)\b/i.test(q);
+ if(recordScope?.awaitingClarification&&isJobDetailTool(recordScope.operation)&&selectionOnly){
+  const selected=explicitIdentity??trimReference(quotedSelection??q);
   if(selected&&selected.length<=120)return {kind:'job',tool:recordScope.operation,reference:uuid.test(selected)?{jobId:selected}:{query:selected},args:recordScope.operation==='get_job_labor_summary'&&recordScope.selection.startDate&&recordScope.selection.endDate?{start_date:recordScope.selection.startDate,end_date:recordScope.selection.endDate}:{}};
  }
  const singularReference=/\b(?:that|this|same)\s+(?:job|project)\b|\b(?:that|this)\s+one\b|\b(?:it|its)\b/i.test(q);
  const pluralReference=/\b(?:those|these|both)\s+(?:jobs|projects)\b|\b(?:their|them)\b/i.test(q)||/\bthe\s+(?:jobs|projects)\b/i.test(q)&&/\b(?:labor|labour|hours?|scheduled?|planning|planned|dates?|status|summary|materials?|issues?)\b/i.test(q);
  const requestedRecordDetails=/\b(?:labor|labour|manpower|hours?|scheduled?|unscheduled|planning|planned|dates?|status|summary|materials?|issues?|follow.?ups?)\b/i.test(q)||requestedJobStatuses(q).length>0;
- if(recordScope&&(singularReference||pluralReference&&requestedRecordDetails)){
+ if(recordScope&&!explicitIdentity&&(singularReference||pluralReference&&requestedRecordDetails)){
   const operation=detailOperation(q);
   if(requestedTemporal&&operation==='get_job_summary')return {kind:'clarify',operation,message:'I can read current recorded Job status and details. Historical status events are not available from these tools.'};
   const args=operation==='get_job_labor_summary'?(period??(recordScope.selection.startDate&&recordScope.selection.endDate?{start_date:recordScope.selection.startDate,end_date:recordScope.selection.endDate}:{})):{};
@@ -121,11 +156,11 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
   if(!singularReference&&pluralReference&&ids.length>0&&ids.length<=4)return ids.length===1?{kind:'job',tool:operation,reference:{jobId:ids[0]},args}:{kind:'jobs',tool:operation,references:[...ids],args};
   return {kind:'clarify',operation,args,message:'Which Production Job'+(pluralReference?'s':'')+' do you mean? Choose '+(pluralReference?'up to four exact Job numbers or full project names':'an exact Job number or full project name')+'. I cannot use an incomplete or ambiguous list as a record selection.'};
  }
- if(continuity&&referential&&continuity.subject==='Job'&&continuity.references.length!==1)return {kind:'clarify',operation:detailOperation(q),message:'Which of the previously discussed Production Jobs do you mean? More than one Job was in context; please choose its number or name.'};
+ if(continuity&&referential&&!explicitIdentity&&continuity.subject==='Job'&&continuity.references.length!==1)return {kind:'clarify',operation:detailOperation(q),message:'Which of the previously discussed Production Jobs do you mean? More than one Job was in context; please choose its number or name.'};
  const modulePattern='(?:Production(?:\\s+Pipeline)?|Inventory|Intake|Planning|Timeline|Manpower(?:\\s+Reporting)?|TenOps|Messaging|Rework|Purchasing|Samples?|Proposals?|Jobs?)';
  if(new RegExp(`^\\s*(?:what\\s+(?:does|do)|how\\s+(?:does|do))\\s+(?:the\\s+)?${modulePattern}\\s+(?:do|show|work|mean|support|include|offer|help|differ|handle|manage|track)\\b`,'i').test(q))return null;
- const populationSeed=continuity?.subject==='Production'&&referential?continuity:null;
- const hasJob=/\b(?:jobs?|production|projects?)\b/i.test(q)||Boolean(context&&uuid.test(context.jobId))||Boolean(populationSeed);
+ const populationSeed=continuity?.subject==='Production'&&referential&&!explicitIdentity?continuity:null;
+ const hasJob=Boolean(explicitIdentity)||/\b(?:jobs?|production|projects?)\b/i.test(q)||Boolean(context&&uuid.test(context.jobId))||Boolean(populationSeed);
  const definition=q.match(/^what\s+does\s+(.+?)\s+mean[?.!]*$/i)?.[1];
  if(definition&&requestedJobStatuses(definition).length&&isJobPopulationRefinement(definition))return null;
  const liveWords=/\b(?:current|status|hold|scheduled?|unscheduled|planning|planned|completion|complete|finish|hours?|labor|labour|manpower|material|ready|readiness|shortage|incoming|rework|follow.up|blockers?|issues?|progress|overview|counts?|active|upcoming|recorded|find|show|list|tell me|what|which|how many|how much|analy[sz]e|evaluate)\b/i;
@@ -150,7 +185,7 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  if(plural&&/\b(?:how many|counts?)\b/i.test(q)&&/\b(?:ready|readiness|ordered|material status|shortages?)\b/i.test(q))return {kind:'clarify',message:'I can report current visible Production Job counts by lifecycle status. Counts filtered by material condition or physical readiness are outside these read-only tools; I can check the recorded material status of a specific Job.'};
  if(plural&&/\bactive\b/i.test(q)&&requestedJobStatuses(q.replace(/\bactive\b/gi,'')).some(s=>['shipped','complete','cancelled'].includes(s)))return {kind:'clarify',message:'Active Jobs exclude Shipped, Complete and Cancelled lifecycles. Do you want the active population, or the named terminal status?'};
  const selectedStatuses=requestedJobStatuses(q),statuses=selectedStatuses.length?selectedStatuses:populationSeed?.selection.statuses??[];
- const explicitReference=/["“]/.test(q)||/\bjob\s+(?:number\s+)?#?\s*(?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*/i.test(q);
+ const explicitReference=Boolean(explicitIdentity)||/["“]/.test(q)||/\bjob\s+(?:number\s+)?#?\s*(?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*/i.test(q);
  const populationList=plural&&!explicitReference&&(listOperation.test(q)||!countOperation.test(q)&&populationSeed?.resultType==='collection');
  const populationCount=overview||Boolean(populationSeed&&!populationList);
  if(plural&&/\b(?:not|except|excluding)\b/i.test(q.replace(/\bnot(?:\s+|-)started\b/gi,''))&&selectedStatuses.length&&!archiveMention)return {kind:'clarify',message:'Which lifecycle statuses should be included? I can count or list the current authorized Jobs for one or more explicit statuses.'};
@@ -175,16 +210,16 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  const numbered=q.match(/\bjob\s+(?:number\s+)?#?\s*((?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*)\b/i)?.[1];
  const afterJob=q.match(/\b(?:jobs?|projects?)\s+(?:named\s+|called\s+|for\s+)?(.+?)(?=\s+(?:for|from|between|during|this|last|today|has|is|with|over|in|and)\b|[?!;]|$)/i)?.[1];
  const forTarget=q.match(/\b(?:for|about|of)\s+(?:(?:the\s+)?(?:job|project)\s+)?(.+?)(?=\s+(?:from|between|during|this|last|today|over|and)\b|[?!;]|$)/i)?.[1];
- const candidate=trimReference(quoted||numbered||afterJob||forTarget||'');
+ const candidate=explicitIdentity??trimReference(quoted||numbered||afterJob||forTarget||'');
  // A canonical owner-scoped seed resolves ordinary qualitative follow-ups;
  // descriptive words before “that Job” are not another project name. Multiple
  // Job references still require an explicit selection rather than a guess.
  const contextualJob=/\b(?:that|this|same)\s+(?:job|project)\b/i.test(q)&&(q.match(/\b(?:jobs?|projects?)\b/gi)?.length??0)<=1;
  const pronounSubject=/\b(?:it|its)\b/i.test(q)&&!/\b(?:job|project)\s+\S/i.test(q)&&(!forTarget||/^(?:it|its|that|this|same)\b/i.test(trimReference(forTarget)));
- if(context&&uuid.test(context.jobId)&&!quoted&&!numbered&&(contextualJob||pronounSubject))return {kind:'job',tool,reference:{jobId:context.jobId},args:contextualArgs};
- if(context&&uuid.test(context.jobId)&&!quoted&&!numbered&&(/^(?:it|its|that|this|same)\b/i.test(candidate)||/\b(?:that|this|same)\s+job\b/i.test(q)&&/^(?:have|has|is|does|do|need|needs)$/i.test(candidate)))return {kind:'job',tool,reference:{jobId:context.jobId},args:contextualArgs};
+ if(context&&uuid.test(context.jobId)&&!explicitIdentity&&!quoted&&!numbered&&(contextualJob||pronounSubject))return {kind:'job',tool,reference:{jobId:context.jobId},args:contextualArgs};
+ if(context&&uuid.test(context.jobId)&&!explicitIdentity&&!quoted&&!numbered&&(/^(?:it|its|that|this|same)\b/i.test(candidate)||/\b(?:that|this|same)\s+job\b/i.test(q)&&/^(?:have|has|is|does|do|need|needs)$/i.test(candidate)))return {kind:'job',tool,reference:{jobId:context.jobId},args:contextualArgs};
  const generic=/^(?:status|overview|counts?|planning|scheduled?|unscheduled|labor|labour|hours?|production|progress|readiness|material|materials|it|that|this|the job|job|jobs|all|all jobs|active jobs|archived jobs)$/i;
- if(candidate&&candidate.length<=120&&!generic.test(candidate)){
+ if(candidate&&candidate.length<=120&&(explicitIdentity||!generic.test(candidate))){
   const search=plural&&/\b(?:find|search|show|list)\b/i.test(q)&&!numbered&&!quoted;
   return search?{kind:'search',tool:'find_jobs',args:{...args,query:candidate}}:{kind:'job',tool,reference:{query:candidate},args:detailArgs,...(includeArchived?{includeArchived:true}:{})};
  }

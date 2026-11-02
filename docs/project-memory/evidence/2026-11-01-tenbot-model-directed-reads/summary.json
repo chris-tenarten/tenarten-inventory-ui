@@ -1,0 +1,90 @@
+{
+  "status": "implemented-local; Product acceptance pending; not deployed",
+  "decision": "Chris TENBOT \u2014 GENERALIZE READ-TOOL ORCHESTRATION, November1,2026; separate Advisory unavailable",
+  "base": "8d590343df8506169e9944beffe84feccbce5c88",
+  "branch": "dev",
+  "productionUnchanged": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "risk": "Tier3/focused Level3",
+  "serverOptIn": "HostedTenbotConfig.modelDirectedReads defaultsfalse; Production Edge index/config unchanged; localhost review explicitlysets true. Cannot be enabled in an employee request.",
+  "newRegisteredOperationalTools": 0,
+  "operationalToolNames": [
+    "find_jobs",
+    "get_job_summary",
+    "get_job_planning",
+    "get_job_labor_summary",
+    "get_production_overview"
+  ],
+  "limits": {
+    "modelRounds": 6,
+    "toolCalls": 10,
+    "callsPerRound": 4,
+    "outputTokensPerRound": 640,
+    "durationMs": 75000,
+    "selectedJobs": 4,
+    "existingFreePoolLimitsUnchanged": true
+  },
+  "actualCandidateInference": {
+    "openaiCalls": 0,
+    "qwenCalls": 0,
+    "costUsd": 0,
+    "actualModelDirectedQualityMeasured": false,
+    "blockedLiveQwenReason": "Existing local Workers Free confirmation expired, bridge unavailable; no fresh properly metered local provider path. No bypass, credential/billing/settings or funding change."
+  },
+  "comparisonMeaning": "Same synthetic records/permissions and actual registered executors; after choices/telemetry are scripted through the realQwen adapter. This measures contract completion, not model reasoning accuracy or live latency.",
+  "baselineLiveQa": {
+    "turns": 15,
+    "pass": 4,
+    "partial": 3,
+    "fail": 8,
+    "qwenResponses": 13,
+    "inputTokens": 9267,
+    "outputTokens": 1589,
+    "estimatedNeurons": 91.29,
+    "openaiCalls": 0
+  },
+  "comparisonCases": [
+    {
+      "case": "E1",
+      "before": "partial",
+      "after": "pass",
+      "beforeCovered": 1,
+      "afterCovered": 3,
+      "providerSteps": 4,
+      "cpuWallMs": 11.381,
+      "actualInference": false
+    },
+    {
+      "case": "B2",
+      "before": "fail",
+      "after": "pass",
+      "beforeCovered": 0,
+      "afterCovered": 2,
+      "providerSteps": 3,
+      "cpuWallMs": 3.8944999999999936,
+      "actualInference": false
+    },
+    {
+      "case": "C1",
+      "before": "fail",
+      "after": "partial",
+      "beforeCovered": 0,
+      "afterCovered": 2,
+      "providerSteps": 3,
+      "cpuWallMs": 14.972709000000009,
+      "actualInference": false
+    }
+  ],
+  "reviewLocation": "http://localhost:3000/my-work",
+  "reviewAccount": "customer-review@example.invalid",
+  "reviewPassword": "Local-review-only!",
+  "reviewUsesSyntheticRecordsAndScriptedPlanning": true,
+  "reviewServerMetadata": "/private/tmp/tenbot-read-orchestration-20261101/review-server.json",
+  "oldReviewProcessesReplacedOnlyAfterOwnershipVerification": true,
+  "priorStaticOutputPreserved": true,
+  "migrations": 0,
+  "databaseChanges": 0,
+  "hostedSettingChanges": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "independentSourceReview": "Passed after scope-grounding,workflowguard,clarification and qualification corrections. No remaining material issue reported; heuristic prose limits and actual-model validation remain explicit."
+}

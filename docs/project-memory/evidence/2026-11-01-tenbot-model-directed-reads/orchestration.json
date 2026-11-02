@@ -1,0 +1,461 @@
+{
+  "passed": true,
+  "groups": 17,
+  "checks": [
+    "E1 actual failed/partial QA question composes model-selected summary and labor instead of a single deterministic brief",
+    "Explicit new Job reference plus its cannot read the previous Job; model can recover through current exact lookup",
+    "B2 retained labor attribution and explicit period are selected by the model, not overwritten by summary routing",
+    "C1 hypothetical readiness question lets the model select verified knowledge with no operational Job lookup",
+    "A genuine other-Job ambiguity cannot borrow the earlier canonical ID",
+    "Free final-answer hallucinations cannot override host facts; fabricated cited observations fall back without second inference",
+    "Qwen provider failure uses deterministic-only fallback without a second inference attempt",
+    "Revocation between read and next model step prevents retransmission and publication",
+    "Changed live source before another model step denies stale evidence",
+    "Current capability limits can answer unavailable historical, PO, staffing and execution requests",
+    "Only registered reads reach discovery; call/round limits remain hard server boundaries",
+    "A forged scope prefix and assertions disguised as questions cannot publish execution claims",
+    "Selected numeric or material facts retain host-owned identity and limitations, including independent multi-Job blocks",
+    "Readable Inventory knowledge cannot grant receiving when current write and receive capabilities are denied",
+    "Only reauthorized prior employee questions reach model context; old answers and revoked-record questions do not",
+    "A new named lookup without an extracted explicit form clears prior-only focus even after no match",
+    "Malformed or empty explicit Job quotes cannot reuse a previous canonical identity"
+  ],
+  "comparisons": [
+    {
+      "case": "E1",
+      "question": "Give me a quick handoff for Job \"chris-dev-test\": saved dates, labor hours, and unresolved follow-ups.",
+      "before": {
+        "mode": "deterministic-only",
+        "message": "DEV-20260803 — chris-dev-test has 6 hours of recorded labor.\nReporting period: Oct 3, 2026–Nov 1, 2026 (work dates).\n2 saved Manpower entries; latest work date Oct 30, 2026.\nRecorded hours do not include unreported work or forecast remaining effort.\nThese are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+        "executedTools": [
+          "find_jobs",
+          "get_job_labor_summary",
+          "find_jobs",
+          "get_job_labor_summary",
+          "find_jobs",
+          "get_job_labor_summary"
+        ],
+        "coverage": "labor only",
+        "result": "partial",
+        "requestedComponents": 3,
+        "coveredComponents": 1,
+        "fallback": true,
+        "providerSteps": 0,
+        "wallMs": 36.334333999999984,
+        "actualInference": false
+      },
+      "after": {
+        "message": "Production Job: DEV-20260803 — chris-dev-test. Persisted planned dates: 2026-08-03 through 2026-09-07. Unresolved recorded follow-ups: 1. Planning completeness and recorded Material Status do not establish physical readiness or absence of blockers.\n\nProduction Job: DEV-20260803 — chris-dev-test. Recorded labor: 6 hours for 2026-10-03 through 2026-11-01. Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown. These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+        "providerSteps": 4,
+        "selectedCalls": [
+          [
+            {
+              "id": "discover",
+              "name": "discover_capabilities",
+              "arguments": {
+                "names": [
+                  "find_jobs",
+                  "get_job_summary",
+                  "get_job_labor_summary"
+                ]
+              }
+            }
+          ],
+          [
+            {
+              "id": "find",
+              "name": "find_jobs",
+              "arguments": {
+                "query": "chris-dev-test",
+                "statuses": [],
+                "include_archived": false,
+                "limit": 20,
+                "cursor": ""
+              }
+            }
+          ],
+          [
+            {
+              "id": "summary",
+              "name": "get_job_summary",
+              "arguments": {
+                "job_id": "00000000-0000-4000-8000-000000000100"
+              }
+            },
+            {
+              "id": "labor",
+              "name": "get_job_labor_summary",
+              "arguments": {
+                "job_id": "00000000-0000-4000-8000-000000000100",
+                "start_date": "",
+                "end_date": ""
+              }
+            }
+          ],
+          []
+        ],
+        "executedTools": [
+          "find_jobs",
+          "find_jobs",
+          "get_job_summary",
+          "get_job_labor_summary",
+          "find_jobs",
+          "get_job_summary",
+          "get_job_labor_summary",
+          "find_jobs",
+          "get_job_summary",
+          "get_job_labor_summary",
+          "find_jobs",
+          "get_job_summary",
+          "get_job_labor_summary"
+        ],
+        "fallback": false,
+        "stopReason": "final accepted",
+        "wallMs": 11.381,
+        "scriptedInputTokens": 444,
+        "scriptedOutputTokens": 176,
+        "actualInference": false,
+        "coverage": "saved dates + labor + unresolved-follow-up count",
+        "result": "pass",
+        "requestedComponents": 3,
+        "coveredComponents": 3
+      }
+    },
+    {
+      "case": "B2",
+      "question": "Was any of that rework, or all the original run?",
+      "fixture": "6 saved hours: 4 original/unclassified +2 completed Rework1; synthetic enrichment, not Production business facts",
+      "before": {
+        "mode": "deterministic-only",
+        "message": "DEV-20260803 — chris-dev-test is In Production.\nPlanning completeness and recorded Material Status do not establish physical readiness or absence of blockers.",
+        "executedTools": [
+          "get_job_summary",
+          "get_job_summary",
+          "get_job_summary"
+        ],
+        "coverage": "summary, not labor attribution",
+        "result": "fail",
+        "requestedComponents": 2,
+        "coveredComponents": 0,
+        "fallback": true,
+        "providerSteps": 0,
+        "wallMs": 3.214916999999957,
+        "actualInference": false
+      },
+      "after": {
+        "message": "Production Job: DEV-20260803 — chris-dev-test. Recorded labor: 6 hours for 2026-10-26 through 2026-11-01. Original or unclassified lifecycle labor: 4 hours. Recorded Rework 1 labor: 2 hours. Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown. These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.",
+        "providerSteps": 3,
+        "selectedCalls": [
+          [
+            {
+              "id": "discover",
+              "name": "discover_capabilities",
+              "arguments": {
+                "names": [
+                  "get_job_labor_summary"
+                ]
+              }
+            }
+          ],
+          [
+            {
+              "id": "attribution",
+              "name": "get_job_labor_summary",
+              "arguments": {
+                "job_id": "00000000-0000-4000-8000-000000000100",
+                "start_date": "2026-10-26",
+                "end_date": "2026-11-01"
+              }
+            }
+          ],
+          []
+        ],
+        "executedTools": [
+          "get_job_labor_summary",
+          "get_job_labor_summary",
+          "get_job_labor_summary",
+          "get_job_labor_summary"
+        ],
+        "fallback": false,
+        "stopReason": "final accepted",
+        "wallMs": 3.8944999999999936,
+        "scriptedInputTokens": 333,
+        "scriptedOutputTokens": 132,
+        "actualInference": false,
+        "coverage": "correct4/2 attribution and retained explicit period",
+        "result": "pass",
+        "requestedComponents": 2,
+        "coveredComponents": 2
+      }
+    },
+    {
+      "case": "C1",
+      "question": "Suppose a PO is allocated to a test Job but hasn't been received. Does Ordered mean the shop can start, and what planning details still matter?",
+      "before": {
+        "mode": "deterministic-only",
+        "message": "No Jobs match this search within your current access.",
+        "executedTools": [
+          "find_jobs",
+          "find_jobs",
+          "find_jobs"
+        ],
+        "coverage": "literal Job lookup",
+        "result": "fail",
+        "requestedComponents": 3,
+        "coveredComponents": 0,
+        "fallback": true,
+        "providerSteps": 0,
+        "wallMs": 2.2085839999999735,
+        "actualInference": false
+      },
+      "after": {
+        "message": "A PO allocation does not establish that incoming material has been received or that a Job is ready. Allocated units become Job-reserved stock when the incoming material is received. Planning completeness is separate from material readiness and Production status. Scheduled jobs missing a Job number, requested delivery, labor estimate or customer need planning information; both planned dates are also required.",
+        "providerSteps": 3,
+        "selectedCalls": [
+          [
+            {
+              "id": "discover",
+              "name": "discover_capabilities",
+              "arguments": {
+                "names": [
+                  "search_workflow_knowledge"
+                ]
+              }
+            }
+          ],
+          [
+            {
+              "id": "knowledge",
+              "name": "search_workflow_knowledge",
+              "arguments": {
+                "query": "Production Ordered materials ready planning completeness"
+              }
+            }
+          ],
+          []
+        ],
+        "executedTools": [],
+        "fallback": false,
+        "stopReason": "final accepted",
+        "wallMs": 14.972709000000009,
+        "scriptedInputTokens": 333,
+        "scriptedOutputTokens": 132,
+        "actualInference": false,
+        "coverage": "incoming receipt/readiness boundary + planning prerequisites; exact Ordered definition not separately present in retrieved static guide",
+        "result": "partial",
+        "requestedComponents": 3,
+        "coveredComponents": 2
+      }
+    }
+  ],
+  "examples": [
+    {
+      "case": "A1",
+      "message": "Production Job: DEV-20260803 — chris-dev-test. Persisted planned dates: 2026-08-03 through 2026-09-07. The saved planned finish is before the requested delivery date. This compares saved dates, not a forecast. Planning phase detail is disabled in the released application; scheduled next work cannot be inferred from phases. Planned dates describe saved scheduling; they do not prove completion or readiness. Phase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+      "providerSteps": 4,
+      "selectedCalls": [
+        [
+          {
+            "id": "discover",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "find_jobs",
+                "get_job_planning"
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "id": "wrong",
+            "name": "get_job_planning",
+            "arguments": {
+              "job_id": "00000000-0000-4000-8000-000000000101"
+            }
+          },
+          {
+            "id": "find",
+            "name": "find_jobs",
+            "arguments": {
+              "query": "DEV-20260803",
+              "statuses": [],
+              "include_archived": false,
+              "limit": 20,
+              "cursor": ""
+            }
+          }
+        ],
+        [
+          {
+            "id": "right",
+            "name": "get_job_planning",
+            "arguments": {
+              "job_id": "00000000-0000-4000-8000-000000000100"
+            }
+          }
+        ],
+        []
+      ],
+      "executedTools": [
+        "find_jobs",
+        "find_jobs",
+        "get_job_planning",
+        "find_jobs",
+        "get_job_planning",
+        "find_jobs",
+        "get_job_planning",
+        "find_jobs",
+        "get_job_planning"
+      ],
+      "fallback": false,
+      "stopReason": "final accepted",
+      "wallMs": 7.234792000000027,
+      "scriptedInputTokens": 444,
+      "scriptedOutputTokens": 176,
+      "actualInference": false,
+      "oldCanonicalIdNeverRead": true
+    },
+    {
+      "case": "B3",
+      "message": "The registered read tools do not retrieve historical Job activity, incoming Purchase Orders, Inventory reservations, staffing capacity or remaining-work estimates. Those conclusions cannot be established with the available tools.",
+      "providerSteps": 3,
+      "selectedCalls": [
+        [
+          {
+            "id": "discover",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "describe_assistant_scope"
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "id": "scope",
+            "name": "describe_assistant_scope",
+            "arguments": {}
+          }
+        ],
+        []
+      ],
+      "executedTools": [],
+      "fallback": false,
+      "stopReason": "final accepted",
+      "wallMs": 1.3147500000000036,
+      "scriptedInputTokens": 333,
+      "scriptedOutputTokens": 132,
+      "actualInference": false
+    },
+    {
+      "case": "C3",
+      "message": "The registered read tools do not retrieve historical Job activity, incoming Purchase Orders, Inventory reservations, staffing capacity or remaining-work estimates. Those conclusions cannot be established with the available tools.",
+      "providerSteps": 3,
+      "selectedCalls": [
+        [
+          {
+            "id": "discover",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "describe_assistant_scope"
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "id": "scope",
+            "name": "describe_assistant_scope",
+            "arguments": {}
+          }
+        ],
+        []
+      ],
+      "executedTools": [],
+      "fallback": false,
+      "stopReason": "final accepted",
+      "wallMs": 0.9522079999999846,
+      "scriptedInputTokens": 333,
+      "scriptedOutputTokens": 132,
+      "actualInference": false
+    },
+    {
+      "case": "E2",
+      "message": "The registered read tools do not retrieve historical Job activity, incoming Purchase Orders, Inventory reservations, staffing capacity or remaining-work estimates. Those conclusions cannot be established with the available tools.",
+      "providerSteps": 3,
+      "selectedCalls": [
+        [
+          {
+            "id": "discover",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "describe_assistant_scope"
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "id": "scope",
+            "name": "describe_assistant_scope",
+            "arguments": {}
+          }
+        ],
+        []
+      ],
+      "executedTools": [],
+      "fallback": false,
+      "stopReason": "final accepted",
+      "wallMs": 1.4808330000000183,
+      "scriptedInputTokens": 333,
+      "scriptedOutputTokens": 132,
+      "actualInference": false
+    },
+    {
+      "case": "E3",
+      "message": "This assistant has no execution tool. It cannot save schedule changes or send messages; an employee must use the authorized TenOps workflows.",
+      "providerSteps": 3,
+      "selectedCalls": [
+        [
+          {
+            "id": "discover",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "describe_assistant_scope"
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "id": "scope",
+            "name": "describe_assistant_scope",
+            "arguments": {}
+          }
+        ],
+        []
+      ],
+      "executedTools": [],
+      "fallback": false,
+      "stopReason": "final accepted",
+      "wallMs": 1.4660000000000082,
+      "scriptedInputTokens": 333,
+      "scriptedOutputTokens": 132,
+      "actualInference": false
+    }
+  ],
+  "actualHostedSessionToolCode": true,
+  "syntheticAuthAndDatabase": true,
+  "scriptedProviderChoices": true,
+  "actualModelDirectedInference": false,
+  "actualInferenceCalls": 0,
+  "actualInferenceUsd": 0,
+  "actualNetworkRequests": 0,
+  "operationalWrites": 0,
+  "scope": "Independent QA failed/partial conversations only, plus directly adjacent resource/freshness/limits contracts"
+}

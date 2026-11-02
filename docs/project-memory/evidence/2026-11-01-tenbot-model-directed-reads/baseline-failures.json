@@ -1,0 +1,22 @@
+[
+  {
+    "verifier": "scripts/verify-tenbot-conversation-context.mts",
+    "baseExitCode": 1,
+    "candidateExitCode": 1,
+    "base": "8d590343df8506169e9944beffe84feccbce5c88",
+    "failure": "Standalone Can you list Jobs that are On Deck? compiles a literal search for that and misses.",
+    "baseLog": "context-baseline.log",
+    "candidateLog": "context.log",
+    "scope": "Existing deterministic population query parsing; unchanged and deferred."
+  },
+  {
+    "verifier": "scripts/verify-tenbot-hosted.mts",
+    "baseExitCode": 1,
+    "candidateExitCode": 1,
+    "base": "8d590343df8506169e9944beffe84feccbce5c88",
+    "failure": "Legacy status assertion omits existing persistentHistoryAvailable:true field.",
+    "baseLog": "hosted-baseline.log",
+    "candidateLog": "hosted.log",
+    "scope": "Existing stale test contract; unchanged and deferred."
+  }
+]
