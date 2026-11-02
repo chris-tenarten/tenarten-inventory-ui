@@ -1,0 +1,25 @@
+{
+  "status": "approved local patch; permanent Pending rollout blocked",
+  "reviewer": "independent rollout_security_review",
+  "runtimeCommit": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "checks": [
+    "outsider paid-inference denial independent of funding",
+    "exact origin checks",
+    "fresh current-capability discovery and execution checks",
+    "requesting-account own password and exact action/session binding retained",
+    "owner-private persistent Production history remains on separate persistent path"
+  ],
+  "findings": [],
+  "testsRunByReviewer": 0,
+  "hostedCalls": 0,
+  "inferenceCalls": 0,
+  "proposedPendingSql": "Change only authorized Pending dispatch in postgres-owned execute_tenbot_reviewed_action to existing tenbot_execute_invoice_receival_core after existing private transaction dispatch; preserve final action authorization and independent commit guard. Legacy public wrapper stays unchanged.",
+  "policyChangeRequiringProductApproval": "All reviewed Pending SQL dispatches would rely on exact password-authorized reviewed action rather than legacy pilot permits; not only the normal employee lane.",
+  "proposedEdgeChange": "Normal eligible beforeExecute stages exact reviewed Pending action without pilot/permit; retain finite acceptance gate at Edge.",
+  "migrationCreated": false,
+  "migrationApplied": false,
+  "newTables": 0,
+  "newGrants": 0,
+  "newRlsPolicies": 0,
+  "newHelpers": 0
+}

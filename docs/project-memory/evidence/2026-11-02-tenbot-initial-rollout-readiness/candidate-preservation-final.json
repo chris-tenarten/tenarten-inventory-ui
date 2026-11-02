@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "at": "2026-11-02T22:21:30.788221+00:00",
+  "candidate": "40037650c63c68214aa1e4c1ce71a2812ce45650",
+  "candidateTree": "6b11cdec845f78782a26ea6cb567e14f515e5bfd",
+  "validatedRootPatch": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "rootHead": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "rootIndexUnstaged": true,
+  "rootOriginalDirtyChecks": {
+    "docs/README.md": true,
+    "docs/project-memory/2026-11-02-tenbot-limited-terra-evaluation.md": true,
+    "docs/project-memory/CURRENT_STATE.md": true,
+    "docs/project/ENGINEERING_EXECUTION_STANDARD.md": true,
+    "scripts/support/tenbot-scoped-evaluation-budget.mts": true,
+    "scripts/verify-tenbot-agent.mts": true,
+    "scripts/verify-tenbot-scoped-evaluation-budget.mts": true,
+    "supabase/functions/_shared/tenbot-agent.ts": true
+  },
+  "originalDirtyPathsUnchanged": 8,
+  "candidateClean": true,
+  "oldProductionSourceUnchangedAndClean": true,
+  "acceptedTenDevSourceUnchangedAndClean": true,
+  "oldProductionBuildOutputPreserved": true,
+  "serversStopped": 0,
+  "worktreesCreated": 0,
+  "rootWritesByCandidateOwner": 0,
+  "candidateMigrationsToApply": [],
+  "fullPendingRolloutBlocked": true
+}

@@ -1,0 +1,94 @@
+{
+  "createdAt": "2026-11-02T22:17:55.454902+00:00",
+  "status": "implemented-locally-validated-not-activated",
+  "baseHead": "7a0243e1f33840c29ebe0a7f836f95c301181291",
+  "paths": [
+    "scripts/support/tenbot-hosted-fixture.mts",
+    "scripts/verify-tenbot-action-adapter.mts",
+    "scripts/verify-tenbot-hosted-action-session.mts",
+    "scripts/verify-tenbot-hosted-operations.mts",
+    "scripts/verify-tenbot-terra-acceptance.mts",
+    "src/modules/tenbot/actions/ActionWorkspaceBridge.tsx",
+    "supabase/functions/_shared/tenbot-action-transport.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-hosted-operations.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "patch": {
+    "path": "/private/tmp/tenops-production-access-contract.patch",
+    "sha256": "25adff340585c67c48eca426eb27b97a68a3bdc5fef26fbc44ec1ea5ddff2ffc"
+  },
+  "checks": [
+    {
+      "command": "node --import tsx scripts/verify-tenbot-terra-acceptance.mts",
+      "exitCode": 0,
+      "groups": 24
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-hosted-action-session.mts",
+      "exitCode": 0,
+      "groups": 10,
+      "finalRefinementRerun": true
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-hosted-operations.mts",
+      "exitCode": 0,
+      "groups": 10,
+      "finalRefinementRerun": true
+    },
+    {
+      "command": "node --import tsx scripts/verify-tenbot-action-adapter.mts",
+      "exitCode": 0,
+      "groups": 17
+    },
+    {
+      "command": "node_modules/.bin/tsc --noEmit --incremental false",
+      "exitCode": 0,
+      "finalRefinementRerun": true
+    },
+    {
+      "command": "node_modules/.bin/eslint --no-warn-ignored src/modules/tenbot/actions/ActionWorkspaceBridge.tsx scripts/verify-tenbot-terra-acceptance.mts scripts/verify-tenbot-hosted-action-session.mts scripts/verify-tenbot-hosted-operations.mts scripts/verify-tenbot-action-adapter.mts scripts/support/tenbot-hosted-fixture.mts",
+      "exitCode": 0
+    },
+    {
+      "command": "node_modules/.bin/eslint --no-ignore supabase/functions/_shared/tenbot-hosted.ts supabase/functions/_shared/tenbot-hosted-operations.ts supabase/functions/_shared/tenbot-agent-session.ts supabase/functions/_shared/tenbot-action-transport.ts supabase/functions/tenbot/index.ts",
+      "exitCode": 0
+    },
+    {
+      "command": "node_modules/.bin/eslint --no-ignore supabase/functions/_shared/tenbot-hosted-operations.ts",
+      "exitCode": 0,
+      "finalRefinementRerun": true
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "finalRefinementRerun": true
+    }
+  ],
+  "focusedGroupCount": 61,
+  "independentReview": {
+    "agent": "rollout_security_review",
+    "result": "No patch blocker; final per-phase capability-cache refinement reviewed"
+  },
+  "configuration": {
+    "newEmployeeIds": "TENBOT_EMPLOYEE_IDS: comma-separated verified account UUIDs; empty/default-OFF",
+    "employeeModeFlag": "TENBOT_EMPLOYEE_MODE_ENABLED remains default OFF",
+    "frontendFlag": "Existing NEXT_PUBLIC_TENBOT_ACTIONS_ENABLED controls review connection; no build/env was changed"
+  },
+  "boundaries": [
+    "No SQL/migration edits",
+    "Finite Pending pilot/permit safety unchanged; permanent Production Pending execution remains blocked",
+    "No roles or capability grants",
+    "No hardcoded cohort identities",
+    "Existing private history/session/password/exact-action controls retained",
+    "No commit or build in this subtask"
+  ],
+  "actualInference": false,
+  "actualDatabase": false,
+  "hostedMutations": 0,
+  "hostedCalls": 0,
+  "screenCapture": false,
+  "limitation": "Model-free transport/Auth/RPC doubles; this is not new real Auth/RLS/database/browser acceptance. Full TypeScript checked root source; candidate owner validates the immutable selective build separately.",
+  "executionNote": "tsx CLI initially failed sandbox Unix-socket EPERM before running. node --import tsx completed all verifiers without escalation."
+}

@@ -1,0 +1,252 @@
+{
+  "at": "2026-11-02T22:15:53.57874+00:00",
+  "readOnly": true,
+  "accounts": [
+    {
+      "id": "92edea19-e431-4493-9a1b-3c3ecf32aeae",
+      "role": "lead",
+      "email": "sales@tenartenterrazzo.com",
+      "active": true,
+      "readOnly": false,
+      "displayName": "Anthony Iorio",
+      "capabilities": {
+        "adjustInventory": true,
+        "writeBusinessData": true,
+        "readOperationalData": true,
+        "manageVendorsCatalog": true,
+        "uploadSupportingFiles": true,
+        "previewOperationalDocuments": true
+      },
+      "proposalAccess": true
+    },
+    {
+      "id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+      "role": "admin",
+      "email": "christopher@tenartenterrazzo.com",
+      "active": true,
+      "readOnly": false,
+      "displayName": "Chris Ngo",
+      "capabilities": {
+        "adjustInventory": true,
+        "writeBusinessData": true,
+        "readOperationalData": true,
+        "manageVendorsCatalog": true,
+        "uploadSupportingFiles": true,
+        "previewOperationalDocuments": true
+      },
+      "proposalAccess": true
+    },
+    {
+      "id": "29bed5b3-2ed8-43aa-9af2-45578b00388e",
+      "role": "lead",
+      "email": "giovanni@tenartenterrazzo.com",
+      "active": true,
+      "readOnly": false,
+      "displayName": "Giovanni Coppola",
+      "capabilities": {
+        "adjustInventory": true,
+        "writeBusinessData": true,
+        "readOperationalData": true,
+        "manageVendorsCatalog": true,
+        "uploadSupportingFiles": true,
+        "previewOperationalDocuments": true
+      },
+      "proposalAccess": true
+    },
+    {
+      "id": "70ecf39f-d873-4330-92e7-a78df3329655",
+      "role": "lead",
+      "email": "marcos@tenartenterrazzo.com",
+      "active": true,
+      "readOnly": false,
+      "displayName": "Marcos Alvarado",
+      "capabilities": {
+        "adjustInventory": true,
+        "writeBusinessData": true,
+        "readOperationalData": true,
+        "manageVendorsCatalog": true,
+        "uploadSupportingFiles": true,
+        "previewOperationalDocuments": true
+      },
+      "proposalAccess": false
+    },
+    {
+      "id": "c85c852e-6775-4ee7-bfb7-f6ff0778243b",
+      "role": "lead",
+      "email": "patrick@tenartenterrazzo.com",
+      "active": true,
+      "readOnly": false,
+      "displayName": "Patrick Soldow",
+      "capabilities": {
+        "adjustInventory": true,
+        "writeBusinessData": true,
+        "readOperationalData": true,
+        "manageVendorsCatalog": true,
+        "uploadSupportingFiles": true,
+        "previewOperationalDocuments": true
+      },
+      "proposalAccess": false
+    }
+  ],
+  "excludedDeveloperAccount": "3785f6b9-742e-452f-af6c-31613a983633",
+  "selectionEvidence": "Existing app_users joined to Auth email/account records; current effective existing capability helper evaluated for exact five IDs; Chris matches previously designated acceptance account.",
+  "hosted": {
+    "at": "2026-11-02T22:14:47.528Z",
+    "tenops": {
+      "sha": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+      "deploymentId": "eb191ab7-6e40-4275-b0a1-c616044b89a5",
+      "url": "https://eb191ab7.tenops.pages.dev",
+      "publicEnvironmentNames": [
+        "NEXT_PUBLIC_ENABLE_PLANNING",
+        "NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL"
+      ]
+    },
+    "tendev": {
+      "sha": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "deploymentId": "4f87390b-6f14-490d-b3d6-d859abfd3240",
+      "url": "https://4f87390b.tendev.pages.dev",
+      "publicEnvironmentNames": [
+        "NEXT_PUBLIC_DARK_PROTOTYPE",
+        "NEXT_PUBLIC_DEV_BRANDING",
+        "NEXT_PUBLIC_EARLY_ACCESS",
+        "NEXT_PUBLIC_ENABLE_PLANNING",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL"
+      ]
+    },
+    "edge": [
+      {
+        "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+        "version": 67,
+        "status": "ACTIVE",
+        "verifyJwt": true,
+        "sourceHash": "7d48ef0647128fb5b78a6624da68df523870a01de1bb4a5b407517a854177230"
+      }
+    ]
+  },
+  "appliedMigrations": [
+    {
+      "name": "tenbot_monthly_allowance",
+      "version": "20261102100000"
+    },
+    {
+      "name": "tenbot_reviewed_actions",
+      "version": "20261102120000"
+    },
+    {
+      "name": "tenbot_action_canonical_receivals",
+      "version": "20261102130000"
+    },
+    {
+      "name": "tenbot_operation_history",
+      "version": "20261102140000"
+    },
+    {
+      "name": "tenbot_canary_deferred_record_boundary",
+      "version": "20261102150000"
+    },
+    {
+      "name": "tenbot_invoice_quantity_total_evidence",
+      "version": "20261102160000"
+    }
+  ],
+  "quantityBodyMd5": "d3a63872347bbe7ac6dc1283b73f4289",
+  "meter": {
+    "ok": true,
+    "enabled": false,
+    "version": 13,
+    "expiresAt": "2026-11-03T01:54:46.647445+00:00",
+    "heldMicrousd": 142953,
+    "allowanceMode": "monthly",
+    "allowedModels": [
+      "gpt-6.1-terra"
+    ],
+    "monthStartsAt": "2026-11-01T00:00:00+00:00",
+    "accountedMicrousd": 1088814,
+    "remainingMicrousd": 478426,
+    "monthLimitMicrousd": 842208,
+    "totalLimitMicrousd": 5000000,
+    "uncertainReservations": 3,
+    "monthAccountedMicrousd": 363782,
+    "legacyAccountedMicrousd": 558679,
+    "legacyUnresolvedMicrousd": 18723
+  },
+  "policy": {
+    "enabled": false,
+    "version": 13,
+    "singleton": true,
+    "expires_at": "2026-11-03T01:54:46.647445+00:00",
+    "allowed_models": [
+      "gpt-6.1-terra"
+    ],
+    "user_open_limit": 2,
+    "global_open_limit": 8,
+    "carryover_evidence": "local-368-attempts-367-settled:unknown-18723:sha256:6827a519fa08f631a1ebbf80c016f64a07b66a0ebdb5dff9e67dfd5c9383bb70",
+    "day_limit_microusd": 5000000,
+    "request_step_limit": 16,
+    "legacy_accounted_day": "2026-10-29",
+    "month_limit_microusd": 842208,
+    "total_limit_microusd": 5000000,
+    "request_limit_microusd": 250000,
+    "user_day_request_limit": 60,
+    "user_minute_step_limit": 16,
+    "user_day_limit_microusd": 5000000,
+    "global_day_request_limit": 300,
+    "global_minute_step_limit": 60,
+    "legacy_accounted_microusd": 558679,
+    "legacy_unresolved_microusd": 18723
+  },
+  "controls": {
+    "action": {
+      "singleton": true,
+      "policy_version": 13,
+      "proposal_enabled": false,
+      "receivals_enabled": false
+    },
+    "pilot": {
+      "enabled": false,
+      "singleton": true,
+      "starts_at": "2026-11-02T21:54:46.651537+00:00",
+      "expires_at": "2026-11-03T01:54:46.647445+00:00",
+      "allowed_origin": "https://tendev.pages.dev",
+      "policy_version": 37,
+      "validation_receipt_sha256": "861761ef5769bc9e441a39dac6e47acb7a11bb6fc17ee8a2dd0c4788c382e65e"
+    },
+    "execution": {
+      "singleton": true,
+      "validated_at": "2026-11-02T21:54:46.651537+00:00",
+      "execution_enabled": false,
+      "isolated_validation_receipt": "Product-approved one Pending objective; exact quantity correction; current matched release and new funding receipt; focused isolated validation SHA256 861761ef5769bc9e441a39dac6e47acb7a11bb6fc17ee8a2dd0c4788c382e65e"
+    },
+    "enrollment": [],
+    "activePermits": 0,
+    "activeGrants": 0
+  },
+  "usageRows": 173,
+  "usageHash": "ef0176dd59599ef82a318c2ea6fce57a",
+  "configuredCredentialCutoff": "2026-11-28T22:46:56Z",
+  "credentialValueRead": false,
+  "configuredCutoffDigestMatches": true,
+  "newInferenceCalls": 0,
+  "hostedMutations": 0,
+  "environmentVerifiedFromKnownValueDigests": {
+    "TENBOT_OPENAI_SPEND_AUTHORIZED": false,
+    "TENBOT_INVOICE_PREPARATION_ENABLED": false,
+    "TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED": false,
+    "TENBOT_TERRA_ACCEPTANCE_ENABLED": false,
+    "TENBOT_REVIEWED_OPERATIONS_ENABLED": false,
+    "TENBOT_REVIEWED_ACTIONS_ENABLED": false,
+    "TENBOT_RECEIVAL_PILOT_ENABLED": false,
+    "TENBOT_RECEIVAL_EXECUTION_ENABLED": false,
+    "TENBOT_EMPLOYEE_MODE_ENABLED": "absent/default OFF",
+    "TENBOT_EMPLOYEE_IDS": "absent/default empty",
+    "TENBOT_RECEIVAL_EMPLOYEE_IDS_empty": true,
+    "knownOriginConfigDigestMatches": {
+      "TENBOT_ALLOWED_ORIGINS": "https://tendev.pages.dev,https://tenops.pages.dev",
+      "TENBOT_OPENAI_ALLOWED_ORIGINS": "https://tendev.pages.dev,https://tenops.pages.dev",
+      "TENBOT_MODEL_DIRECTED_READ_ORIGINS": "https://tendev.pages.dev"
+    }
+  }
+}

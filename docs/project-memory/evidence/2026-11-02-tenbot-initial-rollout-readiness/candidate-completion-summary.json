@@ -1,0 +1,89 @@
+{
+  "candidate": "40037650c63c68214aa1e4c1ce71a2812ce45650",
+  "tree": "6b11cdec845f78782a26ea6cb567e14f515e5bfd",
+  "baseline": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "validatedRootPatch": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "selectedApplicationFiles": 44,
+  "selectedSourceAndHistoryRows": 52,
+  "changedPaths": 64,
+  "historyOnlyMigrations": 6,
+  "candidateMigrationsToApply": [],
+  "remainingRequiredContract": {
+    "status": "required-for-full-normal-Pending-rollout; plan-only, not implemented, no SQL file created",
+    "scope": "Narrow forward replacement of the reviewed Pending branch in execute_tenbot_reviewed_action to call the existing canonical core after the existing private transaction dispatch/current reviewed-action authorization; future normal Edge branch skips the finite legacy permit. Existing public legacy pilot path remains locked.",
+    "sharedApplicationAuthorized": false,
+    "requiredBeforeFullInitialScopeActivation": true,
+    "decision": "Explicit Product approval and focused real fixture verification required before implementation/application; candidate itself contains only six already-applied history migrations."
+  },
+  "proofHolds": 0,
+  "buildArtifacts": 278,
+  "edgeModules": 55,
+  "buildDurationMs": 31850,
+  "environmentProposal": {
+    "CF_PAGES_URL": "https://tenops.pages.dev",
+    "CF_PAGES_BRANCH": "main",
+    "NEXT_PUBLIC_DEV_BRANDING": "false",
+    "NEXT_PUBLIC_TENBOT_CANARY_CONTROL_MODE": "off",
+    "NEXT_PUBLIC_TENBOT_ACTIONS_ENABLED": "true",
+    "existingProductionSettings": "preserved; opaque planning setting equals e71 accepted configuration/build",
+    "backendActivation": "none; all funding/action/pilot/cohort mode settings unchanged"
+  },
+  "recoveryBundle": {
+    "file": "production-readiness-candidate.bundle",
+    "bytes": 17209192,
+    "sha256": "38a46298419201f9fd85dc16ebf26d38ce7739a82a2333309be282dae6b80087",
+    "declaredPrerequisite": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+    "proofRevisions": 17
+  },
+  "evidence": {
+    "candidate.json": {
+      "bytes": 34513,
+      "sha256": "f78839d96b234d0eacd95f6317969ef4e767ac2e1f83705f547fb936bb72de84"
+    },
+    "selected-source-manifest.json": {
+      "bytes": 25248,
+      "sha256": "8ef3faa39cbc925dd1363201720d490864f89da133bc92ea377fc2e3ef185d4c"
+    },
+    "mandatory-proof.json": {
+      "bytes": 427,
+      "sha256": "dd252a1d993ba5c3459b65959cd385122bf64f881620de609868336d787fe5fe"
+    },
+    "build.json": {
+      "bytes": 1272,
+      "sha256": "a0184ac2f4f1fe990fc23ef759867ff8420b86379634f1b2abbf6f0284cdb651"
+    },
+    "edge-closure.json": {
+      "bytes": 9685,
+      "sha256": "6b1601ae786baafdfffdd3c58ab2ba25da3e67c33bdd23a31a89142ffbcc2d3b"
+    },
+    "build-artifacts.json": {
+      "bytes": 39289,
+      "sha256": "51fd56e177db42d350480bece2c7ff741c519074d3352c49fc349f446ffd8a05"
+    },
+    "compatibility.json": {
+      "bytes": 894,
+      "sha256": "7bcfd02c8859fa5b0431ab6982ac7bdbe7ba27e7d2f02a27f36041144de585cb"
+    },
+    "source-recovery.json": {
+      "bytes": 2498,
+      "sha256": "98cb241609db081b7f4f980a30be52f97a117eb67a56d0e27a1b390ac7095a5d"
+    },
+    "candidate-preservation-final.json": {
+      "bytes": 1184,
+      "sha256": "60d32a6b141f527a313b2bba4cba62b60a0c5f80fc660d2a6240baf10f83f984"
+    },
+    "validated-access-source.json": {
+      "bytes": 1631,
+      "sha256": "1086d857c2a63e6536772d665c63d61365aec2669bdb666267cc93337c06fd9d"
+    },
+    "access-validation.json": {
+      "bytes": 4059,
+      "sha256": "7c5b244e5cfe6d36805badbdac35b1bca18c07a97e5a7e94e3aa7e5690913583"
+    }
+  },
+  "hostedMutations": 0,
+  "deployments": 0,
+  "inferenceCalls": 0,
+  "browserScreenshots": 0,
+  "rootSourceWrites": 0
+}

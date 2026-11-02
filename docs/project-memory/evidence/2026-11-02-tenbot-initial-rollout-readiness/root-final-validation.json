@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "originalDirtyContentPreserved": 8,
+  "executionStandardOnlyOwnedAppend": true,
+  "relativeLinksValid": true,
+  "candidateClean": "40037650c63c68214aa1e4c1ce71a2812ce45650",
+  "bundleSha256Verified": true,
+  "sanitizedJsonFiles": 16,
+  "documentationOnlyChecks": true,
+  "noApplicationRetest": true
+}

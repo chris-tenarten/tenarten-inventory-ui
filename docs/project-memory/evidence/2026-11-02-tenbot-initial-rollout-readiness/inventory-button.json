@@ -1,0 +1,22 @@
+{
+  "source": "src/app/inventory/page.tsx:2346",
+  "loader": "src/modules/inventory/retrieval.ts:15",
+  "introducedCommit": "1dc57a3f4c35f1d3f31312191f84df1052dc695c",
+  "integratedCommit": "c43f0c74e3654b5229c7ec3d0bdb444ffa0ba830",
+  "introducedAt": "2026-10-19T16:20:18-05:00",
+  "integratedAt": "2026-10-19T16:26:15-05:00",
+  "gitAuthor": "Christopher <christopher@tenartenterrazzo.com>",
+  "subject": "perf(operations): defer reporting and receival history",
+  "reason": "Wave 4 deferred already-received rows until explicitly requested, reducing initial Inventory load.",
+  "operation": "Sets includeReceived true and reissues existing paginated SELECT pending_receivals with pending, partially_received and received statuses. Cancelled and cleared remain excluded.",
+  "businessMutation": false,
+  "showsExistingHistoricalRows": true,
+  "developerControl": false,
+  "recommendation": "Retain. Show completed deliveries when needed while keeping the outstanding receiving queue quick to open.",
+  "separateConsequentialActions": "Undo Receive and Clear Received Items have their own existing capability/lineage/confirmation paths; loading does not invoke them.",
+  "evidence": [
+    "docs/project-memory/2026-10-19-manpower-inventory-wave4.md",
+    "docs/project-memory/2026-10-19-performance-integration.md"
+  ],
+  "verification": "Read-only Git/source/history; no click, hosted query, mutation or broad Inventory tests. Git authorship does not establish which editor/tool wrote the source."
+}

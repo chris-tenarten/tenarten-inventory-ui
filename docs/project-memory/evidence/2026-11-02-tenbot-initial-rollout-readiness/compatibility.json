@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "candidate": "40037650c63c68214aa1e4c1ce71a2812ce45650",
+  "productionBase": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "acceptedTenDev": "afb549d157453b767e726313bcea87dc4e43f2ed",
+  "accessRevision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "sourceRows": 52,
+  "acceptedMainEdgeModuleClosure": 55,
+  "unchangedOutsideDeclaredScope": true,
+  "productionOnlyAncestry": true,
+  "unchangedKnowledgeClaimsAndPins": true,
+  "originalProductionProofAndGeneratorUnchanged": true,
+  "publicBrandingPwaSourceUnchanged": true,
+  "canaryRouteAbsent": true,
+  "canaryControlsOff": true,
+  "actionsAdapterBuildEnabledServerGatesRemainOff": true,
+  "migrationsApplied": 0,
+  "historyOnlyMigrations": 6,
+  "fullPendingRolloutBlocked": true,
+  "actualHostedAcceptance": "Prior accepted Proposal/Pending/Workspace evidence reused; no repeated real inference or employee write."
+}

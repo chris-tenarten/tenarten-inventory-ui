@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "validated": true,
+  "revision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "sourcePaths": [
+    "src/modules/tenbot/actions/ActionWorkspaceBridge.tsx",
+    "supabase/functions/_shared/tenbot-action-transport.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-hosted-operations.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "hashes": {
+    "src/modules/tenbot/actions/ActionWorkspaceBridge.tsx": "91dff90762cd32f9bf99c97bb345daa6b3a252d47e8c986d55ef4d2988dcb0d1",
+    "supabase/functions/_shared/tenbot-action-transport.ts": "b1e184f627ab1dc6061e5a0fad93d3a3a5845042a40bdc138ef0f565334d7f73",
+    "supabase/functions/_shared/tenbot-agent-session.ts": "cfbf0ef71e3b0811b1dc4a379f954aefdc06d75fbabd5c6883fb2472e0c169c6",
+    "supabase/functions/_shared/tenbot-hosted-operations.ts": "4c48cd577b9029f24018bef0955bd19a949c6a8e9c17dd88fd166320f7524b5b",
+    "supabase/functions/_shared/tenbot-hosted.ts": "159c721738553ae4d2c9777677f8a35f96f159fc5c33659e665afeb36bd443a4",
+    "supabase/functions/tenbot/index.ts": "58f1834c39213e4036a5b95102dc23a301c2dd785cf0513dd56bdfe51ab08768"
+  },
+  "validationReceipt": "/private/tmp/tenops-production-readiness-20261102/access-validation.json",
+  "focusedGroups": 61,
+  "rootPatchSha256": "25adff340585c67c48eca426eb27b97a68a3bdc5fef26fbc44ec1ea5ddff2ffc",
+  "independentReview": {
+    "agent": "rollout_security_review",
+    "result": "No patch blocker; final per-phase capability-cache refinement reviewed"
+  },
+  "hostedMutations": 0,
+  "inference": false
+}

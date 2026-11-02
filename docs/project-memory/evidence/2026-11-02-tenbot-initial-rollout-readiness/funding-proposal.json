@@ -1,0 +1,41 @@
+{
+  "status": "proposed, not activated",
+  "monthlyGlobalMicrousd": 5000000,
+  "requestMicrousd": 250000,
+  "models": [
+    "gpt-6.1-terra"
+  ],
+  "requestStepLimit": 16,
+  "userMinuteStepLimit": 16,
+  "globalMinuteStepLimit": 60,
+  "perUserDollarAllotment": null,
+  "allocation": "one shared monthly pool for five eligible current accounts",
+  "policyExpiryProposal": "infinity (PostgreSQL timestamptz) for ongoing monthly policy; existing provider credential cutoff remains independently enforced",
+  "configuredProviderCutoff": "2026-11-28T22:46:56Z",
+  "oldColumnsNotEnforcedByMonthlyReserve": [
+    "total_limit_microusd",
+    "day_limit_microusd",
+    "user_day_limit_microusd",
+    "user_day_request_limit",
+    "global_day_request_limit",
+    "user_open_limit",
+    "global_open_limit"
+  ],
+  "exhaustion": "atomic reservation refused before provider dispatch; truthful unavailable/retry path; existing non-Terra help may remain; no automatic top-up or refund",
+  "observedSuccessfulReadRequestRangeUsd": [
+    0.008738,
+    0.017835
+  ],
+  "observedPendingUsd": 0.021574,
+  "roughMonthlyQuestionRange": [
+    225,
+    550
+  ],
+  "estimateLimit": "rough cost extrapolation, not measured five-employee load; token use changes with questions and history",
+  "existingControlsSufficientForProposedBudget": true,
+  "schemaChangeRequiredForFundingProposal": false,
+  "activationRequiresSeparateProductApproval": true,
+  "preserveAllUsageAndHolds": true,
+  "hostedMutations": 0,
+  "newInferenceCalls": 0
+}
