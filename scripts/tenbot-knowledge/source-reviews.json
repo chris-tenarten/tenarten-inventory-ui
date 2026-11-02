@@ -2331,26 +2331,11 @@
     "path": "supabase/functions/_shared/tenbot-business-operations.ts",
     "blob": "3dc5a9fb8dfd76f6cc596f072febb3e3b4f1739d",
     "sha256": "2e28eb92278df20d3845805ba59bc03a1882c6c96e064e98d686f8c6e3f2610e",
-    "reviewedCandidate": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+    "reviewedCandidate": "d8c7e0285bf14e0ceaf51a1c57251bce2836520a",
     "scope": "tendev-preparation",
     "receipt": {
       "path": "docs/project-memory/2026-11-02-tenbot-pending-quantity-source-proof.md",
-      "revision": "d35694d8591aa3c672c42f367b11690ce39d01c7",
-      "heading": "## Candidate technical source review \u2014 Pending quantity completion"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "technical-review",
-    "kind": "runtime",
-    "path": "src/modules/inventory/invoice-quantity.ts",
-    "blob": "3c3d95c93f791480170893f6787a1adeadd98c84",
-    "sha256": "131c894139009436f19f53219ed4b52c96d18686a2ed6015129bd19acc69e70c",
-    "reviewedCandidate": "d35694d8591aa3c672c42f367b11690ce39d01c7",
-    "scope": "tendev-preparation",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-pending-quantity-source-proof.md",
-      "revision": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+      "revision": "d8c7e0285bf14e0ceaf51a1c57251bce2836520a",
       "heading": "## Candidate technical source review \u2014 Pending quantity completion"
     }
   },
@@ -2361,11 +2346,11 @@
     "path": "supabase/migrations/20261102160000_tenbot_invoice_quantity_total_evidence.sql",
     "blob": "d331f7a28cd3b4907613f6cfbae80d5dae91fd62",
     "sha256": "9ff784a80eeef6d403250ce0afba114e88ab4b10088ba7162967631a8be40e79",
-    "reviewedCandidate": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+    "reviewedCandidate": "d8c7e0285bf14e0ceaf51a1c57251bce2836520a",
     "scope": "tendev-preparation",
     "receipt": {
       "path": "docs/project-memory/2026-11-02-tenbot-pending-quantity-source-proof.md",
-      "revision": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+      "revision": "d8c7e0285bf14e0ceaf51a1c57251bce2836520a",
       "heading": "## Candidate technical source review \u2014 Pending quantity completion"
     }
   }
