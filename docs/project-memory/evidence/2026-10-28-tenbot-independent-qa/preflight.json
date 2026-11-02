@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-28",
+  "timezone": "America/Chicago",
+  "authorization": "User's TENOPS — TENBOT INDEPENDENT QA & EVALUATION request; autonomous read-only evaluation, authorized synthetic TenBot conversations only. Stop for Product review; no implementation or release authorization.",
+  "riskTier": 3,
+  "testingScope": "Focused live conversational, privacy-boundary and desktop/mobile UI evaluation. No application change, build, migration, business-data write or destructive security test.",
+  "target": "https://tenops.pages.dev/settings → Messaging → TenBot",
+  "account": "Existing chris developer / Developer, signed in manually by user. No account creation, impersonation or permission changes.",
+  "releaseAuthority": {
+    "runtime": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+    "receipt": "docs/project-memory/2026-10-27-tenbot-candidate.md#executed-tenbot-release--october-27-2026",
+    "verificationBoundary": "Source comparisons use git show at this released revision. Native Production UI was refreshed and TenBot observed. A fresh independent public-asset hash check was not completed: sandbox DNS failed and required escalation was aborted. Do not represent the release receipt as a new served-byte verification.",
+    "advisoryContext": "Separate Product/Architecture thread unavailable; current explicit QA request controls this evaluation."
+  },
+  "preservation": "Existing dev branch, worktrees, dirty application files, Current State and prior evidence preserved. Task writes only new QA evidence files; no stage, commit, push or deployment.",
+  "freePlan": {
+    "verifiedAt": "2026-10-28T13:15:00Z",
+    "timestampPrecision": "Approximate observation minute",
+    "method": "Reloaded existing authenticated Cloudflare Workers plans UI: Free $0 / disabled Current plan, 10000 Neurons/day. No billing change."
+  },
+  "campaignLimits": {
+    "maxUiQuestions": 60,
+    "maxAdditionalActualNeurons": 2000,
+    "retainAccountNominalHeadroom": 2000,
+    "minSendSpacingMs": 11000,
+    "configuredAppBudgets": "300/day, 6000/month attempts; 8000/day, 240000/month accounted Neurons; six account attempts/minute; UTC reset."
+  },
+  "privacy": "Only own synthetic TenBot questions/answers retained. No employee DM/task content or customer-sensitive record used as test input; no ordinary conversation opened. Messaging sidebar observations were filtered; final screenshot evidence excludes the sidebar. No feature feedback submitted. Existing official TenOps welcome notice may appear in initial private QA captures; it is not an employee DM.",
+  "latencyMethod": "Q01–Q03 are observation upper bounds including manual tool gaps. Q04 onward: Send click to first complete AX observation, sampled at approximately 500 ms plus tool overhead; includes UI/network/database/model work and is not provider-only inference latency.",
+  "usageMethod": "Read-only Cloudflare account aggregate aiInferenceAdaptiveGroups. Account-shared before/after totals can lag and cannot by themselves exclude concurrent clients. UI sends, actual account inference counts, token-derived/accounted costs and failed reservations must remain distinct. Developer account does not have manageUsers; app usage ledger not retrieved. Product feedback UI intentionally not opened because it also loads unrelated feedback content.",
+  "closureObservation": "Working tree and dev commit count changed concurrently during QA. Those external changes were not authored, staged or altered by this workstream; released-source comparisons remain pinned to 6cb6cf7. Task-owned repository writes are confined to the new QA evidence directory.",
+  "finalBrowserCheck": "Native Chrome window still unavailable (cgWindowNotFound) on final check. Q31 was not sent. Restore request remains pending.",
+  "incidentalDiscoveryExposure": "Initial native app discovery automatically surfaced an already-open Job inspector. Its business content was not used as a question, sent to TenBot, or retained in QA report artifacts. An existing controlled test-conversation preview also appeared during Messaging diagnosis; no ordinary employee conversation was opened. Subsequent observations were scoped to TenBot and screenshots cropped."
+}

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T01:11:01.175Z",
+  "sha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+  "previousVersion": 10,
+  "version": 11,
+  "verifyJwt": true,
+  "status": "ACTIVE",
+  "bundleSha256": "7517faa181df6008539576b4edd237e0e647ef65fdf80e7491a234d65c19bf9f",
+  "unrelatedFunctionsUnchanged": true,
+  "paidPathDisabled": true,
+  "inventoryWriteToolsConstructed": false
+}

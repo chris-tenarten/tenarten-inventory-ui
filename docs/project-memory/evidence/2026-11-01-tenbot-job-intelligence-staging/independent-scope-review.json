@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "reviewer": "job_read_database_fixture",
+  "scope": "Accepted source/migration boundary and reuse evidence, read-only local review",
+  "newTests": false,
+  "newHostedCalls": false,
+  "blockingFindings": 0,
+  "acceptedDelta": "six shared modules plus six scripts",
+  "newMigrations": 0,
+  "alreadyAppliedMigration": "20261101210000",
+  "requiredInvariants": "JWT/RLS, history ownership, exact source/Edge, unchanged budgets/providers, writes OFF, zero grants/enrollment/permits"
+}

@@ -1,0 +1,33 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+  "method": "POST",
+  "startedAt": "2026-10-30T23:56:00.243Z",
+  "readOnly": true,
+  "querySha256": "f5f4877597bb7fb3139ca8e0ef5394220a96dcfa90a79155f20dbde477f8eae9",
+  "timeoutMs": 15000,
+  "automaticRetries": 0,
+  "businessMutations": 0,
+  "status": 201,
+  "headersMs": 238,
+  "totalMs": 254,
+  "bodyBytes": 399,
+  "bodySha256": "d83683726dfdaf796455ad586e93e77509cfc4027d310b2b31121982b51e4298",
+  "state": {
+    "readOnly": "on",
+    "serverNow": "2026-10-30T23:56:00.428977+00:00",
+    "enrollment": 0,
+    "pilotEnabled": false,
+    "otherBackends": 11,
+    "maxConnections": 90,
+    "oldReservation": {
+      "id": "84c8e242-4f99-4573-a6c3-6b19a01ef7ee",
+      "state": "reserved",
+      "settledAt": null,
+      "reservedMicrousd": 61139
+    },
+    "executionEnabled": false,
+    "executionPermits": 0,
+    "databaseStartedAt": "2026-10-30T23:53:21.428532+00:00",
+    "activeCanaryGrants": 0
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:25:50.302981+00:00",
+  "sharedHead": "ec62998aba228e615279ae7d6e81f04378e62062",
+  "sharedIndexRefsAndBranchesUnchanged": true,
+  "allSevenPreexistingDirtyFilesByteIdentical": true,
+  "protectedFiles": [
+    {
+      "path": "docs/project-memory/2026-10-28-tenbot-openai-agent-poc.md",
+      "sha256": "1fa54f3ea7d15f104088947a8b9672bbd028d9106bc76d969098500addae424c"
+    },
+    {
+      "path": "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+      "sha256": "1e304bda4180e2fd4b366a2fc7e474e837ac8099d9e237e56478a755156b48c5"
+    },
+    {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "sha256": "92cab3d85573029d1cf53358073e5588538a44a0f19cca707400419d518d490c"
+    },
+    {
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "sha256": "5bc625c720e8a24ed175a9a77e9825bf5e235d8b7f87258db6b11db35d091440"
+    },
+    {
+      "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+      "sha256": "d74acd6568c2f9d3e6689cc8a6ce5f4d11ffadde159b9897af6571dec5d57c41"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent.mts",
+      "sha256": "b46e816c54f4b8e5a5aea17d6db93635c6952f2fb86a3034700324f09d7ce8b1"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "365a00731d1d53a944989a406783e8bdd6061ac28930aa0cd4653a89f3659052"
+    }
+  ],
+  "localhost3000ProcessUntouched": true,
+  "sourceViews": "Reused existing isolated TenDev source; separate private Git/archive Production source. No new branch/worktree, main/dev move or push."
+}

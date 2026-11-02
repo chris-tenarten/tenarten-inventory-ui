@@ -1,0 +1,22 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/restart",
+  "method": "POST",
+  "projectName": "tenartenDB",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "authorizedAction": "ONE supported project restart, no reset/restore/configuration change",
+  "startedAt": "2026-10-30T23:26:05.578Z",
+  "timeoutMs": 30000,
+  "automaticRetries": 0,
+  "requestBodyPresent": false,
+  "status": 200,
+  "headersMs": 1116,
+  "totalMs": 1120,
+  "bodyBytes": 0,
+  "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "responseHeaders": {
+    "date": "Fri, 30 Oct 2026 23:26:06 GMT",
+    "server": "cloudflare",
+    "cf-ray": "a52e2ed56f847ca9-DFW"
+  },
+  "result": "RESTART_ACKNOWLEDGED_RECOVERY_NOT_YET_VERIFIED"
+}

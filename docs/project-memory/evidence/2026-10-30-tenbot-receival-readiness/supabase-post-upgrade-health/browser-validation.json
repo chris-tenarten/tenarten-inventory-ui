@@ -1,0 +1,21 @@
+{
+  "observedBetweenUtc": [
+    "2026-10-31T00:08:49Z",
+    "2026-10-31T00:09:53Z"
+  ],
+  "method": "Native authenticated UI; no console, token extraction, employee conversation opening or message submission.",
+  "tenops": {
+    "origin": "https://tenops.pages.dev",
+    "caller": "Own Chris/Admin Safari session",
+    "inventoryRefresh": "PASS: loading state followed by populated table and Pending Receivals (0)",
+    "messaging": "PASS: Inbox and existing own TenBot entry loaded; closed without opening another employee conversation"
+  },
+  "tendev": {
+    "origin": "https://tendev.pages.dev",
+    "caller": "Own chris_dev/Developer Chrome session",
+    "inventoryRefresh": "PASS: refreshed populated table and Pending Receivals (0)",
+    "messaging": "PASS: Inbox and existing own TenBot entry loaded; closed without message/inference"
+  },
+  "finalViews": "Both restored to Inventory; native computer-use session released.",
+  "limitations": "Read smoke only; no new provider inference, canary or broad conversational/security retest."
+}

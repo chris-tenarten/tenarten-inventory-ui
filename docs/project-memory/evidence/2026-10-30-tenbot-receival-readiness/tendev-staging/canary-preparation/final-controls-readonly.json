@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:21:45.437Z",
+  "readOnlyTransaction": true,
+  "querySha256": "d5a68dfaa2c59504d8348e58d918e64a3501f908d8b343d427e16495e1027cbd",
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 748026,
+      "remainingMicrousd": 3791930,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "policy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "draftCount": 0,
+    "permitCount": 0,
+    "pilotEnabled": false,
+    "approvalCount": 0,
+    "employeeCount": 0,
+    "originalCount": 0,
+    "executionCount": 0,
+    "executionEnabled": false,
+    "selectedEmployeeToday": {
+      "steps": 0,
+      "requests": 0,
+      "reserved": 0,
+      "uncertain": 0,
+      "accountedMicrousd": 0
+    }
+  },
+  "selectedEmployeeUserId": "92edea19-e431-4493-9a1b-3c3ecf32aeae",
+  "employeeDayRemainingUsd": 0.25,
+  "serverFlagsDisabled": true,
+  "onlyAllowedOrigin": "https://tendev.pages.dev",
+  "allowlistEmpty": true,
+  "providerKeyDigestsUnchanged": true,
+  "edges": [
+    {
+      "slug": "tenbot",
+      "version": 19,
+      "verifyJwt": true
+    },
+    {
+      "slug": "tenbot-receival-cleanup",
+      "version": 2,
+      "verifyJwt": true
+    }
+  ],
+  "tenDev": {
+    "sha": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+    "acceptedDeployment": "b3401edf-3218-45ff-af84-c8dd63e94ca8",
+    "servedAssets": [
+      {
+        "path": "index.html",
+        "sha256": "e06712ec075c813b446b3e210dc3d3d33510396015bbcf4247cbbe67c79f3833",
+        "exact": true
+      },
+      {
+        "path": "catalog.html",
+        "sha256": "4ce2382cab9a9b866e7cc77b1dfdf46bb00e6d23e4be8bfe17941c66bfed77a2",
+        "exact": true
+      },
+      {
+        "path": "inventory.html",
+        "sha256": "76a43aa22bb6a6cbabdff8c5aa998e5012915ab4ad626931b3786ccb90afd922",
+        "exact": true
+      },
+      {
+        "path": "my-work.html",
+        "sha256": "734731be9295eff509de48117edf25771b88a569833c1db8ff19eb7450e0985b",
+        "exact": true
+      }
+    ]
+  },
+  "tenOps": {
+    "lastAcceptedSha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "lastVerifiedDeployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+    "currentServerWriteGatesDenied": true
+  },
+  "deploymentMetadataLimitation": "Cloudflare management-session check failed; no retry/credential refresh. Current exact public TenDev artifacts and Supabase function identity/current write controls verified; accepted deployment receipts reused.",
+  "inferenceCalls": 0,
+  "permissionChanges": 0,
+  "migrations": 0,
+  "deployments": 0,
+  "mutations": 0
+}

@@ -1,0 +1,23 @@
+{
+  "status": "PASS from exact committed atomic apply evidence; independent postcommit metadata query prepared for root only",
+  "candidate": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "appliedAt": "2026-10-30T16:42:51.578Z",
+  "appliedMigrationHashesMatch": 11,
+  "atomic": true,
+  "transactionDurationMs": 1601,
+  "executionControlsOff": true,
+  "employeeEnrollmentCount": 0,
+  "exactTableRlsAndFunctionBodyPostchecksPassedInApply": true,
+  "canonicalReceivingAndStockColumnsAndBodiesPreserved": true,
+  "meterStatusUnchangedAtCommit": true,
+  "meterUsageFingerprintUnchangedAtCommit": true,
+  "outstandingReservationsPreserved": 1,
+  "metadataQueryPreparedOnly": true,
+  "querySha256": "74b2e38a136db96bc29391ca7606c8660cc4d12ffcce59f3d41808933aa9b961",
+  "queryPath": "/private/tmp/tenops-tenbot-receival-tendev-resume-20261030/verify-postapply-readonly.sql",
+  "queryRunner": "/private/tmp/tenops-tenbot-receival-tendev-resume-20261030/verify-postapply-readonly.mjs",
+  "noClaimOfNewJwtOrOperationalLifecycleTest": true,
+  "reviewerHostedCalls": 0,
+  "reviewerMutations": 0,
+  "reviewerInference": 0
+}

@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "at": "2026-11-01T17:28:36.620Z",
+  "tenDevSha": "509abf3be39e77d607e458a297abbaa3e592f189",
+  "tenDevDeployment": "341a78e4-91f4-4578-b153-20c2ccd40563",
+  "tenOpsSha": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "tenOpsDeployment": "1576467e-ab80-41e4-b0e8-4afb1fe1f951",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 34,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "878717f5d18e860e16b5d6384dc56bf0c81f679bbaa907e81581d7f3a2fc8404"
+  },
+  "allWritesOff": true,
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "ordinarySpendingAuthorized": false,
+  "candidate": "509abf3be39e77d607e458a297abbaa3e592f189",
+  "migration": {
+    "path": "supabase/migrations/20261031230000_tenbot_conversation_context.sql",
+    "version": "20261031230000",
+    "name": "tenbot_conversation_context",
+    "sha256": "a75ecd0eef035cc4a71cf944724c00588216aabae3fa9d98b161d7ea7b66bb52"
+  },
+  "protectedHistoryRlsAclClaimsUnchanged": true,
+  "ordinaryPolicyAndAccountingUnchanged": true,
+  "secretsUnchanged": true,
+  "tenOpsPagesUnchanged": true,
+  "authenticatedFollowUpsPerformed": false,
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

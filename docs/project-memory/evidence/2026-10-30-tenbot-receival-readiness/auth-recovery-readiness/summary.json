@@ -1,0 +1,177 @@
+{
+  "status": "ACCEPTED_AUTH_FIX_PREPARED_UNDEPLOYED_HOSTED_HEALTH_BLOCKED",
+  "recordedAt": "2026-10-30T23:00:28.510Z",
+  "authority": "Chris AUTH RECOVERY & CANARY READINESS accepts ec62998, authorizes bounded read-only health and selective release preparation only. No restart/reset/shared-infrastructure mutation/push/deploy/canary/spending extension. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "acceptedImplementation": "ec62998aba228e615279ae7d6e81f04378e62062",
+  "currentHealth": {
+    "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+    "method": "GET",
+    "startedAt": "2026-10-30T22:55:15.486Z",
+    "status": 200,
+    "totalMs": 10759,
+    "cfRay": "a52e01aacdc8accd-DFW",
+    "services": [
+      {
+        "name": "auth",
+        "healthy": false,
+        "status": "UNHEALTHY"
+      },
+      {
+        "name": "db",
+        "healthy": false,
+        "status": "UNHEALTHY"
+      }
+    ],
+    "captures": 1,
+    "retries": 0,
+    "sqlOrLoginProbesWhileUnhealthy": 0,
+    "scope": "A fresh project-level read-only health check; not a successful database query or authenticated user-session check."
+  },
+  "supportedOwnerRecovery": {
+    "project": "tenartenDB",
+    "projectRef": "vxdxjhazkqhpkwdqtobp",
+    "firstStep": "Read-only Supabase Project Status, Database Reports and scoped logs for the captured connection-timeout period; use the prior sanitized endpoint/time/CF-ray evidence.",
+    "activeRecoveryOption": {
+      "action": "One supported Supabase project restart through existing Project Settings",
+      "status": "PROPOSED_REQUIRES_SEPARATE_PRODUCT_APPROVAL",
+      "target": "Shared TenOps/TenDev project vxdxjhazkqhpkwdqtobp",
+      "expectedImpact": "Temporary interruption to the shared database/Auth services; recovery is not guaranteed and may be temporary.",
+      "noResetResizeUpgradeCredentialOrPermissionChangeProposed": true
+    },
+    "fallback": "Owner opens a Supabase Support case if reports are unavailable, restart is not approved, or the project remains unhealthy; do not send it automatically.",
+    "underlyingPhysicalCauseStillUnproven": true,
+    "performed": false,
+    "officialGuidance": [
+      "https://supabase.com/kb/troubleshooting/failed-to-run-sql-query-connection-terminated-due-to-connection-timeout",
+      "https://supabase.com/kb/troubleshooting/project-status-reports-unhealthy-services"
+    ]
+  },
+  "selectiveRelease": {
+    "target": "TenDev first",
+    "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+    "tree": "666201253dbaa01713768b8b13666cd87310b711",
+    "baseline": "ce157b99e31c227480c479169e0a480a6d509bf1",
+    "ref": "refs/tenops/candidates/auth-recovery-tendev-preparation-20261030",
+    "applicationFiles": 1,
+    "source": [
+      {
+        "path": "src/lib/auth.tsx",
+        "sha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527"
+      },
+      {
+        "path": "scripts/verify-auth-resolution-deadlines.mjs",
+        "sha256": "0813dbaca210dfd14d8a6a53d1c24478e48397f4b4011e8725c3b898daca9ea6"
+      },
+      {
+        "path": "scripts/verify-auth-startup-resolution.mjs",
+        "sha256": "10ff9fce77f9fcb12eea17a7816a5acbdae1f00cf6d10420b817615a154ee73d"
+      }
+    ],
+    "verifierFiles": 2,
+    "acceptedEvidenceFiles": 4,
+    "manualReceipt": {
+      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "heading": "## Accepted manual Auth source review — bounded restoration recovery",
+      "receiptRevision": "da5a9246c8a158c0ed266668a98bf8d54701cebf"
+    },
+    "changedPaths": [
+      "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/browser-result.json",
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/build-result.json",
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/source-manifest.json",
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/worker-validation.json",
+      "scripts/verify-auth-resolution-deadlines.mjs",
+      "scripts/verify-auth-startup-resolution.mjs",
+      "src/lib/auth.tsx"
+    ],
+    "knowledgeRegistrySnapshotAndReleasedAuthorityUnchanged": true,
+    "mandatoryFullHistoryCleanExactCommittedProofPassed": true,
+    "semanticHolds": 0,
+    "sourceHolds": 0,
+    "unclassifiedSensitivePaths": 0,
+    "exactTargetBuildPassed": true,
+    "buildDurationMs": 28482,
+    "buildArtifactCount": 287,
+    "buildKnowledgeSha256": "e4d416597970fb0c23226d9221236b3da1c06b5c3b2cfe25f2c1b9652d8973e2",
+    "sourceCleanAfterBuild": true,
+    "artifactSecretScanPassed": true,
+    "localValidationReused": {
+      "offlineGroups": 9,
+      "syntheticLocalBrowserGroups": 20,
+      "typesLintAndEm": true,
+      "noFeatureTestRerun": true
+    },
+    "independentEmScopeReviewPassed": true,
+    "buildSettings": "Reused previously accepted TenDev public build settings and existing enabled canary-control UI mode; fresh hosted configuration/deployment preflight remains required before a separately approved deployment.",
+    "noNewMigrations": true,
+    "noEdgeDeploymentRequired": true,
+    "noSecretOrProviderChangeRequired": true,
+    "noDeploymentPerformed": true
+  },
+  "productionPlan": {
+    "planOnly": true,
+    "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "authBeforeBlob": "e0348f96373847dfb7a7038764da27bf896b50e9",
+    "authBeforeEqualsAcceptedParent": true,
+    "acceptedAuthAfterBlob": "59e3baee0c73978c6253f344923bc72d02f4cc05",
+    "acceptedAuthAfterSha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527",
+    "separateCandidateRequired": true,
+    "candidateCreated": false,
+    "buildRun": false,
+    "deployed": false,
+    "noTenDevAncestryOrExperimentalSourcePromotion": true
+  },
+  "conditionalAuthenticatedValidation": {
+    "performed": false,
+    "reason": "The fresh DB and Auth health check remains UNHEALTHY. Do not repeat user sign-in or SQL probes against unavailable services.",
+    "genuineSafariAdminConfirmed": false,
+    "genuineChromeChrisDevConfirmed": false,
+    "endpointTaggedReadOnlyPreflightPassed": false,
+    "priorLocalValidationIsNotHostedRecoveryProof": true
+  },
+  "canaryBoundaries": {
+    "canaryAttempt": false,
+    "grantActivation": false,
+    "permissionChanges": 0,
+    "enrollmentChanges": 0,
+    "writeGateChanges": 0,
+    "invoiceUploads": 0,
+    "operationalWrites": 0,
+    "inferenceCalls": 0,
+    "spendingPolicyChanges": 0,
+    "completeFreshDatabaseGateReadbackAvailable": false,
+    "lastKnownOffRevokedEmptyStatePreservedByNoMutation": true,
+    "allPreviousAuditEvidenceRetained": true
+  },
+  "funding": {
+    "existingCutoff": "2026-10-30T23:00:00Z",
+    "localCutoff": "October30 2026 6p.m. America/Chicago",
+    "cutoffElapsedAtRecord": true,
+    "extended": false,
+    "remainingAllowanceFreshlyVerified": false,
+    "requirement": "A later canary requires fresh server-ledger/credit checks and explicit Product authorization for any new funding period/window. No rollover or promotional renewal assumed."
+  },
+  "remainingBlockers": [
+    "Recover responsive healthy shared Database/Auth services; a restart or other infrastructure change requires separate Product authorization.",
+    "Obtain Product approval for the prepared selective TenDev release before deployment; Production must use its own Auth-only baseline candidate.",
+    "After health recovery, verify genuine Safari Admin and Chrome chris_dev roles/capabilities and a bounded endpoint-tagged read-only preflight, including all SQL/Edge gates OFF, revoked grants, enrollment empty, exact data/duplicates and fresh funding.",
+    "Only after separate Product authorization may a fresh <=15-minute receival canary window be established; this task authorizes none."
+  ],
+  "workspace": {
+    "devHeadUnchanged": "ec62998aba228e615279ae7d6e81f04378e62062",
+    "unrelatedDirtyWorkPreserved": true,
+    "sharedIndexBranchesWorktreesUnchanged": true,
+    "newBranchOrWorktree": false,
+    "candidateSourceAndPrivateGitRetained": true,
+    "localhostReviewServerUntouched": true,
+    "sourceEditsThisTask": 0,
+    "hostedConfigurationChanges": 0,
+    "migrations": 0,
+    "pushes": 0,
+    "deployments": 0,
+    "infraRecoveryActions": 0
+  },
+  "stop": "Product review. No infrastructure recovery or canary execution authorized or performed."
+}

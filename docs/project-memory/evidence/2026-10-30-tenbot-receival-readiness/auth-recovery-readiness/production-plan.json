@@ -1,0 +1,13 @@
+{
+  "planOnly": true,
+  "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "authBeforeBlob": "e0348f96373847dfb7a7038764da27bf896b50e9",
+  "authBeforeEqualsAcceptedParent": true,
+  "acceptedAuthAfterBlob": "59e3baee0c73978c6253f344923bc72d02f4cc05",
+  "acceptedAuthAfterSha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527",
+  "separateCandidateRequired": true,
+  "candidateCreated": false,
+  "buildRun": false,
+  "deployed": false,
+  "noTenDevAncestryOrExperimentalSourcePromotion": true
+}

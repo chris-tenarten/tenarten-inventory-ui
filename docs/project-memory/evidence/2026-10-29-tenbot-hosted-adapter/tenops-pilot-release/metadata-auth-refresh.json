@@ -1,0 +1,6 @@
+{
+  "recordedAt": "2026-10-30T02:13:21.397Z",
+  "initialReadStatus": 401,
+  "cause": "Existing Cloudflare OAuth access token expired at 2026-10-30T02:10:54.937Z",
+  "operation": "One normal Wrangler session refresh, then read-only final reconciliation; no deployment retry or permission change"
+}

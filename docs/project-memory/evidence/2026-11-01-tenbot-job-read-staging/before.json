@@ -1,0 +1,72 @@
+{
+  "passed": true,
+  "at": "2026-11-02T00:12:11.739Z",
+  "tenDevSha": "523f6471eaf7897c300ede04fe7ea64a837169c4",
+  "tenDevDeployment": "90e51027-0a6b-40da-bc6f-bd0b2c123e2c",
+  "tenOpsSha": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "tenOpsDeployment": "967ed4d1-0ee8-4488-8db2-ee984cabc953",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 37,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "0e67f734aa1509a324f0dd2ae0538d8fa64440d49f7d0403d34dc0cfcb82bdb6"
+  },
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "ordinarySpendingAuthorized": false,
+  "scheduler": [
+    {
+      "id": 3,
+      "name": "tenbot-invoice-original-expiry",
+      "active": true,
+      "lastRuns": [
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T23:23:00.158816+00:00",
+          "start_time": "2026-11-01T23:23:00.120526+00:00"
+        },
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T22:23:00.165209+00:00",
+          "start_time": "2026-11-01T22:23:00.108432+00:00"
+        }
+      ],
+      "schedule": "23 * * * *",
+      "username": "postgres",
+      "commandHash": "b196b8a7cc744bcb4273b0bda12938de453f2bcbb0bec5d99f4f87543bd97c0b",
+      "privatePurgeOnly": false,
+      "signedDispatcherOnly": true
+    },
+    {
+      "id": 4,
+      "name": "tenbot-operational-history-expiry",
+      "active": true,
+      "lastRuns": [
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-02T00:12:00.057586+00:00",
+          "start_time": "2026-11-02T00:12:00.042843+00:00"
+        },
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-02T00:11:00.115004+00:00",
+          "start_time": "2026-11-02T00:11:00.087635+00:00"
+        }
+      ],
+      "schedule": "* * * * *",
+      "username": "postgres",
+      "commandHash": "2064f05be6e63d7fc1de82d1f3e67f0e35ea37d19db5f614e7c88886eb646077",
+      "privatePurgeOnly": true,
+      "signedDispatcherOnly": false
+    }
+  ],
+  "sharedPredecessorSchemaVerified": true,
+  "newMigrations": 0,
+  "approvedMigrationSha256": "d07a8588ccf3b4a847a4b378274f77f26d4cc7b5594c238addf1011df4880177",
+  "oldReceiptBodySha256": "365d95448b66d2aa0665bd944102d4b29b8f80b93872575ae4b7025108a73a56",
+  "receiptLedgerAbsent": true,
+  "hostedMutations": 0
+}

@@ -1,0 +1,155 @@
+{
+  "status": "RELEASED_BOTH",
+  "checkedAt": "2026-10-29T15:16:22.000Z",
+  "acceptedCandidate": "f5b1ce8736932859d193fe0ac8f601afb1d15bb9",
+  "servedRuntime": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+  "canonicalRemoteMain": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+  "canonicalRemoteDev": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+  "localDevPreserved": "f5b1ce8736932859d193fe0ac8f601afb1d15bb9",
+  "localMain": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+  "selectivePromotion": true,
+  "excludedUnrelatedLocalHistory": true,
+  "projects": {
+    "tendev": {
+      "sha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "deployment": "7ef121ad-e19e-4caf-816d-11d2c590a734",
+      "branding": "TenDev / RESEARCH & DEVELOPMENT",
+      "verifiedServedAssets": 32,
+      "verifiedBrowserLoadedAssets": 46,
+      "smokeChecks": [
+        "Actual hosted unsigned Manpower route retains normal Sign in gate",
+        "Reporting-date default and collapsed complete 157-member recent group; loaded-history coverage explicitly incomplete",
+        "Automatic later historical publication completes 1501 members; newer reporting date precedes recently edited older report without expansion",
+        "Both alternate sorts selectable; work-date moves recently worked older report first; returning restores historical default/collapse with no viewport overflow"
+      ],
+      "configurationUnchanged": true
+    },
+    "tenops": {
+      "sha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "deployment": "6cda75a5-dc37-480c-8027-bd7806176c34",
+      "branding": "TenOps / OPERATIONS CONTROL",
+      "verifiedServedAssets": 32,
+      "verifiedBrowserLoadedAssets": 46,
+      "smokeChecks": [
+        "Actual hosted unsigned Manpower route retains normal Sign in gate",
+        "Reporting-date default and collapsed complete 157-member recent group; loaded-history coverage explicitly incomplete",
+        "Automatic later historical publication completes 1501 members; newer reporting date precedes recently edited older report without expansion",
+        "Both alternate sorts selectable; work-date moves recently worked older report first; returning restores historical default/collapse with no viewport overflow"
+      ],
+      "configurationUnchanged": true
+    }
+  },
+  "riskTier": 2,
+  "testingLevel": 2,
+  "reusedAcceptedEvidence": [
+    "2026-10-29-manpower-default-browser.json",
+    "2026-10-29-manpower-default-retrieval.json",
+    "2026-10-29-manpower-default-review-origin.json"
+  ],
+  "builds": {
+    "tendev": 1,
+    "tenops": 1
+  },
+  "fullSuitesOrMatricesRepeated": false,
+  "migrationsApplied": 0,
+  "hostedBusinessWrites": 0,
+  "configurationChanges": 0,
+  "boundary": {
+    "releaseCommit": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+    "parent": "8da34ba008098ba68f6464adc7390dc60c90b44b",
+    "accepted": "f5b1ce8736932859d193fe0ac8f601afb1d15bb9",
+    "tree": "31c74382683c90b1c78f98d46da50919deaad8e1",
+    "includedCommits": [
+      "f5b1ce8736932859d193fe0ac8f601afb1d15bb9"
+    ],
+    "appPaths": [
+      "src/modules/manpower/ManpowerWorkspace.tsx",
+      "src/modules/manpower/group-presentation.ts",
+      "src/modules/manpower/progressive-history.ts"
+    ],
+    "paths": [
+      {
+        "path": "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+        "sha256": "05eb559528f89872c0ddf770a142c2762b75a325ac6bc32ad71286cf8c0bb588"
+      },
+      {
+        "path": "docs/project-memory/CURRENT_STATE.md",
+        "sha256": "aa9f770fcafea175d427520532381f4f243e791ef159ae3892e0908754e6937c"
+      },
+      {
+        "path": "docs/project-memory/evidence/2026-10-29-manpower-default-browser.json",
+        "sha256": "e070083eacd45e48240314c78d3402af02b49d97b2fa8c63b30a5e7bf69eb52b"
+      },
+      {
+        "path": "docs/project-memory/evidence/2026-10-29-manpower-default-retrieval.json",
+        "sha256": "3ad421c0e8db559e5848dac4fc554099bb3e571aadcf925ed329db0cc82bc405"
+      },
+      {
+        "path": "docs/project-memory/evidence/2026-10-29-manpower-default-review-origin.json",
+        "sha256": "5a304fa61010ec93b25c6722a47a8535e7430675a8010ef7a87a27b9fd851886"
+      },
+      {
+        "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+        "sha256": "bf266cb1dcf3e5d9f15e339690f1b583ba57eb4e851c846e7aa355741b2f5fd2"
+      },
+      {
+        "path": "scripts/start-manpower-progressive-review.mts",
+        "sha256": "b2c3fa1af666a39fade244fc7f2318dd871f2627ccb270915dce7a7067722779"
+      },
+      {
+        "path": "scripts/support/manpower-progressive-fixture.mjs",
+        "sha256": "eebc1729f6a0f013f6c1788b28d2dbf9374c1da143a5c5c1a5fd1f28d526b7bf"
+      },
+      {
+        "path": "scripts/verify-manpower-progressive-browser.mjs",
+        "sha256": "b2dd590db355fe1f3c17af834d37ed935a9571dc65e0641f03fbd7662a208967"
+      },
+      {
+        "path": "scripts/verify-manpower-progressive-retrieval.mts",
+        "sha256": "43521e5b43c33810b2992ab1ad486cc3f9268862a5bbd5fb90d6207ba27f77cd"
+      },
+      {
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "sha256": "7abf39104716cfd5d0e237512c49e8b3959478ce5fea1d27794c5d5b584c2504"
+      },
+      {
+        "path": "src/modules/manpower/group-presentation.ts",
+        "sha256": "402096547c076380fae4083eb6ae80b3f48291a7d0f1b90a814dcd974beec08b"
+      },
+      {
+        "path": "src/modules/manpower/progressive-history.ts",
+        "sha256": "ae5f55f9a8a05d066d0a08e4fc89d6486d47899ae72178ca966f058968f122b0"
+      }
+    ],
+    "sourcePaths": [
+      "scripts/start-manpower-progressive-review.mts",
+      "scripts/support/manpower-progressive-fixture.mjs",
+      "scripts/verify-manpower-progressive-browser.mjs",
+      "scripts/verify-manpower-progressive-retrieval.mts",
+      "src/modules/manpower/ManpowerWorkspace.tsx",
+      "src/modules/manpower/group-presentation.ts",
+      "src/modules/manpower/progressive-history.ts"
+    ],
+    "migrationsRequired": [],
+    "configurationChanges": [],
+    "preservedLocalDev": "f5b1ce8736932859d193fe0ac8f601afb1d15bb9",
+    "createdAt": "2026-10-29T15:10:25.524542+00:00"
+  },
+  "rollback": {
+    "canonicalRef": "rollback/manpower-default-20261029-canonical",
+    "sha": "8da34ba008098ba68f6464adc7390dc60c90b44b",
+    "priorRuntime": "5e28d254b8d674ec64ce2ba347c83108366af936",
+    "priorDeployments": {
+      "tendev": "faa8af5a-4e96-43a2-9641-ba6bbefb40f8",
+      "tenops": "395bba78-2861-4e74-a0aa-8b8cdef3c301"
+    },
+    "bundle": "/private/tmp/tenops-manpower-default-release-20261029/release.bundle",
+    "bundleSha256": "5d48240b3ad2f05f1e48e19e683cee2bbac70f9631ee39201914d220bfe6cf52"
+  },
+  "limitations": [
+    "Brief desktop smoke uses actual served frontend with intercepted existing synthetic Auth/data fixtures, not live authenticated hosted business data.",
+    "Accepted local desktop/mobile/read-only/batch-entry evidence reused; no full-history completion, new physical-device or Production latency claim."
+  ],
+  "alignedRemoteAndServed": true,
+  "unrelatedDirtyWorkPreserved": true
+}

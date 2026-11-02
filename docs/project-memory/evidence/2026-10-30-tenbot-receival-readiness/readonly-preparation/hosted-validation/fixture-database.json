@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "failed": 0,
+  "recordedAt": "2026-10-31T02:59:35.194Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "projectRef": "jltgxcfiprocydhbrahz",
+  "migrationSha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580",
+  "actualDatabase": true,
+  "actualPostgreSQL": true,
+  "actualSignedAuthJwt": true,
+  "actualStorageUpload": true,
+  "groups": [
+    {
+      "name": "real signed JWT eligibility, no adjustInventory grant and actual authorized catalog lookup",
+      "durationMs": 890
+    },
+    {
+      "name": "weak actor rejects nonapproved source before allocation; actual private PDF upload/read and concurrent hash reuse",
+      "durationMs": 1414
+    },
+    {
+      "name": "cross-user source RPC/RLS/Storage denial and service-only metadata boundary",
+      "durationMs": 440
+    },
+    {
+      "name": "real source attestation persists a nonexecuting one-Bag draft without durable business records",
+      "durationMs": 176
+    },
+    {
+      "name": "immutable source quantities/transcription and forged approval/execution state are rejected",
+      "durationMs": 578
+    },
+    {
+      "name": "concurrent source-state version retries serialize without changing quantity or creating business records",
+      "durationMs": 204
+    },
+    {
+      "name": "authenticated account is_active revocation denies source and Storage access, then exact active flag is restored",
+      "durationMs": 1597
+    },
+    {
+      "name": "existing retained/bound chris_dev original cannot be reopened by the weaker preparation path",
+      "durationMs": 731
+    },
+    {
+      "name": "expired synthetic source metadata is denied by actual owner RPC/RLS without changing retained originals",
+      "durationMs": 952
+    },
+    {
+      "name": "approval, durable preparation and execution retain stronger permission denial with no operational mutations",
+      "durationMs": 633
+    }
+  ],
+  "passedGroups": 10,
+  "priorReceipt": {
+    "path": "/private/tmp/tenops-tenbot-readonly-preparation-validation-20261030/fixture-test-result.json",
+    "sha256": "36be3b1c87b8da6d1be5a5a58f5f9d3671aa6415c2406d221cb1b0b97d4b3137",
+    "status": "original failed read_only fixture setup preserved; first six passed groups carried"
+  },
+  "resumeReceipt": {
+    "path": "/private/tmp/tenops-tenbot-readonly-preparation-validation-20261030/fixture-resume-result.json",
+    "sha256": "44a87565014bab570fa43259675d9645fc4b82b120890b5c13e4a6683bad0c3e",
+    "status": "four additional groups passed; original erroneous void-return cleanup assertion preserved"
+  },
+  "reconciliation": {
+    "mode": "one actual read-only PostgreSQL snapshot; no mutator retry",
+    "finishReturns": "void",
+    "cleanupActuallyCompleted": true,
+    "expiredSourceId": "aca3029d-1c9a-4720-97c5-9a830f3c4680",
+    "sourceRowPreserved": true,
+    "storageAbsent": true,
+    "unbound": true,
+    "exactProfileRestored": true,
+    "roleCapabilitiesUnchanged": true,
+    "catalogStockPendingDraftApprovalExecutionAuditUnchanged": true,
+    "allWritesOff": true,
+    "activeGrants": 0,
+    "enrollment": 0
+  },
+  "positiveSource": {
+    "id": "7a8f81b1-9898-4c9f-bfd1-3b7a6dec477e",
+    "owner": "3f984e84-a088-49f2-89b6-d4a413fda1ff",
+    "state": "ready",
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "unbound": true,
+    "byteSize": 2877,
+    "draftUnit": "Bag",
+    "unexpired": true,
+    "canApprove": false,
+    "contentType": "application/pdf",
+    "draftStatus": "review_required",
+    "draftQuantity": "1",
+    "privateBucket": true,
+    "sourceQuantity": {
+      "unit": "Bag",
+      "quantity": "1"
+    },
+    "executionEnabled": false,
+    "retainedAtAbsent": true,
+    "durableDraftAbsent": true,
+    "retainedDraftAbsent": true,
+    "storedOriginalPresent": true
+  },
+  "cleanupCorrection": "finish_expired_invoice_receival_source_removal returns void. The prior successful call retired the exact empty expired source; checking result.data.state was a harness error, not an application or cleanup failure. No repeat cleanup was executed.",
+  "specificChrisDevPositive": "Existing retained/bound original preserved and owner denial tested. Positive ungranted Developer upload used another existing synthetic Developer; source-specific new chris_dev insertion remains untested.",
+  "fixtureLedgerAbsent": true,
+  "actualMigrationProof": "exact source attempt SHA and seven changed/four new function plus policy readback; no new fixture ledger/schema initialized",
+  "operationalWrites": 0,
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "productionAccess": false,
+  "remainingSourceRetention": "Positive source remains private, unapproved and subject to existing 24h source TTL; no completed business batch."
+}

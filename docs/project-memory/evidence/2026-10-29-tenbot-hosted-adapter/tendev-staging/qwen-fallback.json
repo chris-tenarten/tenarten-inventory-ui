@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T01:23:45.646Z",
+  "route": "TenDev assistant with paid dispatch disabled",
+  "actualQwen": true,
+  "openaiCalls": 0,
+  "normalMessagingComposer": true,
+  "correctGroupGuidanceObserved": true,
+  "usage": [
+    {
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "outcome": "completed",
+      "createdAt": "2026-10-30T01:22:41.998396+00:00",
+      "inputTokens": 974,
+      "outputTokens": 136,
+      "estimatedNeurons": 8.65
+    }
+  ]
+}

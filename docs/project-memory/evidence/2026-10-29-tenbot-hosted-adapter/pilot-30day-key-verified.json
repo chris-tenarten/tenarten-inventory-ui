@@ -1,0 +1,109 @@
+{
+  "recordedAt": "2026-10-29T22:50:06.069Z",
+  "status": "HOSTED_KEY_METADATA_VERIFIED_AND_PERMISSIONS_CORRECTED_NO_HOSTED_ACTIVATION",
+  "continuesBlockedReceipt": "pilot-30day-key-verification.json",
+  "verificationMethod": "Bounded native Chrome accessibility list and metadata details; no screenshots or one-time secret views",
+  "key": {
+    "name": "TenBotHostedTerraPilot",
+    "trackingId": "key_ImfGQBcK9J5eQ9cn",
+    "projectName": "TenBot",
+    "projectId": "proj_e3Qoebc2IckUzl282v3ys6Yl",
+    "owner": "Chris Ngo",
+    "ownerType": "User",
+    "status": "Active",
+    "createdAtUtc": "2026-10-29T22:46:56Z",
+    "expiresAtUtc": "2026-11-28T22:46:56Z",
+    "exactDurationSeconds": 2592000,
+    "exactThirtyDayDurationVerified": true,
+    "lastUsed": "Never",
+    "displayedMonthlySpendUsd": 0
+  },
+  "initialObservation": {
+    "permissionsMode": "All",
+    "safeDetailsText": "No key-level restrictions configured.",
+    "actualKeyExists": true
+  },
+  "focusedCorrection": {
+    "authorizedScope": "Restrict only the existing hosted pilot key to the originally authorized Responses capability",
+    "sameKeyEdited": true,
+    "keyRecreated": false,
+    "expirationControl": "Keep current expiration",
+    "expirationResetOrChanged": false,
+    "permissionsMode": "Restricted",
+    "responsesUiPermission": "Write",
+    "allOtherResources": "None",
+    "saveToast": "API key updated!",
+    "propagationNotice": "Permission changes may take a few minutes to take effect."
+  },
+  "afterFullReload": {
+    "listPermissionsMode": "Restricted",
+    "safeDetailsOnlyApiResource": "Model capabilities / Responses (/v1/responses)",
+    "actualScopes": [
+      "api.responses.write",
+      "api.responses.read"
+    ],
+    "scopeExplanation": "The UI Responses Write setting grants both Responses write and read scopes. No other API resource was present in the saved key-level permissions list.",
+    "projectOwnerAndKeyIdUnchanged": true,
+    "createdAndExpiresTimestampsUnchanged": true,
+    "scopePropagationViaInferenceTested": false
+  },
+  "projectPolicyReadback": {
+    "projectMaximumLifetimeDays": 30,
+    "projectMaximumLifetimeSeconds": 2592000,
+    "maximumEnabled": true,
+    "defaultServiceTier": "Standard",
+    "allowedServiceTiers": [
+      "Standard"
+    ],
+    "organizationPolicyChanged": false
+  },
+  "creditMetadata": {
+    "balanceUsd": 6.46,
+    "grantTotalUsd": 7,
+    "displayedUsedUsd": 0.54,
+    "state": "Available",
+    "receivedDate": "2026-10-29",
+    "expirationDate": "2026-10-31",
+    "expirationDisplayPrecision": "Date only; no exact time displayed",
+    "automaticRenewalShown": false,
+    "automaticRenewalVerified": false,
+    "walletBalanceUsd": 0,
+    "billingChanges": false
+  },
+  "credentialSafety": {
+    "ownerReportedPrivateSaving": true,
+    "storageLocationOrSecretValueIndependentlyVerified": false,
+    "localOpenAiKeyRead": false,
+    "localOpenAiKeyReused": false,
+    "oneTimeSecretViewOpened": false,
+    "secretCopiedOrRevealed": false,
+    "secretValuesInReceipt": false,
+    "screenshots": false
+  },
+  "cleanup": {
+    "temporaryMetadataTabClosed": true,
+    "originalProjectSettingsTabRestored": true,
+    "cloudflareTabPreserved": true,
+    "uiBindingsReleased": true
+  },
+  "changes": {
+    "onlyHostedKeyPermissionsCorrected": true,
+    "newApiKeysCreatedByAgent": false,
+    "hostedSupabaseSecretConfiguration": false,
+    "hostedSpendingEnabled": false,
+    "inferenceCalls": 0,
+    "inferenceCostUsd": 0,
+    "deployment": false,
+    "migrationApplication": false,
+    "billingOrServices": false,
+    "modelsOrRateLimits": false,
+    "dataSharing": false,
+    "applicationSource": false
+  },
+  "remainingBoundaries": [
+    "No actual API authentication or propagation test was run against the new key.",
+    "Secure hosted secret staging and paid activation were not performed.",
+    "Promotional credits expire on October 31 as a date-only label; ongoing renewal was not established.",
+    "Existing isolated database and deployment release gates remain outside this metadata check."
+  ]
+}

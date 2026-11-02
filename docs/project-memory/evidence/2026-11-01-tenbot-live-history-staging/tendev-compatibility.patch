@@ -1,0 +1,108 @@
+diff --git a/scripts/verify-tenbot-live-history.mts b/scripts/verify-tenbot-live-history.mts
+index 8c77d05..8c6b4c9 100644
+--- a/scripts/verify-tenbot-live-history.mts
++++ b/scripts/verify-tenbot-live-history.mts
+@@ -19,4 +19,9 @@ assert(!renderJobEvidence(buildJobEvidence({...emptyPage,status:'partial',comple
+ const {createTenbotAgentJobTools}=await import('../supabase/functions/_shared/tenbot-agent-operations');const scoped=createTenbotAgentJobTools(f.state.jobTools!,{intent,question:'Which Jobs are they?'});const modelSearch=await scoped.tools.find(t=>t.name==='find_jobs')!.execute({query:'are they'}, {callerId:f.owner,signal:new AbortController().signal});const serialized=JSON.stringify(modelSearch);assert(serialized.includes('CTX-1')&&!serialized.includes('CTX-2')&&!serialized.includes('CTX-3'));checks.push('Primary model-selected find_jobs receives the same retained population even when pronouns appear in its generated query');
+ const {createTenbotAgentSessions}=await import('../supabase/functions/_shared/tenbot-agent-session');const {createTenbotAgentHistoryStore}=await import('../supabase/functions/_shared/tenbot-agent-history-store');let step=0;const primary=createTenbotAgentSessions({readOnlyHosted:true,mode:'openai',sessionStore:createTenbotAgentHistoryStore(f.caller,f.service),can:async()=>true,jobTools:()=>f.state.jobTools!,now:()=>f.state.now,provider:()=>({name:'OFFLINE adversarial transport',model:'no-inference',async step(){step++;const usage={inputTokens:0,cachedInputTokens:0,outputTokens:0,costUsd:0,reservedUsd:0};if(step===1)return{calls:[{id:'discover',name:'discover_capabilities',arguments:{names:['find_jobs']}}],continuation:[],usage};if(step===2)return{calls:[{id:'read',name:'find_jobs',arguments:{query:'are they',include_archived:false,limit:20,cursor:''}}],continuation:[],usage};return{calls:[],continuation:[],usage,final:{answer:'No matching Jobs.',observations:[{text:'No matching Jobs.',evidence_ids:['e1']}],inferences:[],recommendations:[],questions:[],completed_actions:[]}};}})});const primaryReply=await primary({action:'ask',question:'Which Jobs are they?',conversationId:id},f.owner) as {message:string};assert(primaryReply.message.includes('CTX-1')&&!primaryReply.message.includes('CTX-2')&&!primaryReply.message.includes('No matching Jobs'));checks.push('Canonical scoped enumeration overrides a false-zero primary-model answer without a brittle prose filter');
+ const {operationalDigest}=await import('../supabase/functions/_shared/tenbot-operational-history');const fixtureResult={...unavailable,status:'ok',complete:true,data:null,unknowns:[]} as JobToolResult,proof=await operationalDigest(fixtureResult);const crowded=[0,1,2].map(i=>({...structuredClone(receipt),id:crypto.randomUUID(),createdAt:new Date(Date.parse(receipt.answeredAt)-3+i).toISOString(),reads:[0,1,2,3].map(j=>({name:'find_jobs' as const,args:{query:`scope-${i}-${j}`},digest:proof}))}));const bounded=await restoreOperationalHistory(crowded,{execute:async()=>fixtureResult},f.state.now,receipt.scopeDigest,id,'assistant',async()=>true);assert(bounded.kept.some(r=>r.id===crowded[2].id)&&!bounded.kept.some(r=>r.id===crowded[0].id));checks.push('Bounded verification prioritizes the newest answer; older receipts cannot starve or block a successful new turn');
++
++const legacy=f.handler('https://tenops.pages.dev',{origins:['https://tenops.pages.dev'],spendingAuthorized:false});
++const legacyAnswer=await legacy({action:'ask',question:'List current Production Jobs',conversationId:id}) as Record<string,unknown>;assert.equal(legacyAnswer.contentScope,'volatile');assert(!('historyTurns' in legacyAnswer)&&!('history' in legacyAnswer));
++const legacyHistory=await legacy({action:'history',conversationId:id}) as {turns:{answer:{contentScope:string}}[]};assert(legacyHistory.turns.every(t=>t.answer.contentScope!=='operational-history'));assert(f.row(id).state.operational?.length);checks.push('Old Production client receives no new scope or live history while existing private TenDev receipts remain bounded');
++const {readFileSync}=await import('node:fs');const hostedSource=readFileSync(new URL('../supabase/functions/_shared/tenbot-hosted.ts',import.meta.url),'utf8');assert(hostedSource.includes("operationalHistory:options.origin==='https://tendev.pages.dev'"));checks.push('Shared Edge opts only the staged TenDev origin into the new history display contract');
+ console.log(JSON.stringify({passed:true,groups:checks.length,checks,actualInference:false,actualDatabase:false},null,2));
+diff --git a/supabase/functions/_shared/tenbot-agent-session.ts b/supabase/functions/_shared/tenbot-agent-session.ts
+index 4eb336a..370a9be 100644
+--- a/supabase/functions/_shared/tenbot-agent-session.ts
++++ b/supabase/functions/_shared/tenbot-agent-session.ts
+@@ -46,6 +46,8 @@ export type AgentSessionDependencies={
+  mode:'offline-scripted'|'openai';
+  invoice?:{document:TenbotInvoiceDocument;reader(owner:string):TenbotInvoiceReader};
+  readOnlyHosted?:boolean;
++ /** Server-only staged transport gate; legacy clients never receive private live history. */
++ operationalHistory?:boolean;
+  sessionStore?:AgentSessionStore;
+  now?:()=>number;
+  onDiagnostic?:InvestigationDiagnosticSink;
+@@ -74,6 +76,10 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
+  if(deps.sessionStore&&!deps.readOnlyHosted)throw new Error('Durable assistant sessions require read-only hosted mode.');
+  if(deps.readOnlyHosted&&!deps.sessionStore)throw new Error('Hosted assistant sessions require durable storage.');
+  const responseMode=deps.readOnlyHosted?'assistant':'agent-experiment';
++ const operationalEnabled=deps.operationalHistory!==false;
++ // Keep unexpired private receipts from a newer client without publishing them
++ // to the old UI. This gate grants no read, tool or storage authority.
++ const restoreHistory:typeof restoreOperationalHistory=(...args)=>operationalEnabled?restoreOperationalHistory(...args):Promise.resolve({kept:args[0].filter(t=>Date.parse(t.expiresAt)>args[2]),turns:[]});
+  const storedState=(session:Session):StoredAgentState=>({guidance:structuredClone(session.guidance),display:structuredClone(session.display),...(session.operational.length?{operational:structuredClone(session.operational)}:{}),...(session.context?{context:structuredClone(session.context)}:{})});
+  const sessions=new Map<string,Session>(),now=deps.now??Date.now;
+  const publicationAllowed=async(check:()=>Promise<boolean>)=>{
+@@ -148,7 +154,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
+     if(!await deps.can(owner,'readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
+     if(now()-session.touched>3600000||sessions.get(supplied as string)!==session)throw new TenbotError('Conversation unavailable. Reopen TenBot and retry.',403);
+     session.display=published;
+-    const restored=await restoreOperationalHistory(session.operational,deps.jobTools(owner),now(),finalScope,String(supplied),responseMode,p=>sourceIsCurrent(p,owner));
++    const restored=await restoreHistory(session.operational,deps.jobTools(owner),now(),finalScope,String(supplied),responseMode,p=>sourceIsCurrent(p,owner));
+     session.operational=restored.kept;
+     let operationalTurns=restored.turns;
+     if(lease){await deps.sessionStore!.commit(lease,storedState(session),false);committed=true;}
+@@ -157,7 +163,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
+     if(deps.readOnlyHosted&&!await publicationAllowed(async()=>{
+      if(!await deps.can(owner,'readOperationalData')||lease&&now()>=lease.expiresAt||await scopeDigest(owner)!==finalScope)return false;
+      for(const turn of published)for(const proof of turn.sources)if(!await sourceIsCurrent(proof,owner))return false;
+-     operationalTurns=(await restoreOperationalHistory(restored.kept,deps.jobTools(owner),now(),finalScope,String(supplied),responseMode,p=>sourceIsCurrent(p,owner))).turns.concat(restored.turns.filter(t=>t.answer.history.state==='redacted'));
++     operationalTurns=(await restoreHistory(restored.kept,deps.jobTools(owner),now(),finalScope,String(supplied),responseMode,p=>sourceIsCurrent(p,owner))).turns.concat(restored.turns.filter(t=>t.answer.history.state==='redacted'));
+      return await scopeDigest(owner)===finalScope&&deps.can(owner,'readOperationalData');
+     }))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+     return {conversationId:supplied,mode:responseMode,turns:[...published.map(({id,question,createdAt,answeredAt,answer})=>({id,question,createdAt,answeredAt,answer:structuredClone(answer)})),...operationalTurns].sort((a,b)=>a.createdAt.localeCompare(b.createdAt)).slice(-8)};
+@@ -307,14 +313,14 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
+      session.display=[...session.display,{id:historyTurnId,question,createdAt,answeredAt,answer:savedAnswer,sources:proofs,scopeDigest:await scopeDigest(owner)}].slice(-8);
+      const entry=agentKnowledgeEntries().find(x=>x.id===sourceProofs[0].id);session.context=workflowConversationContext(entry?.modules[0]??'TenOps',proofs,false,now());
+     }else{session.guidance=[];session.context=contextFromReads(job.reads(),question,now(),session.context)??(!job.reads().length&&session.context&&!/\b(?:new topic|switch(?:ing)? to)\b/i.test(question)?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);}
+-    const savedOperational=!workflow?await operationalReceipt(job.reads(),question,String(fallback.message),createdAt,now(),await scopeDigest(owner),fallbackProofs):null;
++    const savedOperational=operationalEnabled&&!workflow?await operationalReceipt(job.reads(),question,String(fallback.message),createdAt,now(),await scopeDigest(owner),fallbackProofs):null;
+     if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
+     if(!await job.fresh()||!await can('readOperationalData'))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+     if(lease){await deps.sessionStore!.commit(lease,storedState(session),true);committed=true;}
+     if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await job.fresh())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+-    const rechecked=await restoreOperationalHistory(session.operational,deps.jobTools(owner),now(),await scopeDigest(owner),id,responseMode,p=>sourceIsCurrent(p,owner));
++    const rechecked=await restoreHistory(session.operational,deps.jobTools(owner),now(),await scopeDigest(owner),id,responseMode,p=>sourceIsCurrent(p,owner));
+     if(!await can('readOperationalData')||savedOperational&&!rechecked.kept.some(t=>t.id===savedOperational.id))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+-    return {...fallback,conversationId:id,contentScope:savedOperational?'operational-history':workflow?'workflow':'volatile',fallback:true,historyTurns:rechecked.turns,...(savedOperational?{history:operationalHistoryMeta(savedOperational,now(),false)}:{}),...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};
++    return {...fallback,conversationId:id,contentScope:savedOperational?'operational-history':workflow?'workflow':'volatile',fallback:true,...(operationalEnabled?{historyTurns:rechecked.turns}:{}),...(savedOperational?{history:operationalHistoryMeta(savedOperational,now(),false)}:{}),...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};
+    }
+    session.questions=[...session.questions,question].slice(-3);
+    // Failed/attempted operational tools make a turn ineligible even if no result
+@@ -346,7 +352,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
+     const answer:DisplayAnswer={conversationId:id,mode:responseMode,contentScope,message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,notices:[]};
+     session.display=[...session.display,{id:historyTurnId,question,createdAt,answeredAt,answer,sources:[...ancestry.values()],scopeDigest:await scopeDigest(owner)}].slice(-8);
+    }
+-   const savedOperational=deps.readOnlyHosted&&contentScope==='volatile'&&result.status==='completed'?await operationalReceipt(job.reads(),question,message,createdAt,now(),await scopeDigest(owner),[...ancestry.values()]):null;
++   const savedOperational=operationalEnabled&&deps.readOnlyHosted&&contentScope==='volatile'&&result.status==='completed'?await operationalReceipt(job.reads(),question,message,createdAt,now(),await scopeDigest(owner),[...ancestry.values()]):null;
+    if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
+    if(lease){await deps.sessionStore!.commit(lease,storedState(session),true);committed=true;}
+    if(deps.readOnlyHosted&&!await publicationAllowed(async()=>{
+@@ -358,9 +364,9 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
+     for(const capability of knowledgeGrants)if(!await can(capability))return false;
+     return can('readOperationalData');
+    }))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+-   if(deps.readOnlyHosted){const rechecked=await restoreOperationalHistory(session.operational,deps.jobTools(owner),now(),await scopeDigest(owner),id,responseMode,p=>sourceIsCurrent(p,owner));
++   if(deps.readOnlyHosted){const rechecked=await restoreHistory(session.operational,deps.jobTools(owner),now(),await scopeDigest(owner),id,responseMode,p=>sourceIsCurrent(p,owner));
+    if(!await can('readOperationalData')||savedOperational&&!rechecked.kept.some(t=>t.id===savedOperational.id))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+-   return {conversationId:id,mode:responseMode,contentScope:savedOperational?'operational-history':contentScope,historyTurns:rechecked.turns,...(savedOperational?{history:operationalHistoryMeta(savedOperational,now(),false)}:{}),message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,notices:[],...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};}
++   return {conversationId:id,mode:responseMode,contentScope:savedOperational?'operational-history':contentScope,...(operationalEnabled?{historyTurns:rechecked.turns}:{}),...(savedOperational?{history:operationalHistoryMeta(savedOperational,now(),false)}:{}),message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,notices:[],...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};}
+    return {conversationId:id,mode:'agent-experiment',contentScope,message,sources:[],snapshot:{revision:'tenbot-agent-poc.v1',verifiedAt:answeredAt},summary:null,suggestionAllowed:false,...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{}),
+     notices:[deps.mode==='offline-scripted'?'Local scripted transport demonstration. This is not an OpenAI or Qwen reasoning result.':'Local OpenAI experiment. Review evidence and proposals; no execution capability exists.'],
+     agent:{mode:deps.mode,provider:provider.name,model:provider.model,...result,modelSteps:result.status==='completed'?modelSteps:modelSteps.map(step=>({callCount:step.calls.length,usage:step.usage,durationMs:step.durationMs})),durationMs:now()-before,invoiceAttached:session.invoiceAttached,executionAvailable:false}};
+diff --git a/supabase/functions/_shared/tenbot-hosted.ts b/supabase/functions/_shared/tenbot-hosted.ts
+index 420e7c8..f3923f4 100644
+--- a/supabase/functions/_shared/tenbot-hosted.ts
++++ b/supabase/functions/_shared/tenbot-hosted.ts
+@@ -44,6 +44,8 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
+  const sessions=enabled?createTenbotAgentSessions({
+   can:(_owner,capability)=>_owner===owner?can(capability):Promise.resolve(false),
+   jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,now,
++  // Only the staged TenDev UI understands bounded, reauthorized live history.
++  operationalHistory:options.origin==='https://tendev.pages.dev',
+   sessionStore:historyStore,
+   fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,qwen,undefined,tools,undefined,{context,history}),
+   provider(){

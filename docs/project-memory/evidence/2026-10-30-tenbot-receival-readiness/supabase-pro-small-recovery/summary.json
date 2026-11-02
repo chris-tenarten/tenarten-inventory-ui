@@ -1,0 +1,141 @@
+{
+  "status": "PRO_AND_SMALL_APPLIED_BOUNDED_RECOVERY_VERIFIED",
+  "authority": "Chris: TENOPS — APPROVED SUPABASE UPGRADE & RECOVERY, October30 2026.25USDplusapplicabletaxPro,~40USDmonthlyorgcost,onlytenartenDBSmall2GB. Owner privately completed Pro purchase. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "payment": {
+    "plan": "Pro",
+    "organization": "tenarten-terrazzo",
+    "organizationId": "uxxhpnseynojdgabanrv",
+    "actualPaidInvoiceUsd": 26.6,
+    "invoice": "AUXWOO-00009",
+    "date": "2026-10-30",
+    "status": "PAID",
+    "approvedBaseQuoteUsd": 25,
+    "taxBreakdown": "Not inspected; actual total is verified without assuming the1.60USDdifference is a particular tax line.",
+    "purchaseActor": "Owner; operator did not click purchase or handle payment information",
+    "paymentInformationRecorded": false
+  },
+  "compute": {
+    "targetProject": "vxdxjhazkqhpkwdqtobp",
+    "name": "tenartenDB",
+    "region": "us-east-1",
+    "before": "Nano up to0.5GB",
+    "after": "Small2GB",
+    "apiVariant": "ci_small",
+    "hourlyUsd": 0.0206,
+    "confirmedBy": [
+      "Fresh ManagementAPI selected addon ci_small/2GBmetadata",
+      "Dashboard primary Small and Small2GB radio selected, transition banner cleared",
+      "DB/Auth healthy and database max_connections90 after actual restart"
+    ],
+    "fixture": {
+      "ref": "jltgxcfiprocydhbrahz",
+      "name": "tenbot-readonly-validation-20261029",
+      "allocation": "Nano unchanged",
+      "addonResponseSha256": "3f7361f79735878bf0cb26f29ef2445faaf29a2ec1c707e00912befef13166b7",
+      "exactBeforeAfterResponseHashEqual": true
+    },
+    "otherAddons": "None added; target selected addons only compute_instance/ci_small",
+    "ongoingCost": "Approximately40USD/month before tax and other usage with both existingprojects; hourlymetering and shared10USDcomputecredit. ExistingfixtureNano billedMicro rate, allocation unchanged."
+  },
+  "action": {
+    "method": "PATCH",
+    "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/billing/addons",
+    "body": {
+      "addon_type": "compute_instance",
+      "addon_variant": "ci_small"
+    },
+    "submittedAt": "2026-10-30T23:52:08.667Z",
+    "acknowledgedAt": "Fri, 30 Oct 2026 23:52:13 GMT",
+    "status": 200,
+    "latencyMs": 5181,
+    "requestIdentifier": "a52e54fefc7e75d5-IAH",
+    "resizeSubmissions": 1,
+    "automaticRetries": 0,
+    "manualRestarts": 0,
+    "databaseStartedAt": "2026-10-30T23:53:21.428532+00:00",
+    "interruption": "Transition showed project offline/resizing. Exact downtime was not continuously measured; healthy verified at23:55:39Z,3m31s after request. Do not present that full interval as measured downtime."
+  },
+  "recovery": {
+    "initialHealthAt": "2026-10-30T23:55:40.380Z",
+    "initialDatabase": "ACTIVE_HEALTHY",
+    "initialAuth": "ACTIVE_HEALTHY",
+    "initialHealthLatencyMs": 300,
+    "delayedHealthAt": "2026-10-30T23:58:58.602Z",
+    "delayedDatabase": "ACTIVE_HEALTHY",
+    "delayedAuth": "ACTIVE_HEALTHY",
+    "delayedHealthLatencyMs": 354,
+    "sql": {
+      "status": 201,
+      "latencyMs": 254,
+      "readOnly": "on"
+    },
+    "authorizedRestAndUi": "GenuineAdminTenOps and genuineDeveloperTenDev restored. Inventory freshly refreshed and Messaging Inbox reads passed; delayed ProductionInventory/Inbox and TenDevInventory checks passed. No inference submitted.",
+    "publicInventoryPages": {
+      "tenops": 200,
+      "tendev": 200
+    },
+    "qualification": "Availability recovered throughout this bounded post-resize verification. Long-term stability and initiating cause are not established."
+  },
+  "resources": {
+    "observedAt": "2026-10-30T23:55:39.953Z",
+    "metricsStatus": 200,
+    "memoryTotalBytes": 1924182016,
+    "memoryAvailableBytes": 1352036352,
+    "availableRamDecimalGB": 1.352036352,
+    "swapUsedBytes": 69632,
+    "swapUsedKiB": 68,
+    "committedBytes": 1509126144,
+    "commitLimitBytes": 2035826688,
+    "commitPercent": 74.12841932446462,
+    "pgUp": 1,
+    "exporterScrapeError": 0,
+    "newHostOomCounter": 0,
+    "interpretation": "Current headroom substantially better than earlier severe commitment/substantialswap warning. AbsoluteCommitted_AS is not claimed to have decreased. Currenthost OOMcounter0 does not exclude an oldhostOOM or prove cause."
+  },
+  "safeguards": {
+    "pilotEnabled": false,
+    "executionEnabled": false,
+    "activeGrants": 0,
+    "enrollment": 0,
+    "permits": 0,
+    "oldReservation": {
+      "id": "84c8e242-4f99-4573-a6c3-6b19a01ef7ee",
+      "state": "reserved",
+      "settledAt": null,
+      "reservedMicrousd": 61139
+    },
+    "modelCalls": 0,
+    "inferenceBudgetOrCutoffExtended": false,
+    "operationalWritesRequested": 0,
+    "migrations": 0,
+    "rlsOrRoleChanges": 0,
+    "schedulerChanges": 0,
+    "credentialChanges": 0,
+    "deployments": 0,
+    "additionalServicesPurchased": 0,
+    "sourceEdits": 0
+  },
+  "remaining": {
+    "rootCause": "Unconfirmed. Larger memory/resource allocation correlates with recovery; do not claim proven OOM or particular workload trigger.",
+    "stability": "Short bounded check, not permanent reliability proof.",
+    "oldInferenceReservation": "61139microUSD/$0.061139 reserved from earlier request remains unchanged; reconcile provider/accounting separately before releasing or retrying.",
+    "inference": "Existing finite hosted cutoff remains expired; no new inference or budget extension was authorized/tested.",
+    "support": "High-severity ticket already submitted; recovery did not fail in this pass, so no new ticket or message was sent. Owner can provide measured Small-recovery evidence in the existing thread.",
+    "authFix": "Accepted ec62998/prepared selective da5a9246 unchanged and undeployed; it remains a separate release decision."
+  },
+  "recommendedInvestigation": [
+    "Review now-available memory/swap/commitment/connection trends onSmall with Supabase Support to identify the original incident cause.",
+    "Inspect only relevant scheduled workload and failure-time query evidence if new telemetry supports a trigger; no speculative pausing or broad query campaign.",
+    "Reconcile employees' interrupted submissions before manual retries; no blanket replay."
+  ],
+  "preserved": {
+    "devHead": "ec62998aba228e615279ae7d6e81f04378e62062",
+    "tenDevRuntime": "ce157b99e31c227480c479169e0a480a6d509bf1",
+    "tenOpsRuntime": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "unrelatedWorkAndIndex": true,
+    "localhost3000": "Existing PID79102 untouched",
+    "nativeAccessReleased": true
+  },
+  "evidenceValidation": "Actual applied-state, service health/metrics, read-onlySQL and genuinebrowserread checks. Reused acceptedsecurityevidence; no broadQA/build/modelbenchmark."
+}

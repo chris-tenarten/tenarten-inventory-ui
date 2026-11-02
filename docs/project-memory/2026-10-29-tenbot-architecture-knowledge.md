@@ -265,3 +265,55 @@ Equivalent authorized aliases no longer consume the direct four-result/two-seed 
 Tier 3 / focused Level 3: nine retrieval regression groups, all 15 existing architecture/provenance groups, unchanged generated-knowledge reproducibility, candidate-only Production export, TypeScript, explicitly included Edge/script ESLint, diff check and independent review pass. The isolated archive contains HEAD plus only the two task source/test files, excluding the unrelated dirty runtime/latency change; synthetic public localhost configuration and no provider credentials were used. Prior relevant browser/history evidence is reused for this backend-only delta. No new inference, provider comparison, database or hosted request was made.
 
 **Implemented locally, pending Product review.** Generated facts, authority/proof format, grants, Terra/Qwen dispatch, history, spending and migrations are unchanged. Existing exact runtime/migration/source-review holds remain; this commit does not authorize a release or a whole-dev promotion. Pre-existing dirty receipts/runtime work and untracked evidence are preserved. Only task-owned source, regression, this section and compact Current State/execution handoffs are selected for the authorized local commit. No push, deployment, database changes or review-server replacement.
+
+
+## Final selective knowledge release-hold review — October 29, 2026
+
+Chris's **TENBOT — FINAL KNOWLEDGE RELEASE-HOLD REVIEW** accepts `85b73182ecfcd8ff99e6f2523d233d1e77b25fdc` and freezes retrieval behavior. This is a review-only task: no new source classification is committed, no retrieval/runtime code or gate changes, no inference, hosted call/mutation, push or deployment. Separate Advisory remains unavailable; the current explicit Product decision governs. Tier 3 focused semantic/source-proof review reuses completed retrieval, migration and hosted Terra release verification.
+
+The retained executed Terra evidence now establishes baseline **`9a7c6249851fad76f72454ccd5c045dbee5ad50d`**, tree `c294d3314f6171a8899b11bfd5e58c9a6c843ccf`, TenDev `845b86cf-2d17-46a0-bef4-3712e65064c5` and TenOps `2019c461-3dab-422f-b750-64a17fcdcc2e`. Shared Edge v15 retains JWT verification and accepted bundle `7517faa181df6008539576b4edd237e0e647ef65fdf80e7491a234d65c19bf9f`. The [authentic TenOps executed section](2026-10-28-tenbot-openai-agent-poc.md#approved-tenops-terra-pilot-released--october-29-2026) and its source/ledger/deployment receipts supersede the prior unreleased reasons. These are retained findings, not fresh hosted verification. The latest release receipt/evidence is still dirty/untracked, and its Approved headings do not satisfy the existing generator's committed Executed proof format; this review does not invent such proof or weaken the gate.
+
+| Exact held path / record | Review decision and reason |
+|---|---|
+| `supabase/functions/_shared/tenbot-agent-history-store.ts` | **historically-deployed**: Owner-history source and executed hosted history evidence now resolve old unreleased-persistence reason. |
+| `supabase/functions/_shared/tenbot-agent-operations.ts` | **accepted-knowledge-delta**: Accepted architecture retrieval and85b alias deduplication; include exact accepted bytes, not a historical-deployed label. |
+| `supabase/functions/_shared/tenbot-agent-session.ts` | **accepted-knowledge-delta**: Only accepted shared projection, source/authority proofs, registry links and selected-source grant rechecks differ from deployed baseline. |
+| `supabase/functions/_shared/tenbot-agent.ts` | **historically-deployed**: Committed candidate orchestration is byte-identical to deployed runtime; dirty latency correction excluded. |
+| `supabase/functions/_shared/tenbot-hosted.ts` | **historically-deployed**: Routing, fallback and durable infrastructure match executed deployed source. |
+| `supabase/functions/_shared/tenbot-invoice.ts` | **historically-deployed**: Static module matches deployed source; hosted construction still excludes invoice/preparation tools. Presence grants no execution authority. |
+| `supabase/functions/_shared/tenbot-openai-metering.ts` | **historically-deployed**: Paid accounting matches deployed source and executed canary/accounting evidence; no budget change. |
+| `supabase/functions/_shared/tenbot-openai.ts` | **historically-deployed**: Provider dispatch matches deployed source; no provider or model change. |
+| `supabase/functions/tenbot/index.ts` | **historically-deployed**: Exact deployed dispatcher/RPC allowlist/JWT configuration retained. |
+| `supabase/migrations/20261029210000_invoice_pending_receival_approval.sql` | **excluded-genuine-semantic-hold**: Absent from released baseline and shared ledger; approval/execution/RLS contract remains held for any future write release. No knowledge dependency requires it. |
+| `supabase/migrations/20261029220000_tenbot_openai_metering.sql` | **historically-deployed**: Exact assistant migration applied and registered atomically on shared backend during authorized staging; final TenOps ledger readback confirms it. Do not apply again. |
+| `supabase/migrations/20261029221000_tenbot_agent_history.sql` | **historically-deployed**: Exact assistant migration applied and registered atomically on shared backend during authorized staging; final TenOps ledger readback confirms it. Do not apply again. |
+| `knowledge-messaging` → `docs/project-memory/CURRENT_STATE.md` | **documentation-no-claim-impact**: Only five appended retrieval status lines changed exact reviewed bytes in85b. The selected privacy/Proposal paragraphs and claim/grant digest are identical in reviewed, accepted and released sources. Keep canonical document; renew exact proof for selective tree. |
+| `knowledge-proposals` → `docs/project-memory/CURRENT_STATE.md` | **documentation-no-claim-impact**: Only five appended retrieval status lines changed exact reviewed bytes in85b. The selected privacy/Proposal paragraphs and claim/grant digest are identical in reviewed, accepted and released sources. Keep canonical document; renew exact proof for selective tree. |
+
+Thus nine old runtime/migration reasons are resolved by exact deployed evidence, two paths are the explicitly accepted knowledge/retrieval delta, and both Current State questions are unchanged-document cases. The one receival approval/execution migration remains genuinely held, but lies outside the selective release; it is absent from both the deployed baseline and proposed tree. No new migration or policy/budget/configuration change is required. Seven deployed runtime files, both already-applied assistant migrations and all other baseline source remain byte-identical. The dirty latency correction and its verifier are unrelated and excluded.
+
+Exact accepted source selection, based on9a7c624 rather than a whole-dev promotion:
+
+| Path | Accepted85b blob |
+|---|---|
+| `supabase/functions/_shared/tenbot-agent-knowledge.ts` | `d0baddb6724515063567da43370437c886e60a84` |
+| `supabase/functions/_shared/tenbot-agent-operations.ts` | `0b90dd83531e6b95363322f888b5637c530bca1c` |
+| `supabase/functions/_shared/tenbot-agent-session.ts` | `c521fad047d387b226568f33a9213e9f4e564d3a` |
+| `supabase/functions/_shared/tenbot-knowledge-snapshot.ts` | `e8f07cd86dba84e41ddc970ce717af05ac169edb` |
+| `supabase/functions/_shared/tenbot-knowledge.ts` | `16a59ae220abcab962fc971597aa864b46b2ae70` |
+| `package.json` | `ad66e4b8d3b39f5f59b614724da3a97bdc7f53ea` |
+| `scripts/generate-tenbot-knowledge.mjs` | `b3f76af6014524a9fa7abdc351e15058ee13e39f` |
+| `scripts/tenbot-knowledge/architecture.mjs` | `f87090d98ff61914fb99844513246f37b2865b97` |
+| `scripts/tenbot-knowledge/infrastructure-reviews.json` | `f82a73f676687ab5516a5751a839fef8633b9c1d` |
+| `scripts/tenbot-knowledge/manifest.mjs` | `f9695bb04977b26f72f8da35f291a9dffc258ba9` |
+| `scripts/tenbot-knowledge/release-evidence/manpower-20261029.json` | `820f0990017755b07ae07436904decf33a99c428` |
+| `scripts/tenbot-knowledge/release-sync.mjs` | `14d42bc8a657c107af68200c8ab7f272b7ac2230` |
+| `scripts/tenbot-knowledge/source-reviews.json` | `1b834e4f7d6614fc484b3fc89783b5c2b4d8abdb` |
+
+These are five runtime files and eight generator/maintenance/package paths. The session delta is only shared safe projection, stronger source/authority proofs, actual-registry capability links and selected-source grant rechecks. Existing hosted construction still excludes invoice/preparation/write capabilities. Module imports close against deployed9a source. Package changes add only the prebuild generator hook and sync/review commands, without dependency upgrades. Carry focused verifiers/evidence separately. Snapshot and review manifest bytes may change only for the necessary proof refresh; accepted knowledge contents, relations, grants, tool availability and retrieval behavior remain frozen.
+
+Focused proof validation passed unchanged knowledge reproducibility and a static exact-tree selection check: only these13source paths differ, every other baseline file and all migrations remain unchanged, and the invoice approval migration is absent. Fresh read-only full-SHA review of85b intentionally still returns **exit1 / review-required**, reproducing exactly12path holds plus two Current State `candidate-source-changed` holds. **Zero machine holds were cleared during this review.** No clean selective candidate or passing release gate is claimed.
+
+Before a selective release can be cleared, preserve the authentic executed Terra evidence in committed compatible proof form and bind the accepted operations/session delta. Retain canonical Current State and Product Manifest. Of the38old no-claim comparisons,23still match selected bytes and every helper,12are inapplicable because selected source equals the original pinned blob, and three unchanged document comparisons need exact same-tree receipts: Messaging/Proposal Current State plus the Inventory Project Manifest comparison. The latter's three selected receiving paragraphs are also identical; do not promote unrelated dev documentation or Inventory helpers to satisfy stale metadata. Omit only inapplicable reviews, renew these exact comparisons, regenerate deterministic proof metadata/artifact and run the unchanged full-SHA clean-candidate gate. No exclusion whitelist, old-document rollback or automatic semantic approval is justified.
+
+**Knowledge/retrieval-only promotion is safe in scope, conditional on that proof preparation and a passing candidate gate.** The complete dev bundle is not approved, and no actual release candidate has been cleared. Necessary Product decision: accept this selective boundary and authorize proof-only source/evidence preparation, followed by normal separate release approval. No new business-rule/permission decision is needed; the write migration remains deferred. [Full14-hold decisions, exact source scope and proof evidence](evidence/2026-10-29-tenbot-final-knowledge-hold-review.json). Stop for Product review.

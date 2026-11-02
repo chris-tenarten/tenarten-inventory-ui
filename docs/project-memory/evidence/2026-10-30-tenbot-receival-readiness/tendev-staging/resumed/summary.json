@@ -1,0 +1,127 @@
+{
+  "status": "TENDEV_STAGED_DISABLED; WRITE_CANARY_HELD",
+  "recordedAt": "2026-10-30T17:10:23.202Z",
+  "authority": "Chris: RESUME APPROVED TENDEV STAGING; exact d7a88fc /35bb064c accepted; canary separately approval-gated",
+  "riskTier": 3,
+  "testingLevel": "Focused Level 3; existing isolated 28 database groups and correction evidence reused",
+  "source": {
+    "dev": "d7a88fceaa656e94470b3d7c6183e345b230a973",
+    "served": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+    "tenDevDeployment": "b3401edf-3218-45ff-af84-c8dd63e94ca8",
+    "tenOpsUnchanged": "966ec1da-e537-4582-a82b-0c7a116daf58"
+  },
+  "migrationCount": 11,
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc"
+    },
+    {
+      "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7"
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63"
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441"
+    },
+    {
+      "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742"
+    },
+    {
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00"
+    },
+    {
+      "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d"
+    },
+    {
+      "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284"
+    },
+    {
+      "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03"
+    },
+    {
+      "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3"
+    },
+    {
+      "path": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+      "sha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496"
+    }
+  ],
+  "appliedAtomically": true,
+  "newHostedChecks": {
+    "sourceAssets": 34,
+    "exactEdgeBundles": 2,
+    "anonymousAndMalformedJwtDenials": 4,
+    "cleanupDisabledInitialSmoke": true,
+    "actualAdminMessagingHelpAndInternalTestJobRead": true,
+    "guidanceRestorationAndNoLiveJobRetention": true,
+    "canonicalInventoryQueueLoaded": true,
+    "privateBucketAndRlsMetadata": true,
+    "signedCleanupBadSignatureReplayCancellationRevocationConcurrencyRetry": true,
+    "actualCronZeroDeletionRun": true,
+    "hourlyCleanupActive": true
+  },
+  "reusedEvidence": {
+    "isolatedRealDatabaseGroups": 28,
+    "focusedProofGroups": 18,
+    "actualProofGuardRejections": 4,
+    "cleanupCryptoHttpGroups": 14,
+    "realPostgresRollbackCleanupGroups": 9,
+    "mandatoryCleanCandidateBuild": true
+  },
+  "deferredHostedChecks": [
+    "Actual synthetic employee approval/revocation and original-upload lifecycle through the hosted UI, followed by one canonical pending-row creation and retry/result/cancel verification, await separately approved canary.",
+    "No new destructive retained-document test or forced hosted timeout/uncertain-charge test; accepted isolated evidence reused.",
+    "Qwen forced fallback not repeated: accepted hosted proof and unchanged deployed provider source/settings retained."
+  ],
+  "controls": {
+    "pilotEnabled": false,
+    "executionEnabled": false,
+    "enrolledEmployees": 0,
+    "ordinaryEmployeeWrites": false,
+    "cleanupMaintenanceOnly": true,
+    "cleanupJob": "tenbot-invoice-original-expiry",
+    "cleanupSchedule": "23 * * * * UTC",
+    "completedOriginalsRetained": true,
+    "sharedSpendingPolicyUnchanged": true,
+    "capUsd": 4,
+    "perEmployeeDayUsd": 0.25,
+    "perRequestUsd": 0.25,
+    "expiresAt": "2026-10-30T23:00:00Z"
+  },
+  "spending": {
+    "sharedInterval": {
+      "steps": 8,
+      "models": [
+        "gpt-6.1-terra"
+      ],
+      "measured": 8,
+      "requests": 2,
+      "reserved": 0,
+      "uncertain": 0,
+      "actualMicrousd": 14352,
+      "accountedMicrousd": 14352
+    },
+    "remainingAllowanceUsd": 3.79193,
+    "existingReservationsPreserved": true,
+    "attribution": "All shared-hosted usage since staging preflight, including possible concurrent employee traffic; not exclusive attribution to browser checks."
+  },
+  "remainingBlocker": "Suggested chris_dev is active Developer with TenDev access but lacks adjustInventory; no access changes made. Exact authorized identity/catalog/PDF/window/cancellation plan must be approved before a canary.",
+  "operationalWrites": 0,
+  "sourceUploads": 0,
+  "storageDeletions": 0,
+  "productionPagesDeployment": false,
+  "gitPush": false,
+  "newImplementationChanges": false,
+  "advisoryThreadAvailable": false
+}

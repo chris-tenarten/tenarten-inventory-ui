@@ -1,0 +1,61 @@
+{
+  "recordedAt": "2026-10-30T17:27:19.764Z",
+  "status": "PREPARED_ONLY_NOT_EXECUTED",
+  "files": [
+    {
+      "path": "canary-contract-review.json",
+      "sha256": "6b97e0aa6ecad581e43b5f8022e383bf7585f84c49b1c2b04077a968fde33f2d"
+    },
+    {
+      "path": "canary-plan.json",
+      "sha256": "1e8db072048d3c30c3243bfb3eaca8139ce8b8d001f73b2d109cd00305b402fe"
+    },
+    {
+      "path": "canary-preparation-independent-review.json",
+      "sha256": "087c2b4b48cfeef704649e38468550db0b7f89ebcce3405435976f5285991205"
+    },
+    {
+      "path": "catalog-reference.json",
+      "sha256": "92678f29bb3230315732d3b9f5bb31b149228a11b53dea00a684109a558c8816"
+    },
+    {
+      "path": "conditional-cancellation-review.json",
+      "sha256": "a25872ab126f8fcbe5f7e01d9db2cf6eb02196c41b024ef56a6f91e4438562bc"
+    },
+    {
+      "path": "exact-quantity-check.json",
+      "sha256": "df56230bbea76f0152afa590b82e8c897bd90113f0e6723c7009dc1a0af27a2b"
+    },
+    {
+      "path": "final-controls-readonly.json",
+      "sha256": "7c654b14d485f79260b7ca2c4c1c8f56cfaa545a6fb4774ecb85941d348318f4"
+    },
+    {
+      "path": "identity-selection.json",
+      "sha256": "03ee6e3f9d3eeca9749e30eb792b8bf576d81aaf70e5ae31e70b475823f1a7c6"
+    },
+    {
+      "path": "output/pdf/synthetic-tendev-receival-20261030-01-page-1.png",
+      "sha256": "ff06f2509d07d12bd567798ed293a176dc0a9bfe39dc08653ae0fc831d8176b2"
+    },
+    {
+      "path": "output/pdf/synthetic-tendev-receival-20261030-01-receipt.json",
+      "sha256": "a98033560b4657a90fe79fe4fc8e06d96bca3ce833a8cfba639363e52f13318a"
+    },
+    {
+      "path": "output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+      "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a"
+    },
+    {
+      "path": "output/pdf/synthetic-tendev-receival-20261030-01.txt",
+      "sha256": "3a4c9cf7a26f48aaf85677a81fa47f992e9846962f5946c601e9a1b93f861a31"
+    }
+  ],
+  "privateScratch": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030",
+  "notCopied": [
+    "Raw multi-employee profile lookup, Auth fields, login emails, tokens/secrets, API credentials or session files"
+  ],
+  "inferenceCalls": 0,
+  "hostedMutations": 0,
+  "permissionChanges": 0
+}

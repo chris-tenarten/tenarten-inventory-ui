@@ -1,0 +1,119 @@
+TENOPS GIT & WORKSPACE HYGIENE — OCTOBER 30, 2026
+
+Completed: autonomous audit and narrow, proven regenerable-cache removal.
+Authority: Chris’s current maintenance request. Tier 3 retention/deletion caution;
+focused filesystem/Git preservation checks. No application-code edits, commits,
+push, deployment, migrations, application database operations or product changes.
+Separate Advisory context was not consulted; no Product intent was inferred.
+
+BEFORE / AFTER
+* Worktrees: 65 -> 65 registrations; 62 existing, 3 genuinely absent; 24 detached.
+  61 existing checkouts inspected: 55 clean, 6 with tracked/untracked changes.
+  MRP status enumeration timed out; its state/ownership remains uncertain.
+* Local branches: 139 -> 139. Remote/tracking branches: 9 -> 9. Tags: 0.
+* TenOps candidate/proof/release/staging refs: 15 -> 15, exact SHAs preserved.
+  Includes candidate 2a3e45c, release c63527c and staging 9a7c624.
+* Codex transient snapshot refs: 15 at first and final inventory, with automatic
+  replacement between samples. Maintenance issued no ref-changing commands.
+* Removed cache footprint: 1,271,169,195 logical bytes (1.271 GB / 1.184 GiB),
+  1,271,349,248 allocated file bytes; 90 files in 3 exact directories.
+  Observed filesystem available-space increase: 0 bytes. Physical reclamation
+  is not claimed; no snapshots/volumes were altered to change this metric.
+
+COMPLETED CLEANUP — CLASS C
+Removed only Webpack .pack/.pack.old files and then their empty directories:
+1. /private/tmp/tenops-intake-webpack-cache-20261027
+   385,676,640 logical bytes.
+2. /private/tmp/tenops-intake-reconciliation-webpack-cache-20261027123456
+   450,711,267 logical bytes.
+3. /private/tmp/tenops-tenbot-review/webpack-cache-before-floating-1793117765
+   434,781,288 logical bytes. Its entire parent review directory remains.
+
+Safety: exact nonsymlink paths, regular cache-pack files only, historical receipts
+identify moved reproducible caches followed by successful fresh-cache exports;
+references are historical, not runtime/script consumers. lsof +D reported no open
+users for each target. Full leaf manifest, inode/size/change checks and independent
+scope/evidence review passed. No unknown directory was recursively deleted.
+
+PRESERVED / CLASSIFICATION
+A — Active: primary dev checkout and TenBot pending-receival implementation;
+    original TenBot and knowledge threads remain referenced in read-only local
+    Codex metadata/held writer locks. Port 3000 / PID 10957 serves the receival
+    application-v2 fixture; adapter 55596 / PID 17403 remains intact. Root .next,
+    out, node_modules, environments, migrations and all source changes retained.
+B — Historical: all receipts, security evidence, provenance/source archives,
+    detached release checkouts, refs, rollback/history branches, archived Git
+    metadata and required exports retained. No evidence deletion or consolidation.
+C — Disposable cache: only the three explicit directories above were removed.
+D — Stale registrations/branches: no pruning or deletion performed. Three missing
+    checkout registrations are deliberately retained. Two have reflog-dependent
+    history; blind git worktree prune would discard their recovery metadata.
+E — Uncertain: MRP checkout, unmatched branch work, dirty/source/evidence-bearing
+    candidates, unregistered release/source copies and nested Itenify research
+    retained. Timestamp, absence of an open descriptor or branch ancestry alone
+    was not treated as abandonment. Earlier observed MRP Git use was this audit’s
+    own enumeration, not proof of an independently active owner.
+
+CANONICAL REFS AND CONCURRENT WORK
+Primary: /Users/chrisngo/source/repos/tenarten-inventory-ui, branch dev.
+Final local dev: a49ae7b49cc49a97788a6db5cc72335caf76f9b2 (ahead 48 / behind 14).
+Local main: ae50e0fc55a7a6d9e454016c5d73a58e792aff79 (behind 5).
+Remote dev/main and tracking refs: c63527cc2f270a5d8cdb41890bd871b489be467d.
+Read-only ls-remote matched tracking heads; no fetch/reconciliation was needed.
+
+During initial inspection, the active implementation thread committed pending
+receivals, advancing dev from 85b7318 to a49ae7b. No maintenance command changed
+branches or the index. Initial staged/source work was therefore preserved through
+its owner’s commit rather than frozen against that owner. Immediately around the
+actual cache deletion, refs, worktree inventory, status, index hash and all 1,434
+protected file hashes matched exactly, including evidence and local environments.
+
+HEALTH / RETENTION CONCERNS
+Connectivity-only fsck passed with no missing-object errors; this is not a full
+object-content audit. With reflogs excluded, 47 commits are outside current refs.
+Three known historical commits have no containing ref and remain in branch and
+worktree reflogs: 1941e068da6d8a75a1ec0d0662f3856c30227fea,
+f1ac2d43beedbcde9d22498bbd07190f0df37786,
+a0b4532f0af3a505e67dd0eb0b39271e010f4de1.
+This is a retention concern, not demonstrated corruption. No GC, reflog expiry,
+object pruning, stale-lock deletion, forced removal or history rewrite occurred.
+No Git operation lock/merge/cherry-pick/rebase metadata was found. Live Codex
+writer/SQLite locks were preserved. The October 21 housekeeping archive and its
+RESTORE.txt remain accessible. 88 branch tips are canonical ancestors; 51 retain
+commits outside canonical histories. Patch-equivalence examples confirm selective
+release ancestry cannot safely be treated as a blanket deletion rule.
+
+Read-only development smoke: localhost:3000/my-work returns 200 with identical
+before/after HTML; sampled JS/CSS return200. Adapter exact-origin OPTIONS returns
+204; missing-origin GET is correctly rejected 403. Both listener PIDs remain.
+No creation, document-generation, inference, application build or test suite run.
+No hosted application or business data was accessed or changed.
+
+PROPOSED ONLY — PRODUCT/OWNER REVIEW BEFORE ACTION
+* Establish explicitly approved durable recovery refs for the three historical
+  commits before revisiting the two reflog-bearing missing registrations.
+* Consider removing 16 fully-retained ordinary branch labels with no worktree,
+  after owner confirmation. The evidence lists exact names/SHAs; candidates,
+  release/proof, archive, rollback and unique-history refs are excluded.
+* Review ownership/provenance before any larger consolidation of .worktrees
+  (~6.03 GB), retained release/source copies or TenBot review scratch. Preserve
+  source snapshots, exports and evidence required by accepted/released work.
+
+Evidence: docs/project-memory/evidence/2026-10-30-workspace-hygiene.json.
+Raw sanitized audit snapshots/removal script:
+/private/tmp/tenops-workspace-hygiene-20261030/.
+Only this report and the focused evidence JSON were added by maintenance;
+they remain uncommitted. Existing dirty/staged work and all refs are preserved
+by maintenance; concurrent owner work is called out above.
+
+Audit-process disposition: the exhaustive MRP read-only Git status scan stalled.
+After OS approval, audit-owned PID 51147 and its parent 51141 were stopped with
+SIGTERM. Both have exited; no implementation process or another ongoing Git
+operation was targeted. The bounded inventory remains complete for the other
+61 existing checkouts; MRP content/state remains unverified and preserved.
+
+Final concurrent-work note: while OS permission was pending, the original TenBot
+thread continued its implementation and added further modified/untracked source,
+verifiers and migrations. Those are preserved and listed in the final evidence
+check. Persistent refs and the index remain unchanged; no baseline status entry
+was removed. Do not read this report as freezing another thread’s working state.

@@ -1,0 +1,92 @@
+{
+  "passed": true,
+  "fixtureRef": "ahnqbzuhpwgmispwohwv",
+  "completed": [
+    {
+      "file": "01-released-identity-foundation.sql",
+      "sha256": "4a0a2fe62054862dde13203c185319e21b63a349613020310570a6d9852eb66e",
+      "applied": true
+    },
+    {
+      "file": "02-inventory-foundation.sql",
+      "sha256": "8b46e0aead4eaddcfec7ce90546c80ca56f0034af789c83443dbd0e1ef1a26de",
+      "applied": true
+    },
+    {
+      "file": "03-20261029210000_invoice_pending_receival_approval.sql",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc",
+      "applied": true
+    },
+    {
+      "file": "04-20261029220000_tenbot_openai_metering.sql",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+      "applied": true
+    },
+    {
+      "file": "05-20261030110000_catalog_write_authorization.sql",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7",
+      "applied": true
+    },
+    {
+      "file": "06-20261030120000_invoice_dependent_pending_receivals.sql",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63",
+      "applied": true
+    },
+    {
+      "file": "07-20261030130000_invoice_receival_runtime_validation.sql",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441",
+      "applied": true
+    },
+    {
+      "file": "08-shared-inventory-contract-projection.sql",
+      "sha256": "5cdf056eb939cb243a343fd48202ff857ddeaa4d2dd27f636c19f6d385a684e8",
+      "applied": true
+    },
+    {
+      "file": "09-20261030140000_invoice_receival_shared_compatibility.sql",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742",
+      "applied": true
+    },
+    {
+      "file": "10-20261030150000_invoice_receival_originals.sql",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+      "applied": true
+    },
+    {
+      "file": "11-20261030160000_invoice_receival_pilot_permits.sql",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+      "applied": true
+    },
+    {
+      "file": "12-20261030170000_invoice_original_storage_compatibility.sql",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+      "applied": true
+    },
+    {
+      "file": "13-20261030180000_invoice_original_backend_fail_closed.sql",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+      "applied": true
+    },
+    {
+      "file": "14-20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+      "applied": true
+    }
+  ],
+  "state": {
+    "grants": 0,
+    "pending": 0,
+    "sources": 0,
+    "pilotOff": true,
+    "authUsers": 0,
+    "windowOff": true,
+    "enrollment": 0,
+    "executionOff": true,
+    "publicTriggers": 58,
+    "networkQueuePresent": false
+  },
+  "sourceDataCopied": false,
+  "invoiceInference": false,
+  "sharedRequests": 0,
+  "preservedFixtureRequests": 0
+}

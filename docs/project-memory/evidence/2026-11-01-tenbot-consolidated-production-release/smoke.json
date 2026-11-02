@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "at": "2026-11-02T01:54:58.752Z",
+  "checks": [
+    {
+      "path": "/auth/v1/health",
+      "status": 200,
+      "rowsRequested": 0,
+      "authenticatedEmployeeClaimed": false
+    },
+    {
+      "path": "/rest/v1/vendor_catalog?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "authenticatedEmployeeClaimed": false
+    },
+    {
+      "path": "/rest/v1/pending_receivals?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "authenticatedEmployeeClaimed": false
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "status",
+      "origin": "https://tendev.pages.dev",
+      "status": 401,
+      "durationMs": 497,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "origin": "https://tendev.pages.dev",
+      "status": 401,
+      "durationMs": 410,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "status",
+      "origin": "https://tenops.pages.dev",
+      "status": 401,
+      "durationMs": 448,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "origin": "https://tenops.pages.dev",
+      "status": 401,
+      "durationMs": 419,
+      "unauthenticatedDenied": true
+    },
+    {
+      "method": "OPTIONS",
+      "status": 204,
+      "allowedOrigin": "https://tenops.pages.dev"
+    }
+  ],
+  "authAndRestResponsive": true,
+  "authenticatedUiOrFollowUpsPerformed": false,
+  "limitation": "No connected legitimate authenticated employee browser/non-browser session; known unavailable browser integration not retried. Existing accepted local UI/context and real database security evidence reused, not claimed as hosted employee results.",
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

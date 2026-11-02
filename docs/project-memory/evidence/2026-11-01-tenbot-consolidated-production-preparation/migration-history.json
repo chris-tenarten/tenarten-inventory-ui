@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "migrationsToApply": 0,
+  "exactAppliedHistoryFiles": [
+    {
+      "path": "supabase/migrations/20261101180000_tenbot_reauthorized_operational_history.sql",
+      "blob": "44b7a835f3d9f70e38b873b0d6433c4062f95188",
+      "sha256": "67ce36cca4e5ecee965182e544ef588c70f18f17125992089a556cf14a0ad342",
+      "acceptedTenDevBlob": "44b7a835f3d9f70e38b873b0d6433c4062f95188",
+      "matchesAcceptedTenDev": true
+    },
+    {
+      "path": "supabase/migrations/20261101181000_tenbot_operational_history_retention.sql",
+      "blob": "da3818f66fd9e2daad1a5c4a3a2a04db21aa6e25",
+      "sha256": "8dda0d2e7dcb665f4b589f3cd16c15269b66ff41900db2b80ea46a0b7b85a472",
+      "acceptedTenDevBlob": "da3818f66fd9e2daad1a5c4a3a2a04db21aa6e25",
+      "matchesAcceptedTenDev": true
+    },
+    {
+      "path": "supabase/migrations/20261101200000_tenbot_persistent_employee_history.sql",
+      "blob": "40c8b197dc6fe56f3bfd28d36bbfbc0e921ef920",
+      "sha256": "535410dd08c0f199a87d9b1d7439990d9d5a2e90052d27cf9f62b4971f9f9811",
+      "acceptedTenDevBlob": "40c8b197dc6fe56f3bfd28d36bbfbc0e921ef920",
+      "matchesAcceptedTenDev": true
+    },
+    {
+      "path": "supabase/migrations/20261101210000_job_read_status_receipts.sql",
+      "blob": "0e628ec4c37c591c06c4a305ad0b047358e6283c",
+      "sha256": "d07a8588ccf3b4a847a4b378274f77f26d4cc7b5594c238addf1011df4880177",
+      "acceptedTenDevBlob": "0e628ec4c37c591c06c4a305ad0b047358e6283c",
+      "matchesAcceptedTenDev": true
+    }
+  ],
+  "executedLedgerEvidenceReused": true,
+  "newDatabaseRequests": 0
+}

@@ -1,0 +1,42 @@
+{
+  "status": "failed",
+  "mode": "Actual isolated Supabase SDK/Auth/PostgREST; no model inference",
+  "startedAt": "2026-10-29T23:22:19.346Z",
+  "elapsedMs": 13651,
+  "httpCalls": 82,
+  "inferenceCalls": 0,
+  "groups": 4,
+  "checks": [
+    {
+      "name": "real synthetic sign-in, JWT getUser and current app capability",
+      "status": "pass",
+      "durationMs": 2614
+    },
+    {
+      "name": "invalid and forged real-JWT signature are rejected by Auth and PostgREST",
+      "status": "pass",
+      "durationMs": 1217
+    },
+    {
+      "name": "caller claim contains metadata only; trusted owner-bound load/commit persists actual state",
+      "status": "pass",
+      "durationMs": 3134
+    },
+    {
+      "name": "ordinary employee and admin cannot claim, load, clear or directly read another owner history",
+      "status": "pass",
+      "durationMs": 3407
+    }
+  ],
+  "blocked": [],
+  "errorCode": "validation-failed-redacted",
+  "currentGroup": "authenticated client cannot invoke commit or proof validator; service cannot cross-bind owner/claim/revision",
+  "currentStage": "rpc:tenbot_agent_release",
+  "safeException": {
+    "name": "TenbotError",
+    "status": 503,
+    "message": "Conversation storage is unavailable. Please retry later."
+  },
+  "operationalWrites": 0,
+  "productionRequests": 0
+}

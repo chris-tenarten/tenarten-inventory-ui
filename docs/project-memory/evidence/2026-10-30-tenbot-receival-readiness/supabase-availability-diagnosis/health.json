@@ -1,0 +1,33 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+  "method": "GET",
+  "startedAt": "2026-10-30T23:10:03.140Z",
+  "status": 200,
+  "headersMs": 10662,
+  "totalMs": 10671,
+  "responseHeaders": {
+    "date": "Fri, 30 Oct 2026 23:10:13 GMT",
+    "server": "cloudflare",
+    "cf-ray": "a52e17567c13eff2-DFW",
+    "content-type": "application/json; charset=utf-8"
+  },
+  "bodyBytes": 181,
+  "bodySha256": "2213ad320ddfb7bb01a4bfccb2723a6401b6858e4c0eeb1359598d71019ac88b",
+  "services": [
+    {
+      "name": "auth",
+      "healthy": false,
+      "status": "UNHEALTHY",
+      "safeError": "Service health check failed"
+    },
+    {
+      "name": "db",
+      "healthy": false,
+      "status": "UNHEALTHY",
+      "safeError": "Service health check failed"
+    }
+  ],
+  "rawBodyRetained": false,
+  "retries": 0,
+  "mutations": 0
+}

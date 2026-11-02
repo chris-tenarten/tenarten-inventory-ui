@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-28T13:19:43.357Z",
+  "dayStart": "2026-10-28T00:00:00.000Z",
+  "scope": "Cloudflare shared account, fresh pre-question baseline",
+  "requestCount": 10,
+  "neurons": 102.12411642074585,
+  "inputTokens": 14050,
+  "outputTokens": 1219,
+  "nominalFreeRemainingNeurons": 9897.875883579254
+}

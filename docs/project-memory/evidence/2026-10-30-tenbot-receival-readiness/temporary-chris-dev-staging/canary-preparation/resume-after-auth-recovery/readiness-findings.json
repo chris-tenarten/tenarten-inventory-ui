@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-10-31T00:37:28.146516+00:00",
+  "review": "Focused existing deployed source/contract inspection, not a new test or implementation.",
+  "datedControl": {
+    "path": "src/modules/inventory/tenbot-canary-control.ts",
+    "sha256": "9a188d667f22eeb3535093b72ac96cb7558e8b712bd7701957e1c3c0a4465da7",
+    "line": 95,
+    "messageLine": 16,
+    "acceptedUntil": "2026-10-30T23:00:00Z",
+    "effect": "Every future grant expiry is now rejected by the reviewed Admin control, before the RPC. No activation was attempted.",
+    "server": "Existing SQL activation allows a future maximum15-minute grant, with required Admin capability, unchanged Developer eligibility, empty enrollment and gates OFF; it has no fixed October30 cutoff.",
+    "localOperator": "/private/tmp/tenops-tenbot-write-canary-retry-20261030/canary-controls.mjs:73 also enforces the old cutoff.",
+    "requiredDecision": "Authorize a focused update of the reviewed UI deadline/copy and matching bounded operator guard to a newly approved finite funding window, then narrow TenDev staging. Do not bypass through console/direct RPC."
+  },
+  "funding": {
+    "current": "Durable policy is expired even though enabled=true and displayed remainingMicrousd is positive.",
+    "requiredDecision": "Explicit finite replacement funding authorization, preserving every prior charge/reservation/carryover."
+  },
+  "sharedPaidRouting": {
+    "paths": [
+      "supabase/functions/tenbot/index.ts:35",
+      "supabase/functions/_shared/tenbot-hosted.ts:36",
+      "supabase/functions/_shared/tenbot-hosted.ts:44",
+      "supabase/functions/_shared/tenbot-receival-hosted.ts:78"
+    ],
+    "currentOrigins": [
+      "https://tendev.pages.dev",
+      "https://tenops.pages.dev"
+    ],
+    "effect": "The same OpenAI enable/spend/key settings and shared SQL policy serve invoice and ordinary conversational inference. Renewing the shared policy alone would restore ordinary paid help on both currently configured origins.",
+    "narrowOriginCaveat": "Changing the existing enabled origins is not a neutral spend-only switch: createHostedTenbot uses that enabled state for assistant/history routing too.",
+    "requiredDecision": "For the requested TenDev/chris_dev invoice-only funding, approve a focused spend-scope correction that preserves ordinary history and Qwen fallback. Alternatively broader shared paid-help funding must be explicitly approved; it is not assumed here.",
+    "implemented": false
+  },
+  "noNewArchitectureRequired": true,
+  "noChangesPerformed": true
+}

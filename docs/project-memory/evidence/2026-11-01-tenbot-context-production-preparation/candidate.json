@@ -1,0 +1,133 @@
+{
+  "passed": true,
+  "recordedAt": "2026-11-01T17:33:06.376Z",
+  "sha": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "tree": "787a4e648830074ff821cdd9ba09347f5d4570ae",
+  "parent": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+  "baseline": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "acceptedTenDev": "509abf3be39e77d607e458a297abbaa3e592f189",
+  "implementationRevision": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+  "source": "/private/tmp/tenops-tenbot-context-production-20261101/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-context-production-20261101/candidate-git",
+  "output": "/private/tmp/tenops-tenbot-context-production-20261101/candidate/out",
+  "sourceHashes": [
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "blob": "ee628f7acd6a94eb237d0d1ff9327c0807b2cc9d",
+      "sha256": "339cdb7a26966cfe902f51113bf5983bd0503247c96c62f9c96486165843c0d2"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "blob": "b21778a095c651649a8a28c6e1960a71ec9d4766",
+      "sha256": "36c655b8d7cb532c648a4ddf2d274c954cca0e5f30f77ffe8cfa9bbbbf91c692"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "blob": "2df00dea5ec98c58c8dcb0cb1767be1ef3885fe5",
+      "sha256": "ae6ca61c5e97a3b3031bceff94a78f80ef79acaff26c5ff8b309643c0af8e59e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "75fa80c81ac952aa1970963e614953f840530290",
+      "sha256": "0ac74bc2f589a91a763717ad4229b3e863537909dc68ac8f6f4953210b581647"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+      "blob": "01414c4ec80f0aa1b3a3793549429c4e91cfd725",
+      "sha256": "e71576ba403560a6fb3561da3c49b0bc000bbe1f9469a292cd2996db76711473"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "blob": "d57da01127979b7a972a1f27e2ee130cb0671858",
+      "sha256": "4331e44183cabe79ee23f991b1a7383bc27b065f7eda815fea5db16e49f4784c"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "blob": "420e7c802d1b12d9d4229bc71461f89bd4e74ab5",
+      "sha256": "e6e622b088c049240ed1d39bf55a9f19640a7adc825d64ad496fe03e78e7dcf5"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "blob": "997976be9c91291a956c5f949b8c2de600ea8cdb",
+      "sha256": "7de9120fc73c664990fa17f3e72f1575f123d8a84a74c1b53fb66fead9cddc7a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "blob": "0721fc2466e37b4def9ec7f133901983105cbe50",
+      "sha256": "ccb04c2e39c9f917ed09c651d3443f97d2869a7de05698be437ad90dd3c4acf8"
+    },
+    {
+      "path": "supabase/migrations/20261031230000_tenbot_conversation_context.sql",
+      "blob": "5e69ed688132133aaffeed8f5c555eff8b4022e6",
+      "sha256": "a75ecd0eef035cc4a71cf944724c00588216aabae3fa9d98b161d7ea7b66bb52"
+    }
+  ],
+  "selectedApplicationPaths": [
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-conversation-context.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-job-session.ts"
+  ],
+  "alreadyAppliedMigrations": [
+    {
+      "path": "supabase/migrations/20261031230000_tenbot_conversation_context.sql",
+      "blob": "5e69ed688132133aaffeed8f5c555eff8b4022e6",
+      "sha256": "a75ecd0eef035cc4a71cf944724c00588216aabae3fa9d98b161d7ea7b66bb52"
+    }
+  ],
+  "migrationsToApply": [],
+  "protectedPathsUnchanged": [
+    "scripts/generate-tenbot-knowledge.mjs",
+    "scripts/tenbot-knowledge/release-sync.mjs",
+    "src/lib/auth.tsx",
+    "src/app/inventory/page.tsx",
+    "src/modules/my-work/InboxDialog.tsx",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/_shared/tenbot-job-tools.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "canaryUiAbsent": true,
+  "productionOnlyAncestry": true,
+  "verifierUnchanged": true,
+  "proofRevision": "d7fe26ade666d95a6babdfe6c8996eac246d6da7",
+  "proofPath": "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+  "changedPaths": [
+    "docs/project-memory/2026-11-01-tenbot-context-production-source-proof.md",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/browser-limitation.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/build.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/candidate.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/context-checks.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/edge.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/final.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/mandatory-proof.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/migration-applied.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/pages.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/served.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/smoke.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/accepted-tendev/summary.json",
+    "docs/project-memory/evidence/2026-11-01-tenbot-context-production-preparation/superseded-source-reviews.json",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-conversation-context.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-job-session.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/migrations/20261031230000_tenbot_conversation_context.sql"
+  ],
+  "scope": "Production candidate preparation only",
+  "hostedMutations": 0,
+  "inferenceCalls": 0,
+  "deployed": false,
+  "workspacePreserved": true
+}

@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "at": "2026-11-01T19:39:08.812Z",
+  "checks": [
+    {
+      "path": "/auth/v1/health",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/rest/v1/vendor_catalog?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/rest/v1/pending_receivals?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "status",
+      "origin": "https://tendev.pages.dev",
+      "status": 401,
+      "durationMs": 349,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "origin": "https://tendev.pages.dev",
+      "status": 401,
+      "durationMs": 302,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "status",
+      "origin": "https://tenops.pages.dev",
+      "status": 401,
+      "durationMs": 392,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "origin": "https://tenops.pages.dev",
+      "status": 401,
+      "durationMs": 68,
+      "unauthenticatedDenied": true
+    }
+  ],
+  "authAndRestResponsive": true,
+  "authenticatedFollowUpsPerformed": false,
+  "limitation": "No available legitimate authenticated hosted employee session; browser integration previously unavailable and not retried. No extraction, fabricated token, impersonation or service-role business read. Existing isolated real JWT/RLS and local UI evidence reused.",
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

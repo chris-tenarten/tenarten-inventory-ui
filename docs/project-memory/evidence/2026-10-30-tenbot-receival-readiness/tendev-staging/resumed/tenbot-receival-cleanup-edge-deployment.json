@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:45:19.459Z",
+  "sha": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "slug": "tenbot-receival-cleanup",
+  "id": "cc6fe361-717a-4c76-958c-c6682eee68ea",
+  "previousVersion": null,
+  "version": 1,
+  "verifyJwt": true,
+  "status": "ACTIVE",
+  "bundleSha256": "cea0da79a1b7912d3a45bfd4a613800c2b4e1d360cc796ad929b4b6a2ffef13d",
+  "exactOwnedModules": [
+    {
+      "path": "src/modules/inventory/invoice-receival-attachments.ts",
+      "sha256": "620cd88fc655ee194622e266fd527ea3fe92dcec2842b43f0c5e6308afac4edb",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+      "sha256": "13a803362707e1729cd6d0590ead1b62fea52f26585f225c6575dc7f30c46d10",
+      "sourceMapOrRawExact": true
+    },
+    {
+      "path": "supabase/functions/tenbot-receival-cleanup/index.ts",
+      "sha256": "6a89f90d487ebc20c6ac971df8cfc2c7a6806234f830fca8ca7a1816bc6f2e74",
+      "sourceMapOrRawExact": true
+    }
+  ],
+  "unrelatedFunctionsUnchanged": true,
+  "allSecretDigestsUnchanged": true,
+  "meterPolicyUnchanged": true,
+  "tenOpsPagesUnchanged": "966ec1da-e537-4582-a82b-0c7a116daf58",
+  "ordinaryWritesDisabled": true,
+  "cleanupDisabled": true
+}

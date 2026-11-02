@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-28T14:19:32.671Z",
+  "http": 200,
+  "rows": [
+    {
+      "count": 65,
+      "sum": {
+        "totalInputTokens": 78143,
+        "totalNeurons": 571.3193669319153,
+        "totalOutputTokens": 6889
+      }
+    }
+  ]
+}

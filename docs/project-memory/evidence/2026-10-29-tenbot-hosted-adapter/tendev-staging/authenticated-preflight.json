@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "target": "https://tendev.pages.dev",
+  "transport": "Existing signed browser caller; bounded fetch inside DevTools; no token left the browser except normal Supabase authorization headers",
+  "inferenceCalls": 0,
+  "checks": [
+    "Real signed caller Auth",
+    "Current readOperationalData capability",
+    "Default-off Qwen status and read-only declaration",
+    "Direct history table SELECT denied",
+    "Privileged history loader denied to caller JWT",
+    "Owner can claim a new synthetic conversation",
+    "Exact owner claim/revision release succeeds",
+    "Unowned conversation denied",
+    "Only the new synthetic conversation cleared"
+  ],
+  "limitations": "Employee/Admin two-user isolation and revocation reuse exact-migration Free-fixture evidence; no other employee account or conversation accessed",
+  "credentialsEmitted": false,
+  "businessWrites": 0
+}

@@ -1,0 +1,342 @@
+{
+  "status": "READY_FOR_PRODUCT_SCOPE_REVIEW_NOT_DEPLOYMENT",
+  "recordedAt": "2026-10-31T17:39:17.171138+00:00",
+  "authority": "Chris CONSOLIDATED RELEASE READINESS October31; focused reconciliation, one selective candidate, necessary Edge import correction and exact release checks; stop for Product approval of final scope. No shared apply or Production deploy authorized.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "newApplicationCorrectionRiskTier": 1,
+  "current": {
+    "tenops": {
+      "project": "tenops",
+      "branch": "main",
+      "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+      "deploymentId": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+      "status": "success",
+      "url": "https://d01a02dc.tenops.pages.dev",
+      "createdOn": "2026-10-31T00:24:11.063773Z"
+    },
+    "tendev": {
+      "project": "tendev",
+      "branch": "dev",
+      "sha": "e357d5625734522c904fa80335e9aad5180a3fec",
+      "deploymentId": "db4ccc2b-b30e-4f10-8ffa-0e4f8fbcf329",
+      "status": "success",
+      "url": "https://db4ccc2b.tendev.pages.dev",
+      "createdOn": "2026-10-31T03:19:40.977248Z"
+    },
+    "publicRootsMatchAcceptedArtifacts": true,
+    "edge": {
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 32,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "bundleSha256": "97f45d178af417b83373e5183181c6811cfa1369d4f147c731434cd0f87f077a"
+    },
+    "edgeSourceMatchesAcceptedE357EszipHash": true,
+    "freshRawEdgeBodyComparisonClaimed": false,
+    "sharedMigrations": [
+      {
+        "version": "20261029210000",
+        "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+        "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261029220000",
+        "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+        "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261029221000",
+        "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+        "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030110000",
+        "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+        "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030120000",
+        "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+        "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030130000",
+        "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+        "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030140000",
+        "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+        "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030150000",
+        "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+        "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030160000",
+        "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+        "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030170000",
+        "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+        "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030180000",
+        "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+        "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030190000",
+        "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+        "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030200000",
+        "path": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+        "sha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030210000",
+        "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+        "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261030220000",
+        "path": "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+        "sha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261031010000",
+        "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+        "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6",
+        "exactSharedLedgerMatch": true
+      },
+      {
+        "version": "20261031020000",
+        "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+        "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580",
+        "exactSharedLedgerMatch": true
+      }
+    ],
+    "newExecutionWindowAbsent": true,
+    "gates": {
+      "pilot": false,
+      "execution": false,
+      "enrollment": 0,
+      "activePermits": 0,
+      "canaryFunding": false,
+      "unrevokedGrants": 0
+    },
+    "configuration": {
+      "flags": {
+        "TENBOT_AI_ENABLED": "true",
+        "TENBOT_OPENAI_ENABLED": "true",
+        "TENBOT_OPENAI_SPEND_AUTHORIZED": "false",
+        "TENBOT_RECEIVAL_PILOT_ENABLED": "false",
+        "TENBOT_RECEIVAL_EXECUTION_ENABLED": "false",
+        "TENBOT_INVOICE_PREPARATION_ENABLED": "false",
+        "TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED": "false"
+      },
+      "enrollmentEmpty": true,
+      "openAIKeyPresent": true,
+      "credentialValuesReadOrStored": false
+    },
+    "meter": {
+      "enabled": false,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "accountedMicrousd": 786171,
+      "uncertainReservations": 0
+    },
+    "ordinaryPolicy": {
+      "enabled": false,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "totalLimitMicrousd": 4539956,
+      "requestLimitMicrousd": 250000,
+      "userDailyLimitMicrousd": 250000,
+      "globalDailyLimitMicrousd": 4000000
+    },
+    "preparedSource": {
+      "id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+      "unit": "Bag",
+      "bound": false,
+      "state": "ready",
+      "quantity": "1",
+      "expiresAt": "2026-11-01T01:24:35.833487+00:00",
+      "previewHash": "7b63a8b55d2d496c2e15d0d5f2af81fb8da06f81109c4da1dfeed89e0c8e7594",
+      "previewRevision": 1
+    }
+  },
+  "acceptedSource": {
+    "baseImplementation": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c",
+    "priorSelective": "f39a135c36da94906c8ddfa72dcccaa06c5b0606",
+    "currentSelective": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+    "selectiveBaseline": "e357d5625734522c904fa80335e9aad5180a3fec",
+    "localDevHeadPreserved": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c"
+  },
+  "candidate": {
+    "sha": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+    "ref": "refs/tenops/candidates/consolidated-readiness-20261031",
+    "source": "/private/tmp/tenops-tenbot-consolidated-readiness-20261031/candidate",
+    "parent": "f39a135c36da94906c8ddfa72dcccaa06c5b0606",
+    "applicationSourcePaths": [
+      "src/modules/inventory/tenbot-canary-control.ts",
+      "src/modules/inventory/tenbot-canary-execution.ts",
+      "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "src/modules/tenbot/TenbotCanaryControl.tsx",
+      "src/modules/tenbot/TenbotWorkspace.tsx",
+      "src/modules/tenbot/live-review.ts",
+      "src/modules/tenbot/prepared-draft-resume.ts",
+      "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "supabase/functions/_shared/tenbot-receival-runtime.ts"
+    ],
+    "testSupportPaths": [
+      "scripts/support/tenbot-execution-window-database.sql",
+      "scripts/support/tenbot-execution-window-lock-a.sql",
+      "scripts/support/tenbot-execution-window-lock-b.sql",
+      "scripts/verify-tenbot-canary-execution.mts",
+      "scripts/verify-tenbot-canary-runtime.mts",
+      "scripts/verify-tenbot-model-free-resume.mts",
+      "scripts/verify-tenbot-prepared-draft-resume.mts",
+      "scripts/verify-tenbot-prepared-resume-browser.mjs"
+    ],
+    "proofOnlyPaths": [
+      "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "scripts/tenbot-knowledge/source-reviews.json",
+      "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+    ],
+    "migration": {
+      "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "version": "20261031030000",
+      "name": "tenbot_execution_only_canary_window",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+      "blob": "baa7b4eb2bd1a0ee078af2808ddb32c4f8972203"
+    },
+    "technicalDelta": [
+      {
+        "path": "src/modules/inventory/tenbot-canary-execution.ts",
+        "reason": "Explicit .ts extension for actual Deno resolution",
+        "beforeSha256": "02f35ae1927242ac9b19bff077bde525dc59c62c7c4668c1ef2b9dd334d8576e",
+        "afterSha256": "d20623ca2be46394e2ca958ad123a4d75fd7c6488eea846346f22565660cbbfc"
+      }
+    ],
+    "productAcceptancePending": true,
+    "employeeKnowledgeAndDeployedPinsUnchanged": true,
+    "sourceLocatorIsNotConversationalMemory": true,
+    "protectedSourcePathsIdenticalToProduction": [
+      "src/lib/auth.tsx",
+      "src/modules/tenbot/conversation-history.ts",
+      "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "supabase/functions/_shared/tenbot-hosted.ts",
+      "supabase/functions/_shared/tenbot-job-tools.ts"
+    ],
+    "unrelatedDevExcluded": true
+  },
+  "validation": {
+    "currentMetadataAndPublicRootsVerified": true,
+    "sharedMigrationFilesMatched": 17,
+    "newMigrationPredecessorsMatch": true,
+    "initialDefaultDenoResolverFailed": true,
+    "correctedActualDenoGraphPassed": true,
+    "correctedGraphModules": 2,
+    "strictRuntimeClosureFiles": 35,
+    "externalDependenciesUnchanged": true,
+    "targetedLintPassed": true,
+    "exactUnchangedReleaseGatePassed": true,
+    "releaseHolds": 0,
+    "optimizedBuildPassed": true,
+    "buildDurationMs": 31016,
+    "credentialScanPassed": true,
+    "artifacts": 287,
+    "priorSixAuthorizationAndNinePositiveContractGatesReused": true,
+    "priorQuantityPrivacyInvoiceHistoryAndAuthEvidenceReused": true,
+    "repeatedOldQaOrModelBenchmark": false,
+    "freshHostedUiOrNewCandidateExecutionClaimed": false
+  },
+  "safeNextScope": [
+    "Invoice metadata, bounded catalog initialization/matching and safe diagnostics already run in shared Edge32; corresponding UI is staged in TenDev, not TenOps Pages.",
+    "Stage consolidated source resume/persistence and fixed execution-only infrastructure disabled-first on TenDev; exact one pending migration only.",
+    "Preserve normal Terra/Qwen routing, verified knowledge, Job reads, Auth resilience and existing owner-scoped conversation history."
+  ],
+  "notReadyForEnablement": {
+    "ordinaryTerraFunding": "Shared ordinary policy is disabled and expired2026-10-30T23:00Z; preserving provider configuration does not authorize new inference. No renewal/credit assumption.",
+    "generalEmployeeInvoicePreparation": "Current implementation and migration intentionally restrict preparation to TenDev/chris_dev/approved synthetic2877bytePDF. An ordinary employee Production invoice workflow is not included or proven.",
+    "productionPromotionOfSameSha": "Current exact source reviews authorize tendev-preparation only; unchanged release verifier rejects main/tenops build. Need explicitly accepted Production boundary rooted at b918 and correct Production public flags after TenDev validation, using true executed shared-source evidence; never weaken verifier.",
+    "writes": "All Inventory/catalog/receival agent creation, grants, enrollment and approval/execution activation remain OFF; no new write canary."
+  },
+  "recommendedProductionFlags": {
+    "TENBOT_AI_ENABLED": "preserve true for Qwen fallback",
+    "TENBOT_OPENAI_ENABLED": "preserve configured true",
+    "TENBOT_OPENAI_SPEND_AUTHORIZED": "false until separately funded finite policy",
+    "TENBOT_INVOICE_PREPARATION_ENABLED": "false",
+    "TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED": "false",
+    "TENBOT_RECEIVAL_PILOT_ENABLED": "false",
+    "TENBOT_RECEIVAL_EXECUTION_ENABLED": "false",
+    "TENBOT_RECEIVAL_EMPLOYEE_IDS": "empty",
+    "NEXT_PUBLIC_TENBOT_CANARY_CONTROL_MODE": "off for eventual Production build",
+    "sqlPilotExecutionFunding": "disabled; no unrevoked grant/permit/enrollment",
+    "TENBOT_RECEIVAL_ALLOWED_ORIGINS": "retain TenDev only; no scope expansion"
+  },
+  "minimumStagingChecks": [
+    "Product approves cd29 scoped candidate and only migration20261031030000; fresh exact predecessor/source/flags check before any shared application.",
+    "Apply migration once with defaultOFF window; deploy exact TenDev UI/Edge with all experimental write/preparation/spend controls initiallyOFF.",
+    "Verify JWT validation, new statusRPC dormant state, complete exact Edge bundle, existing normal Inventory/Messaging/Auth behavior.",
+    "With separately approved finite read-only TenDev/chris_dev access and spending stillOFF, resume existing1Bag source twice across remounts; verify identity/revision/source preservation and useful safe failure; no extraction/modelcall/upload/reviewapproval/write required.",
+    "Use prior hosted metadata/catalog/real Terra/quantity/RLS/transaction evidence; do not repeat broad QA or inference.",
+    "After TenDev acceptance, prepare Production-rooted scope/proof/branding and OFF flags; Product approval required before Production deployment."
+  ],
+  "readerDiagnostics": {
+    "cloudflare401ResolvedByExistingOauthRefresh": true,
+    "newLoginOrHostedConfigChanged": false,
+    "sql400ReaderColumnTypoAndReadOnlyPrivilegedFunctionDenialCorrectedWithTableOnlySelect": true,
+    "edgeRawBodyLocal20MbBoundExceeded": "No source failure asserted; fresh eszipmetadatahash matches previously byte-verified e357. No repeated body download.",
+    "initialFailedReceiptsPreserved": true
+  },
+  "scopeBoundary": {
+    "sharedMigrationsApplied": 0,
+    "deployments": 0,
+    "operationalWrites": 0,
+    "grantsActivated": 0,
+    "inferenceCalls": 0,
+    "inferenceCostUsd": 0,
+    "hostedProviderSpendingAndPermissionsChanges": 0,
+    "newBranchesOrWorktrees": 0,
+    "localOAuthSessionRefreshed": true
+  },
+  "evidenceSha256": {
+    "snapshot.json": "726a0e2037f31ad49048bb9ebbaab3e4d4cbd6af046820749d0a472ec982fe52",
+    "reconciled.json": "57c0f8622ee9c67bf8be19e8fd5bcd58a675c37189a4ea69eb971b35fc91e795",
+    "shared-final.json": "6a2e3108f4ff0ea1621697edf21da1e695d4d057a4c0a2a784ffe94c3b565a43",
+    "catalog-ledger.json": "573f64db2a4cd6a8c5c9201ef608eb9bc6851fe7859a7b0c5eb67f56dadad274",
+    "migration-local-matches.json": "cdaf58d274beea83673f2eda34654c3a8a0720c2d9cc12a67f707dc492dc5dd5",
+    "cloudflare-refresh.json": "4cf845d975ef3fcedfae907c946c10d868158da61fddffaefe26027aae41900b",
+    "edge-import-result.json": "0b1e9d5b4ad85d4644af861e20681f550f36be73bb22d49f0424d66c49a7bb6e",
+    "edge-import-corrected-result.json": "8f508f3c36cc29fffac5b1611b7c6f95327d321d7c693ca3e97ccdf415985087",
+    "local-closure.json": "2475b60fd493aa04dd32d5b9285e95e4a4a03252cdd068c47a4b21d628703252",
+    "candidate.json": "f36567f182cefc08856c4a6c135f624f7bcb42a51b3b1ab7771969d4ab78cfed",
+    "build.json": "e5ed084d38f488fe77f5e8e3947f3732dfe91617a20d8bd9dc74939be5580378",
+    "build-command-result.json": "c074892c901028b2d88152d8ae8dbbc0a25e945160853c072b154799bba69d31",
+    "shared-compatibility.json": "62935ba5152fff424a876097d7ad3d0d2f55f4edce17a7c0b94999d0aa84a5e2"
+  },
+  "scratch": "/private/tmp/tenops-tenbot-consolidated-readiness-20261031",
+  "nextProductDecision": "Approve the consolidated disabled-first TenDev source/migration scope. Funding and employee-wide Production preparation are separate decisions; no automatic activation."
+}

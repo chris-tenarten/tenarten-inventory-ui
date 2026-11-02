@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-10-30T23:34:43.703Z",
+  "method": "Genuine existing Chrome session, native UI accessibility; no credentials, session tokens, console commands or other employees' accounts accessed",
+  "observations": [
+    {
+      "atApprox": "2026-10-30T23:32:00Z",
+      "application": "TenDev",
+      "caller": "chris_dev / Developer",
+      "action": "One normal refresh of existing Inventory tab",
+      "outcome": "Session restored without credential entry. Startup showed chris developer / DEVELOPER; normal Inventory loaded with Account menu Developer and Pending Receivals (0). No stock action clicked."
+    },
+    {
+      "atApprox": "2026-10-30T23:33:00Z",
+      "application": "Supabase Reports",
+      "action": "One owned report tab, Last60minutes 22:32–23:32Z, no refresh",
+      "outcome": "Memory usage/commitment/CPU: No data to show. No resource improvement can be established. Owned report tab closed."
+    },
+    {
+      "atApprox": "2026-10-30T23:33:30Z",
+      "application": "TenDev",
+      "action": "Attempt to reach normal Messaging list, no conversation or composer submission",
+      "outcome": "Previously rendered Messaging control ID was invalid; refreshed accessibility view showed TENOPS ACCOUNT ACCESS failure: Unable to verify your TenOps account access. Could not query the database for the schema cache. Retrying.",
+      "httpEndpointAndStatus": "Not captured; UI error only, no failed-request replay attempted."
+    }
+  ],
+  "verified": {
+    "genuineDeveloperSessionRestoration": true,
+    "inventoryReadsTemporarilyWorked": true,
+    "stableApplicationRecovery": false,
+    "messagingReads": false,
+    "adminSessionRestoration": false,
+    "tenopsAuthenticatedRecovery": false
+  },
+  "limitations": [
+    "Static200 responses do not prove authenticated application recovery.",
+    "No later health request was made after the schema-cache failure; renewed DB/Auth UNHEALTHY status is not asserted.",
+    "Messaging and Admin/Production signed-in checks were stopped because application recovery was unstable.",
+    "Inventory rows and other private message contents are excluded from this receipt."
+  ],
+  "nativeAccessReleased": true,
+  "newCredentialsEntered": false,
+  "modelCalls": 0,
+  "canaryAttempted": false
+}

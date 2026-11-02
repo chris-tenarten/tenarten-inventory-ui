@@ -1,0 +1,13 @@
+{
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "origin": "https://tendev.pages.dev",
+  "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+  "runtime": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+  "fundingId": "20261031-0100-4000-8000-000000000001",
+  "startsAt": "2026-10-31T01:22:06.351163+00:00",
+  "expiresAt": "2026-10-31T01:37:00+00:00",
+  "serverNow": "2026-10-31T01:22:06.352735+00:00",
+  "budgetMicrousd": 250000,
+  "approval": "Current Product FINAL HOSTED CANARY authorization",
+  "grantId": null
+}

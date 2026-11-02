@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "actualDatabase": true,
+  "actualSignedAuthJwt": true,
+  "projectRef": "ahnqbzuhpwgmispwohwv",
+  "migrationSha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+  "receipt": "/private/tmp/tenops-tenbot-clean-execution-validation-20261030/complete-positive-results.json",
+  "receiptSha256": "656f36d0ab70e23746f77dc7ba3736dcdc2eceb0d37a04b5fac305c728d71c72"
+}

@@ -1,0 +1,30 @@
+{
+  "status": "TENDEV_STAGED_AUTHENTICATED_SMOKE_LIMITATION",
+  "riskTier": 3,
+  "testingLevel": "Focused Level3 release; existing isolated/local evidence reused",
+  "acceptedImplementation": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+  "servedSha": "509abf3be39e77d607e458a297abbaa3e592f189",
+  "deploymentId": "341a78e4-91f4-4578-b153-20c2ccd40563",
+  "edgeVersion": 34,
+  "migration": {
+    "path": "supabase/migrations/20261031230000_tenbot_conversation_context.sql",
+    "version": "20261031230000",
+    "name": "tenbot_conversation_context",
+    "sha256": "a75ecd0eef035cc4a71cf944724c00588216aabae3fa9d98b161d7ea7b66bb52"
+  },
+  "proofHolds": 0,
+  "assetMatches": 34,
+  "deterministicContextGroups": 11,
+  "newInferenceCalls": 0,
+  "operationalWrites": 0,
+  "allWriteAndExecutionAuthorizationOff": true,
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "ordinarySpendingUnchanged": true,
+  "secretsUnchanged": true,
+  "tenOpsPagesUnchanged": true,
+  "actualHostedFollowupResults": "Not run; legitimate authenticated caller unavailable",
+  "promotionReadiness": "Requires signed-in focused hosted context/normal Messaging smoke, separately Production-rooted candidate and unchanged Production proof, then Product release approval",
+  "fullProofSha256": "d985de0909e6c02458674070ad824988cfe0c959edd3c807eadca6f76c46ebce"
+}

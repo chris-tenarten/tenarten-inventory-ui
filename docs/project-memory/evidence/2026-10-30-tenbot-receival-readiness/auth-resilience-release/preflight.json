@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:17:57.945Z",
+  "projects": {
+    "tendev": {
+      "sha": "ce157b99e31c227480c479169e0a480a6d509bf1",
+      "deployment": "5b73e5b1-3ea7-4ebd-b572-baeea36fe2fa",
+      "configSha256": "641888d7ff233d2a46a6311dea61a4c52d38ee4b154707b56776f2b2fcee2161"
+    },
+    "tenops": {
+      "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+      "deployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+      "configSha256": "a6ce272a2bd5704517e0098101f65ad1081169ad880e0c65076e57de5636a220"
+    }
+  },
+  "health": [
+    {
+      "name": "auth",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY",
+      "info": {
+        "name": "GoTrue",
+        "version": "v2.197.0",
+        "description": "GoTrue is a user registration and authentication API"
+      }
+    },
+    {
+      "name": "db",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    }
+  ],
+  "allWritesOff": true,
+  "activeGrants": 0,
+  "enrollment": 0,
+  "edgeVersion": 23,
+  "spendingPolicyExpired": true,
+  "oldReservationPreserved": true,
+  "migrations": 0,
+  "hostedMutations": 0
+}

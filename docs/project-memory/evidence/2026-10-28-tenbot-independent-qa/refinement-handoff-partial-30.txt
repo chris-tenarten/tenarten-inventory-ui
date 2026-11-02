@@ -1,0 +1,13 @@
+TENBOT REFINEMENT HANDOFF — Independent Production QA, October 28, 2026
+
+Evaluated released 6cb6cf7 through actual Production Messaging as the existing Developer account: 30 completed questions, with 25 additional shared-account Qwen inference requests / 243.6032 Neurons observed. This is a partial campaign: Chrome automation lost its window before mobile Q31; Contacts, My Work, Messaging and synthetic privacy questions remain untested.
+
+Prioritize:
+1. Preserve persistence/eligibility facts: Q08 falsely says Timeline drag saves immediately; Q17 falsely requires Job number and committed schedule for Bid conversion.
+2. Keep the active workflow through normal follow-ups. Q05 Rework fields, Q18 conversion retry and Q23 Sample PDF recovery lose context. Q14 invents a Manpower group date-range setting despite an available precise history guide.
+3. Match Available guidance to action-specific permissions. Q01 labels Job creation Available to Developer despite its missing createProductionJob capability. This is guidance mismatch, not a demonstrated hosted write bypass.
+4. Retain final Create/Save actions; tolerate common typos such as “fliter”; suppress unrelated/duplicated permission notices.
+
+Retain the exact questions, responses and pinned-source expectations in transcript.json and source-review.json as regressions. Keep honest uncertainty distinct from hallucination, and preserve private owner history, confirmed feedback and Free-only shared budgets. Proposal denials passed for this account; authorized Proposal instructions still need a suitable authorized-account test.
+
+No implementation, account/grant change, business-data mutation, migration, push or deployment was performed. Product review is the next boundary; this handoff has not been submitted elsewhere.

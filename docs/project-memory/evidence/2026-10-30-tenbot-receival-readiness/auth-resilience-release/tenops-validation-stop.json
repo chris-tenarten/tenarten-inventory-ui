@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "recordedAt": "2026-10-31T00:20:00.053Z",
+  "target": "tenops",
+  "phase": "mandatory-exact-candidate-proof",
+  "code": "ERR_ASSERTION",
+  "automaticRetry": false,
+  "hostedMutations": 0,
+  "deployments": 0,
+  "testReruns": 0,
+  "modelCalls": 0
+}

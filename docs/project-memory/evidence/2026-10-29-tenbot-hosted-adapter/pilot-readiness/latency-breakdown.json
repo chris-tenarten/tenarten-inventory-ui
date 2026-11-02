@@ -1,0 +1,45 @@
+{
+  "acceptedRuntime": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "evidenceReused": true,
+  "newHostedTests": 0,
+  "modelCalls": 7,
+  "browserHttpMs": 33410,
+  "seconds": {
+    "reservationToSettlement": 16.630349,
+    "interStepGaps": 10.077073,
+    "entryToFirstReservation": 2.65884,
+    "lastSettlementToHttpEnd": 4.043738
+  },
+  "sharesPercent": {
+    "reservationToSettlement": 49.78,
+    "interStepGaps": 30.16,
+    "entryToFirstReservation": 7.96,
+    "lastSettlementToHttpEnd": 12.1
+  },
+  "perCallReservationWindowSeconds": [
+    2.256341,
+    1.74661,
+    1.543981,
+    1.630641,
+    1.441916,
+    2.136152,
+    5.874708
+  ],
+  "interStepGapSeconds": [
+    5.347969,
+    1.556457,
+    0.750393,
+    0.78838,
+    0.659845,
+    0.974029
+  ],
+  "dominantPattern": "Seven serial inference/tool cycles with repeated authenticated roundtrips; not a single 33-second model response.",
+  "noHosted2500msPacing": true,
+  "localHarnessPacingNotUsedInHostedRuntime": true,
+  "measurementLimits": [
+    "Reservation windows include provider HTTP, usage parsing and metering transport; pure OpenAI compute versus database/network cannot be separated.",
+    "Inter-step gaps include tool, authorization and next reservation work; raw hosted tool trace was not retained.",
+    "Entry/final intervals are residual HTTP windows; not exclusive database or authorization timings."
+  ],
+  "correction": "One duplicate after_tool capability check removed locally, with common check retained before model history. No hosted speedup measured."
+}

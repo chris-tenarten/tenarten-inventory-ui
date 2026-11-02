@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:16:31.313Z",
+  "source": "standard",
+  "row": {
+    "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "vendor": "T&M Supply",
+    "vendor_sku": null,
+    "item_name": "Alaska White",
+    "size": "#0",
+    "category": "marble",
+    "material_class": "turkish_aggregate",
+    "unit": "50lb bag"
+  },
+  "catalogSnapshotSha256": "d1f36457f987804be315ba04f98b75f035e4c9f50db650c007337b409b56f3b2",
+  "method": "Exact normal authenticated TenDev Catalog UI selection, then bounded public-anon PostgREST reference lookup of only the selected catalogue tuple; no SQL/service-role or employee session used",
+  "endpointPath": "rest/v1/vendor_catalog",
+  "exactTuple": {
+    "vendor": "T&M Supply",
+    "item_name": "Alaska White",
+    "size": "#0",
+    "unit": "50lb bag"
+  },
+  "matchedRows": 1,
+  "pricesRead": false,
+  "employeeAuthorizationProof": false,
+  "privilegedGatewayUsed": false,
+  "modelCalls": 0,
+  "mutations": 0
+}

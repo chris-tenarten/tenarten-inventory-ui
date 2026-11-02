@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-10-30T01:22:45.790Z",
+  "localSpendingFlag": false,
+  "stoppedProcesses": [],
+  "journal": {
+    "reservedOrSpentUsd": 0.5399555000000006,
+    "attempts": 367,
+    "settled": 367,
+    "sha256": "bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0"
+  },
+  "carryoverMicrousd": 539956,
+  "newAllowanceMicrousd": 250000,
+  "hostedSpendingFlag": false,
+  "meter": {
+    "ok": true,
+    "enabled": true,
+    "version": 2,
+    "expiresAt": "2026-10-30T02:22:45.717476+00:00",
+    "allowedModels": [
+      "gpt-6.1-terra"
+    ],
+    "accountedMicrousd": 539956,
+    "remainingMicrousd": 250000,
+    "totalLimitMicrousd": 789956,
+    "uncertainReservations": 0,
+    "legacyAccountedMicrousd": 539956
+  },
+  "syntheticFixtureSpendImported": false
+}

@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-10-29T23:03:46.184Z",
+  "httpStatus": 200,
+  "scope": "Read-only branch resource reconciliation after failed creation",
+  "branches": [
+    {
+      "id": "50eb7429-2606-4234-9533-53a6cfe323ba",
+      "name": "main",
+      "projectRef": "vxdxjhazkqhpkwdqtobp",
+      "parentProjectRef": "vxdxjhazkqhpkwdqtobp",
+      "isDefault": true,
+      "persistent": false,
+      "status": "FUNCTIONS_DEPLOYED",
+      "createdAt": "2026-10-29T23:03:25.638062+00:00",
+      "withData": false,
+      "gitBranch": null,
+      "notifyUrlConfigured": false
+    }
+  ],
+  "branchCount": 1,
+  "ownedBranchCount": 0,
+  "creationRetried": false,
+  "hostedMutations": false
+}

@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "candidate": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "baseline": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "productionTarget": "https://tenops.pages.dev",
+  "branch": "main",
+  "artifactCount": 277,
+  "artifactManifestSha256": "fba3161b68b5d58b7346f1b370918aca0243afaa51db4c1afe04b2489529b87d",
+  "mandatoryUnchangedPrebuild": true,
+  "cleanFullHistoryCandidate": true,
+  "holds": 0,
+  "committedArtifactUnchanged": true,
+  "canaryRouteAbsent": true,
+  "canaryControlsOff": true,
+  "secretPatternScanPassed": true,
+  "knowledgeEntriesPatchesAndAuthorityUnchanged": true,
+  "ordinarySpendingUnchanged": true,
+  "allOperationalWriteAndExecutionFlagsRemainOff": true,
+  "durationMs": 27407,
+  "deployments": 0,
+  "hostedMutations": 0,
+  "inferenceCalls": 0
+}

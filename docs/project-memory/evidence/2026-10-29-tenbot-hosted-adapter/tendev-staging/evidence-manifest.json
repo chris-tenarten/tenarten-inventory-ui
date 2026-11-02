@@ -1,0 +1,118 @@
+{
+  "files": [
+    {
+      "path": "preflight.json",
+      "sha256": "354d33d19c54e0796fdcf7c00e81aa2b65a689156bce808bdc971178eb9facba",
+      "bytes": 2238
+    },
+    {
+      "path": "shared-schema-compatibility.json",
+      "sha256": "bedf4ab3582297fcf3d65f67e2f34ba6d50db3358f91e60d522bc9ed43f1dc04",
+      "bytes": 57703
+    },
+    {
+      "path": "migration-application.json",
+      "sha256": "865d9c7c9155cbe82849ca2b84ae2c6d660491bdb6da0d500393c1625522821e",
+      "bytes": 1487
+    },
+    {
+      "path": "disabled-config.json",
+      "sha256": "3b7abc84d5e5c93dafd08bacc83109da87439cec115d60bafc1b129066f5d0e1",
+      "bytes": 767
+    },
+    {
+      "path": "boundary.json",
+      "sha256": "efe57768bfcb3d656caa294470984d73771e6eb39bfb190bc3fc107c124a8c3e",
+      "bytes": 1680
+    },
+    {
+      "path": "selected-source-plan.json",
+      "sha256": "647039f8a4a58720f65546dba5ec16ea3a9e597b47677e323eb3535d077a7aff",
+      "bytes": 46019
+    },
+    {
+      "path": "build.json",
+      "sha256": "e4fc47fc790b53840f046c6c0dca8e8f37daf5b76246a3bc4396184cca98431b",
+      "bytes": 583
+    },
+    {
+      "path": "artifact-manifest.json",
+      "sha256": "b719ec1d8c869ebf0357c9bf43c796671d1fb9098502f09d1284b73297ceda85",
+      "bytes": 44436
+    },
+    {
+      "path": "edge-deployment.json",
+      "sha256": "b186f07c5a783b1eadcd07c674fbd50556c5a1b8ea6de0c12fefcfc115c73c65",
+      "bytes": 447
+    },
+    {
+      "path": "pages-deployment.json",
+      "sha256": "f8863b7ed04731f795633e6a7c4ac2acc4f2ac9a49ea0dfb1298d7fbf63e427a",
+      "bytes": 405
+    },
+    {
+      "path": "served-preflight.json",
+      "sha256": "0cdc0c8f9aed63921a1a11ec48f00c329ef84bce190f0ece7eb4dea8bf92c927",
+      "bytes": 4284
+    },
+    {
+      "path": "authenticated-preflight.json",
+      "sha256": "4b48c4a78528e6bfffae50503e4a6b0d650037bceae27bc7b6ed20fda04ae534",
+      "bytes": 892
+    },
+    {
+      "path": "route-unpaid.json",
+      "sha256": "44941ecdf9db8840d1fc83359268449d4fe7ad5d983254dd26e018bd5ff5a989",
+      "bytes": 211
+    },
+    {
+      "path": "qwen-fallback.json",
+      "sha256": "534be62d4c9e5cb7944108540eb7ae7963627feda17a5acace4a7f2da5d59e16",
+      "bytes": 485
+    },
+    {
+      "path": "canary-policy.json",
+      "sha256": "2947afd749f345490ca7bec7314f3526c14d967a3b3ea93412f25fa252ab1407",
+      "bytes": 777
+    },
+    {
+      "path": "local-freeze-verified.json",
+      "sha256": "ed9df12db288447d9862f6c1df645a2d1dfaf7ded0b5a95957bb0d2066972286",
+      "bytes": 131
+    },
+    {
+      "path": "spending-enabled.json",
+      "sha256": "b4855140756f384880c0d66e3de7d06cba12cbe44870fb0861f809464272d54c",
+      "bytes": 191
+    },
+    {
+      "path": "canary-snapshot.json",
+      "sha256": "2e11e2df45f43447ed33f2cc34395e6f10f65898aacedd2117efc82453487bbe",
+      "bytes": 4836
+    },
+    {
+      "path": "history-before-restoration.json",
+      "sha256": "9a3c3294866cb2f893053838d33ce29e78d03ef03117a50ba194e0c1edc48fef",
+      "bytes": 2607
+    },
+    {
+      "path": "history-after-restoration.json",
+      "sha256": "6bfe0ed7c58a3844e1692aa328db797cb1c0d89ae4c30ec5efb28f91536cd4b2",
+      "bytes": 2607
+    },
+    {
+      "path": "final-hosted-state.json",
+      "sha256": "0d1763a9de60586ba930e3c2d5c5ca12224598f7ba6a6e8e792d55caf6ad8db4",
+      "bytes": 1022
+    },
+    {
+      "path": "live-canaries.json",
+      "sha256": "a36fa06b1568b6393d9f8b406aa0095fd1d0d2d6da9657813c49fd6512af484a",
+      "bytes": 5655
+    }
+  ],
+  "credentialPatternScan": "pass",
+  "privateConfigLogsBundlesAndScreenshotsCopied": false,
+  "actualInference": true,
+  "candidate": "9a7c6249851fad76f72454ccd5c045dbee5ad50d"
+}

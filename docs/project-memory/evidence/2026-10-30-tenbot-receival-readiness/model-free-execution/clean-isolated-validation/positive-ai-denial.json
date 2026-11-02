@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "code": "42501",
+  "reason": "execution-only-never-permits-inference",
+  "boundGrantId": "d5223365-d34e-4df9-a1bb-0ca9d4e85fea",
+  "usageUnchanged": true,
+  "historicalFundingAndOrdinaryPolicyUnchanged": true,
+  "inferenceCalls": 0
+}

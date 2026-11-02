@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T01:33:31.687Z",
+  "pages": [
+    {
+      "name": "tendev",
+      "sha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+      "deployment": "845b86cf-2d17-46a0-bef4-3712e65064c5"
+    },
+    {
+      "name": "tenops",
+      "sha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "deployment": "6cda75a5-dc37-480c-8027-bd7806176c34"
+    }
+  ],
+  "edge": {
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 13,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "bundleSha256": "7517faa181df6008539576b4edd237e0e647ef65fdf80e7491a234d65c19bf9f",
+    "sameTestedSource": true
+  },
+  "settings": {
+    "hostedKeyPresent": true,
+    "expectedNonSecretSettingDigestsMatch": true,
+    "terraOrigins": [
+      "https://tendev.pages.dev"
+    ],
+    "verifiedKeyExpiry": "2026-11-28T22:46:56Z",
+    "qwenEnabled": true,
+    "spendingAuthorized": true
+  },
+  "pagesConfigurationUnchanged": true,
+  "openAiInferenceCallsInThisCheck": 0,
+  "hostedOpenAIKeyValueRead": false
+}

@@ -1,0 +1,90 @@
+{
+  "model": "gpt-6.1-terra",
+  "requestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+  "sourceId": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+  "calls": [
+    {
+      "id": "61380d8b-52cc-42b1-869e-9fda15452c2b",
+      "model": "gpt-6.1-terra",
+      "state": "measured",
+      "requestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+      "actualMicrousd": 791,
+      "reservedMicrousd": 13188,
+      "createdAt": "2026-10-31T01:24:41.700776+00:00",
+      "settledAt": "2026-10-31T01:24:44.414883+00:00"
+    },
+    {
+      "id": "966bfb8c-3250-489d-b81e-5f8218b3e92e",
+      "model": "gpt-6.1-terra",
+      "state": "measured",
+      "requestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+      "actualMicrousd": 2386,
+      "reservedMicrousd": 30298,
+      "createdAt": "2026-10-31T01:24:44.917311+00:00",
+      "settledAt": "2026-10-31T01:24:46.925032+00:00"
+    },
+    {
+      "id": "7116ec47-8f76-4ce6-9c03-f1a278632fb0",
+      "model": "gpt-6.1-terra",
+      "state": "measured",
+      "requestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+      "actualMicrousd": 4832,
+      "reservedMicrousd": 47045,
+      "createdAt": "2026-10-31T01:24:47.269587+00:00",
+      "settledAt": "2026-10-31T01:24:48.554171+00:00"
+    },
+    {
+      "id": "a272ed71-0547-452c-a937-31ddaac14cd3",
+      "model": "gpt-6.1-terra",
+      "state": "measured",
+      "requestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+      "actualMicrousd": 1383,
+      "reservedMicrousd": 50039,
+      "createdAt": "2026-10-31T01:24:48.883367+00:00",
+      "settledAt": "2026-10-31T01:24:50.914331+00:00"
+    },
+    {
+      "id": "f90a1836-6b70-4624-86e7-e266410b87e3",
+      "model": "gpt-6.1-terra",
+      "state": "measured",
+      "requestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+      "actualMicrousd": 1815,
+      "reservedMicrousd": 54247,
+      "createdAt": "2026-10-31T01:24:51.392807+00:00",
+      "settledAt": "2026-10-31T01:24:53.497233+00:00"
+    },
+    {
+      "id": "19b54968-00b1-4498-af18-15191dd07c6d",
+      "model": "gpt-6.1-terra",
+      "state": "measured",
+      "requestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+      "actualMicrousd": 1036,
+      "reservedMicrousd": 55118,
+      "createdAt": "2026-10-31T01:24:53.804827+00:00",
+      "settledAt": "2026-10-31T01:24:55.997639+00:00"
+    },
+    {
+      "id": "3a998629-f5b8-49f0-80a7-0a0886e0cb3d",
+      "model": "gpt-6.1-terra",
+      "state": "measured",
+      "requestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+      "actualMicrousd": 902,
+      "reservedMicrousd": 58198,
+      "createdAt": "2026-10-31T01:24:56.37552+00:00",
+      "settledAt": "2026-10-31T01:24:58.309203+00:00"
+    }
+  ],
+  "measuredMicrousd": 13145,
+  "measuredUsd": 0.013145,
+  "accounting": "Actual provider usage measured by the existing server meter using configured model prices; not a newly reconciled OpenAI billing invoice",
+  "canaryReservedOrUncertainCalls": 0,
+  "allowanceMicrousd": 250000,
+  "unusedMicrousd": 236855,
+  "unusedFundingEnabled": false,
+  "ordinaryPolicyUnchanged": true,
+  "oldOpenReservationMicrousd": 61139,
+  "oldOpenReservationPreserved": true,
+  "cumulativeAccountedBeforeMicrousd": 758624,
+  "cumulativeAccountedAfterMicrousd": 771769,
+  "ordinaryExpiryUnchanged": "2026-10-30T23:00:00+00:00"
+}

@@ -1,0 +1,148 @@
+{
+  "passed": true,
+  "at": "2026-11-01T17:43:14.877Z",
+  "sha": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "deploymentId": "967ed4d1-0ee8-4488-8db2-ee984cabc953",
+  "assets": 34,
+  "checks": [
+    {
+      "path": "index.html",
+      "matches": true
+    },
+    {
+      "path": "inventory.html",
+      "matches": true
+    },
+    {
+      "path": "my-work.html",
+      "matches": true
+    },
+    {
+      "path": "manifest.webmanifest",
+      "matches": true
+    },
+    {
+      "path": "sw.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/css/15f74ee999edbd3d.css",
+      "matches": true
+    },
+    {
+      "path": "_next/static/css/7e85cdb03b2c44e3.css",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/webpack-f3448dbb0cf0ee0a.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/c1b010ae-8cda3ade643e9bbb.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/3714-7946fb603a05859a.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/main-app-a4c21c96cc2bc032.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/47222212-23f239a5d73d6cfe.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/9384-0204748abe1fb3e0.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/4944-9effc5eca9ed4eed.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/537-7f637a9ccda78a65.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/3139-84b1c5c8a35a29d5.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/6873-080df1ee386e2495.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/2560-84b7131ff085d028.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/layout-8d8998bf6c9edac2.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/926-34e9fa653e112405.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/434-3e9f1b911e1df5e9.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/5779-5546161c1fcb7c0d.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/4350-fe070c83536aab29.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/5971-04bd28b43a7f14be.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/9065-f17f0b18dceb7b02.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/4796-d94402c509cd22cd.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/3993-5ba342dd1ad2e0c8.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/5307-ac8741000ac28d3d.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/page-39436d3fff1a8293.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/css/9611c0b375fc73f6.css",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/inventory/page-4ad520f5013b9506.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/8741-ce0a2dcbd1d9b41f.js",
+      "matches": true
+    },
+    {
+      "path": "_next/static/chunks/app/my-work/page-5506f07ea9b5d2af.js",
+      "matches": true
+    }
+  ],
+  "canaryRouteStatus": 404,
+  "normalAuthInventoryMessagingAssetsMatch": true,
+  "authenticatedUiSmokeClaimed": false
+}

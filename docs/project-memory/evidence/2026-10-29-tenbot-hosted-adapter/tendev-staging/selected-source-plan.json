@@ -1,0 +1,1321 @@
+{
+  "schemaVersion": 1,
+  "kind": "selective-TenDev-read-only-source-plan",
+  "baselineRevision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+  "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+  "excludedArchitectureBoundary": "b11b7574b72dd7ae3186477df075dbca267dc8f7",
+  "gitMutation": false,
+  "selectedPaths": [
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/my-work/inbox.ts",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/ReceivalDraftReview.tsx",
+    "src/modules/tenbot/conversation-history.ts",
+    "src/modules/tenbot/live-review.ts",
+    "src/modules/inventory/invoice-quantity.ts",
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-openai-metering.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+    "supabase/migrations/20261029221000_tenbot_agent_history.sql"
+  ],
+  "selectedFiles": [
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "sha256": "5348d3aea388adfe6c86381ac85f09b95e5145597c42b34dd191d4e5874c90b7",
+      "baseline": {
+        "mode": "100644",
+        "blob": "7ef471da16b4bf2048064b416da3614f6bee69b2"
+      },
+      "reason": "Messaging integration and conversational lifecycle"
+    },
+    {
+      "path": "src/modules/my-work/inbox.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "56241543731745bc8f83fc300dd58f425bb0c83a",
+      "sha256": "9b864de21cd7c6934f85a9b89cd956a873b73f6699e0ab4ef07bf50656d83dc0",
+      "baseline": {
+        "mode": "100644",
+        "blob": "290870edcf4aada16ac71ff0cc4d3723b0444cfc"
+      },
+      "reason": "TenBot label and virtual conversation integration"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "e230a2afcbd1f682f8358d7d930601025be0a73c",
+      "sha256": "46fc03a60a538c4dc7ce9b1da01d84f5b5709b33fb81abaf9fc36d48e844293d",
+      "baseline": {
+        "mode": "100644",
+        "blob": "11efe94771556616a526cc76ec6cd0088327aea6"
+      },
+      "reason": "Accepted assistant UI, history restoration and hosted mode"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "a7408374d96d645750672a5865145b067995bcd1",
+      "sha256": "757c79b9032acde6e9bda887d7e2046f2c4e6a1fe3e3f357db361d1b96397915",
+      "baseline": null,
+      "reason": "Static local-only review component dependency; no hosted preparation capability"
+    },
+    {
+      "path": "src/modules/tenbot/conversation-history.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "510e460cbd109bb924d7ff6d7ca7cc07e9a1469d",
+      "sha256": "ce5ca9f876b3fb4cbfff060fef2575a28b6c3a85c6c123ad2b0b21963d5d6665",
+      "baseline": null,
+      "reason": "Owner/scope-bound conversation locator"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "3b6332e171239776eee18baaef4a552c89475c5e",
+      "sha256": "a280364b16a7f7340649973fbd11f144784b3051bf6464e9aed348b5244756dc",
+      "baseline": null,
+      "reason": "Local-only experiment guards and static UI dependency"
+    },
+    {
+      "path": "src/modules/inventory/invoice-quantity.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "ad3c5d7081abde80c81310d5ec59d798c4924f33",
+      "sha256": "6e694e30d1ad871568bf47a215e52b495fc504bb2de9c376f4b35eff70a5d92c",
+      "baseline": null,
+      "reason": "Pure deterministic quantity dependency of local review UI and invoice module"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "a0888e92a05ec479571b7c93ee5486429685cbd4",
+      "sha256": "88cb319df74eebb8d745904415527f01559dc329de4780c915b7a62ca74e2a20",
+      "baseline": null,
+      "reason": "Durable owner-scoped conversation adapter"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "2e13692d4ba402e93be982f756c3f4bd7b873baa",
+      "sha256": "05357a3e9fcd54d52b20c2f173dea9acae3e1912e4d565afad3cbc2508e4345b",
+      "baseline": null,
+      "reason": "Accepted d769 verified knowledge adapter"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "8ef3ddea8b790abdb3008e4ba2a6de3a2483941f",
+      "sha256": "f5695caffb6fe7be8ef467f7197b0d4fafe522f7f20246c791ac42de4d162717",
+      "baseline": null,
+      "reason": "Accepted d769 capability registry"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "b3f9faea201ce99111969fef44c370691236cf36",
+      "sha256": "04f1ef3020b3cf250e2e5a523b6832e5d0f9432ce846fb2b0d4755d19a04a947",
+      "baseline": null,
+      "reason": "Accepted d769 bounded sessions and proof refresh"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "5ce93bcce182097707c3ec60b5cabd44c5f2a62d",
+      "sha256": "6c3b802f94a4ed8fd605d66eba21ab728570cd3aabcecc5611fe5e338304d4f8",
+      "baseline": null,
+      "reason": "Bounded tool-calling runtime"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "c9e0d8c80ad936c7e62b046fba991c8bb3580eac",
+      "sha256": "c6b3fc9fabf4e5d741de42e592a15b7175dfab1995b14c3bb9b1951a2c2ce984",
+      "baseline": {
+        "mode": "100644",
+        "blob": "f015245e4f21c1a1694f5fc810993634aa05671f"
+      },
+      "reason": "Existing handler reuse and hosted routing support"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "4a06c93430e86f3bfda7a02f50111c17a7800c49",
+      "sha256": "483362833b15de5fe985dcbdc3e1d07e57a2bb7576d8447d3be07530ebd3118b",
+      "baseline": null,
+      "reason": "Read-only hosted Terra adapter with Qwen fallback"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "856446f68e057f068dc04ffb2cb7f3fd3912b9ed",
+      "sha256": "14fa64872bf9e581903735c41804da0fff011b9ae5bca790a4c671098b640af4",
+      "baseline": null,
+      "reason": "Module dependency only; hosted mode excludes invoice/preparation capabilities"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "4f538fe0b23c7fdbb7a0edc6f8fa14429b18090e",
+      "sha256": "ba11e374ee20e639a60992f32224695c82dc004eaa802224f21630057e6f17b3",
+      "baseline": null,
+      "reason": "Shared durable reservation/accounting adapter"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "b3fc2b383be2115d0214fee33cb2bd2ddc74fd34",
+      "sha256": "c4987a87fa128ba1b544909190bcc1c0b5159c56e7726b034e2d360163c7191f",
+      "baseline": null,
+      "reason": "Server-only OpenAI provider integration"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "4328303531ec6423633ceed9a49806ea5d32d477",
+      "sha256": "a11b20273b1aad77b542a6729ff7cf3a2bb37cde0e6f2c01938df7bba593314c",
+      "baseline": {
+        "mode": "100644",
+        "blob": "ca7fe3b1d5d2a4d6d601f6153e275f096052ab3d"
+      },
+      "reason": "Authenticated hosted entry and provider routing"
+    },
+    {
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "da6395122e043bf1069109b815f4fda124e7e87d",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+      "baseline": null,
+      "reason": "Only approved assistant metering migration"
+    },
+    {
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "sourceRevision": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "mode": "100644",
+      "blob": "031415b57d7ddf2af760ab2760d401c86c94ff36",
+      "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31",
+      "baseline": null,
+      "reason": "Only approved assistant history migration"
+    }
+  ],
+  "preservedBaselineFiles": [
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "mode": "100644",
+      "blob": "d179f373a4cd96ba102e4e8a48cd74d033c5c699",
+      "sourceD769Blob": "d179f373a4cd96ba102e4e8a48cd74d033c5c699",
+      "unchangedInD769": true
+    },
+    {
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "mode": "100644",
+      "blob": "d8b4e283e4bbef03a8bf8ee52cc7d7eaea44a9e7",
+      "sourceD769Blob": "d8b4e283e4bbef03a8bf8ee52cc7d7eaea44a9e7",
+      "unchangedInD769": true
+    },
+    {
+      "path": "package.json",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "mode": "100644",
+      "blob": "0083b1c912b502b1ab63a23df223cc357fba17de",
+      "sourceD769Blob": "0083b1c912b502b1ab63a23df223cc357fba17de",
+      "unchangedInD769": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "mode": "100644",
+      "blob": "14342301fbd17621b71f7733735331b4c70bbec3",
+      "sourceD769Blob": "14342301fbd17621b71f7733735331b4c70bbec3",
+      "unchangedInD769": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "mode": "100644",
+      "blob": "208dcdf72bebb34c780418ac94d6c0e1db12b185",
+      "sourceD769Blob": "208dcdf72bebb34c780418ac94d6c0e1db12b185",
+      "unchangedInD769": true
+    },
+    {
+      "path": "src/app/client-layout-shell.tsx",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "mode": "100644",
+      "blob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+      "sourceD769Blob": "b6c799e95b190432f9866a0cd868873fb8afc19e",
+      "unchangedInD769": false
+    },
+    {
+      "path": "src/app/inventory/page.tsx",
+      "revision": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "mode": "100644",
+      "blob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+      "sourceD769Blob": "081d40a120cd8ce4bbc6be884f282cf0c27ce377",
+      "unchangedInD769": false
+    }
+  ],
+  "prohibitedChanges": [
+    {
+      "path": "src/app/inventory/page.tsx",
+      "action": "retain-ae50"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-service.ts",
+      "action": "do-not-add"
+    },
+    {
+      "path": "src/modules/inventory/pending-receival-contract.ts",
+      "action": "do-not-add"
+    },
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "action": "do-not-add-or-apply"
+    },
+    {
+      "path": "src/app/client-layout-shell.tsx",
+      "action": "retain-ae50"
+    }
+  ],
+  "excludedB11Versions": [
+    {
+      "path": "docs/README.md",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-29-tenbot-architecture-knowledge.json",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "package.json",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/support/tenbot-hosted-fixture.mts",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/architecture.mjs",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/infrastructure-reviews.json",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/tenbot-knowledge/release-sync.mjs",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-session.mts",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/verify-tenbot-hosted-browser.mjs",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "scripts/verify-tenbot.mts",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "disposition": "use-d769-bytes"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "disposition": "use-d769-bytes"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "disposition": "use-d769-bytes"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "disposition": "retain-ae50-or-do-not-add"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "disposition": "retain-ae50-or-do-not-add"
+    }
+  ],
+  "excludedOtherChanges": "No other ae50-to-dev paths, unrelated docs, evidence dumps, benchmarks, runtime configuration or secrets are selected by this plan.",
+  "dependencyValidation": {
+    "method": "Static TypeScript AST import/export/dynamic-import traversal against projected committed source; no source executed, compiler/build/network tests performed.",
+    "rootSourceFiles": 18,
+    "transitiveCodeFiles": 63,
+    "localEdges": 122,
+    "missing": [],
+    "externalImports": [
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "lucide-react",
+        "kind": "declared-package",
+        "package": "lucide-react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "react-dom",
+        "kind": "declared-package",
+        "package": "react-dom",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "next/link",
+        "kind": "declared-package",
+        "package": "next",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "next/navigation",
+        "kind": "declared-package",
+        "package": "next",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "lucide-react",
+        "kind": "declared-package",
+        "package": "lucide-react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/tenbot/ReceivalDraftReview.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/tenbot/live-review.ts",
+        "spec": "pdfjs-dist/legacy/build/pdf.mjs",
+        "kind": "declared-package",
+        "package": "pdfjs-dist",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "supabase/functions/tenbot/index.ts",
+        "spec": "npm:@supabase/supabase-js@2.101.1",
+        "kind": "existing-runtime-or-remote-import",
+        "networkVerified": false
+      },
+      {
+        "from": "src/modules/my-work/messaging/AttachmentImageViewer.tsx",
+        "spec": "next/image",
+        "kind": "declared-package",
+        "package": "next",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/messaging/AttachmentImageViewer.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/messaging/AttachmentImageViewer.tsx",
+        "spec": "lucide-react",
+        "kind": "declared-package",
+        "package": "lucide-react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/lib/auth.tsx",
+        "spec": "@supabase/supabase-js",
+        "kind": "declared-package",
+        "package": "@supabase/supabase-js",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/lib/auth.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/lib/supabase.ts",
+        "spec": "@supabase/supabase-js",
+        "kind": "declared-package",
+        "package": "@supabase/supabase-js",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/messaging/useAttachmentQueue.ts",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/messaging/InlinePreview.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/messaging/useConversation.ts",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/lib/drafts/useTextDraft.ts",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/components/SuggestionInput.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/modules/my-work/messaging/transfer.ts",
+        "spec": "tus-js-client",
+        "kind": "declared-package",
+        "package": "tus-js-client",
+        "declaredInBaseline": true
+      },
+      {
+        "from": "src/components/BusinessWriteControls.tsx",
+        "spec": "react",
+        "kind": "declared-package",
+        "package": "react",
+        "declaredInBaseline": true
+      }
+    ],
+    "edges": [
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./messaging/AttachmentImageViewer",
+        "to": "src/modules/my-work/messaging/AttachmentImageViewer.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "@/lib/auth",
+        "to": "src/lib/auth.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "@/lib/supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "@/modules/production/job-options",
+        "to": "src/modules/production/job-options.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./inbox",
+        "to": "src/modules/my-work/inbox.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./types",
+        "to": "src/modules/my-work/types.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./messaging/files",
+        "to": "src/modules/my-work/messaging/files.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./messaging/client",
+        "to": "src/modules/my-work/messaging/client.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./messaging/useAttachmentQueue",
+        "to": "src/modules/my-work/messaging/useAttachmentQueue.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./messaging/InlinePreview",
+        "to": "src/modules/my-work/messaging/InlinePreview.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./messaging/useConversation",
+        "to": "src/modules/my-work/messaging/useConversation.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./messaging/TransferPanel",
+        "to": "src/modules/my-work/messaging/TransferPanel.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "./messaging/awareness",
+        "to": "src/modules/my-work/messaging/awareness.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "@/lib/coalesced-read",
+        "to": "src/lib/coalesced-read.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "@/lib/drafts/useTextDraft",
+        "to": "src/lib/drafts/useTextDraft.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "@/modules/tenbot/TenbotAvatar",
+        "to": "src/modules/tenbot/TenbotAvatar.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/InboxDialog.tsx",
+        "spec": "@/modules/tenbot/TenbotWorkspace",
+        "to": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/my-work/inbox.ts",
+        "spec": "./messaging/preview",
+        "to": "src/modules/my-work/messaging/preview.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/inbox.ts",
+        "spec": "./messaging/files",
+        "to": "src/modules/my-work/messaging/files.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/inbox.ts",
+        "spec": "@/lib/supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/inbox.ts",
+        "spec": "./types",
+        "to": "src/modules/my-work/types.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "@/lib/auth",
+        "to": "src/lib/auth.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "@/lib/supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "./ReceivalDraftReview",
+        "to": "src/modules/tenbot/ReceivalDraftReview.tsx",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "./conversation-history",
+        "to": "src/modules/tenbot/conversation-history.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/tenbot/TenbotWorkspace.tsx",
+        "spec": "./live-review",
+        "to": "src/modules/tenbot/live-review.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/tenbot/ReceivalDraftReview.tsx",
+        "spec": "../../components/SuggestionInput",
+        "to": "src/components/SuggestionInput.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/tenbot/ReceivalDraftReview.tsx",
+        "spec": "../inventory/invoice-quantity",
+        "to": "src/modules/inventory/invoice-quantity.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/tenbot/ReceivalDraftReview.tsx",
+        "spec": "./live-review",
+        "to": "src/modules/tenbot/live-review.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/tenbot/live-review.ts",
+        "spec": "../purchasing/types",
+        "to": "src/modules/purchasing/types.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/tenbot/live-review.ts",
+        "spec": "../purchasing/catalog-records",
+        "to": "src/modules/purchasing/catalog-records.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/tenbot/live-review.ts",
+        "spec": "../inventory/invoice-quantity",
+        "to": "src/modules/inventory/invoice-quantity.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+        "spec": "./tenbot-core.ts",
+        "to": "supabase/functions/_shared/tenbot-core.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+        "spec": "./tenbot-knowledge.ts",
+        "to": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "spec": "./tenbot-agent.ts",
+        "to": "supabase/functions/_shared/tenbot-agent.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "spec": "./tenbot-job-session.ts",
+        "to": "supabase/functions/_shared/tenbot-job-session.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "spec": "./tenbot-job-tools.ts",
+        "to": "supabase/functions/_shared/tenbot-job-tools.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "spec": "./tenbot-knowledge.ts",
+        "to": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "spec": "./tenbot-agent-knowledge.ts",
+        "to": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "spec": "./tenbot-agent.ts",
+        "to": "supabase/functions/_shared/tenbot-agent.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "spec": "./tenbot-agent-operations.ts",
+        "to": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "spec": "./tenbot-invoice.ts",
+        "to": "supabase/functions/_shared/tenbot-invoice.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "spec": "./tenbot-core.ts",
+        "to": "supabase/functions/_shared/tenbot-core.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "spec": "./tenbot-job-session.ts",
+        "to": "supabase/functions/_shared/tenbot-job-session.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "spec": "./tenbot-knowledge.ts",
+        "to": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "spec": "./tenbot-agent-knowledge.ts",
+        "to": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "spec": "./tenbot-agent-history-store.ts",
+        "to": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-handler.ts",
+        "spec": "./tenbot-core.ts",
+        "to": "supabase/functions/_shared/tenbot-core.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-handler.ts",
+        "spec": "./tenbot-privacy.ts",
+        "to": "supabase/functions/_shared/tenbot-privacy.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-handler.ts",
+        "spec": "./tenbot-job-routing.ts",
+        "to": "supabase/functions/_shared/tenbot-job-routing.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-handler.ts",
+        "spec": "./tenbot-job-session.ts",
+        "to": "supabase/functions/_shared/tenbot-job-session.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-hosted.ts",
+        "spec": "./tenbot-agent-session.ts",
+        "to": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-hosted.ts",
+        "spec": "./tenbot-agent-history-store.ts",
+        "to": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-hosted.ts",
+        "spec": "./tenbot-openai-metering.ts",
+        "to": "supabase/functions/_shared/tenbot-openai-metering.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-hosted.ts",
+        "spec": "./tenbot-openai.ts",
+        "to": "supabase/functions/_shared/tenbot-openai.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-hosted.ts",
+        "spec": "./tenbot-agent.ts",
+        "to": "supabase/functions/_shared/tenbot-agent.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-hosted.ts",
+        "spec": "./tenbot-handler.ts",
+        "to": "supabase/functions/_shared/tenbot-handler.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-hosted.ts",
+        "spec": "./tenbot-core.ts",
+        "to": "supabase/functions/_shared/tenbot-core.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-hosted.ts",
+        "spec": "./tenbot-job-session.ts",
+        "to": "supabase/functions/_shared/tenbot-job-session.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-invoice.ts",
+        "spec": "../../../src/modules/purchasing/catalog-records.ts",
+        "to": "src/modules/purchasing/catalog-records.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-invoice.ts",
+        "spec": "./tenbot-agent.ts",
+        "to": "supabase/functions/_shared/tenbot-agent.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-invoice.ts",
+        "spec": "./tenbot-job-tools.ts",
+        "to": "supabase/functions/_shared/tenbot-job-tools.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-invoice.ts",
+        "spec": "../../../src/modules/inventory/invoice-quantity.ts",
+        "to": "src/modules/inventory/invoice-quantity.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-openai-metering.ts",
+        "spec": "./tenbot-openai.ts",
+        "to": "supabase/functions/_shared/tenbot-openai.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-openai.ts",
+        "spec": "./tenbot-agent.ts",
+        "to": "supabase/functions/_shared/tenbot-agent.ts",
+        "source": "d769"
+      },
+      {
+        "from": "supabase/functions/tenbot/index.ts",
+        "spec": "../_shared/tenbot-core.ts",
+        "to": "supabase/functions/_shared/tenbot-core.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/tenbot/index.ts",
+        "spec": "../_shared/tenbot-models.ts",
+        "to": "supabase/functions/_shared/tenbot-models.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/tenbot/index.ts",
+        "spec": "../_shared/tenbot-job-tools.ts",
+        "to": "supabase/functions/_shared/tenbot-job-tools.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/tenbot/index.ts",
+        "spec": "../_shared/tenbot-hosted.ts",
+        "to": "supabase/functions/_shared/tenbot-hosted.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/my-work/messaging/AttachmentImageViewer.tsx",
+        "spec": "../inbox",
+        "to": "src/modules/my-work/inbox.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/lib/auth.tsx",
+        "spec": "@/lib/supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/lib/auth.tsx",
+        "spec": "@/lib/web-push",
+        "to": "src/lib/web-push.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/lib/auth.tsx",
+        "spec": "@/lib/dev-branding.mjs",
+        "to": "src/lib/dev-branding.mjs",
+        "source": "ae50"
+      },
+      {
+        "from": "src/lib/auth.tsx",
+        "spec": "@/lib/rbac",
+        "to": "src/lib/rbac.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/production/job-options.ts",
+        "spec": "@/lib/complete-rows",
+        "to": "src/lib/complete-rows.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/production/job-options.ts",
+        "spec": "../../lib/supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/production/job-options.ts",
+        "spec": "./job-reference",
+        "to": "src/modules/production/job-reference.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/production/job-options.ts",
+        "spec": "./status-visuals",
+        "to": "src/modules/production/status-visuals.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/production/job-options.ts",
+        "spec": "./types",
+        "to": "src/modules/production/types.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/client.ts",
+        "spec": "@/lib/supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/client.ts",
+        "spec": "./preview",
+        "to": "src/modules/my-work/messaging/preview.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/client.ts",
+        "spec": "./files",
+        "to": "src/modules/my-work/messaging/files.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/client.ts",
+        "spec": "./transfer",
+        "to": "src/modules/my-work/messaging/transfer.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/useAttachmentQueue.ts",
+        "spec": "./queue",
+        "to": "src/modules/my-work/messaging/queue.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/InlinePreview.tsx",
+        "spec": "@/lib/supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/InlinePreview.tsx",
+        "spec": "./files",
+        "to": "src/modules/my-work/messaging/files.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/InlinePreview.tsx",
+        "spec": "./preview",
+        "to": "src/modules/my-work/messaging/preview.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/useConversation.ts",
+        "spec": "@/lib/supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/useConversation.ts",
+        "spec": "../inbox",
+        "to": "src/modules/my-work/inbox.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/my-work/messaging/useConversation.ts",
+        "spec": "./recentThreads",
+        "to": "src/modules/my-work/messaging/recentThreads.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/useConversation.ts",
+        "spec": "./intentPrefetch",
+        "to": "src/modules/my-work/messaging/intentPrefetch.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+        "spec": "@/lib/auth",
+        "to": "src/lib/auth.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+        "spec": "./files",
+        "to": "src/modules/my-work/messaging/files.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+        "spec": "./client",
+        "to": "src/modules/my-work/messaging/client.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/TransferPanel.tsx",
+        "spec": "./transfer",
+        "to": "src/modules/my-work/messaging/transfer.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/awareness.ts",
+        "spec": "@/lib/coalesced-read",
+        "to": "src/lib/coalesced-read.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/awareness.ts",
+        "spec": "../inbox",
+        "to": "src/modules/my-work/inbox.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/lib/drafts/useTextDraft.ts",
+        "spec": "./textDraft",
+        "to": "src/lib/drafts/textDraft.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/preview.ts",
+        "spec": "./files",
+        "to": "src/modules/my-work/messaging/files.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/components/SuggestionInput.tsx",
+        "spec": "./BusinessWriteControls",
+        "to": "src/components/BusinessWriteControls.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/purchasing/types.ts",
+        "spec": "../../../supabase/functions/_shared/pdf-text-size.mjs",
+        "to": "supabase/functions/_shared/pdf-text-size.mjs",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/purchasing/catalog-records.ts",
+        "spec": "./types",
+        "to": "src/modules/purchasing/types.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-core.ts",
+        "spec": "./tenbot-knowledge.ts",
+        "to": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-core.ts",
+        "spec": "./tenbot-privacy.ts",
+        "to": "supabase/functions/_shared/tenbot-privacy.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-core.ts",
+        "spec": "./tenbot-models.ts",
+        "to": "supabase/functions/_shared/tenbot-models.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "spec": "./tenbot-knowledge-snapshot.ts",
+        "to": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "spec": "./tenbot-workflow-supplement.ts",
+        "to": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-job-session.ts",
+        "spec": "./tenbot-job-routing.ts",
+        "to": "supabase/functions/_shared/tenbot-job-routing.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-job-session.ts",
+        "spec": "./tenbot-job-tools.ts",
+        "to": "supabase/functions/_shared/tenbot-job-tools.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-job-tools.ts",
+        "spec": "./production-job-facts.mjs",
+        "to": "supabase/functions/_shared/production-job-facts.mjs",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-job-tools.ts",
+        "spec": "./labor-hours.mjs",
+        "to": "supabase/functions/_shared/labor-hours.mjs",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-job-routing.ts",
+        "spec": "./tenbot-job-tools.ts",
+        "to": "supabase/functions/_shared/tenbot-job-tools.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/lib/web-push.ts",
+        "spec": "./supabase",
+        "to": "src/lib/supabase.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/production/status-visuals.ts",
+        "spec": "./types",
+        "to": "src/modules/production/types.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/production/types.ts",
+        "spec": "./contacts/model",
+        "to": "src/modules/production/contacts/model.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/transfer.ts",
+        "spec": "./files",
+        "to": "src/modules/my-work/messaging/files.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/queue.ts",
+        "spec": "./files",
+        "to": "src/modules/my-work/messaging/files.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/modules/my-work/messaging/recentThreads.ts",
+        "spec": "../inbox",
+        "to": "src/modules/my-work/inbox.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/my-work/messaging/intentPrefetch.ts",
+        "spec": "../inbox",
+        "to": "src/modules/my-work/inbox.ts",
+        "source": "d769"
+      },
+      {
+        "from": "src/modules/my-work/messaging/intentPrefetch.ts",
+        "spec": "./recentThreads",
+        "to": "src/modules/my-work/messaging/recentThreads.ts",
+        "source": "ae50"
+      },
+      {
+        "from": "src/components/BusinessWriteControls.tsx",
+        "spec": "@/lib/auth",
+        "to": "src/lib/auth.tsx",
+        "source": "ae50"
+      },
+      {
+        "from": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+        "spec": "./tenbot-knowledge.ts",
+        "to": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "source": "ae50"
+      }
+    ],
+    "allLocalImportsAvailable": true,
+    "pdfWorker": "live-review new URL resolves to pdfjs-dist/legacy/build/pdf.worker.min.mjs; pdfjs-dist is an existing declared ae50 dependency. Only local experiment invokes document preparation."
+  },
+  "releaseBoundary": {
+    "target": "TenDev only",
+    "operationalWritesEnabled": false,
+    "receivalMigrationSelected": false,
+    "migrationsSelected": 2,
+    "productionDeploymentAuthorized": false,
+    "b11ReleaseSyncGateIncluded": false,
+    "notes": [
+      "All selected runtime source bytes are d769; no b11 knowledge/generator changes mixed in.",
+      "TenbotWorkspace local experiment requires exact localhost:3000 + explicit flag. Hosted read-only assistant exposes no invoice/preparation/execute tools.",
+      "Canonical Inventory page and services remain served baseline bytes; no operational write path added.",
+      "Architecture b11 remains on dev, explicitly deferred pending scoped release-sync reconciliation.",
+      "Plan excludes validation-only new scripts; prior exact-source evidence is reused, and root may copy focused harnesses outside the release source if needed."
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "reviewer": "production_scope_review",
+  "candidate": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "readOnlyReview": true,
+  "selectedHashesMatch": 23,
+  "builtArtifactHashesMatch": 277,
+  "sourceClean": true,
+  "unchangedProductionProof": true,
+  "zeroHolds": true,
+  "canaryRouteAbsent": true,
+  "pagesFirstOrderConfirmed": true,
+  "newTests": false,
+  "newHostedCalls": false,
+  "blockingFindings": 0
+}

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "candidate": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "status": "reviewed",
+  "holds": 0,
+  "cleanFullHistory": true,
+  "productionTarget": "https://tenops.pages.dev",
+  "branch": "main",
+  "verifierUnchanged": true,
+  "releaseSyncUnchanged": true,
+  "tenDevOnlyCandidateSources": 0,
+  "knowledgeEntriesPatchesAndAuthorityUnchanged": true,
+  "alreadyAppliedMigrationHash": "a75ecd0eef035cc4a71cf944724c00588216aabae3fa9d98b161d7ea7b66bb52"
+}

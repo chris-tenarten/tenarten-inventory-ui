@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "actualInference": true,
+  "actualHostedDatabase": true,
+  "model": "gpt-6.1-terra",
+  "question": "Show the saved status and planned start/end dates for internal test Job DEV-20260803. State missing information. Do not make changes.",
+  "answer": "DEV-20260803 (chris-dev-test) has saved status In Production, a planned start of 2026-08-03, and a planned end of 2026-09-07. None of these fields is missing. Material status is unknown. The saved dates are not forecasts. No changes were made.",
+  "correctAgainstAcceptedFixture": true,
+  "caller": "Existing authenticated owner, current Admin permissions; no employee impersonation",
+  "fixtureOnly": true,
+  "providerSteps": 4,
+  "accountedMicrousd": 6194,
+  "reservationToFinalSettlementMs": 12262,
+  "latencyMethod": "First server reservation through final settlement; not total HTTP duration",
+  "rawToolSequence": "Not included in hosted employee response; four provider steps do not establish an exact tool count",
+  "noOperationalWrites": true,
+  "tokenBreakdown": "Not retained by hosted ledger"
+}

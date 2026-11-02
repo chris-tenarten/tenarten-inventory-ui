@@ -1,0 +1,74 @@
+{
+  "status": "proposed-only",
+  "configurationApplied": false,
+  "sourceChanges": false,
+  "databaseCalls": 0,
+  "hostedCalls": 0,
+  "inferenceCalls": 0,
+  "acceptedCandidate": "d769ab3",
+  "productDirection": "Limited funded pilot using existing promotional credits; unverified renewal is not a blocker and no unfunded monthly commitment is made.",
+  "currency": "USD",
+  "accountingUnit": "integer microUSD, with usage and reservations rounded up",
+  "lastAcceptedLocalJournal": {
+    "settledAttempts": 367,
+    "accountedUsd": 0.5399555,
+    "carryoverMicrousd": 539956,
+    "uncertainReservations": 0,
+    "localCumulativeCapUsd": 5,
+    "localCapRemainsUnchangedUntilCutover": true
+  },
+  "fundingBasis": {
+    "availablePromotionalCreditsUsd": 6.46,
+    "creditExpiryDateAsReported": "2026-10-31",
+    "exactGrantExpiryTimestampClaimed": false,
+    "newPilotAllowanceUsd": 4,
+    "headroomAfterNewAllowanceUsd": 2.46,
+    "requiresNewBillingOrCredits": false,
+    "futureRenewalRequiredToBeginPilot": false,
+    "fundingSource": "Current Product direction; no independent account probe performed by this proposal author."
+  },
+  "proposedPolicy": {
+    "total_limit_microusd": 4539956,
+    "month_limit_microusd": 4539956,
+    "day_limit_microusd": 1000000,
+    "user_day_limit_microusd": 250000,
+    "request_limit_microusd": 250000,
+    "allowed_models": ["gpt-6.1-terra"],
+    "request_step_limit": 16,
+    "global_minute_step_limit": 60,
+    "user_minute_step_limit": 16,
+    "global_day_request_limit": 300,
+    "user_day_request_limit": 60,
+    "global_open_limit": 8,
+    "user_open_limit": 2,
+    "expires_at_upper_bound": "2026-10-30T23:00:00Z",
+    "expiryInChicago": "2026-10-30 18:00 CDT",
+    "effectiveExpiryRule": "Earlier of the stated upper bound and independently verified API-key expiry."
+  },
+  "activationConditions": [
+    "Separate coordinated activation after applicable database, authorization, credential and release gates; this receipt does not enable inference.",
+    "Freeze independent local spending before transferring its latest journal into the shared meter; preserve the local $5 cap until cutover.",
+    "Under the shared policy-row lock, reconcile the latest local carryover monotonically and compute A = legacy_accounted_microusd + SUM(COALESCE(actual_microusd,reserved_microusd)).",
+    "Authorize the new $4 allowance only if A + 4000000 <= 5000000 and currently usable credits cover $4 plus unresolved-charge allowances and a conservative reserve.",
+    "For the stated last accepted journal with no shared rows or uncertainty, A = 539956 and the proposed cumulative ceiling is 4539956 microUSD.",
+    "If actual spend or uncertainty has advanced, stop and reconcile the limits and funding bound before activation; do not silently reset history or increase the cap.",
+    "Preserve all usage and uncertain reservations, imported carryover, current call limits and Qwen fallback; do not auto-release unresolved outcomes.",
+    "No automatic renewal, November budget increase, payment-method change, credit purchase or recharge. Funding expiry ends this pilot policy; Qwen remains available."
+  ],
+  "validationBoundary": {
+    "existingMeterVerifierSafeForExistingPermissionFixtureInPlace": false,
+    "reason": "It requires a dedicated empty tenbot_meter_test_* database and resets all app_users activity and app_role_capabilities in its own disposable fixture. Do not relax these guards or run its resets against shared permission fixtures.",
+    "meterVerifierEvidenceLimit": "Actual PostgreSQL role and metering execution only when run against an explicitly disposable database; minimal app tables and SET ROLE do not certify signed JWT, real Supabase Auth or Job RLS.",
+    "remainingRealHistoryCases": [
+      "Employee/admin cross-user claim, clear and raw-history access denial.",
+      "Privileged load/commit RPC denial, owner/claim/revision mismatch and replay.",
+      "Concurrent claims, expiry takeover, clear versus commit and permission revocation.",
+      "Nonrenewing hydration, bounded retention and legacy fallback revision release."
+    ],
+    "remainingHttpAuthorizationCases": [
+      "Real signed-token authentication, expired/invalid token denial and inactive/revoked account denial.",
+      "Actual caller-authorized Job reads and protected-record RLS."
+    ],
+    "receivalMigrationsExcluded": true
+  }
+}

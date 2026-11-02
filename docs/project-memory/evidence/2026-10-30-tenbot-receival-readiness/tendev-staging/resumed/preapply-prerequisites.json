@@ -1,0 +1,118 @@
+{
+  "checkedAt": "2026-10-30T16:36:10.042Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "readOnlyEndpoint": true,
+  "operationalRowsRead": 0,
+  "mutations": 0,
+  "querySha256": "ff33f0b139aefbbd30501f0ccf4908e569bf8884d6e9d0f103b385c2d505be07",
+  "durationMs": 653,
+  "readOnly": "on",
+  "coreRoles": [
+    "anon",
+    "authenticated",
+    "postgres",
+    "service_role",
+    "supabase_storage_admin"
+  ],
+  "relations": [
+    {
+      "name": "public.app_role_capabilities",
+      "present": true
+    },
+    {
+      "name": "public.app_users",
+      "present": true
+    },
+    {
+      "name": "public.jobs",
+      "present": true
+    },
+    {
+      "name": "public.pending_receivals",
+      "present": true
+    },
+    {
+      "name": "public.vendor_catalog",
+      "present": true
+    },
+    {
+      "name": "public.vendor_catalog_v2",
+      "present": true
+    },
+    {
+      "name": "public.vendors",
+      "present": true
+    },
+    {
+      "name": "storage.buckets",
+      "present": true
+    },
+    {
+      "name": "storage.objects",
+      "present": true
+    },
+    {
+      "name": "supabase_migrations.schema_migrations",
+      "present": true
+    }
+  ],
+  "newRoutines": null,
+  "newRelations": null,
+  "prerequisites": [
+    {
+      "present": true,
+      "signature": "auth.role()"
+    },
+    {
+      "present": true,
+      "signature": "auth.uid()"
+    },
+    {
+      "present": true,
+      "signature": "pg_catalog.gen_random_uuid()"
+    },
+    {
+      "present": true,
+      "signature": "pg_catalog.sha256(bytea)"
+    },
+    {
+      "present": true,
+      "signature": "pg_catalog.trim_scale(numeric)"
+    },
+    {
+      "present": true,
+      "signature": "public.has_app_capability(text)"
+    },
+    {
+      "present": true,
+      "signature": "public.require_app_capability(text)"
+    },
+    {
+      "present": true,
+      "signature": "public.save_purchasing_catalog_item_v2(jsonb)"
+    },
+    {
+      "present": true,
+      "signature": "public.save_purchasing_catalog_item(jsonb)"
+    }
+  ],
+  "serverVersion": "17.6",
+  "executorRoleAbsent": true,
+  "cleanupDependencies": {
+    "pgNet": "0.20.0",
+    "pgCron": "1.6.4",
+    "netHttpPost": [
+      "net.http_post(text,jsonb,jsonb,jsonb,integer)"
+    ],
+    "pgcryptoHmac": true,
+    "vaultSecrets": true,
+    "vaultDecryptedView": true
+  },
+  "catalogCategoryCheck": {
+    "validated": true,
+    "definition": "CHECK (category = ANY (ARRAY['glass'::text, 'filler'::text, 'resin'::text, 'marble'::text, 'misc'::text]))"
+  },
+  "cleanupRoutineCollisions": null,
+  "pendingMigrationVersions": null,
+  "privateOriginalBucketAbsent": true
+}

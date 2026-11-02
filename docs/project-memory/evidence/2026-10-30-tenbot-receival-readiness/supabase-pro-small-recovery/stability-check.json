@@ -1,0 +1,45 @@
+{
+  "phase": "stability",
+  "recordedAt": "2026-10-30T23:58:58.602Z",
+  "resizeSubmittedAt": "2026-10-30T23:52:08.667Z",
+  "healthy": true,
+  "requests": [
+    {
+      "name": "database-auth-health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:58:58.247Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 346,
+      "totalMs": 354,
+      "bodyBytes": 228,
+      "bodySha256": "44e9cfbbf7ec2a5173591fd8178f332952fa16a75bffe555c623f40ea150bb2b",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:58:58 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e5efee8725324-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "services": [
+        {
+          "name": "auth",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        },
+        {
+          "name": "db",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        }
+      ],
+      "healthy": true
+    }
+  ],
+  "projectConfigurationMutations": 0,
+  "businessMutations": 0,
+  "modelCalls": 0,
+  "credentialValuesStored": false
+}

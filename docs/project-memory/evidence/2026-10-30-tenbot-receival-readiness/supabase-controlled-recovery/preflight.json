@@ -1,0 +1,76 @@
+{
+  "recordedAt": "2026-10-30T23:26:03.451Z",
+  "requests": [
+    {
+      "name": "project-identity",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:25:52.710Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 250,
+      "totalMs": 256,
+      "bodySha256": "5f28483dc23255949704d900d98bd382df859d8e19293124724914dec5410593",
+      "bodyBytes": 379,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:25:52 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e2e854833de8a-DFW",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "project": {
+        "id": "vxdxjhazkqhpkwdqtobp",
+        "ref": "vxdxjhazkqhpkwdqtobp",
+        "name": "tenartenDB",
+        "organization_id": "uxxhpnseynojdgabanrv",
+        "organization_slug": "uxxhpnseynojdgabanrv",
+        "region": "us-east-1",
+        "status": "ACTIVE_HEALTHY"
+      },
+      "identityVerified": true
+    },
+    {
+      "name": "fresh-health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:25:52.753Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 10637,
+      "totalMs": 10638,
+      "bodySha256": "2213ad320ddfb7bb01a4bfccb2723a6401b6858e4c0eeb1359598d71019ac88b",
+      "bodyBytes": 181,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:26:03 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e2e854ed0c2f9-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "services": [
+        {
+          "name": "auth",
+          "healthy": false,
+          "status": "UNHEALTHY",
+          "safeError": "Service health check failed"
+        },
+        {
+          "name": "db",
+          "healthy": false,
+          "status": "UNHEALTHY",
+          "safeError": "Service health check failed"
+        }
+      ]
+    }
+  ],
+  "healthy": false,
+  "decision": "UNHEALTHY_RESTART_ELIGIBLE",
+  "criticalOperationCheck": {
+    "knownCriticalOperationsInThisThread": 0,
+    "localDeploymentOrMigrationProcesses": [],
+    "limitations": "Cannot prove absence of all employees' in-flight requests while the database is unhealthy. No known critical operation was identified; no canary, deployment or migration is running in this thread."
+  },
+  "hostedMutations": 0,
+  "credentialValuesStored": false
+}

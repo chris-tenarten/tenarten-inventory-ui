@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "at": "2026-10-31T22:37:15.002Z",
+  "checks": [
+    {
+      "path": "/auth/v1/health",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/rest/v1/vendor_catalog?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/rest/v1/pending_receivals?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "status",
+      "status": 401,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "resume",
+      "status": 401,
+      "unauthenticatedDenied": true
+    }
+  ],
+  "authServiceAndRestResponsive": true,
+  "authenticatedEmployeeSmokePerformed": false,
+  "limitation": "No authorized non-browser employee session is available; browser automation explicitly not retried. No token extraction, login bypass, inference or private-row read.",
+  "realProviderInferenceTested": false,
+  "inferenceCalls": 0
+}

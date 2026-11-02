@@ -1,0 +1,47 @@
+{
+  "status": "STAGED_AUTHENTICATED_SMOKE_BLOCKED",
+  "recordedAt": "2026-10-31T21:27:48.821086+00:00",
+  "candidate": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "deploymentId": "7cac1a67-410f-4f48-aa1c-fd883b83cd28",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "browser": {
+    "userReports": "TenDev chris_dev signed in, most recently Safari",
+    "verified": false,
+    "apps": 0,
+    "browsers": 0,
+    "error": "Sky Computer Use native pipe startup failed",
+    "previousChromeAttempt": "Browser is not available: chrome",
+    "resetAttemptedOnce": true,
+    "credentialsOrSessionsRead": false
+  },
+  "pending": [
+    "Genuine owner-JWT model-free resume and navigation/remount verification",
+    "Authenticated Inventory/Messaging/Auth smoke"
+  ],
+  "disabled": [
+    "agent writes",
+    "execution-only window",
+    "preparation",
+    "preparation spending"
+  ],
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "tenOpsPagesUnchanged": true,
+  "sharedTenBotEdgeUpdated": true,
+  "secretDigestsUnchanged": true,
+  "evidence": {
+    "mandatory-proof.json": "45b78c2cbe23b1062ab9d1a7d527d8c9b6a1576541eeab7aa67c4a2a40717747",
+    "migration-applied.json": "b2ee7c190257ea5314049db50a4af92a1970c22ae01669badc3b15e87bf134ba",
+    "edge.json": "3dacb1639f7ba25ce2cfe5a6055327f6bdb2c58ffd25883ca22a864098ba62de",
+    "pages.json": "d7d72b6432140950e4a23e794a006378ad78b53f92df0ba35e8241870be4411e",
+    "served.json": "f4a3250d72ae5c586aa1fa592393a51ad4cf11e184d6f19bf6d0ddb386344420",
+    "smoke.json": "c07f1883f771e9086412ac70d7075fa175db3ba208309ab82d45ddbd55477210",
+    "source-state.json": "1e8c5ad2575021fd3c283885f76b572d88956d5f60720f9a124cbd6ea610e742",
+    "final.json": "fad87984d4849de5cd0c6cbe44c326b39d43b2ce0a2a3aca6e2af9b875e7de39",
+    "cloudflare-refresh.json": "ce0a433a83393612688492bb9e23365b3304a8d20b850d01d026b13c1666c295"
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "recordedAt": "2026-10-30T17:24:18.877Z",
+  "status": "Reviewed proposed conditional cancellation; not executed or activated",
+  "runtime": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "verdict": "The proposed exact-ID conditional employee-JWT PATCH is a safe narrowing of canonical Cancel semantics. The canonical Receive row lock and post-lock pending-status check prevent a new receipt after successful cancellation. This is source/evidence reasoning, not a newly executed race or JWT/RLS test.",
+  "canonicalCancel": {
+    "source": "src/app/inventory/page.tsx handleCancelPendingReceival",
+    "permission": "auth.can('adjustInventory'); existing caller writeBusinessData/adjustInventory RLS also applies",
+    "operation": "supabase.from('pending_receivals').update({status:'cancelled'}).eq('id',receival.id)",
+    "changesInventory": false,
+    "existingUiCompareAndSet": false,
+    "proposedChange": "No app/service/migration change. A one-off authorized canary cleanup request adds stricter atomic WHERE conditions to the same status-only update."
+  },
+  "conditionalRequest": {
+    "method": "PATCH",
+    "resource": "/rest/v1/pending_receivals",
+    "authorization": "Actual approved employee JWT + existing public anon apikey; never service_role, Management SQL, forged claims or model SQL.",
+    "body": {
+      "status": "cancelled"
+    },
+    "filters": [
+      [
+        "id",
+        "eq.<exact actual returned canary UUID>"
+      ],
+      [
+        "status",
+        "eq.pending"
+      ],
+      [
+        "quantity_received",
+        "eq.0"
+      ],
+      [
+        "receipt_inventory_item_id",
+        "is.null"
+      ],
+      [
+        "receipt_transaction_id",
+        "is.null"
+      ],
+      [
+        "received_at",
+        "is.null"
+      ]
+    ],
+    "header": {
+      "Prefer": "return=representation",
+      "Content-Type": "application/json"
+    },
+    "returnFields": [
+      "id",
+      "status",
+      "quantity_received",
+      "receipt_inventory_item_id",
+      "receipt_transaction_id",
+      "received_at"
+    ],
+    "maximumAffectedRows": 1,
+    "quantityNullIsNotZero": true,
+    "identifierRule": "Obtain the UUID from the immutable invoice execution receipt and independently verify it belongs to this approved canary. No material-name lookup, OR filter, IN list or missing ID.",
+    "sdkExample": "caller.from('pending_receivals').update({status:'cancelled'}).eq('id',returnedCanaryId).eq('status','pending').eq('quantity_received',0).is('receipt_inventory_item_id',null).is('receipt_transaction_id',null).is('received_at',null).select('id,status,quantity_received,receipt_inventory_item_id,receipt_transaction_id,received_at')",
+    "noOtherChanges": [
+      "quantity_expected",
+      "quantity_received",
+      "unit",
+      "material/catalog identity",
+      "Job/reservation links",
+      "original/approval/execution/audit records",
+      "inventory_items",
+      "inventory_transactions"
+    ]
+  },
+  "responseRequirements": {
+    "success": "Require an actual successful HTTP result and exactly one returned row. Verify its ID is the exact requested UUID, status=cancelled, quantity_received=0, and all three receipt/date fields remain NULL. Do not treat a 204 or empty array as confirmed success.",
+    "zeroRows": "No confirmed update. Read only the same exact UUID using the same current employee JWT, selecting the minimal state fields. Do not loosen any filter or infer a missing/hidden row is safe to cancel.",
+    "reconciliation": {
+      "alreadyCancelledUnreceived": "If the exact row is cancelled, received quantity0 and all receipt/date fields NULL, cleanup is already satisfied; record the actual state and original attempt uncertainty.",
+      "receivedOrPartiallyReceived": "Any positive received quantity, receipt link or received_at means stop. No Receive, Undo Receive, stock correction, delete or broader Cancel is authorized.",
+      "pendingAllPreconditionsStillTrue": "Report no confirmed cancellation and investigate authorization/result delivery. No automatic broad retry. Any bounded exact retry must retain every original predicate.",
+      "missingUnauthorizedOrUnexpected": "Stop/report; do not use a privileged lookup or change permissions."
+    },
+    "timeoutOrError": "Preserve the attempt and reconcile the same exact ID read-only before any retry. Never create a replacement receival or call Receive/Undo to clean up."
+  },
+  "receiveSourceConfirmation": {
+    "latestCanonicalMigration": "supabase/migrations/20260923160200_partial_pending_receipts.sql",
+    "primaryFunction": "public.receive_pending_receival_quantity(uuid,text,numeric,uuid)",
+    "sequence": [
+      "require receiveInventory for normal employee callers",
+      "SELECT pending_receivals WHERE id=p_receival_id FOR UPDATE",
+      "Check existing request_id receipt batch; an exact non-reversed replay returns without new writes",
+      "For a new receipt, reject if receival.status <> pending",
+      "Validate positive quantity and remaining expected quantity",
+      "Only then create/update on-hand and insert receipt transaction/batch"
+    ],
+    "statusSemantics": "The canonical partial-receipt function keeps a partially received row at literal status pending with quantity_received>0; it does not use partially_received as the accepted new-receipt status. The proposed quantity_received=0 predicate therefore protects the partial-receipt case as well.",
+    "legacyFunction": "public.receive_pending_receival_with_reservation(uuid,text) locks the same row FOR UPDATE, computes remaining quantity, then delegates to receive_pending_receival_quantity with a fresh request UUID.",
+    "idempotencyCaveat": "An exact previously committed receipt request may return successfully before the pending-status guard, including after a later cancellation. It is a no-op reconciliation, not a new receipt or stock increase."
+  },
+  "concurrencyReasoning": {
+    "cancelWins": "The conditional UPDATE locks and commits status cancelled. A canonical Receive that subsequently obtains the same row lock sees cancelled and rejects a new receipt before stock writes. The legacy Receive wrapper delegates to that same check.",
+    "receiveWins": "A canonical Receive holds the row lock while writing quantity/receipt fields. The conditional PATCH waits and its predicates no longer match the received/partially received row; it must not cancel it. Treat zero rows or any serialization/lock error as unconfirmed and reconcile.",
+    "safetyBoundary": "Atomic predicates must be sent in the actual PATCH. A separate pre-read followed by the original ID-only UI Cancel does not provide this protection.",
+    "testedHere": false
+  },
+  "cachedHostedEvidence": {
+    "source": "/private/tmp/tenops-tenbot-receival-tendev-resume-20261030/shared-schema-metadata.json",
+    "checkedAt": "2026-10-30T16:35:57.484Z",
+    "primaryFunctionProsrcMd5": "9c8437b4c41efbc18c0dadb8c3b6840d",
+    "legacyFunctionProsrcMd5": "dd1cd191607e3552a90c7e55fe5d5750",
+    "observation": "The recorded actual shared function definitions contain the same row lock, pending-status guard, partial-pending representation and legacy delegation. This review made no new hosted request."
+  },
+  "afterCleanupVerification": [
+    "Exact returned canary row status cancelled/quantity_received0/receipt links/date NULL",
+    "No inventory_transactions with pending_receival_id equal to this exact UUID",
+    "No pending_receival_receipt_batches with pending_receival_id equal to this exact UUID",
+    "Relevant pre-pinned caller-visible on-hand quantities remain unchanged, without attributing unrelated live activity to this canary",
+    "Original private source, immutable approval/execution/document claim and audit remain retained; do not purge them"
+  ],
+  "sources": [
+    {
+      "path": "src/app/inventory/page.tsx",
+      "sha256": "d3017e5037f9e0840097abe8b1a295f379999055e7c5e6066f08be05a0d35dc1"
+    },
+    {
+      "path": "supabase/migrations/20260923160200_partial_pending_receipts.sql",
+      "sha256": "ece9c0f4980340c45be5445cafdbb447b4e0a68ecb5bceeb52fbfba6f9a09944"
+    },
+    {
+      "path": "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql",
+      "sha256": "279f581ba29d1bb1c4282aa0831ccfd44c10fc21a3ba8f1f656001aacc0c59d4"
+    }
+  ],
+  "approvals": "This review does not approve the canary or cleanup execution. Product must approve the exact returned-ID cleanup as part of the final canary, and the actual employee must authorize it.",
+  "limits": [
+    "No application change or new cancellation RPC is required for this narrower request.",
+    "No new concurrent PostgreSQL cancellation/Receive race, hosted PATCH or current signed-caller RLS validation was executed.",
+    "Current hosted function drift/permissions remain part of the normal final preflight; cached evidence is not a fresh query."
+  ],
+  "actions": {
+    "networkCalls": 0,
+    "testsRun": 0,
+    "businessMutations": 0,
+    "permissionChanges": 0,
+    "migrationApplications": 0,
+    "gitMutations": 0,
+    "inferenceCalls": 0
+  }
+}

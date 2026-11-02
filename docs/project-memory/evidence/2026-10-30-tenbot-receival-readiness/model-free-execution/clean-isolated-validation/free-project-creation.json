@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-10-31T04:24:43.095Z",
+  "status": "CREATED_NOT_YET_READY_OR_ISOLATED",
+  "fixtureKind": "standalone-free",
+  "project": {
+    "id": "ahnqbzuhpwgmispwohwv",
+    "name": "tenbot-execution-validation-20261030",
+    "status": "ACTIVE_HEALTHY",
+    "organizationId": "fvzmtbjqezlpsousevyh",
+    "organizationSlug": "fvzmtbjqezlpsousevyh",
+    "region": "us-east-1",
+    "createdAt": "2026-10-31T03:32:03.078505Z"
+  },
+  "organization": {
+    "id": "fvzmtbjqezlpsousevyh",
+    "slug": "fvzmtbjqezlpsousevyh",
+    "name": "TenBot Isolated Validation",
+    "plan": "free"
+  },
+  "freePlanVerified": true,
+  "cloned": false,
+  "templateUsed": false,
+  "gitLinked": false,
+  "productionCredentialsOrDataCopied": false,
+  "passwordPersisted": false,
+  "requests": [
+    {
+      "path": "organizations/fvzmtbjqezlpsousevyh",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 199
+    },
+    {
+      "path": "projects",
+      "method": "POST",
+      "status": 201,
+      "elapsedMs": 8395
+    }
+  ],
+  "expectedInfrastructureCostUsd": 0,
+  "actualInvoiceVerified": false,
+  "cleanup": "Preserve until root instructs cleanup; no automatic delete."
+}

@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "failed": 0,
+  "recordedAt": "2026-10-31T04:34:51.739Z",
+  "fixtureRef": "ahnqbzuhpwgmispwohwv",
+  "acceptedCandidate": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c",
+  "migrationSha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+  "actualSignedAuthJwt": true,
+  "actualPostgreSQLAndRestRls": true,
+  "positiveGroups": 9,
+  "groups": [
+    {
+      "name": "real synthetic owner source and Developer baseline are exact; only genuine synthetic Admin may activate",
+      "durationMs": 500
+    },
+    {
+      "name": "fresh <=15-minute private window binds once; concurrent genuine Admin requests create exactly one scoped grant",
+      "durationMs": 1314
+    },
+    {
+      "name": "fresh actual hosted runtime instances resume pinned preview without extraction, downloads, inference or funding",
+      "durationMs": 3356
+    },
+    {
+      "name": "model-free metadata review and explicit canonical approval bind exact source, document, material and grant",
+      "durationMs": 3170
+    },
+    {
+      "name": "metadata edits invalidate previous immutable approval without changing original one-Bag quantities",
+      "durationMs": 3269
+    },
+    {
+      "name": "actual bound execution authorization cannot reserve inference or replenish any accounting",
+      "durationMs": 427
+    },
+    {
+      "name": "single-use scope rejects activation replay, rebinding and wrong owner/document/material review",
+      "durationMs": 1123
+    },
+    {
+      "name": "Natural server expiry rejects in-flight canonical review at deferred commit; independently confirmed PostgreSQL42501 and rollback"
+    },
+    {
+      "name": "Exact authenticated post-expiry revocation, audit, idempotent retry, immutable single-use/replay denial"
+    }
+  ],
+  "originalHarnessOutcome": "Seven groups passed; monitor/assertion-stage failure retained, expiry and cleanup reconciled from independent PostgreSQL logs and fresh signed callers; no activation rerun or reset.",
+  "newGrantCount": 1,
+  "newInventoryWrites": 0,
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "sharedRequests": 0,
+  "preservedFixtureRequests": 0,
+  "protectedBusinessAndAccountingUnchanged": true,
+  "finalAllGatesOff": true,
+  "finalUnrevokedGrants": 0,
+  "finalEnrollmentCount": 0,
+  "scope": "Actual isolated caller/JWT/RLS, canonical source review and explicit approval metadata only; no successful Inventory execution or deployed browser/Edge proof.",
+  "limitations": [
+    "Hosted contract/runtime executed locally with real isolated caller-scoped SDK/RPC responses, not deployed Edge/browser proof.",
+    "Canonical explicit approval RPC is separate from UI Approve and create; no successful execute was invoked.",
+    "Positive expiry-crossing review uses a bounded fixture-only delay trigger; canonical functions/guards remain unchanged.",
+    "Exact grant revoked after natural expiry; previous pre-expiry permission revocation and transactional-write evidence reused."
+  ],
+  "evidence": [
+    "positive-results.json",
+    "positive-activation.json",
+    "positive-approved-binding.json",
+    "positive-edit-invalidation.json",
+    "positive-ai-denial.json",
+    "expiry-error-log.json",
+    "reconciled-positive.json"
+  ]
+}

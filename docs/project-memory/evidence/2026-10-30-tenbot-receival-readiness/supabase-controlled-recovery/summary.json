@@ -1,0 +1,122 @@
+{
+  "status": "ONE_RESTART_PERFORMED_TRANSIENT_RECOVERY_APPLICATION_STABILITY_BLOCKED",
+  "authority": "Chris: TENOPS — AUTHORIZE CONTROLLED SUPABASE RECOVERY, October30 2026. Exactly one supported restart if fresh DB/Auth still unhealthy. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "scope": "Shared Production availability recovery; no deployment, configuration or business-data change.",
+  "project": {
+    "name": "tenartenDB",
+    "ref": "vxdxjhazkqhpkwdqtobp",
+    "organization": "uxxhpnseynojdgabanrv",
+    "region": "us-east-1"
+  },
+  "before": {
+    "healthAt": "2026-10-30T23:26:03Z",
+    "database": "UNHEALTHY",
+    "auth": "UNHEALTHY",
+    "identityVerified": true,
+    "noKnownCriticalOperation": true,
+    "criticalOperationLimitation": "No local migration/deployment/canary or known critical operation was running; all employees' in-flight operations could not be inspected while unhealthy."
+  },
+  "restart": {
+    "performed": true,
+    "requestsSent": 1,
+    "method": "POST",
+    "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/restart",
+    "startedAt": "2026-10-30T23:26:05.578Z",
+    "acknowledgedAt": "2026-10-30T23:26:06Z",
+    "status": 200,
+    "latencyMs": 1120,
+    "requestIdentifier": "a52e2ed56f847ca9-DFW",
+    "actualDatabaseStartedAt": "2026-10-30T23:30:44.699965Z",
+    "localGuard": "An earlier local invocation rejected an expired preflight before creating a restart intent or sending any request; its snapshot is preserved. A fresh check preceded the sole actual POST.",
+    "furtherRestarts": 0
+  },
+  "after": {
+    "oneMinute": "DB/Auth UNHEALTHY",
+    "threeMinutes": "Project RESTARTING; DB healthy, Auth UNHEALTHY",
+    "fiveMinutes": {
+      "observedAt": "2026-10-30T23:31:21Z",
+      "project": "ACTIVE_HEALTHY",
+      "database": {
+        "healthy": true,
+        "status": "ACTIVE_HEALTHY"
+      },
+      "auth": {
+        "healthy": true,
+        "status": "ACTIVE_HEALTHY"
+      }
+    },
+    "databaseRead": {
+      "observedAt": "2026-10-30T23:31:54Z",
+      "status": 201,
+      "latencyMs": 1412,
+      "readOnly": "on",
+      "maxConnections": 60,
+      "otherBackendCount": 12,
+      "backendStates": {
+        "active": 1,
+        "idle": 3,
+        "unknown": 8
+      },
+      "maxOpenTransactionAgeSeconds": 9.396353
+    },
+    "application": "Genuine chris_dev/Developer restored and Inventory loaded, then account access failed with schema-cache database-query error around23:33:30Z. No stable recovery claimed; no further probes after that failure.",
+    "publicPages": {
+      "tenopsInventory": 200,
+      "tendevInventory": 200
+    },
+    "messaging": "Not verified after recovery; no inference sent.",
+    "adminAndProductionSession": "Not reverified before application failure triggered stop."
+  },
+  "resourceObservation": {
+    "before": "Last available historical Reports samples around22:12–22:17Z: memory commitment1.37GB/SEVERE with substantial swap visible.",
+    "after": "Metrics unavailable (400 during transition,500 after services became healthy). One Dashboard report returned No data to show for memory/commitment/CPU. Memory/swap improvement remains unverified.",
+    "connectionInterpretation": "At23:31:54Z there were12other pg_stat_activity backends plus this diagnostic session, max_connections60; no connection-limit exhaustion or long transaction shown in that snapshot. Background rows and future activity are not inferred from this one sample.",
+    "cause": "Restart recovery does not establish the initiating cause; prior memory-pressure hypothesis remains unconfirmed."
+  },
+  "reconciliation": {
+    "canary": {
+      "pilotEnabled": false,
+      "executionEnabled": false,
+      "activeGrants": 0,
+      "enrollment": 0,
+      "permits": 0,
+      "sources": 0,
+      "drafts": 0,
+      "executions": 0,
+      "receivals": 0
+    },
+    "openInferenceReservation": {
+      "reservationId": "84c8e242-4f99-4573-a6c3-6b19a01ef7ee",
+      "requestId": "fe2b568a-79e8-4f4d-aea3-dd1c8f792d3c",
+      "createdAt": "2026-10-30T13:55:38.451468Z",
+      "state": "reserved",
+      "reservedMicrousd": 61139,
+      "reservedUsd": 0.061139,
+      "settledAt": null,
+      "action": "Preserved unchanged; predates this outage/restart. Do not free, rebill or retry automatically without provider/accounting reconciliation."
+    },
+    "otherEmployeeOperations": "Not globally reconciled. Employees should verify results of interrupted operational submissions before retrying; no evidence supports blanket replay or deletion."
+  },
+  "nextAction": "Stop additional recovery actions and prepare owner Supabase Support escalation for transient DB/Auth recovery followed by PostgREST/schema-cache access failure and unavailable metrics. No second restart, compute change, credential rotation or deployment authorized.",
+  "preserved": {
+    "devHead": "ec62998aba228e615279ae7d6e81f04378e62062",
+    "preparedAuthCandidate": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+    "tenDevRuntime": "ce157b99e31c227480c479169e0a480a6d509bf1",
+    "tenOpsRuntime": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "applicationSourceChanged": false,
+    "modelCalls": 0,
+    "businessWriteRequests": 0,
+    "configurationChanges": 0,
+    "grantsOrEnrollmentChanges": 0,
+    "deployments": 0,
+    "migrations": 0,
+    "manualSessionTerminations": 0,
+    "resetRestoreOrDeletion": false,
+    "spendingCutoffExtended": false,
+    "unrelatedWorkPreserved": true,
+    "localhost3000": "Existing PID79102 untouched."
+  },
+  "evidenceValidation": "Sanitized JSON/hash manifest and diff check only; no application delta, broad build or QA rerun.",
+  "officialOperation": "https://supabase.com/docs/reference/api/v1-restart-a-project"
+}

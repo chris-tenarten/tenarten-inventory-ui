@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "candidate": "66dd0c072de3a4d81198884c2df81c96bdd0a134",
+  "baseline": "75ed1f35b97bb964fc5f1d3e9587f1393f7d9356",
+  "baselineIsAncestor": true,
+  "acceptedOrchestration": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
+  "retainedJobRead": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
+  "runtimeDelta": 6,
+  "scriptDelta": 6,
+  "retained": [
+    {
+      "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+      "sha256": "5ab6a975b2295403cd712bf98db00f925896915f77c14be513ef608722a7dbea",
+      "retainedAcceptedSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-filters.ts",
+      "sha256": "7ec39eff8077d9663e4d02e42b3fe1dec150df8c985b4cbb9f9a8d7838e1a465",
+      "retainedAcceptedSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
+      "sha256": "847af9268b98a374809ad97c1b930febe4c2a2e61d036720f0f374803b270426",
+      "retainedAcceptedSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-operational-history.ts",
+      "sha256": "4ff3e8caf4f9a33d6be6d8b1e518f95a7797a42b9bddb2d9240bcd0756a24c9a",
+      "retainedAcceptedSource": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-history-scope.ts",
+      "sha256": "0fe4161be9c6bb7e4ce73833eabdfc283356d29ca40b20b69dfd7b0833211201",
+      "retainedAcceptedSource": true
+    }
+  ],
+  "newMigrations": 0,
+  "validationReused": {
+    "orchestration": 15,
+    "context": 16,
+    "history": 5,
+    "adjacentHistory": 14,
+    "realReferenceDatabase": 7,
+    "realStatusDatabase": 10,
+    "localBrowser": 4
+  },
+  "newModelCalls": 0
+}

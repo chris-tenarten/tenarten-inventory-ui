@@ -1,0 +1,159 @@
+{
+  "status": "complete",
+  "mode": "Focused actual SDK/SQL metadata diagnostic; no inference or app-source change",
+  "steps": [
+    {
+      "stage": "signin",
+      "status": "pass"
+    },
+    {
+      "stage": "sql-metadata",
+      "status": "pass",
+      "rows": [
+        {
+          "id": "f83db033-7820-4c05-884e-45f5f8f84193",
+          "version": 1,
+          "has_claim": true,
+          "active_claim": false,
+          "history_active": true,
+          "sql_state_valid": true,
+          "guidance_count": 1,
+          "display_count": 1
+        }
+      ]
+    },
+    {
+      "stage": "raw-claim",
+      "error": false,
+      "code": null,
+      "status": 200,
+      "ok": true,
+      "reason": null,
+      "keys": [
+        "id",
+        "ok",
+        "claim",
+        "ownerId",
+        "revision",
+        "expiresAt"
+      ],
+      "ownerMatches": true,
+      "revision": 1
+    },
+    {
+      "stage": "raw-service-load",
+      "error": false,
+      "code": null,
+      "status": 200,
+      "state": {
+        "valid": true,
+        "type": "object",
+        "keys": [
+          "display",
+          "guidance"
+        ],
+        "guidanceCount": 1,
+        "displayCount": 1,
+        "display": [
+          {
+            "keys": [
+              "id",
+              "answer",
+              "sources",
+              "question",
+              "createdAt",
+              "answeredAt",
+              "scopeDigest"
+            ],
+            "sourceCount": 1,
+            "questionChars": 37,
+            "scopeDigestChars": 64,
+            "createdAtType": "string",
+            "createdAtIsISO": true,
+            "answeredAtIsISO": true,
+            "answerKeys": [
+              "mode",
+              "message",
+              "notices",
+              "sources",
+              "summary",
+              "snapshot",
+              "contentScope",
+              "conversationId",
+              "suggestionAllowed"
+            ],
+            "answerMode": "assistant",
+            "answerScope": "workflow",
+            "answerMessageChars": 72,
+            "snapshotKeys": [
+              "revision",
+              "verifiedAt"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "stage": "raw-release",
+      "error": false,
+      "code": null,
+      "status": 200,
+      "released": true
+    },
+    {
+      "stage": "adapter-claim",
+      "status": "pass",
+      "state": {
+        "valid": true,
+        "type": "object",
+        "keys": [
+          "display",
+          "guidance"
+        ],
+        "guidanceCount": 1,
+        "displayCount": 1,
+        "display": [
+          {
+            "keys": [
+              "id",
+              "answer",
+              "sources",
+              "question",
+              "createdAt",
+              "answeredAt",
+              "scopeDigest"
+            ],
+            "sourceCount": 1,
+            "questionChars": 37,
+            "scopeDigestChars": 64,
+            "createdAtType": "string",
+            "createdAtIsISO": true,
+            "answeredAtIsISO": true,
+            "answerKeys": [
+              "mode",
+              "message",
+              "notices",
+              "sources",
+              "summary",
+              "snapshot",
+              "contentScope",
+              "conversationId",
+              "suggestionAllowed"
+            ],
+            "answerMode": "assistant",
+            "answerScope": "workflow",
+            "answerMessageChars": 72,
+            "snapshotKeys": [
+              "revision",
+              "verifiedAt"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "httpCalls": 11,
+  "sqlCalls": 1,
+  "inferenceCalls": 0,
+  "productionRequests": 0
+}

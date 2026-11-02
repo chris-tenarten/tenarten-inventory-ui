@@ -1,0 +1,61 @@
+{
+  "status": "DRAFT_NOT_SENT",
+  "recipient": "Supabase Support / project owner",
+  "subject": "tenartenDB: DB/Auth outage, transient recovery after one restart, schema-cache access failure and metrics unavailable",
+  "project": {
+    "name": "tenartenDB",
+    "ref": "vxdxjhazkqhpkwdqtobp",
+    "organization": "uxxhpnseynojdgabanrv",
+    "region": "us-east-1"
+  },
+  "summary": "Please inspect underlying project/host health, Auth/PostgREST database connectivity and schema-cache initialization, pool/backend failures, and exporter/telemetry gaps. One restart was acknowledged and actual Postgres startup confirmed. DB/Auth probes recovered, but authenticated application access then failed again.",
+  "timeline": [
+    {
+      "utc": "2026-10-30T22:16–22:17Z",
+      "event": "Backend logs/resource charts end; earlier memory commitment severe1.37GB/swap."
+    },
+    {
+      "utc": "2026-10-30T22:20Z bucket onward",
+      "event": "Auth/REST504/522/524 gateway log failures with intermittent successes."
+    },
+    {
+      "utc": "2026-10-30T22:39:33.754Z",
+      "event": "Readonly Management database/query544/15.349s Connection terminated due to connection timeout, CF-ray a52deaad8e10b172-IAH."
+    },
+    {
+      "utc": "2026-10-30T23:26:03Z",
+      "event": "Fresh DB/Auth bothUNHEALTHY."
+    },
+    {
+      "utc": "2026-10-30T23:26:05.578Z",
+      "event": "Sole restartPOST200, CF-ray a52e2ed56f847ca9-DFW."
+    },
+    {
+      "utc": "2026-10-30T23:30:44.699965Z",
+      "event": "Actual pg_postmaster_start_time observed in readonlySQL."
+    },
+    {
+      "utc": "2026-10-30T23:31:21Z",
+      "event": "DB/Auth bothACTIVE_HEALTHY, CF-ray a52e3676d9251284-IAH."
+    },
+    {
+      "utc": "2026-10-30T23:31:31Z",
+      "event": "Metrics500 Failed to fetch project metrics, CF-ray a52e368b6b4db55d-IAH."
+    },
+    {
+      "utc": "2026-10-30T23:31:54Z",
+      "event": "ReadonlySQL201;12otherbackends/max60, maxopenxact9.396s; no activecanary."
+    },
+    {
+      "utc": "2026-10-30T23:33:30Z approximate",
+      "event": "Genuine Developer Inventory had loaded, then access verification failed: Could not query the database for the schema cache. Retrying. Actual failingHTTPnotcaptured."
+    }
+  ],
+  "questions": [
+    "Did the host encounter OOM, memory/swap pressure, storage/IO or network failure during22:16–23:26Z?",
+    "Why do exporter and historical resource metrics remain unavailable after successful Postgres restart?",
+    "Are Auth/PostgREST DB connections or schema-cache loading failing after startup, and what supported recovery is recommended?"
+  ],
+  "includedData": "Only project identity, UTC times, safe status/errors/request IDs, aggregate resources and operational safeguards. No API keys, JWTs, employee/customer records, raw statements or private messages.",
+  "nextOwnerAction": "Submit this prepared handoff through existing Supabase Support. No message has been sent by this task."
+}

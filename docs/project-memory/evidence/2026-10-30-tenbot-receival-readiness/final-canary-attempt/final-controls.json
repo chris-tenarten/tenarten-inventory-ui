@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-10-31T01:26:10.943Z",
+  "fundingEnabled": false,
+  "windowClosedByDisable": true,
+  "activeGrants": 0,
+  "exactGrantRevoked": true,
+  "enrollment": 0,
+  "sqlPilotEnabled": false,
+  "sqlExecutionEnabled": false,
+  "edgePilotEnabled": false,
+  "edgeExecutionEnabled": false,
+  "edgeEmployeeIds": [],
+  "edgeExpiry": "",
+  "edgeAllowedOrigins": [
+    "https://tendev.pages.dev"
+  ],
+  "ordinaryPolicyUnchanged": true,
+  "protectedSecretDigestsUnchanged": true,
+  "genuineSafariAdminFinalUi": "Revoked / pilot off / execution off / enrolled0",
+  "genuineChromeDeveloperFinalUi": "Revoked / funding disabled / pilot off / execution off / enrolled0 / no completed canary",
+  "screenControlReleased": true
+}

@@ -1,0 +1,377 @@
+{
+  "phase": "followup",
+  "recordedAt": "2026-10-31T00:08:49.792Z",
+  "healthy": true,
+  "requests": [
+    {
+      "name": "health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:08:49.147Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 301,
+      "totalMs": 310,
+      "bodyBytes": 228,
+      "bodySha256": "44e9cfbbf7ec2a5173591fd8178f332952fa16a75bffe555c623f40ea150bb2b",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:08:49 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e6d6bcbe7fa85-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "services": [
+        {
+          "name": "auth",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        },
+        {
+          "name": "db",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "name": "metrics",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/metrics",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:08:49.458Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 328,
+      "totalMs": 333,
+      "bodyBytes": 233703,
+      "bodySha256": "d15e81f050c8cf54e4f3ede64274b3bf3243221822aa5cda59fcf719817ca3aa",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:08:49 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e6d6d3dc1fa85-IAH",
+        "content-type": "text/plain"
+      },
+      "selectedSamples": [
+        {
+          "metric": "node_load1",
+          "labels": {},
+          "value": 0.07
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "idle"
+          },
+          "value": 891.98
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "iowait"
+          },
+          "value": 6.03
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "irq"
+          },
+          "value": 0
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "nice"
+          },
+          "value": 0.01
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "softirq"
+          },
+          "value": 0.38
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "steal"
+          },
+          "value": 2.56
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "system"
+          },
+          "value": 9.31
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "user"
+          },
+          "value": 23.79
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "idle"
+          },
+          "value": 896.33
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "iowait"
+          },
+          "value": 4.95
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "irq"
+          },
+          "value": 0
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "nice"
+          },
+          "value": 0.01
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "softirq"
+          },
+          "value": 0.72
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "steal"
+          },
+          "value": 2.51
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "system"
+          },
+          "value": 9.09
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "user"
+          },
+          "value": 21.46
+        },
+        {
+          "metric": "node_memory_Cached_bytes",
+          "labels": {},
+          "value": 1347923968
+        },
+        {
+          "metric": "node_memory_SwapFree_bytes",
+          "labels": {},
+          "value": 1073651712
+        },
+        {
+          "metric": "node_memory_MemFree_bytes",
+          "labels": {},
+          "value": 104116224
+        },
+        {
+          "metric": "node_memory_SReclaimable_bytes",
+          "labels": {},
+          "value": 44752896
+        },
+        {
+          "metric": "node_memory_Committed_AS_bytes",
+          "labels": {},
+          "value": 1636225024
+        },
+        {
+          "metric": "node_memory_MemAvailable_bytes",
+          "labels": {},
+          "value": 1289396224
+        },
+        {
+          "metric": "node_vmstat_pswpout",
+          "labels": {},
+          "value": 22
+        },
+        {
+          "metric": "node_memory_Buffers_bytes",
+          "labels": {},
+          "value": 28512256
+        },
+        {
+          "metric": "node_memory_SwapTotal_bytes",
+          "labels": {},
+          "value": 1073737728
+        },
+        {
+          "metric": "node_load5",
+          "labels": {},
+          "value": 0.06
+        },
+        {
+          "metric": "node_load15",
+          "labels": {},
+          "value": 0.04
+        },
+        {
+          "metric": "node_memory_MemTotal_bytes",
+          "labels": {},
+          "value": 1924182016
+        },
+        {
+          "metric": "node_filesystem_avail_bytes",
+          "labels": {
+            "device": "/dev/nvme0n1p2",
+            "fstype": "ext4",
+            "mountpoint": "/"
+          },
+          "value": 1992028160
+        },
+        {
+          "metric": "node_filesystem_avail_bytes",
+          "labels": {
+            "device": "/dev/nvme1n1",
+            "fstype": "ext4",
+            "mountpoint": "/data"
+          },
+          "value": 7984160768
+        },
+        {
+          "metric": "node_vmstat_pswpin",
+          "labels": {},
+          "value": 0
+        },
+        {
+          "metric": "node_disk_io_time_seconds_total",
+          "labels": {
+            "device": "nvme0n1"
+          },
+          "value": 10.803
+        },
+        {
+          "metric": "node_disk_io_time_seconds_total",
+          "labels": {
+            "device": "nvme1n1"
+          },
+          "value": 1.707
+        },
+        {
+          "metric": "node_filesystem_size_bytes",
+          "labels": {
+            "device": "/dev/nvme0n1p2",
+            "fstype": "ext4",
+            "mountpoint": "/"
+          },
+          "value": 10359754752
+        },
+        {
+          "metric": "node_filesystem_size_bytes",
+          "labels": {
+            "device": "/dev/nvme1n1",
+            "fstype": "ext4",
+            "mountpoint": "/data"
+          },
+          "value": 8350298112
+        },
+        {
+          "metric": "node_vmstat_oom_kill",
+          "labels": {},
+          "value": 0
+        },
+        {
+          "metric": "node_memory_CommitLimit_bytes",
+          "labels": {},
+          "value": 2035826688
+        },
+        {
+          "metric": "pg_stat_database_num_backends",
+          "labels": {},
+          "value": 20
+        },
+        {
+          "metric": "pg_up",
+          "labels": {},
+          "value": 1
+        },
+        {
+          "metric": "pg_exporter_last_scrape_error",
+          "labels": {},
+          "value": 0
+        },
+        {
+          "metric": "pgrst_db_pool_max",
+          "labels": {},
+          "value": 30
+        },
+        {
+          "metric": "pgrst_db_pool_waiting",
+          "labels": {},
+          "value": 0
+        }
+      ],
+      "metricNames": [
+        "node_load1",
+        "node_cpu_seconds_total",
+        "node_memory_Cached_bytes",
+        "node_memory_SwapFree_bytes",
+        "node_memory_MemFree_bytes",
+        "node_memory_SReclaimable_bytes",
+        "node_memory_Committed_AS_bytes",
+        "node_memory_MemAvailable_bytes",
+        "node_vmstat_pswpout",
+        "node_memory_Buffers_bytes",
+        "node_memory_SwapTotal_bytes",
+        "node_load5",
+        "node_load15",
+        "node_memory_MemTotal_bytes",
+        "node_filesystem_avail_bytes",
+        "node_vmstat_pswpin",
+        "node_disk_io_time_seconds_total",
+        "node_filesystem_size_bytes",
+        "node_vmstat_oom_kill",
+        "node_memory_CommitLimit_bytes",
+        "pg_stat_database_num_backends",
+        "pg_up",
+        "pg_exporter_last_scrape_error",
+        "pgrst_db_pool_max",
+        "pgrst_db_pool_waiting"
+      ],
+      "rawExpositionRetained": false
+    }
+  ],
+  "hostedMutations": 0,
+  "modelCalls": 0,
+  "credentialsStored": false,
+  "privacy": "Numeric metrics and aggregate diagnostics only; no raw application query/log messages, operational records, tokens, request headers or document contents. Allowlisted response status/timing/diagnostic headers retained."
+}

@@ -1,0 +1,126 @@
+{
+  "status": "PREPARED_STOPPED_BEFORE_PAYMENT_PURCHASE_OR_RESIZE",
+  "authority": "Chris: TENOPS — URGENT SUPABASE COMPUTE RECOVERY, October30 2026. Prepare/quote only, no purchase or resize authorization. Supersedes broader workload-options investigation for this pass.",
+  "riskTier": 3,
+  "advisoryContext": "Separate Advisory unavailable; current explicit Product direction controls.",
+  "observedAround": "2026-10-30T23:42–23:44Z",
+  "method": "Existing genuine authenticated Supabase Dashboard via native Chrome UI; no project database/API probes.",
+  "organization": {
+    "name": "tenarten-terrazzo",
+    "id": "uxxhpnseynojdgabanrv",
+    "plan": "FREE",
+    "subscriptionScope": "Organization-wide; all projects in this organization share the plan. Other organizations are not selected."
+  },
+  "projects": [
+    {
+      "name": "tenartenDB",
+      "ref": "vxdxjhazkqhpkwdqtobp",
+      "region": "us-east-1",
+      "currentCompute": "Nano",
+      "ram": "Up to0.5GB",
+      "intendedResize": "Small2GB after separate approval"
+    },
+    {
+      "name": "tenbot-readonly-validation-20261029",
+      "ref": "jltgxcfiprocydhbrahz",
+      "currentCompute": "Nano",
+      "intendedResize": null,
+      "note": "Preserve existing isolated fixture and allocation. After orgPro upgrade its existing Nano would be billed at Micro rate; no pause/delete/transfer approved."
+    }
+  ],
+  "dashboardComputeRates": {
+    "Nano": {
+      "currentHourlyUsd": 0,
+      "ramGBMax": 0.5
+    },
+    "Micro": {
+      "hourlyUsd": 0.01344,
+      "ramGB": 1
+    },
+    "Small": {
+      "hourlyUsd": 0.0206,
+      "ramGB": 2
+    },
+    "Medium": {
+      "hourlyUsd": 0.0822,
+      "ramGB": 4
+    }
+  },
+  "accountQuote": {
+    "url": "https://supabase.com/dashboard/org/uxxhpnseynojdgabanrv/billing?panel=subscriptionPlan&source=upgrade",
+    "heading": "Upgrade tenarten-terrazzo to the Pro plan",
+    "chargeTodayUsd": 25,
+    "monthlyInvoiceEstimateUsd": 35,
+    "estimateAppliesTo": "Two existing Nano projects before any Small resize",
+    "noPaymentMethods": true,
+    "cardInformationEntered": false,
+    "purchaseConfirmed": false,
+    "confirmationButton": "Confirm upgrade (untouched)",
+    "notice": "Micro Compute included for one project. After upgrading to Pro, switch one project to Micro. Each additional project costs$10+/mo, regardless of compute size.",
+    "finalTaxes": "No payment/billing details entered. Final applicable tax and card charge must be reviewed by owner before purchase;25USD is the displayed pre-entry quote, not an invented final tax-inclusive amount."
+  },
+  "proposed": {
+    "orgPlan": "Pro",
+    "targetProject": "vxdxjhazkqhpkwdqtobp",
+    "targetSize": "Small",
+    "targetRamGB": 2,
+    "otherProject": "Unchanged Nano",
+    "proFeeUsdPerMonth": 25,
+    "orgComputeCreditUsdPerMonth": 10,
+    "computeHourlyUsd": {
+      "target": 0.0206,
+      "other": 0.01344
+    },
+    "sampleHours": 730,
+    "targetComputeUsd": 15.038,
+    "otherComputeUsd": 9.8112,
+    "estimatedMonthlyUsd": 39.8492,
+    "roundedPlanningUsd": 40,
+    "incrementVsTwoNanoAt730HoursUsd": 5.2268,
+    "formula": "25 + targetSmallHours*0.0206 + fixtureNanoHours*0.01344 - applicable10USDorgComputeCredit + other usage/tax",
+    "limitations": "Hourly, not fixed40USD. Other usage/add-ons/tax excluded; hours round up. Compute is outside spend cap. Compute billed in arrears; no immediate upfront compute-resize charge."
+  },
+  "recommendation": "Pro plus Small for tenartenDB is the preferred initial memory recovery attempt. Micro1GB is the literal smallest RAM increase, but Small2GB offers four times currentNano maximum for about5.23USD/month more thanMicro at730hours. Memory pressure remains an unconfirmed initiating cause; recovery is not guaranteed.",
+  "operationalContract": {
+    "proAloneDoesNotIncreaseMemory": true,
+    "reason": "Existing Nano compute is not automatically resized when an organization becomes paid. A separate explicit project compute change is required.",
+    "downtime": "Official guidance: compute changes usually under2minutes, but can take longer depending on cloud provider. Shared TenOps/TenDev connections and in-flight transactions can be interrupted. Plan a finite recovery verification window and reconcile uncertain employee operations before retrying.",
+    "resizeEligibilityWhileUnhealthy": "Not verified by submitting a change. Free-plan compute controls are disabled because Pro is required. No guarantee of mutation acceptance or recovery is claimed.",
+    "scope": "Organization subscription changes apply to both named projects. Only tenartenDB would be resized; the fixture allocation and all other organizations are preserved."
+  },
+  "nextApproval": "Approve displayed25USDPropurchase (review taxes privately), approximately40USD/month organization run rate with both current projects, and separateSmall2GB resize of onlytenartenDB. Owner must privately enter payment details/complete required purchase confirmations; then perform the separately authorized exact resize and bounded DB/Auth/login/Inventory/Messaging verification.",
+  "boundaries": {
+    "purchaseClicks": 0,
+    "paymentInformationEntries": 0,
+    "resizeSubmissions": 0,
+    "restarts": 0,
+    "healthOrDatabaseProbes": 0,
+    "sqlQueries": 0,
+    "schedulerChanges": 0,
+    "computeOrPlanChanges": 0,
+    "permissionOrRlsChanges": 0,
+    "operationalWrites": 0,
+    "modelCalls": 0,
+    "canaryResumed": false,
+    "deployments": 0,
+    "migrations": 0,
+    "sourceEdits": false,
+    "fundingExtended": false
+  },
+  "preserved": {
+    "authSource": "ec62998",
+    "preparedSelectiveAuthCandidate": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+    "tenBotExperimentalWrites": "Remain disabled; not changed or freshly re-probed by this inspection.",
+    "checkout": "Review panel left visible inChrome; native control released. Card fields blank, Addnewcard/Confirmupgrade untouched.",
+    "unrelatedDevAndLocalhost": true
+  },
+  "sources": [
+    "https://supabase.com/docs/guides/platform/billing-on-supabase",
+    "https://supabase.com/docs/guides/platform/manage-your-usage/compute",
+    "https://supabase.com/docs/guides/platform/compute-and-disk",
+    "https://supabase.com/docs/guides/platform/manage-your-subscription",
+    "https://supabase.com/docs/guides/platform/billing-faq",
+    "https://supabase.com/docs/guides/platform/your-monthly-invoice"
+  ],
+  "review": "Focused independent primary-source cost/impact review agrees. No application tests/build needed for read-only financial preparation."
+}

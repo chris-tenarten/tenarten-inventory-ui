@@ -1,0 +1,84 @@
+{
+  "recordedAt": "2026-10-30T01:25:54.998Z",
+  "snapshot": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 2,
+      "expiresAt": "2026-10-30T02:22:45.717476+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 547999,
+      "remainingMicrousd": 241957,
+      "totalLimitMicrousd": 789956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "usage": [
+      {
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "ff865c29-3417-4e53-bdbc-123b0d12ed07",
+        "createdAt": "2026-10-30T01:24:49.297189+00:00",
+        "settledAt": "2026-10-30T01:24:52.35147+00:00",
+        "actualMicrousd": 1716,
+        "reservedMicrousd": 27004
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "ff865c29-3417-4e53-bdbc-123b0d12ed07",
+        "createdAt": "2026-10-30T01:24:54.88641+00:00",
+        "settledAt": "2026-10-30T01:24:56.529362+00:00",
+        "actualMicrousd": 2391,
+        "reservedMicrousd": 31025
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "ff865c29-3417-4e53-bdbc-123b0d12ed07",
+        "createdAt": "2026-10-30T01:24:58.034091+00:00",
+        "settledAt": "2026-10-30T01:25:00.69213+00:00",
+        "actualMicrousd": 1408,
+        "reservedMicrousd": 36184
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "da887cd7-315f-428f-a428-baed0250fba6",
+        "createdAt": "2026-10-30T01:25:31.517988+00:00",
+        "settledAt": "2026-10-30T01:25:35.731059+00:00",
+        "actualMicrousd": 298,
+        "reservedMicrousd": 27393
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "da887cd7-315f-428f-a428-baed0250fba6",
+        "createdAt": "2026-10-30T01:25:39.040761+00:00",
+        "settledAt": "2026-10-30T01:25:40.978317+00:00",
+        "actualMicrousd": 889,
+        "reservedMicrousd": 31414
+      },
+      {
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "da887cd7-315f-428f-a428-baed0250fba6",
+        "createdAt": "2026-10-30T01:25:42.122658+00:00",
+        "settledAt": "2026-10-30T01:25:44.132991+00:00",
+        "actualMicrousd": 1341,
+        "reservedMicrousd": 36573
+      }
+    ],
+    "historyShape": {
+      "rows": 1,
+      "maxDisplays": 2,
+      "maxGuidance": 2,
+      "allStateValid": true
+    },
+    "receivalMigrationPresent": false
+  },
+  "privateProseRead": false,
+  "apiTokenUsageUnavailableInLedger": true
+}

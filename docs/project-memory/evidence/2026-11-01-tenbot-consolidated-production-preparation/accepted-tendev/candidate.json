@@ -1,0 +1,78 @@
+{
+  "passed": true,
+  "sha": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "tree": "2f061902bd1940cd31775d630ca380643e75b7b0",
+  "baseline": "66dd0c072de3a4d81198884c2df81c96bdd0a134",
+  "implementationRevisions": [
+    "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd"
+  ],
+  "retainedJobReadImplementation": "6423a9b6a2da14d538c0624c10cf06b8d29a458e",
+  "retainedOrchestrationImplementation": "f2c60fc5e92379d95f63f9d4f05dea804bce445e",
+  "source": "/private/tmp/tenops-tenbot-direct-answer-finalize-20261101/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-direct-answer-finalize-20261101/candidate-git",
+  "output": "/private/tmp/tenops-tenbot-direct-answer-finalize-20261101/candidate/out",
+  "sourceHashes": [
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "blob": "d6cab5eeb35f198b780987c7c98a7d2c7a57ebeb",
+      "sha256": "66a865ed7ecbe695966158ca322c3b26b7327aed70692433d49e2f92eb2df59d",
+      "acceptedAuthorityRevision": "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
+      "blob": "a279215f6e3236e8825e2c409a6cdc2d42b717da",
+      "sha256": "9bbe435ea42429aa71edf94fdd92f73815f4d4d64ddcda03451ce6c22f28084b",
+      "acceptedAuthorityRevision": "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd"
+    },
+    {
+      "path": "scripts/verify-tenbot-direct-answers.mts",
+      "blob": "22c103b5979fa876e4740716f942c9f97c61f58d",
+      "sha256": "6b4a96d3f2f801a8d089498e483c33150bb7a604aa87e4c6594a26eaefe95135",
+      "acceptedAuthorityRevision": "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd"
+    }
+  ],
+  "added": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "blob": "d6cab5eeb35f198b780987c7c98a7d2c7a57ebeb",
+      "sha256": "66a865ed7ecbe695966158ca322c3b26b7327aed70692433d49e2f92eb2df59d",
+      "reviewedCandidate": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-direct-answer-source-proof.md",
+        "revision": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+        "heading": "## Accepted candidate source review — direct-answer consolidation, November 1, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
+      "blob": "a279215f6e3236e8825e2c409a6cdc2d42b717da",
+      "sha256": "9bbe435ea42429aa71edf94fdd92f73815f4d4d64ddcda03451ce6c22f28084b",
+      "reviewedCandidate": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-01-tenbot-direct-answer-source-proof.md",
+        "revision": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+        "heading": "## Accepted candidate source review — direct-answer consolidation, November 1, 2026"
+      }
+    }
+  ],
+  "proofRevision": "00fb7af6e0c444fcad1cc7a6a72073a0706c0682",
+  "newMigrations": [],
+  "selectedFiles": 3,
+  "runtimeFiles": 2,
+  "testFiles": 1,
+  "clean": true,
+  "verifierUnchanged": true,
+  "knowledgeEntriesUnchanged": true,
+  "scope": "tendev-only",
+  "rootWorkspacePreserved": true
+}

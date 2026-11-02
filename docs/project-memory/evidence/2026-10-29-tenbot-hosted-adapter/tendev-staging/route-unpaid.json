@@ -1,0 +1,7 @@
+{
+  "recordedAt": "2026-10-30T01:21:03.102Z",
+  "paidInferenceAuthorized": false,
+  "route": "TenDev only",
+  "policyEnabled": false,
+  "reason": "Controlled real Qwen fallback with Terra dispatch prohibited"
+}

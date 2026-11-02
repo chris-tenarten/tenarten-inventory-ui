@@ -1,0 +1,205 @@
+{
+  "status": "BLOCKED_PENDING_AUTHORIZED_EMPLOYEE_AND_EXACT_TARGET_APPROVAL",
+  "recordedAt": "2026-10-30T16:52:02.319Z",
+  "runtime": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "host": "https://tendev.pages.dev",
+  "sharedProject": "vxdxjhazkqhpkwdqtobp",
+  "sourceOfAuthority": {
+    "revision": "d7a88fc",
+    "receipt": "docs/project-memory/2026-10-28-tenbot-openai-agent-poc.md",
+    "priorPlan": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/proposed-write-canary.json",
+    "writeCanaryAlreadyAuthorized": false
+  },
+  "repositoryFinding": {
+    "sharedSyntheticEmployeeUuidVerified": false,
+    "sharedCatalogUuidVerified": false,
+    "finalDocumentHashPinned": false,
+    "approvedSharedEmployeeIds": [],
+    "approvedSharedCatalogIds": [],
+    "basis": "The committed proposal explicitly leaves employee UUID, authorized catalog UUID, final attachment bytes/hash, exact cap/window and cancellation approval unselected. Repository-only inspection cannot establish current shared identities or catalog availability.",
+    "currentChrisAdminSmoke": "Valid for current-owner status/UI only; does not prove non-Admin employee write authorization and is not the proposed employee canary.",
+    "exactLoginProvidedByProduct": true,
+    "actualSharedAccountVerified": false
+  },
+  "isolatedEvidenceOnly": {
+    "project": "jltgxcfiprocydhbrahz",
+    "employee": {
+      "role": "Lead (synthetic, non-Admin)",
+      "uuidInCommittedReceipt": null,
+      "evidence": "docs/project-memory/evidence/2026-10-30-tenbot-real-receivals/browser-completion.json"
+    },
+    "materials": [
+      {
+        "catalogSource": "standard",
+        "catalogId": "10302026-0000-4000-8000-000000000101",
+        "supplier": "T&M Supply",
+        "vendorSku": "AW-1",
+        "itemName": "Alaska White",
+        "size": "#1",
+        "catalogUnit": "50 LB Bag",
+        "evidence": "scripts/verify-tenbot-receival-database.mts plus committed actual live-model-execution.json"
+      }
+    ],
+    "usableAsSharedPilotIds": false,
+    "currentExistenceRequeried": false,
+    "restriction": "These exact identities/materials belong only to the isolated Free fixture. Do not copy Auth credentials/users, fabricate their shared existence, or use their UUIDs in the shared project."
+  },
+  "proposedEmployee": {
+    "userId": null,
+    "identity": "Product supplied the exact existing chris_dev login. The prepared exact-email lookup has not been executed by this agent; actual UUID, profile role, active/read-only state and capabilities remain pending verification. No new identity, permission grant or promotion is authorized.",
+    "freshVerification": "Use normal employee sign-in, Auth.getUser, exact own UUID and current caller-scoped capability checks. No Admin impersonation, forged JWT, copied fixture identity or permission escalation.",
+    "requiredExistingCapabilities": [
+      "readOperationalData",
+      "writeBusinessData",
+      "adjustInventory"
+    ],
+    "additionalCatalogCreatePermissionRequired": false,
+    "ordinaryEmployeesEnrolled": 0,
+    "productSuggestedAlias": "chris_dev",
+    "preparedLookup": "inspect-chris-dev-email-readonly.mjs",
+    "lookupPrivacy": "Only exact Auth UUID selected by the fixed provided-email predicate, then matching public profile and six capability booleans. Email, tokens and other Auth fields are not returned.",
+    "preparationDoesNotAuthorizeWriteCanary": true
+  },
+  "materialSelection": {
+    "catalogSource": null,
+    "catalogId": null,
+    "supplier": null,
+    "itemName": null,
+    "size": null,
+    "orderingUnit": null,
+    "inventoryStockingUnit": null,
+    "selection": "Using only the designated employee JWT, choose one existing unambiguous active catalog identity and its exact supplier, SKU/size and valid ordering unit. No new material, supplier or Job. Prefer a plainly documented package unit with no conversion required.",
+    "pinBeforeApproval": [
+      "catalogSource + catalog UUID",
+      "exact supplier identity/name",
+      "SKU, material and size",
+      "ordering/receival unit",
+      "package size and measure only if explicitly verified",
+      "current catalog snapshot"
+    ],
+    "doNotUsePrivilegedLookup": true
+  },
+  "syntheticInvoice": {
+    "reference": "TENBOT-TENDEV-CANARY-20261030-01",
+    "documentDate": "2026-10-30",
+    "title": "SYNTHETIC TEST INVOICE — NOT A PURCHASE",
+    "supplier": "Exact selected catalog supplier, not an invented alias",
+    "format": "One-page unencrypted PDF, new fixed bytes after target selection, no links/scripts/customer information",
+    "filename": "tenbot-tendev-canary-20261030-01.pdf",
+    "sha256": null,
+    "lineCount": 1,
+    "line": {
+      "lineNumber": 1,
+      "vendorSku": "Exact selected SKU",
+      "description": "Exact selected material and size",
+      "sourceQuantity": "1",
+      "sourceUnit": "Exact verified ordering unit",
+      "expectedReceivalQuantity": "1",
+      "expectedReceivalUnit": "Same exact ordering unit",
+      "containerCount": "1 only if that ordering unit is a verified container/package",
+      "quantityPerContainer": "Include only if explicitly verified; no inference from total mass/volume",
+      "totalMaterialQuantity": "Omit from this simplest document; do not infer a second quantity basis",
+      "inventoryStockingUnit": "Record separately from the catalog if known; no stock receipt occurs"
+    },
+    "orderMetadata": {
+      "orderedBy": "Exact designated employee display name, verified at review",
+      "orderDate": "2026-10-30",
+      "location": "Denton"
+    },
+    "jobAssociation": null,
+    "newCatalogProposals": 0,
+    "originalEvidence": "Original bytes/SHA and extracted line text/quantity/unit remain immutable; private source bound to the durable reviewed draft. No original is retained in ordinary assistant conversation history."
+  },
+  "proposedScope": {
+    "batches": 1,
+    "pendingRows": 1,
+    "catalogCreates": 0,
+    "jobCreates": 0,
+    "jobAssociations": 0,
+    "receiveOperations": 0,
+    "onHandChanges": 0,
+    "temporaryJobLabels": 0,
+    "duplicateAcknowledgements": 0,
+    "ordinaryEmployeeActivation": false,
+    "executionWindow": "15 minutes ending no later than 2026-10-30T23:00:00Z; exact UTC start/end still require Product approval.",
+    "employeeAllowlist": "Only the exact approved employee UUID, empty again after the canary.",
+    "approval": "Product approves exact employee/catalog/source SHA/one-row scope/window/budget/cancellation first. The signed employee separately reviews the immutable server hash and explicitly approves once. Any edit, catalog/source/permission drift or unresolved warning requires fresh server review/approval.",
+    "policyLimit": "Existing SQL/Edge pilot gates bind origin, employee and finite time; individual durable approval/permit binds draft/hash. There is no distinct global one-document counter: keep this one synthetic account supervised and approve only the pinned batch."
+  },
+  "spending": {
+    "newInferenceAuthorizedByThisPlan": false,
+    "preserveExistingHostedPolicy": true,
+    "existingPolicy": "$4 total hosted allowance inclusive of canaries, existing durable accounting/carryover/uncertain reservations; per employee/day $0.25, per request $0.25; expires October30 6pmChicago/23:00Z.",
+    "recommendedMaximumUsd": 0.25,
+    "reason": "This uses the existing enforceable per-employee/day ceiling without changing Production read-only provider policy. Fresh remaining allowance and this employee prior usage must be checked before enabling.",
+    "lowCostTargetUsd": 0.05,
+    "priorSuggestionUsd": 0.05,
+    "priorSuggestionIsSeparateServerCap": false,
+    "ifProductRequiresHard005Cap": "A separately approved focused enforcement configuration is needed; do not claim the current per-employee/request $0.25 limits enforce $0.05.",
+    "noAutomaticRenewalOrFundingIncrease": true
+  },
+  "steps": [
+    "Product designates the exact synthetic non-Admin shared identity or explicitly authorizes creation; verify normal signed caller and existing capabilities, without changing permissions.",
+    "Employee-scoped read-only catalog lookup pins one exact identity/supplier/unit; produce the one-line synthetic PDF and SHA, then present this final concrete plan for Product canary approval.",
+    "Confirm the accepted deployed source, private attachment policies, default-off state, durable spending availability/expiry and separately completed hosted integration gates. Set only the finite approved pilot controls/allowlist; keep all other employees and TenOps UI excluded.",
+    "Use real native-original Terra extraction and autonomous catalog investigation through normal TenBot Messaging. If the result is ambiguous, warns of an unexplained potential duplicate, changes quantity/unit or requires a new catalog/Job entry, stop before approval.",
+    "Employee checks one exact line and order metadata, saves server review, verifies original hash and immutable draft hash, then explicitly approves. No model text supplies authorization.",
+    "Record the actual returned single pending ID/draft/approval/source identity, verify that exact row in Inventory Pending Receivals using the same caller, received quantity zero, exact quantity/unit, no Job link and no created catalog records. Verify original private access, durable audit/idempotent result and unchanged on-hand/transaction state.",
+    "If an HTTP result is uncertain, inspect the durable exact draft/receipt under fresh caller authorization; retry only the same immutable operation if the service indicates safe reconciliation. Never regenerate an invoice/reference, discard uncertain spend or start a second batch to bypass uncertainty.",
+    "Disable pilot/execute controls and clear enrollment immediately after the one operation; retain ordinary Terra/Qwen configuration and the separately approved cleanup schedule.",
+    "With Product preapproval and employee confirmation, use the existing Inventory Cancel action on only the returned unreceived canary pending ID. Never click Receive, delete rows, purge source/audit metadata or alter catalog/stock. Verify status cancelled and unchanged stock."
+  ],
+  "cleanup": {
+    "method": "Existing Inventory Pending Receivals → Cancel, exact returned ID and quantity_received=0 only.",
+    "canonicalSource": "Exact35bb src/app/inventory/page.tsx handleCancelPendingReceival checks canAdjustPendingReceivals, confirms, then caller-scoped status=cancelled for that ID. It does not receive stock.",
+    "approvalRequired": true,
+    "recordIds": "Unknown until actual successful execution; bind cleanup to returned IDs rather than a material-name search.",
+    "completedOriginal": "Retain the successful synthetic original, durable approval/receipt/document claim and audit provenance. Do not delete a committed original via expired-draft cleanup.",
+    "failedOrAbandonedOriginals": "Use the reviewed private24h expiry protocol; never public URLs or SQL/Storage direct purge.",
+    "unexpectedReceivedQuantity": "Stop and report; no Undo Receive or broad cleanup is authorized by this plan."
+  },
+  "outstandingBeforeExecution": [
+    "Run exact existing chris_dev login lookup and normal signed own-account verification; resolve actual role/capability gaps through Product, without automatic permission changes.",
+    "Caller-verified exact existing catalog identity/supplier/unit",
+    "Final synthetic PDF bytes and SHA",
+    "Exact UTC canary window and funded spending decision",
+    "Explicit Product approval of the concrete one-row write and exact-ID cancellation/retention plan",
+    "Actual hosted employee authorization, private attachment/native-model execution, queue/stock/audit/idempotency verification still to be performed"
+  ],
+  "researchBoundary": {
+    "repositoryEvidenceOnly": true,
+    "networkCalls": 0,
+    "authUsersCreated": 0,
+    "permissionChanges": 0,
+    "inferenceCalls": 0,
+    "operationalWrites": 0,
+    "gitMutations": 0,
+    "documentBytesCreated": 0
+  },
+  "accountLookupPreparedAt": "2026-10-30T17:06:31.706Z",
+  "verifiedSuggestedAccount": {
+    "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "displayName": "chris developer",
+    "role": "developer",
+    "isActive": true,
+    "readOnly": false,
+    "effectiveCapabilities": {
+      "adjustInventory": false,
+      "messaging.write": true,
+      "writeBusinessData": true,
+      "readOperationalData": true,
+      "manageVendorsCatalog": false,
+      "accessDevelopmentEnvironment": true
+    },
+    "verification": "Exact Product-supplied email mapped to one Auth UUID/profile, read-only; current reviewed capability-rule source verified. Not a signed employee session test.",
+    "eligibleForReceivalCanary": false,
+    "missingReceivalCapability": "adjustInventory",
+    "catalogCreatePermitted": false
+  },
+  "remainingProductDecision": "Choose an existing Inventory-authorized non-Admin test identity with TenDev access, or separately approve the narrow permission approach. No role/global capability/profile changes are authorized or made by this staging.",
+  "canaryTargetSelection": "After that identity is authenticated normally, select/pin one caller-authorized existing catalog record, supplier, ordering unit and exact synthetic PDF bytes/hash; return for Product approval before employee enrollment or writes.",
+  "operationalWrites": 0,
+  "employeeEnrollment": 0,
+  "permissionChanges": 0,
+  "activationApproved": false
+}

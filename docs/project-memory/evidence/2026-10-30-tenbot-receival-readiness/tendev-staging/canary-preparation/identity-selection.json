@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:14:46.310Z",
+  "capabilityRuleSourceMd5": "7e83083b79c3ba2a1b1b3e01c690386d",
+  "eligibleNonAdminCount": 4,
+  "testLikeEligibleCount": 0,
+  "selectedProfile": {
+    "role": "lead",
+    "userId": "92edea19-e431-4493-9a1b-3c3ecf32aeae",
+    "isActive": true,
+    "readOnly": false,
+    "displayName": "Anthony Iorio",
+    "capabilities": {
+      "adjustInventory": true,
+      "messaging.write": true,
+      "writeBusinessData": true,
+      "readOperationalData": true,
+      "manageVendorsCatalog": true,
+      "accessDevelopmentEnvironment": false
+    },
+    "testLikeNameOnly": false,
+    "authIdentityExists": true
+  },
+  "selectionStatus": "Proposed real Lead; not signed-session certified; no other employee profile data copied",
+  "permissionChanges": 0
+}

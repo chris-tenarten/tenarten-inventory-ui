@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "at": "2026-11-01T19:19:32.893Z",
+  "tenDevSha": "509abf3be39e77d607e458a297abbaa3e592f189",
+  "tenDevDeployment": "341a78e4-91f4-4578-b153-20c2ccd40563",
+  "tenOpsSha": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "tenOpsDeployment": "967ed4d1-0ee8-4488-8db2-ee984cabc953",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 34,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "878717f5d18e860e16b5d6384dc56bf0c81f679bbaa907e81581d7f3a2fc8404"
+  },
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "ordinarySpendingAuthorized": false,
+  "scheduler": [
+    {
+      "id": 3,
+      "name": "tenbot-invoice-original-expiry",
+      "active": true,
+      "lastRuns": [
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T18:23:00.085919+00:00",
+          "start_time": "2026-11-01T18:23:00.071968+00:00"
+        },
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T17:23:00.124508+00:00",
+          "start_time": "2026-11-01T17:23:00.044206+00:00"
+        }
+      ],
+      "schedule": "23 * * * *",
+      "username": "postgres",
+      "commandHash": "b196b8a7cc744bcb4273b0bda12938de453f2bcbb0bec5d99f4f87543bd97c0b",
+      "privatePurgeOnly": false,
+      "signedDispatcherOnly": true
+    }
+  ],
+  "schemaCompatible": true,
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261101180000_tenbot_reauthorized_operational_history.sql",
+      "version": "20261101180000",
+      "name": "tenbot_reauthorized_operational_history",
+      "sha256": "67ce36cca4e5ecee965182e544ef588c70f18f17125992089a556cf14a0ad342"
+    },
+    {
+      "path": "supabase/migrations/20261101181000_tenbot_operational_history_retention.sql",
+      "version": "20261101181000",
+      "name": "tenbot_operational_history_retention",
+      "sha256": "8dda0d2e7dcb665f4b589f3cd16c15269b66ff41900db2b80ea46a0b7b85a472"
+    }
+  ],
+  "hostedMutations": 0
+}

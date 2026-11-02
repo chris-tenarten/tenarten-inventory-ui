@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "phase": "before",
+  "at": "2026-10-31T22:13:12.412Z",
+  "code": "INVARIANT_FAILED",
+  "safeMessage": "Existing authorized Management credential unavailable",
+  "automaticRetry": false
+}

@@ -1,0 +1,86 @@
+{
+  "task": "Focused assistant migration real-database gate plan",
+  "candidate": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+  "status": "read-only inspection only; no database connection or migration executed",
+  "riskTier": 3,
+  "target": {
+    "preferred": "Existing isolated tenops-permission-review",
+    "api": "http://127.0.0.1:55481",
+    "postgres": "127.0.0.1:55482",
+    "credentials": "Reuse mode-0600 .tmp-permission-review/config.json privately; reauthenticate synthetic actors rather than reuse expired stored JWTs",
+    "warning": "Do not run the old reset/provisioning verifiers: they reset/setup unrelated schema and use unbounded Docker subprocesses."
+  },
+  "existingHarnesses": [
+    {
+      "path": "scripts/verify-tenbot-openai-metering-database.mjs",
+      "coverage": "14 SQL/role/concurrency/unknown-accounting checks; no HTTP JWT or history",
+      "readyForPermissionFixture": false,
+      "reason": "Requires EMPTY loopback tenbot_meter_test_* database, psql and preexisting anon/authenticated/service_role. It truncates its own test usage/policy only. Do not point at nonempty permission fixture."
+    },
+    {
+      "path": "scripts/verify-tenbot-hosted-history.mts",
+      "coverage": "13 offline state-machine/RPC-double groups; static SQL checks",
+      "realDatabase": false
+    },
+    {
+      "path": "scripts/verify-tenbot-agent-database.mts",
+      "coverage": "Old real-PostgreSQL role/sub bridge Job wrappers; scripted model; no HTTP Auth, no new assistant persistence tests",
+      "requiresDocker": true
+    },
+    {
+      "path": "scripts/verify-read-only-messaging.mjs",
+      "coverage": "Prior genuine Auth/PostgREST baseline and synthetic accounts",
+      "reuse": "Existing config/accounts and signInWithPassword pattern only; do not rerun reset/broad setup."
+    }
+  ],
+  "schemaPrerequisites": {
+    "requiredExisting": [
+      "auth.users, genuine auth.uid() and JWT Auth/PostgREST infrastructure",
+      "public.app_users with real released RBAC columns and app_role_capabilities",
+      "public.has_app_capability(text), current released implementation",
+      "public.tenbot_conversations(id,owner_id,version,expires_at), owner-private legacy policies and RPC baseline",
+      "anon,authenticated,service_role roles; postgres ownership and pgcrypto/gen_random_uuid support"
+    ],
+    "selectivelyApplyIfAbsentInIsolatedOnly": [
+      "20261027120000_tenbot_feedback_usage.sql",
+      "20261027130000_tenbot_shared_usage_pool.sql",
+      "20261027140000_tenbot_measured_free_pool.sql",
+      "20261027150000_tenbot_private_conversations.sql"
+    ],
+    "note": "Only feedback_usage and private_conversations are direct prerequisites for the history SQL. Include intervening Qwen meter migrations if validating exact hosted fallback compatibility. Inspect existence/hash first; never blindly reapply.",
+    "pendingUnderTest": [
+      "20261029220000_tenbot_openai_metering.sql",
+      "20261029221000_tenbot_agent_history.sql"
+    ],
+    "prohibited": [
+      "20260818_002_rbac_final_enforcement_DO_NOT_APPLY.sql",
+      "20261029210000_invoice_pending_receival_approval.sql",
+      "Any migration push glob including unrelated files"
+    ]
+  },
+  "minimalCases": [
+    "Real signInWithPassword/getUser for member, outsider, admin, read-only guest and inactive synthetic accounts. Malformed, missing, expired and forged JWT rejection by Auth/PostgREST; do not count SET ROLE/request.jwt.claims as this gate.",
+    "Apply exact two SQL migrations in isolated DB. Assert RLS enabled, direct SELECT/INSERT/UPDATE/DELETE denied to anon/authenticated/service_role for private history/financial tables and service-only RPC execution denied to employee/admin JWTs.",
+    "Employee claims own conversation; separate employee and Admin cannot claim/release/clear it. Admin may create/read only own assistant conversation. Caller claim returns metadata, never retained prose. Service load/commit require exact owner/id/claim/revision.",
+    "Commit valid static workflow/scope state through real service RPC, create fresh caller/service clients and hydrate same state with no inference. Invalid/extra/volatile evidence fields rejected by real SQL; limits 8 display/3 guidance/1 hour enforced.",
+    "Revoke membership is_active and separately readOperationalData after claim. Claim/load/commit/new reservation denied; settlement of prior dispatched reservation remains allowed. Restore only synthetic fixture permissions afterward.",
+    "Use separate real DB connections for simultaneous claims/reservations. Exactly one history lease wins; stale revision/token, expired lease and replay commits fail. Clear deletes conversation and cascade prevents late commit resurrection; bounded lock waits fail closed.",
+    "Port 14 existing SQL meter scenarios into isolated-prefix fixture without truncating shared prior receipts: disabled/zero budgets; atomic 12-way reserve only 3 succeed; duplicate ID; unknown stays full reserved; zero known charge; same settlement retry; conflicting settlement; owner mismatch; permission revocation; per-request and user/day caps; expiry/model gate; overrun disables; nondecreasing carryover.",
+    "Failure/uncertain simulation uses real SQL reservations and intentional no-response/lost-response adapter boundaries without any OpenAI call. Reconnect retains reserved/uncertain amounts and global open cap; retry cannot authorize another dispatch.",
+    "Exercise actual hosted adapter against real local SDK/Auth/REST for history publication/source freshness and five caller read tools using synthetic operational records only. No fake DB results as RLS proof; no provider call needed for database/security checks."
+  ],
+  "bounds": {
+    "connectionTimeoutMs": 2000,
+    "statementTimeoutMs": 5000,
+    "lockTimeoutMs": 2000,
+    "subprocessTimeoutMs": 8000,
+    "httpTimeoutMs": 4000,
+    "retries": "No unbounded retry or Docker start/status loop; one schema-refresh check with finite total deadline if needed"
+  },
+  "concreteSqlDefectFound": false,
+  "sqlConclusion": "Narrow inspection found no concrete syntax/dependency defect in the two pending SQL files beyond required existing RBAC/conversation objects. This is not SQL execution or security certification.",
+  "minimumMissingHarness": "A small isolated-only real SDK/RPC history+JWT integration verifier; existing SQL meter logic can be reused, but cannot be redirected unchanged to the nonempty permission fixture.",
+  "mutations": 0,
+  "providerCalls": 0,
+  "hostedCalls": 0
+}

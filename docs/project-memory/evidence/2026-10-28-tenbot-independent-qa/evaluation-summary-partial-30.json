@@ -1,0 +1,177 @@
+{
+  "status": "PARTIAL / BLOCKED — stop for Product review; no fixes implemented",
+  "questionsCompleted": 30,
+  "questionsPlanned": 50,
+  "desktopQuestions": 30,
+  "mobileQuestions": 0,
+  "mobileViewportConfigured": "iPhone 16 preset, 393 × 852, verified in Chrome native device toolbar; no mobile conversation sent",
+  "blocker": "Chrome native automation returned cgWindowNotFound at the start of Q31. Rebinding the app also failed. Restoration requested from the user; remaining questions are NOT_RUN.",
+  "questionResults": {
+    "FAIL": 8,
+    "PASS": 14,
+    "PARTIAL": 3,
+    "PERMISSION_PASS": 5
+  },
+  "defectPriorities": {
+    "P2": 6,
+    "P3": 3,
+    "P1": 2
+  },
+  "runtimeAuthority": "Released 6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c; see preflight.json for independent served-byte limit",
+  "usage": {
+    "baselineAt": "2026-10-28T13:19:43.357Z",
+    "checkpointAt": "2026-10-28T13:32:06.564Z",
+    "actualSharedAccountInferenceRequestDelta": 25,
+    "actualSharedAccountNeuronDelta": 243.6031813621521,
+    "sharedAccountInputTokenDelta": 36320,
+    "sharedAccountOutputTokenDelta": 2482,
+    "sharedAccountDayRequests": 35,
+    "sharedAccountDayNeurons": 345.72729778289795,
+    "nominalFreeRemainingNeurons": 9654.272702217102,
+    "appLedgerAttemptsAndReservations": "Not retrieved: Developer lacks manageUsers. No privileged bypass attempted.",
+    "scopeLimit": "Actual Cloudflare account totals during the QA window, not per-question traces. Concurrent shared clients cannot be excluded from aggregate data; rejected model output may still consume inference.",
+    "finalBoundary": "No question was sent after the successful checkpoint. An optional later telemetry refresh hit sandbox DNS failure; no new final reading is claimed.",
+    "paidActivation": false
+  },
+  "latency": {
+    "method": "UI Send to first complete observation; approximately 500 ms sampling plus AX overhead",
+    "sampledTurns": 27,
+    "medianMs": 3584,
+    "minMs": 1286,
+    "maxMs": 20663,
+    "initialThreeTurns": "Manual observation upper bounds; excluded from these statistics"
+  },
+  "privacyBoundary": "No live synthetic privacy question completed. No broad hosted isolation or security-pass claim. Only synthetic test conversations submitted; no feature feedback or business mutation.",
+  "remaining": [
+    {
+      "id": "Q31",
+      "module": "inventory",
+      "question": "Does a Pending Receival already count as on-hand stock?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q32",
+      "module": "inventory",
+      "question": "How would an authorized receiver record only part of an incoming line?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q33",
+      "module": "inventory",
+      "question": "If I reserve only part of a lot for a Job, what happens to the rest?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q34",
+      "module": "inventory",
+      "question": "Where would I inspect old stock movements without recording a new one?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q35",
+      "module": "purchasing",
+      "question": "New topic, Purchasing: can an authorized user create an unlinked PO draft, and when does it get a PO number?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q36",
+      "module": "purchasing",
+      "question": "What if the PO was issued but the permanent PDF failed?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q37",
+      "module": "purchasing",
+      "question": "For a PO line ordered in bags, are Job allocations entered as bags or pounds?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q38",
+      "module": "purchasing",
+      "question": "Does issuing the PO automatically make its materials current Inventory?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q39",
+      "module": "catalog",
+      "question": "And does a Catalog search tell me the current available quantity?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q40",
+      "module": "contacts",
+      "question": "Switching to Contacts: how do i edit a saved customers detials like their phone?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q41",
+      "module": "contacts",
+      "question": "Will that phone correction rewrite old Jobs and issued Proposals?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q42",
+      "module": "contacts",
+      "question": "If Linked Jobs is missing an old project, does matching historical customer text guarantee the link?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q43",
+      "module": "my-work",
+      "question": "New topic, My Work: how would I create a private task?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q44",
+      "module": "my-work",
+      "question": "If I put it in a Task Group, does that share it like a Messaging group?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q45",
+      "module": "my-work",
+      "question": "Can I have that task repeat every Monday automatically? Just explain what is verified; do not create a task or submit feedback.",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q46",
+      "module": "messaging",
+      "question": "Switching to Messaging: how would I start a group conversation, and who can manage its membership?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q47",
+      "module": "messaging",
+      "question": "What if I already have a personal DM and just want to add a third person?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q48",
+      "module": "notifications",
+      "question": "New topic: how do i get TenOps notifications on an iphone, and does enabling them guarantee every alert arrives?",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q49",
+      "module": "tenbot",
+      "question": "For this synthetic QA-only pasted note: two sample panels are ready; a third still needs a color check. Summarize this pasted note in one sentence.",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q50",
+      "module": "privacy",
+      "question": "Hypothetically, can an administrator read a synthetic employee's private DMs or My Work tasks just because they are an administrator? Do not retrieve any records.",
+      "status": "NOT_RUN"
+    }
+  ],
+  "artifacts": [
+    "assessment-first-30.json",
+    "source-review.json",
+    "question-matrix.json",
+    "usage-baseline.json",
+    "usage-checkpoint.json",
+    "preflight.json",
+    "desktop-conversation.png",
+    "refinement-handoff.txt"
+  ]
+}

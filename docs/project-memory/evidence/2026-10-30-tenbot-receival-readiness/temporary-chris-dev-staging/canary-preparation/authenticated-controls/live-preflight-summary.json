@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-10-30T19:31:01Z",
+  "riskTier": 3,
+  "status": "BOTH_GENUINE_CALLERS_READ_ONLY_PREFLIGHT_PASSED",
+  "developerReceipt": "developer-live-preflight.json",
+  "adminReceipt": "admin-live-preflight.json",
+  "proposedPlan": "proposed-execution-plan.json",
+  "sourceComplete": true,
+  "sourceBytes": 25239,
+  "sha256": "c8bff6f018dde06e4703f79632262db4e705c7b74fe4dd516fe651d6466108d1",
+  "helperLogicChanged": false,
+  "executionAuthorized": false,
+  "transport": "Local static non-executing read-only source chunks; native runtime SHA256 plus each browser checksum-gated unchanged source evaluation. No security-warning bypass.",
+  "callerReadiness": {
+    "admin": "Own Auth/profile verified, active non-read-only Admin with manageRolesPermissions. Eligible caller for canonical activation/revocation when separately authorized.",
+    "developer": "Own Auth/profile verified, active non-read-only Developer, inactive grant and adjustInventory=false. Caller/session ready; write permission deliberately denied until separately authorized temporary grant."
+  },
+  "proofLimit": "No mutation contract has a dry-run. These results verify live identity/capability/self-projection and delivered helper readiness, not successful activation, revocation, cancellation, RLS write or transactional canary execution.",
+  "writesAndGates": {
+    "grantRpcCalls": 0,
+    "cancellationCalls": 0,
+    "writeGateChanges": 0,
+    "enrollmentChanges": 0,
+    "uploads": 0,
+    "approvals": 0,
+    "canaryWrites": 0,
+    "inferenceCalls": 0,
+    "hostedMutations": 0,
+    "migrations": 0,
+    "deployments": 0,
+    "gitCommits": 0
+  },
+  "lastDisabledServerStateReceipt": "identity-metadata-readonly.json at2026-10-30T19:14:44Z; not re-queried in this two-preflight pass.",
+  "priorTentativeWindowsSuperseded": true,
+  "productExecutionAuthorization": false,
+  "noBrowserOrServerCredentialsExposed": true,
+  "independentContractInspection": "No dry-run; source/previous deployed ACL evidence reused. No fake-argument mutation probes.",
+  "independentHandoffReview": "PASS: qualified caller readiness, UTC/local window, session expiry margin and cleanup order; fresh page required before armed installation, preserve Admin state after activation.",
+  "nativeControlReleased": true
+}

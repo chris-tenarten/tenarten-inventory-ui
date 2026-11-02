@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "reviewer": "production_scope_review",
+  "candidate": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "readOnlyExactDiffReview": true,
+  "selectedUiFiles": 5,
+  "selectedRuntimeModules": 14,
+  "exactAcceptedApplicationFiles": 18,
+  "reviewedOriginIntegrationFiles": 1,
+  "appliedMigrationHistoryFiles": 4,
+  "unchangedProductionProofTools": true,
+  "protectedAuthInventoryProviderMeteringIndexUnchanged": true,
+  "canaryControlsAbsent": true,
+  "blockingFindings": 0,
+  "newTests": false,
+  "newHostedCalls": false
+}

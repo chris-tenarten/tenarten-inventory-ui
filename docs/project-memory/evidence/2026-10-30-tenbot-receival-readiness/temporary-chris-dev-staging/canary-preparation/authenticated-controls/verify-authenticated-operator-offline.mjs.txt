@@ -1,0 +1,92 @@
+/** Offline VM/fetch-spy checks only. No browser, real session, credentials,
+ * network, hosted state, inference or actual JWT/RLS validation. The in-memory
+ * armed variant exists only inside a VM with a synthetic fetch implementation.
+ */
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {createHash} from 'node:crypto';
+const dir='/private/tmp/tenops-tenbot-chris-dev-staging-20261030/canary-preparation';
+const source=fs.readFileSync(dir+'/authenticated-operator.template.js','utf8');
+assert(source.includes('const EXECUTION_AUTHORIZED=false;'));
+const origin='https://tendev.pages.dev',ref='vxdxjhazkqhpkwdqtobp',api='https://'+ref+'.supabase.co';
+const owner='3785f6b9-742e-452f-af6c-31613a983633',admin='10302026-0000-4000-8000-000000000001',other='10302026-0000-4000-8000-000000000009';
+const grantId='10302026-0000-4000-8000-000000000002',draftId='10302026-0000-4000-8000-000000000003',recordId='10302026-0000-4000-8000-000000000004',approvalId='10302026-0000-4000-8000-000000000005',sourceId='10302026-0000-4000-8000-000000000006';
+const catalog='ba6a3690-0886-4f72-9f86-581bcc1f3b44',sha='c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a',hash='a'.repeat(64),now=Date.parse('2026-10-30T19:20:00Z');
+const iso=time=>new Date(time).toISOString(),clone=value=>structuredClone(value),checks=[];
+const fakeToken=payload=>Buffer.from('{"alg":"none","typ":"OFFLINE-TRANSPORT-ONLY"}').toString('base64url')+'.'+Buffer.from(JSON.stringify(payload)).toString('base64url')+'.SYNTHETIC_TRANSPORT_ONLY';
+const expected={grantId,draftId,hash,recordId};
+function receipt(phase='activation'){return {phase,projectRef:ref,origin,observedAt:iso(now),sha256:'b'.repeat(64),sqlPilotEnabled:false,sqlExecutionEnabled:false,edgePilotEnabled:false,edgeExecutionEnabled:false,sqlEmployeeIds:[],edgeEmployeeIds:[]};}
+function reviewedWindow(){return {confirm:'PRODUCT_APPROVED_CHRIS_DEV_ONE_ROW_WINDOW',startsAt:iso(now-1000),expiresAt:iso(now+5*60000),approvalReference:'SYNTHETIC OFFLINE WINDOW, NOT PRODUCT AUTHORIZATION',reason:'Offline VM only',disabledReceipt:receipt()};}
+function fixture(options={}){
+ const state={now,active:options.active??false,statusCalls:0,storageReads:0,calls:[],mutations:[],pendingStatus:'pending',...options};
+ const uid=state.actor==='admin'?admin:state.actor==='other-admin'?other:owner;
+ const publicAnon=fakeToken({role:'anon',ref});
+ const session={access_token:fakeToken({sub:state.tokenSub??uid,role:'authenticated',iss:state.issuer??api+'/auth/v1',exp:(state.expired?now-1:now+3600000)/1000}),refresh_token:'OFFLINE_REFRESH_MUST_NEVER_RETURN',expires_at:(state.expired?now-1:now+3600000)/1000,user:{id:uid}};
+ const projection=()=>state.actor?.includes('admin')||!state.active?{active:false,serverNow:iso(state.now)}:{active:true,grantId:state.otherGrant?other:grantId,ownerId:state.otherGrantOwner?other:owner,startsAt:iso(now-60000),expiresAt:iso(now+5*60000),serverNow:iso(state.now),documentSha256:sha,documentReference:'SYN-TENDEV-RECEIVAL-20261030-01',supplier:'T&M Supply',catalogSource:'standard',catalogId:catalog,quantityExpected:'1',unit:'Bag'};
+ const pending=()=>({id:recordId,vendor:'T&M Supply',material_name:'Alaska White',size:'#0',quantity_expected:1,quantity_received:0,unit:'Bag',status:state.pendingStatus,production_job_id:null,temporary_job_label:null,is_earmarked:false,earmarked_job_name:null,receipt_inventory_item_id:state.receivedLink?other:null,receipt_transaction_id:null,received_at:null,received_by:null});
+ const executed=()=>iso(state.wrongExecutionTime?now-120000:now-30000);
+ const fetchSpy=async(input,init={})=>{
+  const url=new URL(input);assert.equal(url.origin,api,'VM must never call another URL');const method=init.method??'GET',name=url.pathname.split('/').at(-1),body=init.body?JSON.parse(init.body):null;
+  state.calls.push({method,path:url.pathname});let value;
+  if(url.pathname==='/auth/v1/user')value={id:state.authMismatch?other:uid};
+  else if(name==='get_my_app_access')value=[{user_id:state.profileMismatch?other:uid,role:state.actor?.includes('admin')?'admin':'developer',is_active:true,read_only:false}];
+  else if(name==='has_app_capability'){const capability=body.p_capability;value=['readOperationalData','writeBusinessData'].includes(capability)||state.actor?.includes('admin')||capability==='adjustInventory'&&state.active;}
+  else if(name==='get_my_tenbot_receival_canary_access'){state.statusCalls++;if(state.revokeOnStatus===state.statusCalls)state.active=false;value=projection();}
+  else if(name==='get_invoice_receival_draft'){
+   assert.equal(body.p_draft_id,draftId);value={schemaVersion:'invoice-receivals.v2',id:draftId,hash,ownerId:owner,superseded:false,revoked:false,document:{sha256:state.wrongDocument?'f'.repeat(64):sha,reference:'SYN-TENDEV-RECEIVAL-20261030-01',supplier:'T&M Supply'},lines:[{catalogSource:'standard',catalogId:catalog,quantityExpected:'1',unit:'Bag',productionJobId:null,newMaterial:null,vendor:'T&M Supply',material:'Alaska White',size:'#0'}],execution:{draftId,hash,createdRecordIds:[recordId],createdCatalogRecords:[],executedAt:executed()}};
+  }else if(name==='invoice_receival_executions'){assert.equal(url.searchParams.get('owner_user_id'),'eq.'+owner);assert.equal(url.searchParams.get('draft_id'),'eq.'+draftId);value=[{draft_id:draftId,approval_id:approvalId,owner_user_id:state.foreignExecution?other:owner,content_hash:hash,created_record_ids:[recordId],created_catalog_records:[],executed_at:executed()}];}
+  else if(name==='invoice_receival_approvals'){assert.equal(url.searchParams.get('owner_user_id'),'eq.'+owner);assert.equal(url.searchParams.get('id'),'eq.'+approvalId);value=[{id:approvalId,draft_id:draftId,owner_user_id:owner,content_hash:hash,confirmation:'CREATE_REVIEWED_PENDING_RECEIVALS',approved_at:iso(now-40000)}];}
+  else if(name==='get_invoice_receival_source_for_draft'){assert.equal(body.p_draft_id,draftId);value={id:sourceId,ownerId:state.foreignSource?other:owner,sha256:sha,state:'retained',retainedDraftId:draftId,retainedAt:iso(now-29000)};}
+  else if(name==='invoice_receival_audit'){assert.equal(url.searchParams.get('owner_user_id'),'eq.'+owner);value=[{id:other,event:'approved',content_hash:hash},{id:sourceId,event:'executed',content_hash:hash}];}
+  else if(name==='pending_receivals'){
+   assert.equal(url.searchParams.get('id'),'eq.'+recordId);
+   if(method==='PATCH'){
+    assert.deepEqual(body,{status:'cancelled'});const required={status:'eq.pending',quantity_expected:'eq.1',quantity_received:'eq.0',unit:'eq.Bag',vendor:'eq.T&M Supply',material_name:'eq.Alaska White',size:'eq.#0',production_job_id:'is.null',temporary_job_label:'is.null',is_earmarked:'eq.false',earmarked_job_name:'is.null',receipt_inventory_item_id:'is.null',receipt_transaction_id:'is.null',received_at:'is.null',received_by:'is.null'};for(const [key,value]of Object.entries(required))assert.equal(url.searchParams.get(key),value,key);state.mutations.push({kind:'one_exact_cancel',id:recordId});if(state.uncertainPatch)throw Error('OFFLINE timeout');state.pendingStatus='cancelled';
+   }
+   value=[pending()];
+  }else if(name==='activate_tenbot_chris_dev_canary_grant'){state.mutations.push({kind:'activate',expiresAt:body.p_expires_at});state.active=true;value=grantId;}
+  else if(name==='revoke_tenbot_chris_dev_canary_grant'){assert.equal(body.p_grant_id,grantId);state.mutations.push({kind:'exact_revoke',id:body.p_grant_id});value={grantId,revoked:true,alreadyRevoked:state.revoked??false};state.revoked=true;state.active=false;}
+  else throw Error('Unallowlisted offline URL: '+url.pathname);
+  return {ok:true,status:200,text:async()=>JSON.stringify(value)};
+ };
+ class FixtureDate extends Date{constructor(...args){super(...(args.length?args:[state.now]));}static now(){return state.now;}}
+ const window={};const sandbox=vm.createContext({window,location:{origin:state.origin??origin},localStorage:{getItem(key){state.storageReads++;assert.equal(key,'sb-'+ref+'-auth-token');return state.missingSession?null:JSON.stringify(session);}},fetch:fetchSpy,atob:value=>Buffer.from(value,'base64').toString('binary'),AbortSignal,URLSearchParams,Date:FixtureDate});
+ let code=source.replace('__TENOPS_PUBLIC_ANON_KEY__',publicAnon).replace('__TENOPS_EXPECTED_ADMIN_UUID__',admin);if(state.armed)code=code.replace('const EXECUTION_AUTHORIZED=false;','const EXECUTION_AUTHORIZED=true;');
+ const installed=vm.runInContext(code,sandbox,{timeout:1000});return {state,operator:window.tenbotCanaryOperator,installed,token:session.access_token};
+}
+async function group(name,work){const then=Date.now();await Promise.race([work(),new Promise((_,reject)=>{const t=setTimeout(()=>reject(Error('Offline group timeout')),3000);t.unref();})]);checks.push({name,durationMs:Date.now()-then});}
+const denied=promise=>assert.rejects(promise);
+await group('unarmed install/three mutations/binding are zero-session-read and zero-HTTP even after local window preparation',async()=>{
+ const f=fixture();assert.equal(f.state.calls.length,0);assert.equal(f.state.storageReads,0);assert.equal(f.operator.localState().executionAuthorized,false);f.operator.armReviewedWindow(reviewedWindow());
+ await denied(f.operator.activate('ACTIVATE_EXACT_CHRIS_DEV_GRANT'));await denied(f.operator.cancelPending('CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW'));await denied(f.operator.revoke({confirmation:'REVOKE_EXACT_CHRIS_DEV_GRANT',reason:'Offline'}));await denied(f.operator.bindOwnActiveGrant(grantId));await denied(f.operator.inspectCompleted(expected));await denied(f.operator.reconcileCancellation());
+ assert.equal(f.state.calls.length,0);assert.equal(f.state.storageReads,0);assert.equal(f.state.mutations.length,0);
+});
+await group('wrong origin, issuer, storage owner and expired own-session inputs reject without an HTTP request',async()=>{
+ assert.throws(()=>fixture({origin:'https://tenops.pages.dev'}));for(const options of [{issuer:'https://other.example.invalid/auth/v1'},{tokenSub:other},{expired:true},{missingSession:true}]){const f=fixture(options);await denied(f.operator.preflight());assert.equal(f.state.calls.length,0);}
+});
+await group('preflight freshly checks Auth/profile identity and exact Admin; returns no tokens/session/refresh values',async()=>{
+ const f=fixture(),result=await f.operator.preflight();assert.equal(result.verifiedUserId,owner);assert.equal(result.role,'developer');const shown=JSON.stringify(result);assert(!shown.includes(f.token));assert(!shown.includes('OFFLINE_REFRESH'));
+ for(const options of [{authMismatch:true},{profileMismatch:true},{actor:'other-admin'},{active:true,otherGrantOwner:true}]){const rejected=fixture(options);await denied(rejected.operator.preflight());assert.equal(rejected.state.mutations.length,0);}
+});
+async function prepared(options={}){const f=fixture({armed:true,active:true,...options});await f.operator.bindOwnActiveGrant(grantId);return f;}
+await group('sandbox-only armed checks reject arbitrary returned rows, foreign execution/source and execution outside the exact grant',async()=>{
+ const arbitrary=await prepared();await denied(arbitrary.operator.inspectCompleted({...expected,recordId:other}));assert.equal(arbitrary.state.mutations.length,0);
+ for(const options of [{foreignExecution:true},{foreignSource:true},{wrongDocument:true},{wrongExecutionTime:true},{receivedLink:true}]){const f=await prepared(options);await denied(f.operator.inspectCompleted(expected));assert.equal(f.state.mutations.length,0);}
+});
+await group('sandbox-only canonical own evidence binds exact returned row and one guarded cancellation CAS',async()=>{
+ const f=await prepared();const proof=await f.operator.inspectCompleted(expected);assert.equal(proof.grantId,grantId);assert.equal(proof.recordId,recordId);f.operator.recordCancellationDisabledReceipt(receipt('cancellation'));const result=await f.operator.cancelPending('CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW');assert.equal(result.cancelled,true);assert.equal(f.state.mutations.length,1);assert.equal(f.state.pendingStatus,'cancelled');await denied(f.operator.cancelPending('CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW'));assert.equal(f.state.mutations.length,1);
+});
+await group('sandbox-only fresh pre-CAS revocation and expired grant reject without mutation',async()=>{
+ const revoked=await prepared({revokeOnStatus:4});await revoked.operator.inspectCompleted(expected);revoked.operator.recordCancellationDisabledReceipt(receipt('cancellation'));await denied(revoked.operator.cancelPending('CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW'));assert.equal(revoked.state.mutations.length,0);
+ const expired=await prepared();await expired.operator.inspectCompleted(expected);expired.operator.recordCancellationDisabledReceipt(receipt('cancellation'));expired.state.now+=6*60000;expired.state.active=false;await denied(expired.operator.cancelPending('CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW'));assert.equal(expired.state.mutations.length,0);
+});
+await group('sandbox-only uncertain cancellation is single-attempt and reconciliation is read-only',async()=>{
+ const f=await prepared({uncertainPatch:true});await f.operator.inspectCompleted(expected);f.operator.recordCancellationDisabledReceipt(receipt('cancellation'));await denied(f.operator.cancelPending('CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW'));assert.equal(f.state.mutations.length,1);await denied(f.operator.cancelPending('CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW'));assert.equal(f.state.mutations.length,1);const result=await f.operator.reconcileCancellation();assert.equal(result.readOnly,true);assert.equal(f.state.mutations.length,1);
+});
+await group('sandbox-only exact Admin revoke remains possible after window/grant expiry and retries the same UUID',async()=>{
+ const f=fixture({armed:true,actor:'admin'});f.operator.armReviewedWindow(reviewedWindow());const activated=await f.operator.activate('ACTIVATE_EXACT_CHRIS_DEV_GRANT');assert.equal(activated.grantId,grantId);f.state.now+=6*60000;f.state.active=false;
+ const closed=await f.operator.revoke({confirmation:'REVOKE_EXACT_CHRIS_DEV_GRANT',reason:'Offline close after expiry'});assert.equal(closed.revoked,true);assert.equal(closed.grantId,grantId);const retried=await f.operator.revoke({confirmation:'REVOKE_EXACT_CHRIS_DEV_GRANT',reason:'Offline exact replay'});assert.equal(retried.alreadyRevoked,true);assert(f.state.mutations.filter(item=>item.kind==='exact_revoke').every(item=>item.id===grantId));
+});
+const report={passed:true,groups:checks.length,checks,scope:'Offline VM and synthetic fetch-spy transport only; in-memory armed variant never written or connected to any service.',templateSha256:createHash('sha256').update(source).digest('hex'),executionAuthorizedInPreparedArtifact:false,realSessionReads:0,realNetworkRequests:0,realGrantActivations:0,operationalWrites:0,actualJwtRlsValidation:false,paidInferenceCalls:0};
+fs.writeFileSync(dir+'/authenticated-operator-offline-results.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

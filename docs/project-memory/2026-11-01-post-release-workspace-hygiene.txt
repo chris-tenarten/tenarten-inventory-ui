@@ -1,0 +1,134 @@
+TENOPS POST-RELEASE WORKSPACE HYGIENE — NOVEMBER 1, 2026
+
+Completed focused authorized maintenance; stop for Product review. Tier 3
+history/evidence retention caution, with focused Git/filesystem verification.
+No feature work, staging, commits, push, deployment, application/database
+operations, builds, broad tests, new branch or new worktree.
+
+BEFORE -> AFTER
+Registered worktrees: 65 -> 65 (62 existing, 3 absent; 24 detached).
+Existing checkout state: 55 clean, 6 dirty, 1 unknown (MRP intentionally not
+re-enumerated after the prior audit's hang). Additional physical scan found 25
+.git structures outside this registry; 24 valid checkout paths / 23 Git repos,
+plus one incomplete artifact .git. Private source copies are preserved.
+Local branches: 139 -> 135. Remote refs: 9 -> 9. TenOps candidate/proof/release
+refs: 37 -> 37. No tags/stash; no canonical or candidate ref changed.
+
+SOURCE CONTROL: ACTUAL COUNT AND CAUSES
+Before cleanup: 683 expanded Git paths, or 153 with untracked directories
+collapsed. Zero staged; 16 modified tracked files comprise 14 documentation
+files and 2 application/verifier files. The 667 untracked entries comprise 14
+receipt documents, 626 evidence files and 27 nested repository directory entries.
+The two retained source/verifier modifications are:
+  scripts/verify-tenbot-agent.mts
+  supabase/functions/_shared/tenbot-agent.ts
+These are owner work; maintenance did not change them.
+
+Cleanup leaves these legitimate paths unchanged. The final count is 685 expanded
+/ 155 collapsed because this pass adds only its report and evidence JSON. No
+ignore edit, blanket clean, forced staging or evidence deletion hides the count.
+Compared with the Oct30 exact deletion checkpoint (165 expanded paths), all 518
+additional pre-audit paths are documentation/evidence: 509 additional untracked
+records and 9 additional tracked-document modifications. Subsequent owner work
+at the end of that earlier audit is separately documented in its original report.
+
+COMPLETED CLEANUP
+1. Normal git branch -d removed four obsolete, nonunique labels:
+   fix/auth-startup-resolution       a79e13dadee7a3489cb05fdc3ea0c129edb810aa
+   fix/lot-auth-regression           3e9d78dbc41e01ca4acfb95acfa6512b11019f5c
+   fix/sample-generation-decimals   095f3215d4a57c7439aa974e59a617f54ccdeba9
+   perf/messaging-thread-latency    907e4e7324db188a19341d8164ed26e320407aef
+   Each tip and every old/new reflog commit remains in both main/dev history;
+   no worktree or current source/script workflow uses these labels. Full reflog
+   text, exact tips and containment evidence are archived in this receipt JSON.
+   No force deletion or unique-history/candidate/ref deletion occurred.
+2. Removed exactly 60 unused .next/cache/webpack directories / 583 regular
+   index/digit .pack[.old] files. No symlink, hardlink, source, export, compiled
+   output, environment file, Git object or evidence file was removed. All source
+   parent directories remain. Pure-cache format, Next build provenance, zero
+   tracked cache files, no live build/open users and manifest contracts were
+   verified. 1,034 proof/source/build/receipt manifests had no cache dependencies.
+3. Created a complete local recovery bundle for released e71bd981 under existing
+   ignored backups/tenops-release-history/2026-11-01/. Bundle verification from
+   the primary repository confirms complete history, exact HEAD and no required
+   prerequisite objects. Size 59,454,821 bytes; SHA256:
+   0be2842e8cd50c16465e17b646da179fb7134e68cb61df5e51d2fe554fe788c6
+   All original private repositories, incremental/full bundles and proofs remain.
+   This is a local backup; no ref import, remote publication or history rewrite.
+
+SPACE
+Removed cache footprint: 21,703,176,900 logical bytes (21.70 GB / 20.21 GiB);
+allocated file footprint: 21,704,433,664 bytes. Observed available-space gain
+across cache deletion: 409,600,000 bytes (409.6 MB). A 59.45 MB complete recovery
+bundle was then added. The evidence records the later net available-space reading.
+File footprint is not claimed as physical free-space gain. No snapshots, volumes,
+GC, reflog expiry or object pruning were used to chase space.
+
+CANONICAL / RELEASE / PENDING WORK
+Primary checkout remains /Users/chrisngo/source/repos/tenarten-inventory-ui.
+Local dev: 8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd (ahead 73 / behind 14).
+Local main: ae50e0fc55a7a6d9e454016c5d73a58e792aff79 (behind 5).
+Remote main/dev: c63527cc2f270a5d8cdb41890bd871b489be467d; fresh ls-remote
+matches tracking refs. Current Production e71bd981a583e0a4e706f9953c6cc1fcc4d576e1
+is a separate private detached release candidate, as its executed receipt says;
+no root commit or source push was part of that release. Do not align these by
+resetting dev or promoting all of it.
+
+Pending-receival commits a49ae7b, ffed10a and 05bd3d4 remain ancestors of dev.
+All 37 TenOps refs, including 22 added since Oct30, remain at identical SHAs.
+All accepted code, unmerged work, source snapshots, receipts/security evidence,
+credentials and environments are preserved. Active root cache/output/dependencies,
+direct-answer source, exact e71 and prerequisite 01c Git/source/build bundles,
+architecture proof and investigation/failed-build caches were held entirely.
+Local ports 3000/PID79102, 55596/PID79599 and 55597/PID82544 remain untouched.
+
+RETENTION / INTEGRITY
+Connectivity-only fsck passed in primary and the private Production Git; no
+missing-object errors. This is not a full object-content audit. Forty primary
+commits remain outside ordinary refs when reflogs are excluded (47 on Oct30).
+The three known historical commits 1941e068, f1ac2d43 and a0b4532f still have no
+containing ref. Their branch/worktree reflogs and all three missing registrations
+are preserved. No stale operation lock/merge/cherry-pick/rebase metadata found.
+
+Primary Git still lacks the deployed e71 object. The repository's existing
+incremental release bundle requires 2a3e45c and 01c0b457; the prior full 01c
+bundle is protected in /private/tmp/tenops-tenbot-context-production-20261101/.
+The new complete ignored e71 backup resolves temporary-only recovery dependence
+for this exact released HEAD. Original histories/proofs remain; this does not
+make release history remotely published or synchronize canonical branches.
+
+VERIFICATION
+Across cache deletion, persistent refs, index SHA256, status, worktree inventory
+and all 9,664 protected file hashes matched. After branch removal, the only
+persistent-ref differences are the four allowed labels; every retained commit
+is still reachable. Root index and all pre-existing dirty/untracked entries
+remain intact. Localhost:3000/my-work served identical before/after HTML (200),
+and all three listeners stayed on the same PIDs. No application lifecycle,
+inference, hosted system or database operation was exercised.
+
+PROPOSED ONLY — PRODUCT / OWNER REVIEW
+* Curate and commit completed receipts/evidence after owner review, and assign
+  the two remaining application/verifier modifications to their implementation
+  owner. This is the safe path to reducing the Source Control file count.
+* Proposed first checkout-retirement set, after owner/export/source-proof release:
+  .worktrees/announcement-expiry-release
+  .worktrees/mobile-early-access-release
+  .worktrees/mobile-nav-release
+  .worktrees/startup-888-release
+  .worktrees/startup-terrazzo-release
+  All five are clean with canonically retained HEADs; keep their branch refs and
+  archive required exact exports/source snapshots before checkout retirement.
+  This would reduce registrations 65 -> 60 and nested repository entries by 5.
+  No checkout was deleted in this pass; ambiguous/dirty/unique work stays held.
+* Establish approved durable refs for the three reflog-only historical commits
+  before any missing-registration pruning. Keep unique/candidate/release refs.
+* Choose longer-term/remote retention for the complete Production backup.
+Five additional pure caches (~1.72 GB) in external sibling worktrees were left
+untouched because those paths are outside the writable workspace roots; they
+need OS write permission, not a new Product semantics decision. All uncertain
+scratch/source directories and incomplete historical artifact metadata remain.
+
+Evidence: docs/project-memory/evidence/2026-11-01-post-release-workspace-hygiene.json
+Task-owned raw manifests/scripts: /private/tmp/tenops-postrelease-hygiene-20261101/
+Only two new report files and the ignored complete recovery bundle were created.
+The two report files remain uncommitted. Stop for Product review.

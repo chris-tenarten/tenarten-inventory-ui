@@ -1,0 +1,12 @@
+{
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "origin": "https://tendev.pages.dev",
+  "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+  "startsAt": "2026-10-30T19:45:00Z",
+  "expiresAt": "2026-10-30T20:00:00Z",
+  "approvalReference": "Product APPROVED ONE-ROW HOSTED WRITE CANARY, October30 2026; fresh14:45-15:00Chicago",
+  "candidateRuntime": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "validationReceiptSha256": "836af5bb4414611c2a2e3f8a2df4af222e9d97b9d7fe63030d17999ca1e0445c",
+  "authority": "Current explicit Product one-row authorization; browser action-time grant confirmation still pending",
+  "grantActivated": false
+}

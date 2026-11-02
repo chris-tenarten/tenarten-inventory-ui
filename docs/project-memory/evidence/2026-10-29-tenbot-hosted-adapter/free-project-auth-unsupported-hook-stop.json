@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-10-29T23:16:49.632Z",
+  "status": "STOPPED",
+  "phase": "configure",
+  "httpStatus": 402,
+  "code": null,
+  "errorType": "Error",
+  "message": "The following auth hooks cannot be configured for this organization: HOOK_PASSWORD_VERIFICATION_ATTEMPT, HOOK_MFA_VERIFICATION_ATTEMPT",
+  "requests": [
+    {
+      "path": "projects/jltgxcfiprocydhbrahz",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 200
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/functions",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 275
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/secrets",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 295
+    },
+    {
+      "path": "organizations/uxxhpnseynojdgabanrv",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 329
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/config/auth",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 316
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/database/query/read-only",
+      "method": "POST",
+      "status": 201,
+      "elapsedMs": 431
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/billing/addons",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 1620
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/database/query/read-only",
+      "method": "POST",
+      "status": 201,
+      "elapsedMs": 183
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/config/auth",
+      "method": "PATCH",
+      "status": 402,
+      "elapsedMs": 179
+    }
+  ],
+  "paidFallbackAttempted": false
+}

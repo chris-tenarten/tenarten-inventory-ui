@@ -1,0 +1,121 @@
+// Scratch-only real HTTP/SQL verifier. NO OpenAI calls or operational writes.
+// Execution is gated by root readiness and the new branch's pinned SQL helper.
+import assert from 'node:assert/strict';
+import {lstatSync,readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {spawn} from 'node:child_process';
+import {randomUUID} from 'node:crypto';
+import path from 'node:path';
+
+const arg=name=>process.argv[process.argv.indexOf(name)+1];
+// Root must replace this literal with the independently verified, data-free
+// project's ref. No credential config or command-line argument can choose it.
+const FIXED_ISOLATED_REF='jltgxcfiprocydhbrahz';
+const execute=process.argv.includes('--execute-authorized');
+const expectedRef=arg('--branch-ref'),configPath=arg('--config'),helperPath=arg('--sql-helper');
+assert.match(expectedRef??'',/^[a-z0-9]{20}$/,'An independently supplied NEW isolated-project ref is required.');
+assert.match(FIXED_ISOLATED_REF,/^[a-z0-9]{20}$/,'No isolated-project literal is pinned; root readiness is required.');
+assert.equal(expectedRef,FIXED_ISOLATED_REF,'Target differs from the independently pinned isolated project.');
+assert(configPath&&helperPath&&path.isAbsolute(configPath)&&path.isAbsolute(helperPath),'Absolute branch-only config and fixed-ref helper paths required.');
+const stat=lstatSync(configPath);
+assert(stat.isFile()&&!stat.isSymbolicLink()&&stat.uid===process.getuid()&&(stat.mode&0o077)===0,'Branch-only config must be owned and mode600.');
+const cfg=JSON.parse(readFileSync(configPath,'utf8'));
+assert.equal(cfg.branchRef,expectedRef);assert.match(cfg.parentRef??'',/^[a-z0-9]{20}$/);assert.notEqual(cfg.branchRef,cfg.parentRef);
+assert.equal(cfg.url,`https://${expectedRef}.supabase.co`);
+assert(!('managementAccessToken' in cfg)&&!('managementToken' in cfg),'Control-plane credentials are forbidden in test config.');
+for(const key of ['anonKey','serviceRoleKey'])assert.equal(typeof cfg[key],'string');
+for(const key of ['employeeA','employeeB','admin','meter']){
+ const actor=cfg.actors?.[key];assert(actor&&typeof actor.email==='string'&&typeof actor.password==='string');
+ assert.match(actor.id??'',/^[a-f0-9-]{36}$/i);
+}
+assert.equal(new Set(Object.values(cfg.actors).map(actor=>actor.id)).size,Object.values(cfg.actors).length);
+function jwtPayload(token){try{return JSON.parse(Buffer.from(token.split('.')[1],'base64url').toString());}catch{return null;}}
+for(const key of ['anonKey','serviceRoleKey']){
+ const payload=jwtPayload(cfg[key]);if(payload){assert.equal(payload.ref,expectedRef,'Branch API-key ref mismatch.');assert.equal(payload.role,key==='anonKey'?'anon':'service_role');}
+}
+const dir=path.dirname(new URL(import.meta.url).pathname);mkdirSync(path.join(dir,'sql'),{recursive:true,mode:0o700});
+const reportPath=path.join(dir,'result.json');
+const actorId=cfg.actors.meter.id;
+const quote=value=>{assert.match(value,/^[a-z0-9-]{1,64}$/i);return `'${value}'`;};
+const owned=`user_id=${quote(actorId)}`;
+let sqlSequence=0,baseline=0,dedicatedRole='',phase='prepare',cleanupNeeded=false;
+const started=Date.now(),events=[],checks=[];
+const totalDeadline=AbortSignal.timeout(600000);
+const identities={},verifiedIdentities=[];
+function fail(code){throw Object.assign(new Error(code),{safeCode:code});}
+function bounded(){if(totalDeadline.aborted)fail('total-test-deadline');return AbortSignal.any([totalDeadline,AbortSignal.timeout(8000)]);}
+async function body(response){
+ const reader=response.body?.getReader();if(!reader)return null;const chunks=[];let size=0;
+ try{while(true){const next=await reader.read();if(next.done)break;size+=next.value.length;if(size>524288)fail('oversized-http-response');chunks.push(Buffer.from(next.value));}}
+ finally{await reader.cancel().catch(()=>{});reader.releaseLock();}
+ const value=Buffer.concat(chunks).toString('utf8');try{return value?JSON.parse(value):null;}catch{fail('non-json-http-response');}
+}
+async function http(endpoint,{method='POST',token=cfg.serviceRoleKey,key=cfg.serviceRoleKey,value}={}){
+ assert(endpoint.startsWith('/rest/v1/')||endpoint.startsWith('/auth/v1/'));
+ const before=Date.now();let response;
+ try{response=await fetch(cfg.url+endpoint,{method,headers:{apikey:key,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},...(value===undefined?{}:{body:JSON.stringify(value)}),redirect:'error',signal:bounded()});}catch{fail('branch-http-transport-or-timeout');}
+ const result=await body(response),code=result&&typeof result==='object'&&/^[A-Z0-9]{5,12}$/.test(result.code??'')?result.code:null;
+ events.push({kind:'http',endpoint:endpoint.split('?')[0],status:response.status,code,latencyMs:Date.now()-before});
+ return {status:response.status,ok:response.ok,data:result,code};
+}
+const rpc=(name,args={},identity='service')=>{assert.match(name,/^[a-z_]+$/);return http('/rest/v1/rpc/'+name,{value:args,...(identity==='service'?{}:identity==='anon'?{token:cfg.anonKey,key:cfg.anonKey}:{token:identities[identity],key:cfg.anonKey})});};
+function good(result){if(!result.ok)fail('unexpected-http-'+result.status+'-'+(result.code??'unknown'));return result.data;}
+function denied(result,code,statuses=[400,401,403,409]){assert.equal(result.ok,false,'Expected denial returned success.');assert(statuses.includes(result.status),'Unexpected denial HTTP status.');assert.equal(result.code,code,'Denial must have the expected SQLSTATE, not an auth/schema/transport error.');}
+async function sql(statement,label='query',expectedError){
+ assert(!totalDeadline.aborted);const file=path.join(dir,'sql',String(++sqlSequence).padStart(3,'0')+'-'+label+'.sql');writeFileSync(file,statement+'\n',{mode:0o600});
+ if(!execute)return [];
+ const before=Date.now();
+ const result=await new Promise((resolve,reject)=>{
+  const child=spawn(process.execPath,[helperPath,'--file',file],{stdio:['ignore','pipe','pipe'],env:{PATH:process.env.PATH,TMPDIR:process.env.TMPDIR},timeout:8000,killSignal:'SIGKILL'});
+  let out='',length=0;child.stdout.on('data',chunk=>{length+=chunk.length;if(length>524288)child.kill('SIGKILL');else out+=chunk.toString();});child.stderr.on('data',()=>{});child.on('error',()=>reject(Error('branch-sql-helper-unavailable')));child.on('close',()=>{try{resolve(JSON.parse(out));}catch{reject(Error('branch-sql-helper-invalid-or-timeout'));}});
+ });
+ events.push({kind:'sql',file:path.basename(file),ok:result.ok===true,code:result.code??null,latencyMs:Date.now()-before});
+ if(expectedError){assert.equal(result.ok,false);assert.equal(result.code,expectedError);return [];}
+ assert.equal(result.ok,true,'Branch-pinned SQL helper rejected '+label);assert(Array.isArray(result.rows));return result.rows;
+}
+async function proof(statement,label){const rows=await sql(statement,label);assert(rows[0]?.proof&&typeof rows[0].proof==='object');return rows[0].proof;}
+async function check(name,fn){phase=name;await fn();checks.push(name);}
+const newRequest=()=>randomUUID();
+const reserveArgs=(amount=1000,id=randomUUID(),request=newRequest(),owner=actorId,model='gpt-6.1-terra')=>({p_user:owner,p_request_id:request,p_id:id,p_model:model,p_reserved_microusd:amount});
+const settleArgs=(id,amount=null,owner=actorId)=>({p_user:owner,p_id:id,p_actual_microusd:amount});
+async function reset(overrides={}){
+ const fields={enabled:'true',expires_at:"clock_timestamp()+interval '1 hour'",legacy_accounted_day:"(clock_timestamp() at time zone 'UTC')::date",total_limit_microusd:String(baseline+100000),day_limit_microusd:String(baseline+100000),month_limit_microusd:String(baseline+100000),user_day_limit_microusd:'100000',request_limit_microusd:'100000',request_step_limit:'16',global_minute_step_limit:'10000',user_minute_step_limit:'1000',global_day_request_limit:'100000',user_day_request_limit:'10000',global_open_limit:'100',user_open_limit:'10',...overrides};
+ for(const [key,value]of Object.entries(fields)){assert.match(key,/^[a-z_]+$/);assert.equal(typeof value,'string');}
+ await sql(`begin;do $$begin if exists(select 1 from public.tenbot_openai_usage where not(${owned})) then raise exception 'Foreign meter records present: stop exclusive phase';end if;end$$;delete from public.tenbot_openai_usage where ${owned};update public.app_users set is_active=true where ${owned};update public.tenbot_openai_policy set ${Object.entries(fields).map(([key,value])=>key+'='+value).join(',')} where singleton;commit;`,'reset-owned-meter-case');
+}
+async function signIn(name){
+ const actor=cfg.actors[name],result=await http('/auth/v1/token?grant_type=password',{token:cfg.anonKey,key:cfg.anonKey,value:{email:actor.email,password:actor.password}});
+ const data=good(result),claims=jwtPayload(data?.access_token??'');assert.equal(data.user?.id,actor.id);assert.equal(claims?.sub,actor.id);assert.equal(claims?.iss,cfg.url+'/auth/v1');assert.equal(claims?.role,'authenticated');identities[name]=data.access_token;
+ const verified=good(await http('/auth/v1/user',{method:'GET',token:identities[name],key:cfg.anonKey}));assert.equal(verified.id,actor.id);verifiedIdentities.push(name);
+}
+function save(passed,error){
+ writeFileSync(reportPath,JSON.stringify({passed,phase,errorCode:error instanceof Error?(error.safeCode??error.name):null,isolatedProjectRef:expectedRef,parentWasNeverTargeted:true,actualSupabaseHttp:events.some(event=>event.kind==='http'),actualSignedJwt:verifiedIdentities.length===4,signedJwtVerifiedActors:verifiedIdentities,actualManagementSql:events.some(event=>event.kind==='sql'&&event.ok),actualInference:false,operationalWrites:0,databaseScope:'dedicated data-free isolated project; synthetic meter actor and own usage only',checks,checkCount:checks.length,events,latencyMs:Date.now()-started,cleanupNeeded},null,2)+'\n',{mode:0o600});
+}
+if(!execute){
+ writeFileSync(path.join(dir,'plan.json'),JSON.stringify({prepared:true,executed:false,branchRef:expectedRef,configMode600Verified:true,managementCredentialInConfig:false,requiredSqlHelper:helperPath,scope:'Synthetic shared-meter reservations/settlements and dedicated actor permission tests; no inference or operational writes.'},null,2)+'\n',{mode:0o600});
+ console.log(JSON.stringify({prepared:true,executed:false}));process.exit(0);
+}
+try{
+ await check('Signed Auth identities belong to this preview branch',async()=>{for(const name of ['employeeA','employeeB','admin','meter'])await signIn(name);});
+ const actorIds=['employeeA','employeeB','admin','meter'].map(name=>quote(cfg.actors[name].id)).join(',');
+ const pre=await proof(`select jsonb_build_object('baseline',p.legacy_accounted_microusd,'enabled',p.enabled,'total',p.total_limit_microusd,'count',(select count(*) from public.tenbot_openai_usage),'role',(select role::text from public.app_users where ${owned}),'sameRoleUsers',(select count(*) from public.app_users where role=(select role from public.app_users where ${owned})),'readGrant',(select count(*) from public.app_role_capabilities where role=(select role from public.app_users where ${owned}) and capability='readOperationalData'),'actorRoles',(select jsonb_object_agg(user_id::text,role::text) from public.app_users where user_id in (${actorIds})),'activeActorCount',(select count(*) from public.app_users where user_id in (${actorIds}) and is_active)) as proof from public.tenbot_openai_policy p where singleton;`,'exclusive-meter-preflight');
+ assert.equal(pre.enabled,false);assert.equal(Number(pre.total),0);assert.equal(Number(pre.count),0);assert.equal(Number(pre.sameRoleUsers),1);assert.equal(Number(pre.readGrant),1);assert.equal(Number(pre.activeActorCount),4);assert.equal(pre.actorRoles[cfg.actors.admin.id],'admin');for(const name of ['employeeA','employeeB']){assert.equal(typeof pre.actorRoles[cfg.actors[name].id],'string');assert.notEqual(pre.actorRoles[cfg.actors[name].id],'admin');}assert.match(pre.role,/^[a-z]+$/);baseline=Number(pre.baseline);assert(baseline>=539956);dedicatedRole=pre.role;cleanupNeeded=true;
+ const cleanupSql=`begin;update public.tenbot_openai_policy set enabled=false,expires_at=clock_timestamp(),total_limit_microusd=0,day_limit_microusd=0,month_limit_microusd=0,user_day_limit_microusd=0,request_limit_microusd=0 where singleton;update public.app_users set is_active=true where ${owned};insert into public.app_role_capabilities(role,capability) values(${quote(dedicatedRole)},'readOperationalData') on conflict do nothing;commit;`;
+ writeFileSync(path.join(dir,'cleanup-owned-meter.sql'),cleanupSql+'\n',{mode:0o600});
+ await check('Default policy is disabled with zero usable budget',async()=>{denied(await rpc('tenbot_openai_reserve',reserveArgs()),'P0001');const s=good(await rpc('tenbot_openai_meter_status'));assert.equal(s.enabled,false);assert.equal(s.totalLimitMicrousd,0);assert.equal(s.legacyAccountedMicrousd,baseline);});
+ await check('Real employee/admin/anon JWTs cannot invoke arbitrary budget RPCs or financial tables',async()=>{
+  for(const identity of ['employeeA','admin','anon'])for(const [name,args]of [['tenbot_openai_reserve',reserveArgs()],['tenbot_openai_settle',settleArgs(randomUUID(),0)],['tenbot_openai_meter_status',{}]])denied(await rpc(name,args,identity),'42501',[401,403]);
+  for(const identity of ['employeeA','admin','service'])for(const table of ['tenbot_openai_policy','tenbot_openai_usage']){const token=identity==='service'?cfg.serviceRoleKey:identities[identity],key=identity==='service'?cfg.serviceRoleKey:cfg.anonKey;denied(await http('/rest/v1/'+table+'?select=*',{method:'GET',token,key}),'42501',[401,403]);}
+ });
+ await check('Twelve concurrent HTTP reservations admit exactly three against shared 3000 microUSD',async()=>{await reset({total_limit_microusd:String(baseline+3000),day_limit_microusd:String(baseline+3000),month_limit_microusd:String(baseline+3000)});const results=await Promise.all(Array.from({length:12},()=>rpc('tenbot_openai_reserve',reserveArgs())));assert.equal(results.filter(r=>r.ok).length,3);for(const result of results.filter(r=>!r.ok))denied(result,'P0001');const s=good(await rpc('tenbot_openai_meter_status'));assert.equal(s.accountedMicrousd,baseline+3000);});
+ await check('Repeated ID denies a second dispatch and uncertain outcome remains fully charged across clients',async()=>{await reset({total_limit_microusd:String(baseline+1000)});const args=reserveArgs();good(await rpc('tenbot_openai_reserve',args));denied(await rpc('tenbot_openai_reserve',args),'23505');const s=good(await rpc('tenbot_openai_settle',settleArgs(args.p_id)));assert.equal(s.state,'uncertain');assert.equal(s.accountedMicrousd,1000);denied(await rpc('tenbot_openai_reserve',reserveArgs(1)),'P0001');const after=good(await rpc('tenbot_openai_meter_status'));assert.equal(after.accountedMicrousd,baseline+1000);assert.equal(after.uncertainReservations,1);});
+ await check('Concurrent identical settlements are idempotent and conflicting settlement is rejected',async()=>{await reset();const args=reserveArgs();good(await rpc('tenbot_openai_reserve',args));for(const r of await Promise.all(Array.from({length:6},()=>rpc('tenbot_openai_settle',settleArgs(args.p_id,500)))))assert.equal(good(r).accountedMicrousd,500);denied(await rpc('tenbot_openai_settle',settleArgs(args.p_id,501)),'P0001');denied(await rpc('tenbot_openai_settle',settleArgs(args.p_id,500,cfg.actors.admin.id)),'P0001');});
+ await check('Uncertain reservations remain charged after crossing UTC daily/monthly windows',async()=>{await reset({total_limit_microusd:String(baseline+1000)});const args=reserveArgs();good(await rpc('tenbot_openai_reserve',args));good(await rpc('tenbot_openai_settle',settleArgs(args.p_id)));await sql(`update public.tenbot_openai_usage set created_at=clock_timestamp()-interval '40 days' where ${owned} and id=${quote(args.p_id)};`,'age-owned-uncertainty');assert.equal(good(await rpc('tenbot_openai_meter_status')).accountedMicrousd,baseline+1000);denied(await rpc('tenbot_openai_reserve',reserveArgs(1)),'P0001');});
+ await check('Inactive employee and revoked dedicated-role capability deny new inference; prior charge can settle',async()=>{await reset();const args=reserveArgs();good(await rpc('tenbot_openai_reserve',args));await sql(`update public.app_users set is_active=false where ${owned};`,'deactivate-owned-meter');denied(await rpc('tenbot_openai_reserve',reserveArgs()),'42501');assert.equal(good(await rpc('tenbot_openai_settle',settleArgs(args.p_id,100))).accountedMicrousd,100);await sql(`begin;update public.app_users set is_active=true where ${owned};delete from public.app_role_capabilities where role=${quote(dedicatedRole)} and capability='readOperationalData';commit;`,'revoke-owned-role-read');denied(await rpc('tenbot_openai_reserve',reserveArgs()),'42501');await sql(`insert into public.app_role_capabilities(role,capability) values(${quote(dedicatedRole)},'readOperationalData') on conflict do nothing;`,'restore-owned-role-read');});
+ await check('Request cost and step count limits act independently',async()=>{await reset({request_limit_microusd:'1000'});const req=newRequest();good(await rpc('tenbot_openai_reserve',reserveArgs(700,randomUUID(),req)));denied(await rpc('tenbot_openai_reserve',reserveArgs(400,randomUUID(),req)),'P0001');good(await rpc('tenbot_openai_reserve',reserveArgs(300,randomUUID(),req)));await reset({request_step_limit:'2'});const req2=newRequest();good(await rpc('tenbot_openai_reserve',reserveArgs(1,randomUUID(),req2)));good(await rpc('tenbot_openai_reserve',reserveArgs(1,randomUUID(),req2)));denied(await rpc('tenbot_openai_reserve',reserveArgs(1,randomUUID(),req2)),'P0001');});
+ await check('User daily, global daily and monthly monetary caps fail independently',async()=>{for(const overrides of [{user_day_limit_microusd:'1'},{day_limit_microusd:String(baseline)},{month_limit_microusd:String(baseline)}]){await reset(overrides);if(overrides.user_day_limit_microusd)good(await rpc('tenbot_openai_reserve',reserveArgs(1)));denied(await rpc('tenbot_openai_reserve',reserveArgs(1)),'P0001');}});
+ await check('Global/user request, rate and unresolved-open limits bound repeated calls',async()=>{for(const field of ['global_day_request_limit','user_day_request_limit','global_minute_step_limit','user_minute_step_limit','global_open_limit','user_open_limit']){await reset({[field]:'1'});const args=reserveArgs(1);good(await rpc('tenbot_openai_reserve',args));if(field.includes('open'))good(await rpc('tenbot_openai_settle',settleArgs(args.p_id)));denied(await rpc('tenbot_openai_reserve',reserveArgs(1)),'P0001');}});
+ await check('Expired policy and disabled challenger model cannot reserve',async()=>{await reset();denied(await rpc('tenbot_openai_reserve',reserveArgs(1,randomUUID(),newRequest(),actorId,'gpt-6.1-sol')),'22023');await sql("update public.tenbot_openai_policy set expires_at=clock_timestamp()-interval '1 second' where singleton;",'expire-meter-policy');denied(await rpc('tenbot_openai_reserve',reserveArgs(1)),'P0001');});
+ await check('Measured overrun is recorded and atomically disables future inference',async()=>{await reset();const args=reserveArgs(100);good(await rpc('tenbot_openai_reserve',args));const result=good(await rpc('tenbot_openai_settle',settleArgs(args.p_id,101)));assert.equal(result.overrun,true);assert.equal(result.accountedMicrousd,101);assert.equal(good(await rpc('tenbot_openai_meter_status')).enabled,false);denied(await rpc('tenbot_openai_reserve',reserveArgs(1)),'P0001');});
+ await check('Reconciled legacy spend can rise but cannot fall even above the original floor',async()=>{await sql(`update public.tenbot_openai_policy set legacy_accounted_microusd=${baseline+1} where singleton;`,'raise-carryover');await sql(`update public.tenbot_openai_policy set legacy_accounted_microusd=${baseline} where singleton;`,'deny-carryover-decrease','23514');assert.equal(good(await rpc('tenbot_openai_meter_status')).legacyAccountedMicrousd,baseline+1);});
+ await sql(cleanupSql,'disable-and-restore-owned-meter');cleanupNeeded=false;save(true);console.log(JSON.stringify({passed:true,checkCount:checks.length,result:reportPath,actualInference:false}));
+}catch(error){save(false,error);console.log(JSON.stringify({passed:false,phase,errorCode:error instanceof Error?(error.safeCode??error.name):'unknown',cleanupNeeded,result:reportPath}));process.exitCode=1;}

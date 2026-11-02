@@ -1,0 +1,11 @@
+{
+  "candidate": "509abf3be39e77d607e458a297abbaa3e592f189",
+  "status": "candidate-preparation-reviewed",
+  "reviewRequired": false,
+  "sourceReviewHolds": [],
+  "semanticRecordIds": [],
+  "unclassifiedSensitivePaths": [],
+  "fullProofSha256": "d985de0909e6c02458674070ad824988cfe0c959edd3c807eadca6f76c46ebce",
+  "fullProofPath": "/private/tmp/tenops-tenbot-context-staging-20261101/proof.json",
+  "verifierUnchanged": true
+}

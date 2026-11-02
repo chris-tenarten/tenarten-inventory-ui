@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-10-29T23:18:44.781Z",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "syntheticAuthUsers": 4,
+  "roleCounts": [
+    {
+      "role": "admin",
+      "actors": 1
+    },
+    {
+      "role": "developer",
+      "actors": 1
+    },
+    {
+      "role": "member",
+      "actors": 2
+    }
+  ],
+  "credentialsPrinted": false,
+  "productionRequests": 0,
+  "inferenceCalls": 0
+}

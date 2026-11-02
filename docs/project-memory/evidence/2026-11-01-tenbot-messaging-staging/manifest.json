@@ -1,0 +1,71 @@
+{
+  "candidate": "523f6471eaf7897c300ede04fe7ea64a837169c4",
+  "files": [
+    {
+      "path": "before.json",
+      "sha256": "4148a6c4032914680a7b6704421e3e60e126fd1bffd4326a2386aa6ca4ff8666"
+    },
+    {
+      "path": "build.json",
+      "sha256": "31845dce48cd98bcd7b17535c16f4ad4e23978c95cdafef1feb78f193ad31fe3"
+    },
+    {
+      "path": "candidate-523f6471.bundle",
+      "sha256": "cc9bdcac800028539c47eae775ea6e1364f7a7468f2c1c2ad792697d36dc311b"
+    },
+    {
+      "path": "candidate.json",
+      "sha256": "69990a93276669249b5c003344d2bfdeb0df897b70c77df26f72ce598e581477"
+    },
+    {
+      "path": "cloudflare-refresh.json",
+      "sha256": "f7834418fa09f5c8c500d3faa9828ea884ccf57df755c50c7d0c62c656dbb754"
+    },
+    {
+      "path": "edge-closure.json",
+      "sha256": "4d890f670aa614f6847bd92b59164514685e744b417808a1634bd0ca8944ff91"
+    },
+    {
+      "path": "edge.json",
+      "sha256": "aac290c4ab2241b4802bfb95172e2382c9286c7ffe155d155ed604933e02ac9b"
+    },
+    {
+      "path": "final.json",
+      "sha256": "2e4745cbe42b2614fe084c5df22f5ed2fa784cc3f5c72094a526ab9400233cf9"
+    },
+    {
+      "path": "mandatory-proof.json",
+      "sha256": "8b3c6b96cb06aeecdf463e068a690325574747a40cab74f44373c282f8fa5f6c"
+    },
+    {
+      "path": "messaging-assets.json",
+      "sha256": "77e7b5375f1ea043f3cf1cd0c25180e7028f978b700b062ffef279916a9328a6"
+    },
+    {
+      "path": "pages.json",
+      "sha256": "d82601a1948b7b9c4f527faaa233269552b48a653cae8161ce3bba198d3786b8"
+    },
+    {
+      "path": "served.json",
+      "sha256": "1e01a8fa090f0f5f913efc82cfc9b88922bf05be2a88a5f589ce6ea508b6dc30"
+    },
+    {
+      "path": "smoke.json",
+      "sha256": "eabd1ddf4e9e9d7027c0ff8b86c0c9c76ff4a09b93088603da00d18b5b93849f"
+    },
+    {
+      "path": "source-recovery.json",
+      "sha256": "c0ab8455f2b322f975ed9403c5eb5ef55006b78e254e706e6411a8875b118636"
+    },
+    {
+      "path": "validation-reuse.json",
+      "sha256": "d9465af8f921c2f9acbc28ec0fd5ba6eac67c961b1d163a26e9f474d586efde0"
+    },
+    {
+      "path": "workspace-preservation.json",
+      "sha256": "34d26aa75c1021308fb2e465c5257e124e59b6de92e24347c3f5f0745aa23915"
+    }
+  ],
+  "reportSha256": "e373e757bd7c331699bd9d8b2085b9e4299998cfbf8ed8d8e4e0f2dd65a5a34d",
+  "excludes": "Private metadata, CLI logs, credentials and operational/private content"
+}

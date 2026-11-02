@@ -1,0 +1,23 @@
+{
+  "recordedAt": "2026-10-30T23:48:21.575Z",
+  "authority": "Chris: TENOPS — APPROVED SUPABASE UPGRADE & RECOVERY",
+  "organization": "uxxhpnseynojdgabanrv",
+  "organizationName": "tenarten-terrazzo",
+  "plan": "Pro",
+  "approvedBaseChargeUsd": 25,
+  "applicableTaxAuthorized": true,
+  "expectedMonthlyUsdApprox": 40,
+  "targetProject": "vxdxjhazkqhpkwdqtobp",
+  "targetSize": "Small",
+  "targetRamGB": 2,
+  "preserveFixture": "jltgxcfiprocydhbrahz Nano unchanged",
+  "additionalServicesAuthorized": false,
+  "paymentEntry": "Owner private entry required; never record card values",
+  "currentPhase": "WAITING_FOR_OWNER_PRIVATE_PAYMENT_ENTRY",
+  "purchaseSubmitted": false,
+  "resizeSubmitted": false,
+  "restartsAuthorized": 0,
+  "operationalWritesAuthorized": false,
+  "deploymentAuthorized": false,
+  "inferenceExtensionAuthorized": false
+}

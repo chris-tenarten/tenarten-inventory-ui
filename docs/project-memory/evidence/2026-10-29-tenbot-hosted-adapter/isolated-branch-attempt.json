@@ -1,0 +1,133 @@
+{
+  "recordedAt": "2026-10-29T23:04:41.575Z",
+  "status": "STOPPED_HTTP_402_BILLING_UPGRADE_REQUIRED_NO_PREVIEW_CREATED",
+  "parentProjectRef": "vxdxjhazkqhpkwdqtobp",
+  "authorizedBranchName": "tenbot-readonly-gates-20261029",
+  "officialSources": {
+    "creationParameters": "https://supabase.com/docs/reference/api/v1-create-a-branch",
+    "branchSpecificSecrets": "https://supabase.com/docs/guides/deployment/branching/configuration",
+    "secretsStayBehind": "https://supabase.com/blog/local-supabase-project-per-agent-with-or-without-docker",
+    "gitlessHostedMigrationHistory": "https://supabase.com/blog/how-a-new-branch-gets-its-config-migrations-and-functions",
+    "pricing": "https://supabase.com/docs/guides/platform/manage-your-usage/branching",
+    "planRequirement": "https://supabase.com/docs/guides/deployment"
+  },
+  "preCreationSafety": {
+    "secretsBranchSpecificContractChecked": true,
+    "gitlessBranchUsesHostedMigrationHistoryOnly": true,
+    "noGitOrSeedFileRequested": true,
+    "withDataFalse": true,
+    "noSecretsSupplied": true,
+    "migrationMetadataPreflight": {
+      "checkedAt": "2026-10-29T23:03:20.875Z",
+      "httpStatus": 200,
+      "scope": "Production migration-history metadata only; no operational rows",
+      "migrationCount": 57,
+      "receivalCandidateApplied": false,
+      "safeToAvoidAutomaticParentBaselineWrite": true,
+      "hostedMutations": false
+    }
+  },
+  "creation": {
+    "attemptedAt": "2026-10-29T23:03:25.362Z",
+    "endpoint": "POST /v1/projects/vxdxjhazkqhpkwdqtobp/branches",
+    "creationPostCount": 1,
+    "payload": {
+      "branch_name": "tenbot-readonly-gates-20261029",
+      "is_default": false,
+      "persistent": false,
+      "region": "us-east-1",
+      "desired_instance_size": "micro",
+      "release_channel": "ga",
+      "postgres_engine": "17",
+      "secrets": {},
+      "with_data": false
+    },
+    "httpStatus": 402,
+    "providerApiCode": null,
+    "billingOrPlanUpgradeCondition": true,
+    "exactProviderMessage": null,
+    "providerMessageLimitation": "The failure sanitizer retained HTTP 402 and a billing/upgrade match, but did not retain the original response wording. No repeat request was made to recover it.",
+    "operatorMessage": "Supabase management request failed; no automatic retry.",
+    "creationRetried": false
+  },
+  "managementReads": [
+    {
+      "purpose": "Earlier isolated branch inventory",
+      "httpStatus": 200,
+      "result": "No branches at 22:56:11 UTC"
+    },
+    {
+      "purpose": "Pre-creation migration-history metadata query",
+      "method": "POST read-only query",
+      "httpStatus": 200,
+      "migrationCount": 57,
+      "receivalCandidateApplied": false
+    },
+    {
+      "purpose": "Immediate pre-create branch inventory",
+      "httpSuccess": true,
+      "exactHttpStatusRetained": false,
+      "result": "No existing named branch; duplicate guard passed"
+    },
+    {
+      "purpose": "Read-only reconciliation after rejected create",
+      "httpStatus": 200,
+      "checkedAt": "2026-10-29T23:03:46.184Z"
+    }
+  ],
+  "controlPlaneSideEffect": {
+    "observed": true,
+    "description": "The rejected creation initialized a default main branch metadata descriptor for the existing parent; it did not create the authorized isolated preview.",
+    "mainDescriptor": {
+      "id": "50eb7429-2606-4234-9533-53a6cfe323ba",
+      "name": "main",
+      "projectRef": "vxdxjhazkqhpkwdqtobp",
+      "parentProjectRef": "vxdxjhazkqhpkwdqtobp",
+      "isDefault": true,
+      "persistent": false,
+      "status": "FUNCTIONS_DEPLOYED",
+      "createdAt": "2026-10-29T23:03:25.638062+00:00",
+      "withData": false,
+      "gitBranch": null,
+      "notifyUrlConfigured": false
+    },
+    "parentDescriptorDeletedOrModifiedByAgent": false,
+    "parentMustNeverBeDeleted": true
+  },
+  "finalResources": {
+    "ownedPreviewBranchCount": 0,
+    "isolatedProjectRef": null,
+    "newPreviewComputeCreated": false,
+    "newBranchCredentialFileCreated": false,
+    "newBranchQueryHelperCreated": false,
+    "cleanupOfOwnedPreviewRequired": false
+  },
+  "cost": {
+    "microUsdPerHour": 0.01344,
+    "plannedFourHourComputeEstimateUsd": 0.05376,
+    "expectedNewPreviewComputeCostUsd": 0,
+    "actualInvoiceVerified": false,
+    "reason": "Creation was rejected before any owned preview branch existed; no paid preview compute was observed. No billing plan upgrade was performed."
+  },
+  "credentialSafety": {
+    "existingManagementCredentialUsedOnlyInProcess": true,
+    "keychainTokenPersisted": false,
+    "productionCredentialsCopiedIntoBranch": false,
+    "localOpenAiKeyReadOrCopied": false,
+    "newBranchCredentialsIssued": false,
+    "secretValuesInReceipt": false
+  },
+  "workNotPerformed": {
+    "branchQuarantine": false,
+    "branchAuthJwtExpiryChange": false,
+    "syntheticUsersOrRecords": false,
+    "schemaOrMigrationWrites": false,
+    "downloadsOrInstallations": false,
+    "openAiCalls": false,
+    "hostedOpenAiSecretConfiguration": false,
+    "productionOperationalWriteRequests": false,
+    "planUpgradeOrAdditionalPaidResources": false
+  },
+  "requiredResolution": "Product must separately approve any required Supabase plan/billing upgrade, or provide another approved isolated database. Do not retry branch creation, upgrade billing, or delete the parent main descriptor under the current stop condition.",
+  "localArtifact": "branch-lifecycle.mjs is an operator-only fixed-parent script with no embedded credentials; no branch config or branch-query.mjs was generated."
+}

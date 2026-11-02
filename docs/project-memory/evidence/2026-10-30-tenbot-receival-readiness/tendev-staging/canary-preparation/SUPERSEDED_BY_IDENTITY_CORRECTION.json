@@ -1,0 +1,9 @@
+{
+  "status": "WITHDRAWN_HISTORICAL_PROPOSAL_DO_NOT_EXECUTE",
+  "recordedAt": "2026-10-30T17:44:45.385Z",
+  "authority": "Current Product correction: chris_dev is the sole permitted test identity.",
+  "supersededPlanSha256": "1e8db072048d3c30c3243bfb3eaca8139ce8b8d001f73b2d109cd00305b402fe",
+  "currentPlan": "../identity-correction/canary-plan.json",
+  "historyPreserved": true,
+  "noDatabaseReversalNeeded": true
+}

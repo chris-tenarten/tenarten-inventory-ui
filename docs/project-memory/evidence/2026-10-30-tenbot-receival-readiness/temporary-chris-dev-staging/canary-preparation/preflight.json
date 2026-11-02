@@ -1,0 +1,109 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T19:01:18.154Z",
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 752283,
+      "remainingMicrousd": 3787673,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "pilot": false,
+    "grants": 0,
+    "policy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "catalog": [
+      {
+        "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+        "size": "#0",
+        "unit": "50lb bag",
+        "vendor": "T&M Supply",
+        "material": "Alaska White"
+      }
+    ],
+    "permits": 0,
+    "profile": {
+      "role": "developer",
+      "active": true,
+      "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+      "readOnly": false
+    },
+    "enrolled": 0,
+    "readOnly": "on",
+    "auditRows": 0,
+    "execution": false,
+    "functions": [
+      {
+        "name": "activate_tenbot_chris_dev_canary_grant",
+        "bodyMd5": "c2d6f546fad823a7a4ffdf8dd6cc9b1f"
+      },
+      {
+        "name": "receive_pending_receival_quantity",
+        "bodyMd5": "9c8437b4c41efbc18c0dadb8c3b6840d"
+      },
+      {
+        "name": "revoke_tenbot_chris_dev_canary_grant",
+        "bodyMd5": "07f4bc465c8db61d4df67cc0896a8f96"
+      }
+    ],
+    "serverNow": "2026-10-30T19:01:18.006487+00:00",
+    "activeGrants": 0,
+    "matchingClaims": 0,
+    "matchingDrafts": 0,
+    "basePermissions": {
+      "messaging.write": true,
+      "writeBusinessData": true,
+      "readOperationalData": true
+    },
+    "matchingSources": 0,
+    "subjectDayUsageMicrousd": 0
+  },
+  "pdf": {
+    "reference": "SYN-TENDEV-RECEIVAL-20261030-01",
+    "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "bytes": 2877
+  },
+  "edgeWriteGatesOff": true,
+  "edgeEnrollmentEmpty": true,
+  "spendingPolicyUnchanged": true,
+  "chrisDevSessionVerified": false,
+  "visibleTenDevSession": "Chris Ngo / Admin",
+  "secureOwnJwtActivationOrGuardedCancellationChannelVerified": false,
+  "activationRpcCalls": 0,
+  "grantChanges": 0,
+  "uploads": 0,
+  "approvals": 0,
+  "operationalWrites": 0,
+  "inferenceCalls": 0
+}

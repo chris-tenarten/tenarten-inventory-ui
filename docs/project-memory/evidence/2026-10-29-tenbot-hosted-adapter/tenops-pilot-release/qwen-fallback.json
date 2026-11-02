@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T02:07:40.897940+00:00",
+  "scope": "Initial TenOps Qwen routing before Terra origin enablement; nested fallback separately checked after activation",
+  "question": "Where do I start a new group conversation in Messaging?",
+  "answerCorrect": true,
+  "normalMessaging": true,
+  "openaiCallsAdded": 0,
+  "usage": [
+    {
+      "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+      "outcome": "completed",
+      "createdAt": "2026-10-30T02:06:49.416187+00:00",
+      "inputTokens": 975,
+      "outputTokens": 109,
+      "estimatedNeurons": 7.832
+    }
+  ]
+}

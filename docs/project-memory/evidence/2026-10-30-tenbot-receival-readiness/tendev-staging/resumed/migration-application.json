@@ -1,0 +1,145 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:42:51.578Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "candidate": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "durationMs": 1601,
+  "atomic": true,
+  "migrationHashes": [
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc"
+    },
+    {
+      "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7"
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63"
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441"
+    },
+    {
+      "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742"
+    },
+    {
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00"
+    },
+    {
+      "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d"
+    },
+    {
+      "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284"
+    },
+    {
+      "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03"
+    },
+    {
+      "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3"
+    },
+    {
+      "path": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+      "sha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496"
+    }
+  ],
+  "result": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 733674,
+      "remainingMicrousd": 3806282,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "usage": {
+      "rows": 67,
+      "measured": 66,
+      "reserved": 1,
+      "uncertain": 0,
+      "rowsFingerprint": "38a98a7b8150f5df724a41421805fbb0"
+    },
+    "atomic": true,
+    "candidate": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+    "pilotEnabled": false,
+    "cleanupEnabled": false,
+    "migrationCount": 11,
+    "migrationHashes": [
+      {
+        "name": "invoice_pending_receival_approval",
+        "version": "20261029210000",
+        "sourceMd5": "0045b2dcf55da3a478f45d8edc3f77c7"
+      },
+      {
+        "name": "catalog_write_authorization",
+        "version": "20261030110000",
+        "sourceMd5": "604e887cca21bea5294fc52fec5313bf"
+      },
+      {
+        "name": "invoice_dependent_pending_receivals",
+        "version": "20261030120000",
+        "sourceMd5": "de873ee68941be8ccbc052b5731eca0f"
+      },
+      {
+        "name": "invoice_receival_runtime_validation",
+        "version": "20261030130000",
+        "sourceMd5": "f170ec992b159fe8285ddac66f47d2fe"
+      },
+      {
+        "name": "invoice_receival_shared_compatibility",
+        "version": "20261030140000",
+        "sourceMd5": "d003cee308345e3a58fbd00e1faed3d3"
+      },
+      {
+        "name": "invoice_receival_originals",
+        "version": "20261030150000",
+        "sourceMd5": "070e51105e528bb9e489e334fc5375bf"
+      },
+      {
+        "name": "invoice_receival_pilot_permits",
+        "version": "20261030160000",
+        "sourceMd5": "26df41e6b3f592c70d6977528826a6cd"
+      },
+      {
+        "name": "invoice_original_storage_compatibility",
+        "version": "20261030170000",
+        "sourceMd5": "25dd8f6459d21172fd45a0d1764d405b"
+      },
+      {
+        "name": "invoice_original_backend_fail_closed",
+        "version": "20261030180000",
+        "sourceMd5": "5eb83d37809d23c642c6cb355b756b8f"
+      },
+      {
+        "name": "invoice_receival_pilot_policy_lock",
+        "version": "20261030190000",
+        "sourceMd5": "a8736d994d47c5ae7e04625f29e8f9a5"
+      },
+      {
+        "name": "tenbot_receival_cleanup_wakes",
+        "version": "20261030200000",
+        "sourceMd5": "37c957ef6a499cae469f8fc45bfcbeaa"
+      }
+    ],
+    "executionEnabled": false,
+    "employeeEnrollmentCount": 0
+  },
+  "operationalWrites": 0,
+  "employeeEnrollmentChanges": 0,
+  "inferenceCalls": 0,
+  "tenOpsApplicationDeployment": false
+}

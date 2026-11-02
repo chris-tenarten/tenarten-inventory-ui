@@ -1,0 +1,91 @@
+{
+  "status": "EVALUATION COMPLETE — stop for Product review; corrections not implemented",
+  "questionsCompleted": 52,
+  "originalQuestionsPlanned": 50,
+  "additionalFocusedPrivacyParaphrases": 2,
+  "desktopQuestions": 30,
+  "mobileQuestions": 22,
+  "mobileViewport": "Chrome iPhone 16 preset, 393 × 852; desktop keyboard, not a physical iPhone",
+  "questionResults": {
+    "FAIL": 16,
+    "PASS": 21,
+    "PARTIAL": 8,
+    "PERMISSION_PASS": 7
+  },
+  "defectPriorities": {
+    "P2": 12,
+    "P3": 8,
+    "P1": 4
+  },
+  "runtimeAuthority": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c from executed release receipt and pinned source; refreshed live Production UI observed. Independent fresh served-byte verification not completed.",
+  "usage": {
+    "developerActorWindowStart": "2026-10-28T13:20:00+00:00",
+    "developerActorWindowEnd": "2026-10-28T14:19:10.711+00:00",
+    "developerMeasuredInferenceAttempts": 44,
+    "developerModels": [
+      "@cf/qwen/qwen3-30b-a3b-fp8"
+    ],
+    "developerReservations": 44,
+    "developerCompleted": 39,
+    "developerFailedMeasured": 5,
+    "developerStillReserved": 0,
+    "developerUnmeasuredAttempts": 0,
+    "developerTokenEstimatedAccountedNeurons": 390.126,
+    "developerInputTokens": 57436,
+    "developerOutputTokens": 4084,
+    "uiQuestionsWithoutInferenceReservation": 8,
+    "actorAttributionLimit": "Actor and time attribution, not conversation/request-ID attribution. Another simultaneous use by the same developer actor cannot be independently excluded; no prompt or answer records were queried.",
+    "providerBaselineAt": "2026-10-28T13:19:43.357Z",
+    "providerFinalAt": "2026-10-28T14:19:32.671Z",
+    "sharedProviderRequestDelta": 55,
+    "sharedProviderNeuronDelta": 469.19525051116943,
+    "sharedProviderDayRequests": 65,
+    "sharedProviderDayNeurons": 571.3193669319153,
+    "nominalFreeRemainingNeurons": 9428.680633068085,
+    "sharedAppDayReservations": 50,
+    "sharedAppDayAccountedNeurons": 486.232,
+    "sharedAppDayRemainingReservations": 250,
+    "sharedAppDayRemainingAccountedNeurons": 7513.768,
+    "sharedAppMonthReservations": 50,
+    "sharedAppMonthAccountedNeurons": 486.232,
+    "sharedAppMonthRemainingReservations": 5950,
+    "sharedAppMonthRemainingAccountedNeurons": 239513.768,
+    "paidActivation": false,
+    "measurementNotes": "Ledger Neurons are validated token-derived estimates/accounting, not a separate provider billing measurement. Cloudflare telemetry is actual account-shared usage and includes activity beyond this developer ledger. Failed measured requests still consumed inference; no unmeasured holds remain for this actor/window."
+  },
+  "latency": {
+    "method": "Send click to first complete native accessibility observation, approximately 500 ms sampling plus tool overhead; end-to-end UI, not provider-only latency",
+    "sampledTurns": 48,
+    "medianMs": 4226.5,
+    "minMs": 1286,
+    "maxMs": 30046,
+    "desktopMedianMs": 3584,
+    "mobileMedianMs": 5381,
+    "excluded": [
+      "Q01–Q03 manual upper bounds",
+      "Q39 recovered after CUA timeout; no measured latency"
+    ]
+  },
+  "privacy": {
+    "syntheticPastedText": "Q49 passed",
+    "policyAndRetrievalBoundaryExplanation": "Q50–Q52 returned generic uncertainty; fails documented boundary communication",
+    "observedDisclosure": "No private content or retrieval/execution claim returned by the synthetic probes",
+    "securityClaimLimit": "No new broad hosted RLS or private-record isolation claim. No other employee identity or content queried. Aggregate-only usage inspection did not read prompt, answer, feedback, task or message tables."
+  },
+  "coverageLimits": [
+    "One Developer account: privileged Proposal, PO allocation and Contacts edit procedures remain permission-limited.",
+    "Q43 is an explicitly marked incomplete 512-character accessibility excerpt.",
+    "Phone viewport with desktop input; no physical-device/software-keyboard or notification-delivery acceptance.",
+    "Source selection paths are inferred where exact source IDs/raw provider dispatch were not captured.",
+    "Historical release receipt establishes the source boundary; a new independent public served-byte hash check was not completed."
+  ],
+  "interruptions": [
+    "After Q30 native Chrome window became unavailable; partial report preserved. User restored it and authorized continuation.",
+    "Mobile accessibility-target clicks were unreliable in device emulation; screen-coordinate input recovered. No confirmed TenOps defect assigned from that artifact.",
+    "CUA batch timed out after Q39 was sent. Its completed answer was recovered without a duplicate send; latency excluded."
+  ],
+  "historicalPartialReport": "QA-report-partial-30.html",
+  "remainingQuestions": [],
+  "implementationChanged": false,
+  "nextBoundary": "Product review; refinement handoff not sent elsewhere; no implementation, commit, push, migration, account/grant change or deployment authorized by this evaluation."
+}

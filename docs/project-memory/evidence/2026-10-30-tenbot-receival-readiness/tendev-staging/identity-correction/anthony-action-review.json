@@ -1,0 +1,328 @@
+{
+  "reviewedAt": "2026-10-30T17:40:46.193Z",
+  "status": "Independent local historical action audit; Anthony is not an authorized active canary identity",
+  "authority": "Current Product correction permits only chris_dev. Root replaces active proposal; this review does not alter historical records.",
+  "scope": {
+    "directories": [
+      "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030",
+      "/private/tmp/tenops-tenbot-receival-canary-conditional-20261030"
+    ],
+    "referencedHistoricalHold": "/Users/chrisngo/source/repos/tenarten-inventory-ui/docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/conditional-hold/outcome.json",
+    "mode": "Read existing operator source and structured receipts only; no execution of operators, session/credential access or hosted request"
+  },
+  "verdict": "No evidence in these task-owned scripts/receipts of Anthony-authenticated session use, permission changes, enrollment, upload, model inference, approval or operational execution. Anthony WAS used as a proposed local plan identity and as the filter for a read-only usage-cost aggregate; do not describe the history as containing no Anthony-related activity at all.",
+  "actualActions": [
+    {
+      "category": "Operator read-only account/role metadata inspection",
+      "source": "inspect-preparation.mjs + preparation-readonly.sql + preparation-readonly.private.json",
+      "recordedAt": "2026-10-30T17:14:46.310Z",
+      "details": "Management-authenticated BEGIN READ ONLY queried active public profiles, role-capability bindings, eligible non-Admin candidates (bounded to8) and active test-like profiles; checked only Auth existence for selected UUIDs. Four eligible profile metadata rows and one test-like profile were returned. No password/email/token/credential field or private content was read; this was not an Anthony signed-session test.",
+      "returnedEligibleProfileMetadataRows": 4,
+      "returnedTestLikeProfileMetadataRows": 1,
+      "mutations": 0
+    },
+    {
+      "category": "Read-only selected-employee cost lookup",
+      "source": "final-controls-readonly.mjs + final-controls-readonly.json",
+      "recordedAt": "2026-10-30T17:21:45.437Z",
+      "selectorUserIdSha256": "677dcf57a3674b19598be416d3a621a8b09ed4c0d0199c2da143fe9cdae9c744",
+      "details": "The proposed Anthony UUID was used only in a SELECT aggregate of tenbot_openai_usage. No request JWT claims or Auth session were set to that UUID.",
+      "aggregate": {
+        "steps": 0,
+        "requests": 0,
+        "reserved": 0,
+        "uncertain": 0,
+        "accountedMicrousd": 0
+      },
+      "mutations": 0
+    },
+    {
+      "category": "Narrow catalog reference GET",
+      "source": "catalog-reference.mjs + catalog-reference.json",
+      "details": "One previously UI-selected catalog tuple was read using the existing public anon key, not an Anthony JWT or a service-role business client. Receipt explicitly says employeeAuthorizationProof=false.",
+      "modelCalls": 0,
+      "mutations": 0
+    },
+    {
+      "category": "Local proposal/document/quantity artifacts",
+      "source": "create-synthetic-invoice.mjs, verify-exact-quantity.mts, package-plan.mjs, document-plan.mjs and output receipts",
+      "details": "Generated local synthetic PDF/text/preview, verified deterministic quantity semantics, and wrote proposal/documentation/evidence artifacts. The local proposal designated Anthony; these files are planning artifacts, not employee approval or DB submissions.",
+      "networkCallsInTheseGenerators": 0,
+      "authSessionAccessSyntax": 0
+    },
+    {
+      "category": "Conditional hold/preflight",
+      "source": "hold-preflight-readonly.mjs + hold-preflight-readonly.json + record-hold.mjs + historical outcome.json",
+      "recordedAt": "2026-10-30T17:31:26.897Z",
+      "details": "Read-only disabled controls, empty enrollment/permit counts and fixed-document source/draft/claim counts, plus Edge secret digests. Historical outcome explicitly records Anthony unavailable, no genuine participation/human approval and no newly confirmed window. record-hold writes only local repository documentation/evidence.",
+      "directHostedMutations": 0
+    }
+  ],
+  "notObserved": {
+    "anthonyLoginOrSessionTokenRead": false,
+    "anthonyJwtBorrowedMintedOrReplayed": false,
+    "authClaimsImpersonation": false,
+    "authUserCreation": false,
+    "roleOrPermissionChange": false,
+    "pilotEmployeeEnrollment": false,
+    "edgeOrSqlWriteActivation": false,
+    "originalUpload": false,
+    "serverDraftCreation": false,
+    "employeeApproval": false,
+    "permitMint": false,
+    "pendingOrCatalogCreation": false,
+    "cancellation": false,
+    "stockReceiptOrUndo": false,
+    "inference": false
+  },
+  "counterEvidence": {
+    "preparation": {
+      "recordedAt": "2026-10-30T17:14:46.310Z",
+      "transactionReadOnly": "on",
+      "controls": {
+        "pilot": false,
+        "drafts": 0,
+        "sources": 0,
+        "approvals": 0,
+        "employees": 0,
+        "execution": false,
+        "executions": 0
+      },
+      "noEmployeeEnrollment": true,
+      "signedEmployeeAuthorizationTest": false,
+      "permissionChanges": 0,
+      "inferenceCalls": 0,
+      "mutations": 0
+    },
+    "finalPreparation": {
+      "recordedAt": "2026-10-30T17:21:45.437Z",
+      "executionEnabled": false,
+      "pilotEnabled": false,
+      "enrolledEmployees": 0,
+      "permits": 0,
+      "sources": 0,
+      "drafts": 0,
+      "approvals": 0,
+      "executions": 0,
+      "edgeFlagsDisabled": true,
+      "allowlistEmpty": true,
+      "selectedEmployeeUsage": {
+        "steps": 0,
+        "requests": 0,
+        "reserved": 0,
+        "uncertain": 0,
+        "accountedMicrousd": 0
+      },
+      "permissionChanges": 0,
+      "inferenceCalls": 0,
+      "mutations": 0
+    },
+    "hold": {
+      "recordedAt": "2026-10-30T17:31:26.897Z",
+      "state": {
+        "meter": {
+          "ok": true,
+          "enabled": true,
+          "version": 3,
+          "expiresAt": "2026-10-30T23:00:00+00:00",
+          "allowedModels": [
+            "gpt-6.1-terra"
+          ],
+          "accountedMicrousd": 748026,
+          "remainingMicrousd": 3791930,
+          "totalLimitMicrousd": 4539956,
+          "uncertainReservations": 0,
+          "legacyAccountedMicrousd": 539956
+        },
+        "readOnly": "on",
+        "pilotEnabled": false,
+        "executionEnabled": false,
+        "executionPermits": 0,
+        "enrolledEmployees": 0,
+        "approvedInvoiceDrafts": 0,
+        "approvedInvoiceSources": 0,
+        "approvedInvoiceDocumentClaims": 0
+      },
+      "edgeFlagsDisabled": true,
+      "allowlistEmpty": true,
+      "anthonySessionVerified": false,
+      "humanApprovalVerified": false,
+      "executionWindowConfirmed": false,
+      "directHostedMutations": 0,
+      "permissionChanges": 0,
+      "inferenceCalls": 0,
+      "sourceUploads": 0
+    },
+    "outcome": {
+      "status": "HELD_BY_PRODUCT_ANTHONY_UNAVAILABLE_NOT_EXECUTED",
+      "executionAttempted": false,
+      "createdRecordId": null,
+      "pendingRowsCreatedByCanary": 0,
+      "featureActivation": 0,
+      "permissionChanges": 0,
+      "inferenceCalls": 0,
+      "directHostedMutations": 0
+    }
+  },
+  "staticOperatorReview": {
+    "scripts": [
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/catalog-reference.mjs",
+        "sha256": "4fefbd943a55430867b3ee7808bffc4a824962b76a28252068eff2aa01bc8def",
+        "actualNetworkCallSyntax": 1,
+        "employeeSessionAccessSyntax": 0
+      },
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/create-synthetic-invoice.mjs",
+        "sha256": "139c9a19d5acfb3904bd580e0844f765dceecef131c46d3fdf17dc77491c1451",
+        "actualNetworkCallSyntax": 0,
+        "employeeSessionAccessSyntax": 0
+      },
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/document-plan.mjs",
+        "sha256": "76b61f062a6f09a2cb87d3a2732ce522768beebece7912c6a731b76cf2ce41f8",
+        "actualNetworkCallSyntax": 0,
+        "employeeSessionAccessSyntax": 0
+      },
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/final-controls-readonly.mjs",
+        "sha256": "12cec85bfd3bf40cfde3255edfb52bf3d668eafb9a0a999ccb169d0244d850cb",
+        "actualNetworkCallSyntax": 2,
+        "employeeSessionAccessSyntax": 0
+      },
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/inspect-preparation.mjs",
+        "sha256": "411ec1ac7e0fe0703798ccd745ab1bd215e668a3a59760d1e862bb526eafb447",
+        "actualNetworkCallSyntax": 2,
+        "employeeSessionAccessSyntax": 0
+      },
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/package-plan.mjs",
+        "sha256": "20db3567fe54bdf1d40cbb4658ed66b78002644692cf7c3a3b79f073c525ec36",
+        "actualNetworkCallSyntax": 0,
+        "employeeSessionAccessSyntax": 0
+      },
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/verify-exact-quantity.mts",
+        "sha256": "242ec9da71e1968bd31ccc4f68e10c38402ac63df3ddb5be6341bd9ad3c807c2",
+        "actualNetworkCallSyntax": 0,
+        "employeeSessionAccessSyntax": 0
+      },
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-conditional-20261030/hold-preflight-readonly.mjs",
+        "sha256": "da298e7a8e1854119bf8964627b09e2c28018446b1c5dfdad58088be7fb388d0",
+        "actualNetworkCallSyntax": 2,
+        "employeeSessionAccessSyntax": 0
+      },
+      {
+        "file": "/private/tmp/tenops-tenbot-receival-canary-conditional-20261030/record-hold.mjs",
+        "sha256": "8e88557477ebe14907ce65bb8f0204f5769e1b753580a158c25640abcc70d479",
+        "actualNetworkCallSyntax": 0,
+        "employeeSessionAccessSyntax": 0
+      }
+    ],
+    "employeeSessionAccessSyntaxTotal": 0,
+    "credentialSources": "Prior metadata readers import the established operator Supabase management-token accessor; catalog GET uses the existing public anon key. Those are operator/reference credentials, not Anthony credentials. This audit did not invoke any credential accessor or open any session store.",
+    "sessionOrCredentialFilesPresentInReviewedDirectories": []
+  },
+  "limits": [
+    "This is a bounded local audit of retained task-owned scripts/receipts, not a fresh server-state or external/manual-browser reconstruction. Root is independently querying fresh targeted counts.",
+    "Code presence alone is not execution evidence; actual activity claims above require the corresponding retained receipts/artifacts.",
+    "Zero counters apply at their recorded timestamps. No claim about unrelated Production activity, deleted/out-of-scope files or future events is made.",
+    "The read-only metadata lookup and proposed identity do not establish Anthony genuine authenticated participation or authorization.",
+    "Historical wrong-identity proposal/hold evidence remains unchanged. No Anthony plan is eligible for activation; only a new chris_dev proposal under the current Product decision may be considered."
+  ],
+  "reviewedFileHashes": [
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/canary-contract-review.json",
+      "sha256": "6b97e0aa6ecad581e43b5f8022e383bf7585f84c49b1c2b04077a968fde33f2d"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/canary-preparation-independent-review.json",
+      "sha256": "087c2b4b48cfeef704649e38468550db0b7f89ebcce3405435976f5285991205"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/catalog-reference.json",
+      "sha256": "92678f29bb3230315732d3b9f5bb31b149228a11b53dea00a684109a558c8816"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/catalog-reference.mjs",
+      "sha256": "4fefbd943a55430867b3ee7808bffc4a824962b76a28252068eff2aa01bc8def"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/conditional-cancellation-review.json",
+      "sha256": "a25872ab126f8fcbe5f7e01d9db2cf6eb02196c41b024ef56a6f91e4438562bc"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/create-synthetic-invoice.mjs",
+      "sha256": "139c9a19d5acfb3904bd580e0844f765dceecef131c46d3fdf17dc77491c1451"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/document-plan.mjs",
+      "sha256": "76b61f062a6f09a2cb87d3a2732ce522768beebece7912c6a731b76cf2ce41f8"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/exact-quantity-check.json",
+      "sha256": "df56230bbea76f0152afa590b82e8c897bd90113f0e6723c7009dc1a0af27a2b"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/final-controls-readonly.json",
+      "sha256": "7c654b14d485f79260b7ca2c4c1c8f56cfaa545a6fb4774ecb85941d348318f4"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/final-controls-readonly.mjs",
+      "sha256": "12cec85bfd3bf40cfde3255edfb52bf3d668eafb9a0a999ccb169d0244d850cb"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/inspect-preparation.mjs",
+      "sha256": "411ec1ac7e0fe0703798ccd745ab1bd215e668a3a59760d1e862bb526eafb447"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/material-selection.template.json",
+      "sha256": "3f6805db143abf271ab62a410aae476870ae9d0ef1b5a1fb012abd7868659dee"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/package-plan.mjs",
+      "sha256": "20db3567fe54bdf1d40cbb4658ed66b78002644692cf7c3a3b79f073c525ec36"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/preparation-readonly.private.json",
+      "sha256": "f9457b0d82509cc524e9c1b3352cf6f7a1cb026fc5e9536a25b62c3530412360"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/preparation-readonly.sql",
+      "sha256": "53f53689c3439ba45f5dcbff639987d4a63515f4b73db0e3b4401d1f30850d5c"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/single-line-invoice-plan.txt",
+      "sha256": "c258166678bf6b299574ea9f7a2992f881226d5fd1aae6d3cd8d03548526e694"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-preparation-20261030/verify-exact-quantity.mts",
+      "sha256": "242ec9da71e1968bd31ccc4f68e10c38402ac63df3ddb5be6341bd9ad3c807c2"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-conditional-20261030/hold-preflight-readonly.json",
+      "sha256": "c8268288babd1a4199f151e159dab3bdff78d5887e80a2c4f5ca7441431b763e"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-conditional-20261030/hold-preflight-readonly.mjs",
+      "sha256": "da298e7a8e1854119bf8964627b09e2c28018446b1c5dfdad58088be7fb388d0"
+    },
+    {
+      "file": "/private/tmp/tenops-tenbot-receival-canary-conditional-20261030/record-hold.mjs",
+      "sha256": "8e88557477ebe14907ce65bb8f0204f5769e1b753580a158c25640abcc70d479"
+    }
+  ],
+  "actionsByThisReview": {
+    "networkCalls": 0,
+    "sessionOrCredentialAccess": 0,
+    "operatorScriptsExecuted": 0,
+    "permissionChanges": 0,
+    "hostedMutations": 0,
+    "gitMutations": 0,
+    "historyFilesModified": 0,
+    "inferenceCalls": 0,
+    "activePlanChanges": 0
+  }
+}

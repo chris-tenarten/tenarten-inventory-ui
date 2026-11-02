@@ -1,0 +1,275 @@
+[
+  {
+    "name": "functions",
+    "path": "/v1/projects/vxdxjhazkqhpkwdqtobp/functions",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 191
+  },
+  {
+    "name": "secrets",
+    "path": "/v1/projects/vxdxjhazkqhpkwdqtobp/secrets",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 204
+  },
+  {
+    "name": "tenops",
+    "path": "/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tenops",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 250
+  },
+  {
+    "name": "tendev",
+    "path": "/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tendev",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 292
+  },
+  {
+    "name": "database/query",
+    "path": "/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+    "method": "POST",
+    "status": 201,
+    "durationMs": 291
+  },
+  {
+    "name": "served",
+    "path": "/manifest.webmanifest",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 179
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/css/15f74ee999edbd3d.css",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 182
+  },
+  {
+    "name": "served",
+    "path": "/my-work",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 188
+  },
+  {
+    "name": "served",
+    "path": "/inventory",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 205
+  },
+  {
+    "name": "served",
+    "path": "/sw.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 210
+  },
+  {
+    "name": "served",
+    "path": "/",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 247
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/css/7e85cdb03b2c44e3.css",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 40
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/main-app-a4c21c96cc2bc032.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 63
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/47222212-23f239a5d73d6cfe.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 64
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/c1b010ae-8cda3ade643e9bbb.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 77
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/3714-7946fb603a05859a.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 96
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/webpack-70d6a666716b43b5.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 100
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/537-7f637a9ccda78a65.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 46
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/3139-84b1c5c8a35a29d5.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 56
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/4944-9effc5eca9ed4eed.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 57
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/2560-84b7131ff085d028.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 57
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/6873-1f406ac7dc1df0b4.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 57
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/9384-0204748abe1fb3e0.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 67
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/434-3e9f1b911e1df5e9.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 53
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/5971-04bd28b43a7f14be.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 53
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/4350-fe070c83536aab29.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 53
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/926-34e9fa653e112405.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 58
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/5779-5546161c1fcb7c0d.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 60
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/app/layout-a144002ea434cced.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 95
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/3993-5ba342dd1ad2e0c8.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 28
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/css/9611c0b375fc73f6.css",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 45
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/9065-f17f0b18dceb7b02.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 49
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/4796-d94402c509cd22cd.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 52
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/5307-ac8741000ac28d3d.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 85
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/app/page-7761c23c286c4c0f.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 126
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/app/inventory/page-31818f16fddd93ad.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 46
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/8741-ce0a2dcbd1d9b41f.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 48
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/polyfills-42372ed130431b0a.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 58
+  },
+  {
+    "name": "served",
+    "path": "/_next/static/chunks/app/my-work/page-ae2fe6de659f65d9.js",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 95
+  }
+]

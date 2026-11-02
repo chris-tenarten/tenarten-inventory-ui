@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T20:55:43.274Z",
+  "sha": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "source": "/private/tmp/tenops-tenbot-control-staging-20261030/candidate",
+  "output": "/private/tmp/tenops-tenbot-control-staging-20261030/candidate/out",
+  "durationMs": 26775,
+  "productionOptimizedBuild": true,
+  "mandatoryCleanCandidatePrebuild": true,
+  "fullHistory": true,
+  "committedArtifactUnchanged": true,
+  "sourceCleanAfterBuild": true,
+  "knowledgeEntriesUnchanged": true,
+  "structuredKnowledgeUnchanged": true,
+  "releasedAuthorityUnchanged": true,
+  "secretEnvironmentFilesExcluded": true,
+  "noInferenceCredential": true,
+  "artifactSecretPatternScanPassed": true,
+  "publicAnonMatches": 3,
+  "artifactCount": 287,
+  "proof": {
+    "status": "candidate-preparation-reviewed",
+    "semanticHolds": 0,
+    "sourceHolds": 0,
+    "unclassifiedSensitivePaths": 0,
+    "acceptedCandidateSources": 19,
+    "technicalCandidateSources": 5,
+    "authority": {
+      "scope": "tendev-preparation",
+      "requiresProductAcceptance": true,
+      "hostedApplicationVerified": false,
+      "deploymentAuthorized": false
+    }
+  },
+  "canaryControlMode": "enabled",
+  "deployments": 0,
+  "paidInferenceCalls": 0
+}

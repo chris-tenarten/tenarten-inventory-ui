@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T03:38:51.805Z",
+  "authority": "Product APPROVED READ-ONLY PREPARATION VALIDATION; candidate4fba20b; one hosted test up to$0.25",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "isolatedDatabaseGroups": 10,
+  "migration": {
+    "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+    "version": "20261031020000",
+    "name": "invoice_preparation_read_boundary",
+    "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580"
+  },
+  "servedSha": "e357d5625734522c904fa80335e9aad5180a3fec",
+  "tenDevDeploymentId": "db4ccc2b-b30e-4f10-8ffa-0e4f8fbcf329",
+  "tenOpsApplicationUnchanged": {
+    "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+    "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4"
+  },
+  "hostedDraftPassed": true,
+  "freshTerraInvestigation": true,
+  "freshMultimodalExtraction": false,
+  "cachedExtractionDisclosure": "Existing ready source retains prior real PDF extraction; this test does not establish a fresh multimodal extraction.",
+  "inferenceCalls": 6,
+  "costUsd": 0.014402,
+  "authorizedMaximumUsd": 0.25,
+  "newUnresolvedCostMicrousd": 0,
+  "ledgerHistoryPreserved": true,
+  "operationalWrites": 0,
+  "allTemporaryControlsOff": true,
+  "activeGrants": 0,
+  "enrollment": 0,
+  "diagnosticsAvailable": true,
+  "diagnosticEvents": 15,
+  "diagnosticLimit": "Initial granular analytics query returned400; corrected content-free aggregate query confirmed delivery and selected safe stage/tool/reason counts. No per-event duration series retained.",
+  "exactTokensAvailable": false,
+  "remainingExecutionActions": [
+    "Separate Product authorization; genuine callers and fresh funding/window preflight",
+    "Complete order metadata and explicit server-reviewed immutable approval",
+    "Exact scoped temporary grant and execution gates only",
+    "Verify one returned row then guarded cancellation/exact revocation and gate closure"
+  ],
+  "evidence": [
+    {
+      "path": "fixture-database.json",
+      "sha256": "9c8f95d9c6432adf96ab0000a3b13cb1d2d5a8602e3fed9f63244ab3c1dff53e"
+    },
+    {
+      "path": "migration-application.json",
+      "sha256": "5e0b8e0b02cbbc680438305c9ecd9eb40a1f823104571e82ccb5042c520a5ec9"
+    },
+    {
+      "path": "selective-release.json",
+      "sha256": "472177e1d6ebbb5b7a1a3c1322bcc810b8e6907d71c064edb40cd28ddbcdb83a"
+    },
+    {
+      "path": "hosted-test.json",
+      "sha256": "2a6c27f25d9f9af094ca5ea1dd21553a4f692e0f84c5d65c17187ef0812922be"
+    },
+    {
+      "path": "diagnostic-counts.json",
+      "sha256": "d2c45067e0b360e59d70f0d89b791a280a728ae29cd626467991c4479e8bd683"
+    },
+    {
+      "path": "final-state.json",
+      "sha256": "104f5d24926bd870ca6ace547352270053970a961fa0bcd7e49a081981435a90"
+    },
+    {
+      "path": "ui-observations.json",
+      "sha256": "71e80ec92ecf3e2dbbb86d3dc928d598a22b0c211a3e5e5376a50d1533e8d334"
+    }
+  ],
+  "privateReceipts": {
+    "validationScratch": "/private/tmp/tenops-tenbot-readonly-preparation-validation-20261030",
+    "fundingScratch": "/private/tmp/tenops-tenbot-preparation-funding-20261030",
+    "closeReceipt": {
+      "file": "2026-10-31T03-30-18-601Z-close-result.json",
+      "sha256": "27e1b3de9c4cb7aa94493117dc7303d186fc4df9b7dfdf8fb94f4f0dd752fc45"
+    },
+    "originalPostTestSha256": "2a6c27f25d9f9af094ca5ea1dd21553a4f692e0f84c5d65c17187ef0812922be"
+  },
+  "sourcePreservation": "HEAD/index/branches and all nine dirty baseline hashes independently verified unchanged before documentation appendices; no source edits, push or new branch/worktree"
+}

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "candidate": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "productionRoot": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "selectedRuntimeModules": 14,
+  "uiChanges": 5,
+  "alreadyAppliedMigrations": 4,
+  "migrationsToApply": 0,
+  "knowledgeEntriesPatchesAndReleaseAuthorityUnchanged": true,
+  "all41EdgeModulesExceptReviewedOriginAndDerivedKnowledgeMatchAcceptedHosted": true,
+  "canaryRouteAndControlsAbsent": true,
+  "authInventoryProviderAndMeteringUnchanged": true,
+  "acceptedMessagingHistoryJobToolsAndDirectAnswerScopeOnly": true,
+  "productionHistoryOriginIntegration": true,
+  "hostedChecksReused": true,
+  "actualHostedAuthenticatedFollowups": "Unavailable; Product explicitly accepted the TenDev limitation",
+  "inferenceCalls": 0,
+  "hostedMutations": 0
+}

@@ -1,0 +1,142 @@
+{
+  "status": "PREPARED_LIVE_CALLER_PREFLIGHTS_PASSED_AWAITING_PRODUCT_AUTHORIZATION",
+  "recordedAt": "2026-10-30T19:31:01Z",
+  "scope": "One fixed synthetic pending receival; no execution authorized",
+  "riskTier": 3,
+  "validation": "Exactly two live read-only own-caller preflights, unchanged source SHA verified before evaluation in both browsers; no new mutation/security lifecycle test.",
+  "sourceRuntime": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "identity": {
+    "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "account": "chris_dev",
+    "role": "developer",
+    "visibleSession": "Chrome TenDev: chris developer / Developer",
+    "genuineChrisDevSessionVerified": true
+  },
+  "prerequisitesUnavailable": [],
+  "invoice": {
+    "reference": "SYN-TENDEV-RECEIVAL-20261030-01",
+    "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "bytes": 2877
+  },
+  "catalog": {
+    "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "size": "#0",
+    "unit": "50lb bag",
+    "vendor": "T&M Supply",
+    "material": "Alaska White"
+  },
+  "operation": {
+    "pendingRows": 1,
+    "quantityExpected": "1",
+    "unit": "Bag",
+    "receivedQuantity": "0",
+    "newCatalog": false,
+    "newJob": false,
+    "onHandIncrease": false
+  },
+  "proposedWindow": {
+    "date": "2026-10-30",
+    "timezone": "America/Chicago",
+    "start": "14:45",
+    "end": "15:00",
+    "startUtc": "2026-10-30T19:45:00Z",
+    "endUtc": "2026-10-30T20:00:00Z",
+    "confirmed": false,
+    "activationNotBeforeStart": true,
+    "maximumGrantLifetimeMinutes": 15,
+    "noAutomaticRollover": true,
+    "stopCreationBy": "14:53",
+    "cancelBy": "14:57 while active and all exact predicates pass",
+    "revokeBy": "14:58; revocation may still be used after expiry to close authorization/audit"
+  },
+  "budget": {
+    "remainingHostedUsd": 3.787673,
+    "employeeDayRemainingUsd": 0.25,
+    "requestMaximumUsd": 0.25,
+    "cutoffUtc": "2026-10-30T23:00:00+00:00",
+    "cutoffLocal": "October30 6pmChicago",
+    "changesAuthorized": false,
+    "observation": "Prior metadata readback, not re-queried during the two-callers-only preflight; refresh before any approved activation. No inference in this pass."
+  },
+  "activation": {
+    "transport": "Supabase PostgREST RPC using the Admin own genuine authenticated client/session; never Management SQL, a service key, forged claims or borrowed sessions",
+    "path": "/rest/v1/rpc/activate_tenbot_chris_dev_canary_grant",
+    "required": [
+      "active non-read-only Admin",
+      "manageRolesPermissions",
+      "all SQL write gates OFF",
+      "enrollment empty"
+    ],
+    "body": {
+      "p_expires_at": "2026-10-30T20:00:00Z",
+      "p_reason": "PROPOSED ONLY: Product-approved one-row chris_dev TenDev canary SYN-TENDEV-RECEIVAL-20261030-01; newly confirmed 14:45\u201315:00 Chicago window required before use"
+    },
+    "returned": "Exact grant UUID; retain for revocation",
+    "performed": false
+  },
+  "sequence": [
+    "Wait for explicit Product authorization. Current helper copies remain hard-disabled and no mutation contract is a dry-run.",
+    "After approval, prepare the existing execution-enabled helper variant with only the reviewed guard-state difference in each genuine own actor session; verify complete source before installation. Never transfer sessions or tokens. Current installed property cannot be replaced; start on a fresh/reloaded page before activation. Preserve the same Admin instance after activation through exact-grant revoke.",
+    "At the confirmed start, refresh caller identity/expiry, funded limits, catalog/frozen PDF hash, duplicate checks, gates OFF and empty enrollment. Abort if changed or unavailable.",
+    "Own Safari Admin explicitly activates the exact chris_dev-only grant expiring at 15:00; retain returned UUID. Ambiguous activation response means narrow read-only reconciliation, never blind retry.",
+    "Genuine Chrome chris_dev verifies the exact active grant. Under the approved canary controls only, enroll/allowlist this identity for TenDev with SQL/Edge expirations no later than grant expiry. No ordinary employee or TenOps-origin activation.",
+    "chris_dev uploads only the frozen synthetic invoice, reviews 1 Bag / exact existing material / no Job / no new catalog and explicitly approves immutable content; canonical transactional service creates at most one pending receival.",
+    "Verify actual returned ID, queue/persisted 1 Bag received0, private original, immutable approval/provenance/audit and idempotent retry with unchanged stock/receipt links. No replacement row.",
+    "Stop creation and turn creation gates OFF by 14:53. Using the same genuine chris_dev session, cancel only the exact verified returned pending/unreceived/unlinked row by 14:57 while grant remains active. All fixed material/quantity/unit/Job/earmark/receipt predicates remain required.",
+    "Own Admin immediately revokes only the exact returned grant by 14:58, invalidating approval/permit authority and clearing subject enrollment. Verify SQL/Edge gates OFF, lists empty, Developer baseline unchanged, original/audit retained and row cancelled/received0/stock unchanged. Revocation remains useful after expiry; expired business cleanup stops without Admin bypass/regrant."
+  ],
+  "cancellation": {
+    "transport": "Same genuine chris_dev caller-scoped PostgREST PATCH",
+    "target": "Only actual returned pending receival UUID P",
+    "predicates": {
+      "id": "eq.P",
+      "status": "eq.pending",
+      "quantity_received": "eq.0",
+      "receipt_inventory_item_id": "is.null",
+      "receipt_transaction_id": "is.null",
+      "received_at": "is.null"
+    },
+    "body": {
+      "status": "cancelled"
+    },
+    "response": "Prefer return=representation; exactlyone returned matching row",
+    "failure": "Read only exactP after uncertain/zero result; otherwise STOP. No broader filters, Admin business cleanup, regrant, Receive/Undo or delete.",
+    "additionalHelperPredicates": "Fixed supplier/material/size/1 Bag; no Job, temporary Job, earmark, received_by or receipt linkage. Same genuine chris_dev and exact completed approval/execution/source proof. More than30 seconds grant lifetime immediately before PATCH."
+  },
+  "revocation": {
+    "path": "/rest/v1/rpc/revoke_tenbot_chris_dev_canary_grant",
+    "body": {
+      "p_grant_id": "Exact returned activation grant UUID",
+      "p_reason": "One-row canary complete/cancelled; invalidate outstanding authority and clear enrollment"
+    },
+    "performed": false
+  },
+  "actions": {
+    "grantRpcCalls": 0,
+    "writeGateChanges": 0,
+    "enrollmentChanges": 0,
+    "uploads": 0,
+    "approvals": 0,
+    "operationalWrites": 0,
+    "inferenceCalls": 0,
+    "migrations": 0,
+    "deployments": 0,
+    "permissionChanges": 0,
+    "gitCommits": 0
+  },
+  "decision": "No execution authorized; stop for explicit Product approval of the proposed 14:45\u201315:00 Chicago window. If missed, reconfirm a fresh window; never extend automatically.",
+  "admin": {
+    "browser": "Safari",
+    "origin": "https://tendev.pages.dev",
+    "verifiedOwnIdentity": "Chris Ngo / Admin",
+    "manageRolesPermissions": true,
+    "readOnlyPreflightPassed": true,
+    "mutationContractInvoked": false
+  },
+  "remainingPrerequisites": [
+    "Explicit Product execution/grant authorization for this newly proposed window; no automatic rollover.",
+    "After authorization only, separately review execution-enabled delivery of unchanged helper logic; current installed copies are permanently hard-disabled. Installed helper is non-configurable: use a fresh/reloaded genuine own-session page BEFORE activation; preserve the Admin instance afterward for its returned exact-grant revocation state.",
+    "Immediately before activation refresh own caller identity/expiry, disabled SQL/Edge state, empty enrollment, duplicate identity, catalog, invoice hash and funded per-user/global budget. Existing metadata/budget receipt is dated, not a fresh mutation-ready certification."
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "passed": true,
+  "at": "2026-11-02T01:44:16.466Z",
+  "tenDevSha": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "tenDevDeployment": "a13abbaf-1a44-4231-abea-d1e408cc8d94",
+  "tenOpsSha": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "tenOpsDeployment": "967ed4d1-0ee8-4488-8db2-ee984cabc953",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 40,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "694222bc534dc6c937a6af9c3260600e8938a16bc154d295bb8fb146520b3396"
+  },
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "ordinarySpendingAuthorized": false,
+  "scheduler": [
+    {
+      "id": 3,
+      "name": "tenbot-invoice-original-expiry",
+      "active": true,
+      "lastRuns": [
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-02T01:23:00.133753+00:00",
+          "start_time": "2026-11-02T01:23:00.08954+00:00"
+        },
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-02T00:23:00.105306+00:00",
+          "start_time": "2026-11-02T00:23:00.054273+00:00"
+        }
+      ],
+      "schedule": "23 * * * *",
+      "username": "postgres",
+      "commandHash": "b196b8a7cc744bcb4273b0bda12938de453f2bcbb0bec5d99f4f87543bd97c0b",
+      "privatePurgeOnly": false,
+      "signedDispatcherOnly": true
+    },
+    {
+      "id": 4,
+      "name": "tenbot-operational-history-expiry",
+      "active": true,
+      "lastRuns": [
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-02T01:44:00.12613+00:00",
+          "start_time": "2026-11-02T01:44:00.113156+00:00"
+        },
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-02T01:43:00.133416+00:00",
+          "start_time": "2026-11-02T01:43:00.108765+00:00"
+        }
+      ],
+      "schedule": "* * * * *",
+      "username": "postgres",
+      "commandHash": "2064f05be6e63d7fc1de82d1f3e67f0e35ea37d19db5f614e7c88886eb646077",
+      "privatePurgeOnly": true,
+      "signedDispatcherOnly": false
+    }
+  ],
+  "candidate": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "newMigrations": 0,
+  "alreadyAppliedReceiptMigration": "20261101210000",
+  "receiptMigrationHash": "d07a8588ccf3b4a847a4b378274f77f26d4cc7b5594c238addf1011df4880177",
+  "unrelatedSchemaAndRlsUnchanged": true,
+  "providerSettingsAndSecretsUnchanged": true,
+  "spendingAndAccountingUnchanged": true,
+  "schedulesUnchanged": true,
+  "tenOpsPagesUnchanged": true,
+  "persistentOrigin": "TenDev and localhost; Production transport unchanged",
+  "allAgentWritesOff": true,
+  "authenticatedEmployeeChecks": false,
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

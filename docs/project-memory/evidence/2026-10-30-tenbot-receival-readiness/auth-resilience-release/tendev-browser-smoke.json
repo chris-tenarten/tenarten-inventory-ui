@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:22:09.596290+00:00",
+  "project": "tendev",
+  "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+  "deployment": "23f8a171-5625-42d9-b874-676115cb34f5",
+  "method": "Actual native Chrome UI via cua_repl; genuine own chris_dev/Developer session, no console or token extraction",
+  "hardReload": true,
+  "sessionRestored": true,
+  "observedReloadToInventoryMs": 2047,
+  "timingScope": "Wall time through native reload and observation; not isolated Auth network latency",
+  "developerRolePreserved": true,
+  "inventoryRefresh": "PASS: populated table and Pending Receivals (0), no restoration/schema-cache/access failure",
+  "messaging": "PASS: normal Inbox and existing own TenBot entry loaded, closed back to Inventory",
+  "uiObservationNote": "One immediate AX observation caught a pre-transition snapshot. A later settled AX state showed Inbox; the intervening stale-index click was rejected before input. No application failure inferred.",
+  "messagesSubmitted": 0,
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "noFaultInjectionOrBroadRetest": true,
+  "reusedOfflineGroups": 9,
+  "reusedLocalBrowserGroups": 20
+}

@@ -1,0 +1,38 @@
+{
+  "status": "prepared-not-executed",
+  "acceptedRuntime": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "tenDevAcceptance": "Current Product message accepts this exact staged runtime.",
+  "defaultShortestPath": "Promote exact accepted runtime unchanged; keep the local dedup correction separate unless Product explicitly selects it.",
+  "steps": [
+    "After Product approval, perform only source/deployment drift and current balance/ledger reconciliation.",
+    "Build exact accepted source once with existing TenOps public flags; do not reuse TenDev branding/early-access/planning artifacts or include any secret env files.",
+    "If approved as part of release, publish only the selective source ref; never merge dev wholesale or move its deferred knowledge work backward.",
+    "Deploy TenOps while Terra still excludes the TenOps origin; verify served SHA and target flags using existing release checks.",
+    "Apply the approved financial policy atomically without resetting usage; then add https://tenops.pages.dev to the existing OpenAI rollout-origin secret.",
+    "Confirm read-only routing/status and metering configuration; reuse accepted hosted security/conversation/history/fallback results. No broad or paid canary rerun required."
+  ],
+  "existingSharedContracts": [
+    "Same Supabase project, dedicated Responses key, verified expiry and Standard Terra provider",
+    "Caller JWT/RBAC/RLS for five allowlisted read tools",
+    "Owner-scoped static history with fresh permission/source checks and no retained live Job evidence",
+    "Atomic shared reservations, unknown accounting, call limits and Qwen fallback",
+    "Hardcoded hosted read-only registry; Inventory/catalog/receival writes disabled"
+  ],
+  "newMigrationsRequired": false,
+  "newKeyRequired": false,
+  "newEdgeDeploymentRequiredForExactAcceptedRuntime": false,
+  "deferredKnowledgeIncluded": false,
+  "rollback": "Remove only the TenOps rollout origin for Qwen there; preserve ledger/history and applied migrations. Disable shared paid policy if a wider stop is needed.",
+  "requiredProductDecisions": [
+    "Approve $4 total hosted allowance inclusive of completed canaries, global day cap $4, unchanged $0.25 per-user/day and request caps, cutoff October 30 at 6 p.m. Chicago.",
+    "Authorize TenOps deployment of exact accepted 9a7c624 and specify approval for selective main/dev remote ref publication if using the standard Git release path."
+  ],
+  "optionalProductDecision": "Select the one-line local dedup delta for a separately pinned source candidate; otherwise it does not block exact accepted-runtime promotion.",
+  "changesThisPass": {
+    "hostedMutations": 0,
+    "inferenceCalls": 0,
+    "deployments": 0,
+    "spendingIncrease": false,
+    "commits": 0
+  }
+}

@@ -1,0 +1,833 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T21:03:03.734Z",
+  "readOnly": true,
+  "migrationCount": 13,
+  "allAgentWriteGatesOff": true,
+  "grants": 0,
+  "enrollment": 0,
+  "subjectSources": 0,
+  "subjectDrafts": 0,
+  "subjectApprovals": 0,
+  "subjectExecutions": 0,
+  "roleAndCapabilitiesUnchanged": true,
+  "stockAndTransactionsUnchanged": true,
+  "usageUnchanged": true,
+  "secretDigestsUnchanged": true,
+  "remainingHostedMicrousd": 3787673,
+  "sqlSha256": "a06d4e3ddff1e49354d29b561d26ef268803c3865d421e52b0c59dee25dae2d3",
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 752283,
+      "remainingMicrousd": 3787673,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "usage": {
+      "rows": 77,
+      "uncertain": 0,
+      "fingerprint": "ece1a66d15d1cef95e5c7d12b2fadcb8"
+    },
+    "ledger": [
+      {
+        "name": "invoice_pending_receival_approval",
+        "version": "20261029210000",
+        "sourceSha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc",
+        "statementCount": 1
+      },
+      {
+        "name": "catalog_write_authorization",
+        "version": "20261030110000",
+        "sourceSha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7",
+        "statementCount": 1
+      },
+      {
+        "name": "invoice_dependent_pending_receivals",
+        "version": "20261030120000",
+        "sourceSha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63",
+        "statementCount": 1
+      },
+      {
+        "name": "invoice_receival_runtime_validation",
+        "version": "20261030130000",
+        "sourceSha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441",
+        "statementCount": 1
+      },
+      {
+        "name": "invoice_receival_shared_compatibility",
+        "version": "20261030140000",
+        "sourceSha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742",
+        "statementCount": 1
+      },
+      {
+        "name": "invoice_receival_originals",
+        "version": "20261030150000",
+        "sourceSha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+        "statementCount": 1
+      },
+      {
+        "name": "invoice_receival_pilot_permits",
+        "version": "20261030160000",
+        "sourceSha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+        "statementCount": 1
+      },
+      {
+        "name": "invoice_original_storage_compatibility",
+        "version": "20261030170000",
+        "sourceSha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+        "statementCount": 1
+      },
+      {
+        "name": "invoice_original_backend_fail_closed",
+        "version": "20261030180000",
+        "sourceSha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+        "statementCount": 1
+      },
+      {
+        "name": "invoice_receival_pilot_policy_lock",
+        "version": "20261030190000",
+        "sourceSha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+        "statementCount": 1
+      },
+      {
+        "name": "tenbot_receival_cleanup_wakes",
+        "version": "20261030200000",
+        "sourceSha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496",
+        "statementCount": 1
+      },
+      {
+        "name": "tenbot_chris_dev_canary_grant",
+        "version": "20261030210000",
+        "sourceSha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86",
+        "statementCount": 1
+      },
+      {
+        "name": "tenbot_canary_control_status",
+        "version": "20261030220000",
+        "sourceSha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040",
+        "statementCount": 1
+      }
+    ],
+    "cleanup": {
+      "cron": "0a4a3810e6736eeb8330e5a937a08886",
+      "control": "f112bce8e0c78d2178dd72a825aed742"
+    },
+    "profile": {
+      "role": "developer",
+      "active": true,
+      "readOnly": false
+    },
+    "controls": {
+      "pilot": false,
+      "enrolled": 0,
+      "execution": false,
+      "grantRows": 0,
+      "subjectDrafts": 0,
+      "grantAuditRows": 0,
+      "subjectSources": 0,
+      "subjectApprovals": 0,
+      "subjectExecutions": 0
+    },
+    "executor": {
+      "oid": "37834",
+      "rolname": "tenbot_invoice_executor",
+      "rolsuper": false,
+      "rolconfig": null,
+      "rolinherit": true,
+      "rolcanlogin": false,
+      "rolcreatedb": false,
+      "rolbypassrls": false,
+      "rolconnlimit": -1,
+      "rolcreaterole": false,
+      "rolreplication": false
+    },
+    "readOnly": "on",
+    "functions": [
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "oid": "38471",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=10s"
+        ],
+        "bodyMd5": "c2d6f546fad823a7a4ffdf8dd6cc9b1f",
+        "definer": true,
+        "signature": "activate_tenbot_chris_dev_canary_grant(timestamp with time zone,text)",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "oid": "38470",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "1619d46658263452ddc66fcc91de88e3",
+        "definer": true,
+        "signature": "get_my_tenbot_receival_canary_access()",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "oid": "32176",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "73a05dba3f0241702880f29129c70b1e",
+        "definer": true,
+        "signature": "has_app_capability(text)",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "oid": "38473",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=10s"
+        ],
+        "bodyMd5": "07f4bc465c8db61d4df67cc0896a8f96",
+        "definer": true,
+        "signature": "revoke_tenbot_chris_dev_canary_grant(uuid,text)",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38468",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "dd87ba2333ed04ab8c6ce360bb53e54e",
+        "definer": true,
+        "signature": "tenbot_active_chris_dev_canary_grant(uuid)",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38477",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "a617e6994416a5b2f0cdd03450cd1012",
+        "definer": true,
+        "signature": "tenbot_assert_chris_dev_canary_payload(uuid,jsonb)",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38474",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "33f7ae89887fb520c34368e36d7f4522",
+        "definer": true,
+        "signature": "tenbot_canary_expiry_limit(uuid)",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38465",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "799ad9f31314bbbc8540d6f1847564d5",
+        "definer": false,
+        "signature": "tenbot_canary_grant_immutable()",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38469",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "eef780e5df099e10a2574f91a4197186",
+        "definer": true,
+        "signature": "tenbot_canary_user_has_capability(uuid,text)",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38486",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "5a36467c6d12a5e0b734ff4735962aaa",
+        "definer": true,
+        "signature": "tenbot_chris_dev_canary_commit_authorized()",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38480",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "71d19465a71f9c1a8bee26eddf482120",
+        "definer": true,
+        "signature": "tenbot_guard_chris_dev_canary_operation()",
+        "volatility": "v"
+      },
+      {
+        "acl": "{postgres=X/postgres}",
+        "oid": "38478",
+        "owner": "postgres",
+        "config": [
+          "search_path=pg_catalog, public"
+        ],
+        "bodyMd5": "699a5a9d40d3307246b56711e27f16ab",
+        "definer": true,
+        "signature": "tenbot_guard_chris_dev_canary_source()",
+        "volatility": "v"
+      }
+    ],
+    "relations": [
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "oid": "32166",
+        "rls": true,
+        "name": "app_role_capabilities",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "role_capabilities_read_active",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "(EXISTS ( SELECT 1\n   FROM app_users\n  WHERE ((app_users.user_id = auth.uid()) AND app_users.is_active)))",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "tenops_business_write_delete",
+            "check": null,
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": "has_app_capability('writeBusinessData'::text)",
+            "command": "d",
+            "permissive": false
+          },
+          {
+            "name": "tenops_business_write_insert",
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": null,
+            "command": "a",
+            "permissive": false
+          },
+          {
+            "name": "tenops_business_write_update",
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": "has_app_capability('writeBusinessData'::text)",
+            "command": "w",
+            "permissive": false
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=arwdDxtm/postgres,service_role=arwdDxtm/postgres}",
+        "oid": "32139",
+        "rls": true,
+        "name": "app_users",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "app_users_read_self",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "((user_id = auth.uid()) OR has_app_capability('manageUsers'::text))",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "tenops_business_write_delete",
+            "check": null,
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": "has_app_capability('writeBusinessData'::text)",
+            "command": "d",
+            "permissive": false
+          },
+          {
+            "name": "tenops_business_write_insert",
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": null,
+            "command": "a",
+            "permissive": false
+          },
+          {
+            "name": "tenops_business_write_update",
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": "has_app_capability('writeBusinessData'::text)",
+            "command": "w",
+            "permissive": false
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=r/postgres,tenbot_invoice_executor=ar/postgres}",
+        "oid": "37867",
+        "rls": true,
+        "name": "invoice_receival_approvals",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "invoice_approvals_owner_insert",
+            "check": "((owner_user_id = auth.uid()) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('adjustInventory'::text))",
+            "roles": [
+              "37834"
+            ],
+            "using": null,
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "invoice_approvals_owner_read",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text))",
+            "command": "r",
+            "permissive": true
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=r/postgres,tenbot_invoice_executor=ar/postgres}",
+        "oid": "37939",
+        "rls": true,
+        "name": "invoice_receival_audit",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "invoice_audit_owner_insert",
+            "check": "((owner_user_id = auth.uid()) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('adjustInventory'::text))",
+            "roles": [
+              "37834"
+            ],
+            "using": null,
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "invoice_audit_owner_read",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text))",
+            "command": "r",
+            "permissive": true
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=r/postgres,tenbot_invoice_executor=ar/postgres}",
+        "oid": "37849",
+        "rls": true,
+        "name": "invoice_receival_drafts",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "invoice_drafts_owner_insert",
+            "check": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('adjustInventory'::text))",
+            "roles": [
+              "37834"
+            ],
+            "using": null,
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "invoice_drafts_owner_read",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text))",
+            "command": "r",
+            "permissive": true
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=r/postgres,tenbot_invoice_executor=ar/postgres}",
+        "oid": "37890",
+        "rls": true,
+        "name": "invoice_receival_executions",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "invoice_executions_owner_insert",
+            "check": "((owner_user_id = auth.uid()) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('adjustInventory'::text))",
+            "roles": [
+              "37834"
+            ],
+            "using": null,
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "invoice_executions_owner_read",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text))",
+            "command": "r",
+            "permissive": true
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,tenbot_invoice_executor=r/postgres}",
+        "oid": "37998",
+        "rls": false,
+        "name": "invoice_receival_permission_epochs",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": null
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=r/postgres}",
+        "oid": "38116",
+        "rls": true,
+        "name": "invoice_receival_source_bindings",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "invoice_source_bindings_owner_read",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('adjustInventory'::text) AND ((owner_user_id <> '3785f6b9-742e-452f-af6c-31613a983633'::uuid) OR (original_sha256 = 'c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a'::text)))",
+            "command": "r",
+            "permissive": true
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,authenticated=r/postgres}",
+        "oid": "38077",
+        "rls": true,
+        "name": "invoice_receival_sources",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "invoice_sources_owner_read",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "((owner_user_id = auth.uid()) AND has_app_capability('readOperationalData'::text) AND has_app_capability('writeBusinessData'::text) AND has_app_capability('adjustInventory'::text) AND ((lifecycle_state = 'retained'::text) OR (expires_at > clock_timestamp())) AND ((owner_user_id <> '3785f6b9-742e-452f-af6c-31613a983633'::uuid) OR ((sha256 = 'c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a'::text) AND (content_type = 'application/pdf'::text) AND (byte_size = 2877))))",
+            "command": "r",
+            "permissive": true
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,anon=rm/postgres,authenticated=arwdm/postgres,service_role=arwdDxtm/postgres,tenbot_invoice_executor=ar/postgres}",
+        "oid": "30712",
+        "rls": true,
+        "name": "pending_receivals",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": [
+          {
+            "name": "Allow anon read pending receivals",
+            "check": null,
+            "roles": [
+              "16484"
+            ],
+            "using": "true",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "Pending Receivals RBAC delete",
+            "check": null,
+            "roles": [
+              "16485"
+            ],
+            "using": "has_app_capability('adjustInventory'::text)",
+            "command": "d",
+            "permissive": true
+          },
+          {
+            "name": "Pending Receivals RBAC insert",
+            "check": "has_app_capability('adjustInventory'::text)",
+            "roles": [
+              "16485"
+            ],
+            "using": null,
+            "command": "a",
+            "permissive": true
+          },
+          {
+            "name": "Pending Receivals RBAC update",
+            "check": "has_app_capability('adjustInventory'::text)",
+            "roles": [
+              "16485"
+            ],
+            "using": "has_app_capability('adjustInventory'::text)",
+            "command": "w",
+            "permissive": true
+          },
+          {
+            "name": "Pending receivals read",
+            "check": null,
+            "roles": [
+              "0"
+            ],
+            "using": "true",
+            "command": "r",
+            "permissive": true
+          },
+          {
+            "name": "tenops_business_write_delete",
+            "check": null,
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": "has_app_capability('writeBusinessData'::text)",
+            "command": "d",
+            "permissive": false
+          },
+          {
+            "name": "tenops_business_write_insert",
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": null,
+            "command": "a",
+            "permissive": false
+          },
+          {
+            "name": "tenops_business_write_update",
+            "check": "has_app_capability('writeBusinessData'::text)",
+            "roles": [
+              "16485",
+              "16484"
+            ],
+            "using": "has_app_capability('writeBusinessData'::text)",
+            "command": "w",
+            "permissive": false
+          }
+        ]
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "oid": "38446",
+        "rls": true,
+        "name": "tenbot_chris_dev_canary_grant_audit",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": null
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres}",
+        "oid": "38400",
+        "rls": true,
+        "name": "tenbot_chris_dev_canary_grants",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": null
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,tenbot_invoice_executor=r/postgres}",
+        "oid": "37838",
+        "rls": false,
+        "name": "tenbot_receival_execution_control",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": null
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,tenbot_invoice_executor=r/postgres}",
+        "oid": "38191",
+        "rls": false,
+        "name": "tenbot_receival_pilot_employees",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": null
+      },
+      {
+        "acl": "{postgres=arwdDxtm/postgres,tenbot_invoice_executor=r/postgres}",
+        "oid": "38175",
+        "rls": false,
+        "name": "tenbot_receival_pilot_policy",
+        "owner": "postgres",
+        "forceRls": false,
+        "policies": null
+      }
+    ],
+    "currentUser": "postgres",
+    "meterPolicy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "newFunction": {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "oid": "38512",
+      "owner": "postgres",
+      "bodyMd5": "cfc73c51d7916ea56c2af4683f395845",
+      "language": "plpgsql",
+      "signature": "get_tenbot_chris_dev_canary_control_status()",
+      "volatility": "v",
+      "configuration": [
+        "search_path=pg_catalog, public",
+        "lock_timeout=3s",
+        "statement_timeout=10s"
+      ],
+      "publicExecute": false,
+      "serviceExecute": false,
+      "executorExecute": true,
+      "securityDefiner": true,
+      "anonymousExecute": false,
+      "authenticatedExecute": true,
+      "directExecutorExecute": false
+    },
+    "sessionUser": "postgres",
+    "fingerprints": {
+      "stock": "fac81d2543d0110e16e5fe1d0a8a962d",
+      "epochs": "d41d8cd98f00b204e9800998ecf8427e",
+      "grants": "d41d8cd98f00b204e9800998ecf8427e",
+      "profiles": "cf81451514bedc81b3606a89b9d03d6c",
+      "grantAudit": "d41d8cd98f00b204e9800998ecf8427e",
+      "capabilities": "59a88b1342b040b0f54edf49a2a53495",
+      "transactions": "7a092040f5b07cb2a43b7d2dda344655"
+    },
+    "publicCreate": {
+      "anon": false,
+      "authenticated": false,
+      "tenbot_invoice_executor": false
+    },
+    "developerAdjust": 0,
+    "privateTableAccess": [
+      {
+        "role": "anon",
+        "table": "tenbot_chris_dev_canary_grant_audit",
+        "anyPrivilege": false
+      },
+      {
+        "role": "anon",
+        "table": "tenbot_chris_dev_canary_grants",
+        "anyPrivilege": false
+      },
+      {
+        "role": "authenticated",
+        "table": "tenbot_chris_dev_canary_grant_audit",
+        "anyPrivilege": false
+      },
+      {
+        "role": "authenticated",
+        "table": "tenbot_chris_dev_canary_grants",
+        "anyPrivilege": false
+      },
+      {
+        "role": "service_role",
+        "table": "tenbot_chris_dev_canary_grant_audit",
+        "anyPrivilege": false
+      },
+      {
+        "role": "service_role",
+        "table": "tenbot_chris_dev_canary_grants",
+        "anyPrivilege": false
+      },
+      {
+        "role": "tenbot_invoice_executor",
+        "table": "tenbot_chris_dev_canary_grant_audit",
+        "anyPrivilege": false
+      },
+      {
+        "role": "tenbot_invoice_executor",
+        "table": "tenbot_chris_dev_canary_grants",
+        "anyPrivilege": false
+      }
+    ],
+    "executorMemberships": [
+      {
+        "set": true,
+        "role": "authenticated",
+        "admin": false,
+        "inherit": true
+      }
+    ],
+    "newFunctionNameCount": 1,
+    "executorAuthenticatedUsage": true
+  }
+}

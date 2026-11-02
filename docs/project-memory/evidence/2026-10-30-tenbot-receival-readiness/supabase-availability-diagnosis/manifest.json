@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "name": "health.json",
+      "sha256": "65e9ed5862aacf45b1f0b9235d3dd427b3e9fd37285d44eaa477170625bb4c43"
+    },
+    {
+      "name": "observability.json",
+      "sha256": "d5b1382d981299e148e5cb16537c7855c7fbde83fb8cf6ab404b2c76bfb874a8"
+    },
+    {
+      "name": "duration-summary.json",
+      "sha256": "bda1cad1cc16fc57fcf63a190e0c8611f333602ad6f77aa7e45be25608e1114e"
+    },
+    {
+      "name": "summary.json",
+      "sha256": "9be66501ca7c40cc41c6948e88e264afc026282f0c3531d7fb350a5c10da0899"
+    }
+  ],
+  "rawLogsRetained": false,
+  "credentialsRetained": false
+}

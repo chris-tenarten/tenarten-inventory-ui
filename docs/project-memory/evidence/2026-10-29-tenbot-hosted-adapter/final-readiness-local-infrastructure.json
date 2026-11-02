@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-10-29T22:15:02.045Z",
+  "candidate": "d769ab3",
+  "scope": "Bounded read-only overlooked isolated PostgreSQL/Supabase inventory; not a daemon health check",
+  "checkedLocations": [
+    "/usr/local/Cellar",
+    "/usr/local/opt",
+    "/opt/homebrew/Cellar",
+    "/opt/homebrew/opt",
+    "/Applications",
+    "/Users/chrisngo/Applications",
+    "/Library/PostgreSQL",
+    "/opt/local/bin",
+    "/usr/local/pgsql",
+    "/opt/postgres",
+    "/opt/postgresql",
+    "/Users/chrisngo/.local",
+    "/Users/chrisngo/.cache",
+    "/Users/chrisngo/Library/Application Support",
+    "/Library/Application Support"
+  ],
+  "boundedDirectoryCount": 1059,
+  "boundedExistingPackageAndFixturePaths": 13693,
+  "postgresBinariesOrDataDirectoriesFound": [],
+  "embeddedPostgresPackageFound": false,
+  "existingConfiguredIsolatedTargets": [
+    {
+      "name": "tenops-permission-review",
+      "apiPort": 55481,
+      "dbPort": 55482,
+      "knownBackend": "Docker; previously unresponsive; not retried"
+    },
+    {
+      "name": "tenops-auth-qa",
+      "apiPort": 54321,
+      "dbPort": 54322,
+      "knownBackend": "Docker; not retried"
+    }
+  ],
+  "newApprovedIsolatedTargetFound": false,
+  "limitations": [
+    "No daemon, Docker or endpoint retry performed",
+    "No new Supabase management inventory; prior verified accessible-project inventory only contained shared Production/TenDev",
+    "Process metadata invocation was sandbox-restricted; no absence-of-running-process claim"
+  ],
+  "shortestExistingInfrastructureResolution": "Owner restores known isolated permission-review Supabase backend or designates an approved responsive isolated Supabase endpoint. Then run only assistant metering/history migrations and focused real database tests.",
+  "alternativeRequiringCoordination": "Install native PostgreSQL 17 for a disposable loopback SQL/RLS/concurrency fixture. This does not independently validate Supabase HTTP Auth/JWT.",
+  "changes": {
+    "servicesProvisioned": false,
+    "installedOrDownloaded": false,
+    "databaseConnections": false,
+    "dockerCommands": false,
+    "endpointRetries": false,
+    "paidInference": false,
+    "hostedMutations": false,
+    "applicationEdits": false
+  }
+}

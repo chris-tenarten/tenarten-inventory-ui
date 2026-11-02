@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "wrapperRevision": "v2-executor-inheritance",
+  "wrapperEvidence": {
+    "rollbackConfirmed": true,
+    "rollbackReceiptSha256": "8b12fa8aa41272d8addee06657a943d0f696c0c8667e8103956bccec2dfcc338",
+    "inheritanceProofSha256": "5ea131b0ee7721816373efa486297deb000e54cbd6a3f5df628d01ea529f22b4",
+    "v1Artifacts": {
+      "shared-migration-prepared.json": "35766ff2c90f820d4857837b5dffbca4bc321cca43fe80f132447ed8a164d8d3",
+      "shared-migration-attempt.json": "d63b77b523ef3ce467579b679632bd6297e786f0ab9564c4ff3636ddf2ba7e93",
+      "apply-approved-preparation.private.sql": "255296e09aabb99f58c70fe7129ba14743779b84f761004e20ded8ea678a1f7e",
+      "schema-expected-after.private.json": "c2d5535e38a5bb26c7771ae9171a7fd3ce2bf1ecdd2f942f320a3a0e4360e315"
+    },
+    "onlyCorrection": "Public authenticated EXECUTE is inherited by the existing NOLOGIN INHERIT executor; private helpers remain denied."
+  },
+  "recordedAt": "2026-10-31T03:18:49.434Z",
+  "candidate": "e357d5625734522c904fa80335e9aad5180a3fec",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "migration": {
+    "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+    "version": "20261031020000",
+    "name": "invoice_preparation_read_boundary",
+    "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580"
+  },
+  "atomicSourceAndLedger": true,
+  "reconciledReadOnly": false,
+  "exactLedger": {
+    "name": "invoice_preparation_read_boundary",
+    "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580",
+    "version": "20261031020000",
+    "statementCount": 1
+  },
+  "sourceFunctions": 7,
+  "newHelpers": 4,
+  "exactPolicy": true,
+  "protectedFunctionsAndRolesUnchanged": true,
+  "allWriteGatesOff": true,
+  "activeGrants": 0,
+  "enrollment": 0,
+  "spendingActivated": false,
+  "operationalWrites": 0
+}

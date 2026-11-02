@@ -1,0 +1,33 @@
+{
+  "id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+  "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+  "contentType": "application/pdf",
+  "bytes": 2877,
+  "privateObjectPresent": true,
+  "state": "ready",
+  "verifiedAt": "2026-10-31T01:24:44.454217+00:00",
+  "expiresAt": "2026-11-01T01:24:35.833487+00:00",
+  "extraction": {
+    "mode": "openai-original",
+    "model": "gpt-6.1-terra",
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "sourceMediaType": "application/pdf"
+  },
+  "rawLines": [
+    "SYNTHETIC TEST INVOICE",
+    "NOT FOR PAYMENT",
+    "Supplier",
+    "T&M Supply",
+    "Invoice reference                                             Invoice date",
+    "SYN-TENDEV-RECEIVAL-20261030-01                               2026-10-30",
+    "Material / size / quantity",
+    "Alaska White | #0 | 1 Bag",
+    "Synthetic TenDev validation document. No physical shipment.",
+    "Not a request for payment.",
+    "Synthetic test document                                                      Page 1 of 1"
+  ],
+  "draftPresent": false,
+  "traceHash": null,
+  "approvedBatch": false,
+  "retention": "Unapproved source remains private under the existing 24-hour abandoned-source cleanup policy. No false approved-batch retention or manual deletion was applied. Original frozen synthetic PDF remains in repository evidence."
+}

@@ -1,0 +1,56 @@
+{
+  "recordedAt": "2026-10-29T22:48:07.259Z",
+  "status": "BLOCKED_SAFE_PLATFORM_METADATA_WINDOW_UNAVAILABLE",
+  "project": {
+    "name": "TenBot",
+    "id": "proj_e3Qoebc2IckUzl282v3ys6Yl"
+  },
+  "key": {
+    "name": "TenBotHostedTerraPilot",
+    "creationReportedByOwner": true,
+    "ownerReportedSecretDisplayClosed": true,
+    "creationIndependentlyVerified": false,
+    "projectIndependentlyVerified": false,
+    "ownerIndependentlyVerified": false,
+    "permissionsIndependentlyVerified": false,
+    "createdAtUtc": null,
+    "expiresAtUtc": null,
+    "exactDurationSeconds": null,
+    "exactThirtyDayDurationVerified": false
+  },
+  "uiAttempt": {
+    "browserAutomationAvailable": false,
+    "attachedWindow": "Cloudflare in Chrome work profile",
+    "openAiWindowVisibleInWindowMenu": false,
+    "boundedFollowupTimedOutAfterSeconds": 10,
+    "toolKernelResetOnTimeout": true,
+    "noFurtherUiCallsAfterTimeout": true
+  },
+  "credits": {
+    "balanceVerified": false,
+    "expirationVerified": false,
+    "renewalVerified": false,
+    "reason": "OpenAI Platform metadata context unavailable; no billing page visited."
+  },
+  "priorVerifiedProjectPolicy": {
+    "maximumKeyLifetimeDays": 30,
+    "source": "pilot-30day-config-resumed.json; prior save and creation-form readback",
+    "reverifiedThisAttempt": false
+  },
+  "nextOwnerAction": "Open TenBot API Keys in the authenticated Chrome profile with the one-time secret display closed. Leave the named key list or safe metadata details visible. Do not create a duplicate. Exact created_at and expires_at in UTC are still required; a date-only label does not prove an exact 2592000-second duration.",
+  "privacy": {
+    "localOpenAiKeyRead": false,
+    "secretCopiedOrRevealed": false,
+    "screenshots": false,
+    "oneTimeSecretViewOpened": false
+  },
+  "changes": {
+    "keyEditedOrCreated": false,
+    "projectOrOrganizationPolicy": false,
+    "billingOrServices": false,
+    "hostedSecrets": false,
+    "inference": false,
+    "deployment": false,
+    "migrations": false
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/logs",
+  "method": "GET",
+  "startedAt": "2026-10-30T23:14:53.798Z",
+  "window": {
+    "start": "2026-10-30T22:00:00Z",
+    "end": "2026-10-30T23:11:00Z"
+  },
+  "timeoutMs": 20000,
+  "automaticRetries": 0,
+  "querySha256": "07dc1c7feb9c6212f7a0d83fc414c2798b234ccc06262a1fd8569b288822676d",
+  "aggregateOnly": true,
+  "postgreSqlQueries": 0,
+  "hostedMutations": 0,
+  "rawMessagesOrStatementsReturned": false,
+  "status": 200,
+  "headersMs": 781,
+  "totalMs": 789,
+  "bodyBytes": 827,
+  "bodySha256": "8afcaee57acb47da4238abf0ff21469a500badca237a56331974c53918ac62af",
+  "rows": [
+    {
+      "database_dependency_mentions": 0,
+      "durations_ge_10s": 0,
+      "durations_ge_1s": 0,
+      "events": 8,
+      "last_event_at": "2026-10-30T22:11:43.000000",
+      "lifecycle_error_mentions": 0,
+      "lock_or_timeout_mentions": 0,
+      "max_recorded_duration_ms": 0,
+      "recorded_durations": 0,
+      "source": "auth_logs"
+    },
+    {
+      "database_dependency_mentions": 0,
+      "durations_ge_10s": 0,
+      "durations_ge_1s": 0,
+      "events": 2182,
+      "last_event_at": "2026-10-30T22:16:06.224000",
+      "lifecycle_error_mentions": 0,
+      "lock_or_timeout_mentions": 0,
+      "max_recorded_duration_ms": 888.277,
+      "recorded_durations": 2145,
+      "source": "postgres_logs"
+    },
+    {
+      "database_dependency_mentions": 0,
+      "durations_ge_10s": 0,
+      "durations_ge_1s": 0,
+      "events": 23,
+      "last_event_at": "2026-10-30T22:16:44.055204",
+      "lifecycle_error_mentions": 0,
+      "lock_or_timeout_mentions": 0,
+      "max_recorded_duration_ms": 0,
+      "recorded_durations": 0,
+      "source": "postgrest_logs"
+    }
+  ],
+  "available": true
+}

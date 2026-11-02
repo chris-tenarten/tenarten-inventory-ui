@@ -1,0 +1,39 @@
+{
+  "status": "ANTHONY_WITHDRAWN_CHRIS_DEV_ONLY_ALL_WRITES_OFF",
+  "recordedAt": "2026-10-30T17:44:45.385Z",
+  "anthony": {
+    "accountProfileAndCapabilitiesMatchBefore": true,
+    "trackedActorEpoch": 0,
+    "trackedGlobalCapabilityEpoch": 0,
+    "sessionOrTokenAccessByWorkstream": false,
+    "permissionOrRoleChangesByWorkstream": 0,
+    "enrollment": 0,
+    "uploads": 0,
+    "drafts": 0,
+    "approvals": 0,
+    "executionPermits": 0,
+    "executions": 0,
+    "documentClaims": 0,
+    "auditRows": 0,
+    "operationalWritesByWorkstream": 0,
+    "actualRelatedActions": "Read-only profile/role and aggregate usage metadata lookup; named only in local proposal/documentation. Those proposals are withdrawn and retained as historical evidence.",
+    "reversalNeeded": false
+  },
+  "chrisDev": {
+    "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "role": "developer",
+    "missingCapability": "adjustInventory",
+    "grantApplied": false
+  },
+  "currentPlan": "canary-plan.json",
+  "controls": {
+    "pilot": false,
+    "execution": false,
+    "enrolledEmployees": 0
+  },
+  "serverWriteFlagsDisabled": true,
+  "additionalInferenceCalls": 0,
+  "hostedMutations": 0,
+  "permissionChanges": 0,
+  "sourceChanges": 0
+}

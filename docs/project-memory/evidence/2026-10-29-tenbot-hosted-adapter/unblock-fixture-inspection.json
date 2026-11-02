@@ -1,0 +1,105 @@
+{
+  "inspected_at_utc": "2026-10-29T22:56:09.524133+00:00",
+  "mode": "read-only filesystem, bounded subprocess socket/process metadata inspection; no Docker/Supabase CLI or HTTP/database request by this investigator",
+  "risk_tier": 3,
+  "fixtures": {
+    "permission_review": {
+      "workdir": ".tmp-permission-supabase",
+      "project_id": "tenops-permission-review",
+      "api_url": "http://127.0.0.1:55481",
+      "database_port": 55482,
+      "smtp_port": 55484,
+      "postgres_major_version": 17,
+      "auth_enabled": true,
+      "edge_runtime_enabled": true,
+      "database_seeding_enabled": false,
+      "saved_review_config": ".tmp-permission-review/config.json",
+      "saved_actor_count": 8,
+      "saved_session_expiration_range_utc": [
+        "2026-10-05T17:27:25+00:00",
+        "2026-10-05T17:27:26+00:00"
+      ],
+      "all_saved_sessions_expired": true,
+      "database_health_verified": false,
+      "schema_state_verified": false,
+      "saved_credential_values_in_evidence": false
+    },
+    "auth_qa": {
+      "workdir": "auth-qa",
+      "project_id": "tenops-auth-qa",
+      "api_port": 54321,
+      "database_port": 54322,
+      "smtp_port": 54324,
+      "postgres_major_version": 17,
+      "auth_enabled": true,
+      "edge_runtime_enabled": false,
+      "storage_enabled": false,
+      "realtime_enabled": false,
+      "configured_fixture_tables": [
+        "app_users"
+      ],
+      "configured_fixture_functions": [
+        "get_my_app_user",
+        "ensure_my_welcome_notification"
+      ],
+      "contains_tenbot_schema": false,
+      "does_not_satisfy_tenbot_database_gate_on_its_own": true
+    }
+  },
+  "listening_sockets": {
+    "inspection": "lsof -nP -iTCP -sTCP:LISTEN, subprocess timeout5s",
+    "permission_review_ports": [
+      55481,
+      55482,
+      55484
+    ],
+    "owner_pid": 3105,
+    "owner_executable": "/Applications/Docker.app/Contents/MacOS/com.docker.backend",
+    "auth_qa_ports_listening": [],
+    "listener_is_docker_forwarder_not_evidence_of_database_health": true
+  },
+  "coordinated_root_health_probe": {
+    "source": "root agent report; not repeated by this investigator",
+    "url": "http://127.0.0.1:55481/auth/v1/health",
+    "attempts": 1,
+    "connected_to_listener": true,
+    "http_bytes_received": 0,
+    "http_status": "000",
+    "elapsed_ms": 3006,
+    "curl_exit_code": 28,
+    "result": "timeout behind Docker forwarder"
+  },
+  "startup_contracts": {
+    "permission_review_ui": "scripts/start-read-only-messaging-review.mjs reads Supabase status without subprocess timeout; it is an application launcher, not database restoration.",
+    "permission_review_verifier": "scripts/verify-read-only-messaging.mjs invokes unbounded Supabase status and Docker psql. Its --reset-local-fixture option drops/recreates public schema. Do not invoke it blindly as health preflight.",
+    "auth_qa_start": "npm auth:qa:start runs supabase start then db reset --local; not a read-only health operation.",
+    "auth_qa_env_loader": "scripts/local-auth-qa-env.mjs runs unbounded supabase status --output env; importing it may hang while Docker is unresponsive.",
+    "tenbot_existing_preflight": "scripts/check-tenbot-fixture.mjs is bounded5s per Docker command but still requires Docker and the existing tenops-tenbot-review PostgreSQL container; not retried."
+  },
+  "smallest_owner_restoration_action": [
+    "Restore responsiveness of the existing Docker Desktop backend/tenops-permission-review local stack in the separate maintenance task; do not reset/delete volumes or public schema.",
+    "After the owner reports the existing stack responsive, coordinate exactly one bounded API/DB health check before fixture startup or tests.",
+    "Reauthenticate only the existing synthetic local fixture actors to obtain fresh local JWTs; never refresh these fixtures against the shared hosted Production/TenDev project.",
+    "Then verify actual existing schema/grants and apply only explicitly authorized assistant test migrations in the isolated fixture; do not use the receival-write migration."
+  ],
+  "docker_independent_alternative_within_inspected_fixtures": {
+    "available": false,
+    "reason": "Both existing Supabase environments depend on Docker. The Docker-independent localhost agent adapters simulate persistence or call the unresponsive permission-review API; they do not provide Auth/PostgreSQL/RLS. AuthQA has identity-only schema and no running listeners. Any independently running existing native/hosted test database must be separately verified by root before use."
+  },
+  "remaining_release_gates": [
+    "Real JWT verification for independent owner/admin/employee sessions",
+    "Owner-scoped durable history and revocation across instances",
+    "Actual PostgreSQL locking/concurrency/CAS/replay/uncertain accounting",
+    "Actual caller-authorized Job RLS reads"
+  ],
+  "actions_not_taken": [
+    "No Docker command",
+    "No Supabase CLI/status/reset",
+    "No endpoint retry",
+    "No database connection or write",
+    "No service provisioning/install",
+    "No hosted mutation",
+    "No paid inference",
+    "No source edit"
+  ]
+}

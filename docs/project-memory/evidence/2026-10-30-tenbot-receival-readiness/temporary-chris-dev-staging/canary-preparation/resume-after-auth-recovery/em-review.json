@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:38:30.108274+00:00",
+  "reviewer": "Independent architecture_audit agent",
+  "mode": "Focused offline evidence/contract review; no probes, edits or test reruns",
+  "findingsRemaining": [],
+  "resolvedWording": "Revocation removes enrollment and invalidates permit/approval authority via epoch/version; rows and audit remain retained.",
+  "verified": [
+    "Seven original manifest hashes matched",
+    "539956+157529+61139=758624; plus250000=1008624",
+    "October30 20:00\u201320:15CDT equalsOctober31 01:00\u201301:15UTC",
+    "Old reservation remains accounted without exhausting existing open limits",
+    "Shared paid routing is an explicit Product decision; no broader activation inferred",
+    "Credit date precision and fresh conditional funding/window approval are stated"
+  ]
+}

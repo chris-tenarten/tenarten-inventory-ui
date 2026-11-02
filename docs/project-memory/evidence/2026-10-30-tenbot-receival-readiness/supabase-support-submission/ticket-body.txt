@@ -1,0 +1,18 @@
+Project: tenartenDB (vxdxjhazkqhpkwdqtobp), us-east-1, organization tenarten-terrazzo.
+Affected services: Database and Authentication. Production TenOps and staging TenDev share this project. Session restoration/account verification and database-backed Inventory/Messaging access were disrupted. Frontend pages returned 200, which did not establish application recovery.
+
+Incident: October 30, 2026. Chicago times below are CDT (UTC-5).
+
+- Around 5:16-5:17 p.m. (22:16-22:17Z), available backend logs/resource chart samples stop. Historical Database Reports around 5:12-5:17 showed memory commitment 1.37 GB marked SEVERE and substantial swap in use. This is evidence of resource risk, NOT a confirmed OOM event.
+- From the 5:20 p.m. five-minute bucket (22:20Z), gateway logs show intermittent Auth/REST 504/522/524 failures alongside some successes. Safari's Auth refresh endpoint /auth/v1/token?grant_type=refresh_token also reported 522/Load failed.
+- At 5:39:33.754 p.m. (22:39:33.754Z), POST https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query with a read-only query returned HTTP 544 after 15.349s: "Connection terminated due to connection timeout." CF-ray: a52deaad8e10b172-IAH.
+- Database and Auth were both UNHEALTHY at repeated bounded checks, including 5:55 p.m. and a fresh 6:26 p.m. check.
+- ONE controlled restart was submitted at 6:26:05.578 p.m. (23:26:05.578Z) and acknowledged HTTP 200 at 6:26:06. CF-ray: a52e2ed56f847ca9-DFW. No further restart, reset, compute/configuration change or deployment was attempted.
+- Actual Postgres startup time subsequently read: 6:30:44.699965 p.m. (23:30:44.699965Z).
+- At 6:31:21 p.m. (23:31:21Z), both DB/Auth reported healthy/ACTIVE_HEALTHY. At 6:31:54, a read-only SQL request succeeded in 1.412s. That snapshot showed 12 other backends versus max_connections=60 and maximum open transaction age 9.396s; it does not establish outage-time connection usage. Genuine Developer authentication restored and Inventory loaded briefly.
+- At 6:31:31, the Metrics API still returned HTTP 500: "Failed to fetch project's metrics." CF-ray: a52e368b6b4db55d-IAH. A subsequent Database Reports view had no memory/commitment/CPU data. Memory/swap improvement is unverified.
+- Around 6:33:30 p.m. (23:33:30Z), the previously working application failed account verification: "Could not query the database for the schema cache. Retrying." The actual failing HTTP response was not captured. We stopped further probes; DB/Auth health AFTER that error is unknown. Sustained recovery is not established.
+
+Please investigate project compute/host and database health, memory/swap pressure or possible resource failure, connection/pool health, Auth/schema-cache database access, and why metrics/backend logs are incomplete. Please identify the cause of recurrent post-restart unavailability and recommend the smallest supported recovery.
+
+The initiating cause is unconfirmed. We have no proof of an OOM event, connection exhaustion, a specific expensive query, or a particular application change as the cause. Sanitized incident evidence is attached; no credentials, JWTs, customer/employee records or raw query contents are included.

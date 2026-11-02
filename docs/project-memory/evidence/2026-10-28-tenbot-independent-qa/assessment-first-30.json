@@ -1,0 +1,1361 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-28",
+  "runtime_revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "scope": "Independent evidence review of actual Production Messaging turns Q01–Q30 only. No new UI, inference, network, hosted action or implementation change by this reviewer.",
+  "status": "EVALUATED",
+  "method": "Exact final visible assistant response text, including substantive fallback/permission/deployment notices, compared against released source. Accessibility IDs, timestamps, source-count controls and composer UI stripped. The actual questions supersede the initial matrix when adapted.",
+  "account_context": "Developer identity and missing Proposal/createProductionJob access are supplied by the root QA identity/preflight evidence. Released ROLE_CAPABILITIES supplies the comparison; no role impersonation, grant change or hosted mutation was performed. Guidance mismatch alone is not a write bypass.",
+  "severity_definitions": {
+    "P1": "High-priority materially false workflow/save prerequisite that can cause lost work or block a core workflow. No security exploit or mutation is implied.",
+    "P2": "Meaningful incorrect procedure/control or inability to answer a documented relevant workflow/recovery question.",
+    "P3": "Minor completeness or presentation/relevance defect; correct primary behavior remains usable.",
+    "none": "No material answer defect demonstrated in this turn."
+  },
+  "verdict_definitions": {
+    "PASS": "Sufficiently correct for the actual question, despite harmless omissions.",
+    "PARTIAL": "Core answer is correct but a specific minor omission/noise remains.",
+    "FAIL": "Wrong, contradictory, irrelevant or no useful answer despite documented relevant guidance. Honest uncertainty can fail coverage without being a hallucination.",
+    "PERMISSION_PASS": "Account access boundary behaves correctly; the restricted authorized workflow itself is not fully evaluated."
+  },
+  "summary": {
+    "turns": 30,
+    "verdict_counts": {
+      "FAIL": 8,
+      "PASS": 14,
+      "PARTIAL": 3,
+      "PERMISSION_PASS": 5
+    },
+    "defect_severity_counts": {
+      "P2": 6,
+      "P3": 3,
+      "P1": 2
+    },
+    "highest_priority_regressions": [
+      "Q08",
+      "Q17",
+      "Q14",
+      "Q18",
+      "Q05",
+      "Q10",
+      "Q23",
+      "Q01"
+    ],
+    "authorized_proposal_workflow_quality": "Not evaluated under this Developer account; Q26–Q29 establish denial behavior only.",
+    "privacy_observation": "These questions/answers contain no real employee/customer records. This review does not establish broad RLS or private-record isolation.",
+    "inference_consumption": "Not inferred from UI wording or latency. Use root QA provider/usage telemetry; guide fallback or uncertainty does not prove zero provider calls."
+  },
+  "assessments": [
+    {
+      "id": "Q01",
+      "module": "production",
+      "question": "How do I create a blank Production Job, and which fields are required?",
+      "actual": "To create a blank Production Job, go to Production → New Job → Create Blank Job. Enter a Project name (required), and add other details as needed. A Job number must be unique and cannot duplicate an existing Job. Other fields like customer, delivery, labor, and dates can be added later. The Job will not appear on the Timeline until it is scheduled.",
+      "expected": "Explain the generic blank-Job workflow and that Project name is the required identity, with final Create Job submission. Distinguish it from this account’s authorization: Developer lacks createProductionJob, so an account-specific mutation source must not claim Available based only on writeBusinessData. Do not infer or test hosted write success.",
+      "verdict": "FAIL",
+      "severity": "P2",
+      "classification": [
+        "permission_awareness_failure",
+        "knowledge_capability_mapping_gap",
+        "incomplete_procedure",
+        "no_demonstrated_write_bypass"
+      ],
+      "finding": "The generic creation facts are correct, but root observed the expanded Create a Production Job source card marked Available for the verified Developer account, which lacks createProductionJob. The precise entry gates only on generic business-write capability. That account-availability mapping is a substantive permission-awareness failure; the prose also omits final Create Job. No creation was attempted and no hosted write bypass is demonstrated.",
+      "recommendation": "Align the precise creation source, broad claim gate and Available presentation with the existing createProductionJob capability; retain the final Create Job submission step for authorized users.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-create-job"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobCreator.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/jobs.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobCreator.tsx",
+          "line": 317
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts",
+          "line": 70
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "line": 481
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-core.ts",
+          "line": 38
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-handler.ts",
+          "line": 48
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "line": 817
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx",
+          "line": 8
+        }
+      ],
+      "observed_latency_ms": 15985,
+      "viewport": "desktop",
+      "root_cause_limit": "Root source-card/capability observation plus released guide and claim gates support the availability-mapping diagnosis. No hosted creation, current RLS enforcement test or raw provider trace was performed.",
+      "additional_ui_observation": {
+        "text": "Create a Production Job Available",
+        "provenance": "Root evaluator expanded the source card and separately inspected the existing account capability list. This source-card observation is not appended to the exact assistant prose.",
+        "evidence_artifact": "docs/project-memory/evidence/2026-10-28-tenbot-independent-qa/source-review.json",
+        "finding_id": "production-create-account-availability-mapping"
+      }
+    },
+    {
+      "id": "Q02",
+      "module": "production-rework",
+      "question": "Can I start Rework before a Job is complete?",
+      "actual": "No. Rework requires the Job to be complete, unarchived, and have no active Rework cycle. You cannot initiate Rework before the Job is complete.",
+      "expected": "No. Rework creation requires the original canonical Job status Complete, unarchived and no active Rework cycle. Do not suggest bypassing the prerequisite.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_prerequisite"
+      ],
+      "finding": "Direct and correct No; all three verified eligibility conditions are retained.",
+      "recommendation": "Retain this prerequisite regression.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx",
+          "line": 9
+        }
+      ],
+      "observed_latency_ms": 13782,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q03",
+      "module": "production-rework",
+      "question": "Switching to Rework: how would I create Rework for a completed Job?",
+      "actual": "To create Rework for a completed Job, open the Job in Production and select 'Create Rework.' Ensure the Job is complete, unarchived, and has no active Rework cycle. Choose a Reason, describe the Rework Scope, and enter the Intake/Return Date. Only one Rework cycle can be active at a time.",
+      "expected": "With business-write access, open the completed unarchived Job → Create Rework; choose Reason, enter Scope / Work Required and Intake / Return Date, then Create Rework. No active cycle may already exist. Same canonical Job; original lifecycle remains.",
+      "verdict": "PARTIAL",
+      "severity": "P3",
+      "classification": [
+        "incomplete_procedure"
+      ],
+      "finding": "Correct fields and eligibility, but stops after form entry without the final Create Rework submission action.",
+      "recommendation": "Complete the procedure through the final Create Rework button.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx",
+          "line": 41
+        }
+      ],
+      "observed_latency_ms": 20137,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q04",
+      "module": "production-rework",
+      "question": "If that button is missing, what should I check?",
+      "actual": "If the 'Create Rework' button is missing, check that the Job is complete, unarchived, and has no active Rework cycle. Ensure you have the necessary permissions and that the Job is in a state eligible for Rework. Only one Rework cycle can be active at a time.",
+      "expected": "Retain Rework context. Check business-write authorization, original Job completion, archive state and existing active Rework. Do not claim a hidden control can bypass permissions or state.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_context",
+        "permission_aware"
+      ],
+      "finding": "Retains Rework context and lists the correct Job-state checks. Permission wording is generic but not incorrect.",
+      "recommendation": "Prefer naming the verified action permission when it helps explain the missing control.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx",
+          "line": 9
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx",
+          "line": 8
+        }
+      ],
+      "observed_latency_ms": 4716,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q05",
+      "module": "production-rework",
+      "question": "I filled in the Reason, Scope, and Intake/Return Date. Am I done, or is there a final button to press?",
+      "actual": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+      "expected": "Retain the preceding Rework creation context. Filling Reason, Scope and Intake / Return Date is not submission; choose the final Create Rework button. The actual form uses its submit handler to create the cycle.",
+      "verdict": "FAIL",
+      "severity": "P2",
+      "classification": [
+        "context_or_retrieval_failure",
+        "incomplete_explanation"
+      ],
+      "finding": "Returns honest uncertainty although the precise released guide and form both specify the final Create Rework action. This is not a hallucination.",
+      "recommendation": "Resolve this short completion follow-up to the Rework creation workflow and answer with the final button.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx",
+          "line": 41
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-create"
+        }
+      ],
+      "observed_latency_ms": 3023,
+      "viewport": "desktop",
+      "root_cause_limit": "Classification describes observed behavior and released-source comparison. Selected model payload/raw output and exact internal failure path were not independently inspected."
+    },
+    {
+      "id": "Q06",
+      "module": "production-rework",
+      "question": "Once the rework is finished, how do I close that cycle without changing the original Production history?",
+      "actual": "Once the rework is finished, go to the Job in Production, open Details, change the Production status to 'Complete' or 'Cancelled,' and select Save changes. This updates the rework cycle without altering the original Production history. Ensure the Job is complete, unarchived, and has no other active rework cycles before proceeding.",
+      "expected": "Open Job → Details; change active Rework Production status to Complete or Cancelled and Save changes. Save other Job edits separately. It affects active Rework, preserving original lifecycle; historical closed cycles are immutable.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_procedure",
+        "history_preserved"
+      ],
+      "finding": "Correct Details → Complete/Cancelled → Save changes and original-history distinction. The extra eligibility reminder adds little but does not reverse the procedure.",
+      "recommendation": "Retain the active-cycle/original-history distinction.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-status"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/jobs.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/status-visuals.ts"
+        }
+      ],
+      "observed_latency_ms": 3005,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q07",
+      "module": "timeline",
+      "question": "New topic: how do I move a Production Job to different planned dates on the Timeline?",
+      "actual": "To move a Production Job to different planned dates on the Timeline, open the Job and adjust its bar in the Timeline or enter new Planned start and finish dates in Details. Review the changes, then select Save all changes. Ensure the finish date is on or after the start date. Staged changes require explicit confirmation to save.",
+      "expected": "Business writers stage the bar adjustment or both planned boundaries, Review changes and Save all changes through confirmation. Dates are proposed until saved; finish cannot precede start.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_procedure"
+      ],
+      "finding": "Correct staged dates, Save all changes, finish/start ordering and explicit confirmation.",
+      "recommendation": "Retain as the initial turn for the Q08 regression.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-schedule"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ScheduleReviewDialog.tsx"
+        }
+      ],
+      "observed_latency_ms": 4205,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q08",
+      "module": "timeline",
+      "question": "So letting go of the bar saves it right away?",
+      "actual": "Letting go of the bar in the Timeline saves the changes immediately. You can adjust the bar or enter new dates in Details, then select Save all changes. The changes are staged and saved upon confirmation. If you discard, the original dates are restored.",
+      "expected": "No. Drag release stages proposed dates; review and Save all changes / final confirmation are required. Discard all restores persisted dates.",
+      "verdict": "FAIL",
+      "severity": "P1",
+      "classification": [
+        "incorrect_model_reasoning_or_generation",
+        "contradictory_answer"
+      ],
+      "finding": "First sentence explicitly claims drag release saves immediately, contradicting the released staged workflow, its own later sentences and Q07. A later caveat does not repair the affirmative opening.",
+      "recommendation": "Answer No first; releasing the bar only stages dates, and explicit final confirmation is required.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-schedule"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ScheduleReviewDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "line": 422
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "line": 1011
+        }
+      ],
+      "observed_latency_ms": 3057,
+      "viewport": "desktop",
+      "root_cause_limit": "Classification describes observed behavior and released-source comparison. Selected model payload/raw output and exact internal failure path were not independently inspected."
+    },
+    {
+      "id": "Q09",
+      "module": "planning",
+      "question": "Different question: where is the Planning tab for phases and items? I can see the Production Timeline.",
+      "actual": "The Planning tab for phases and items is not available in the current Production application deployment. The Production Timeline is accessible, but Planning features are disabled. You cannot navigate to or interact with Planning tabs or their associated controls. Please contact Product to inquire about enabling Planning functionality.\n\nPlanning Phases and Items support Job coordination, but Planning is not enabled in the verified Production application. Its tab and Timeline overlays are unavailable in that deployment. I cannot give live navigation steps for these controls. Please check with Product before relying on a Planning workflow.",
+      "expected": "Distinguish ordinary Production Timeline scheduling from Phase/Item Planning. The verified released build disables Planning tab and overlays; do not give live Phase/Item creation steps.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_deployment_awareness"
+      ],
+      "finding": "Correctly distinguishes available Production Timeline from disabled Phase/Item Planning. The substantive deterministic notice agrees with the prose.",
+      "recommendation": "Retain the deployed-feature-flag boundary.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "planning-phase"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/planning/timeline-model.mjs"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-schedule"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ScheduleReviewDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "docs/project-memory/evidence/2026-10-27-tenbot/coverage/planning-availability.json"
+        }
+      ],
+      "observed_latency_ms": 2450,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q10",
+      "module": "manpower",
+      "question": "Switching to manpower: how do i fliter by jobs in manpower reporting?",
+      "actual": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+      "expected": "Reporting → Manpower Reporting → Job labor review; select the Job. Clear job filter / All reporting groups resets. The selector is business-write gated; loaded-history limits apply.",
+      "verdict": "FAIL",
+      "severity": "P2",
+      "classification": [
+        "typo_or_intent_matching_failure",
+        "missing_answer_from_existing_knowledge"
+      ],
+      "finding": "The common fliter typo yields honest generic uncertainty despite an existing precise Job labor review guide. Not a hallucination and not evidence the feature is absent.",
+      "recommendation": "Handle common filter typos without losing the explicitly named Manpower module.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "manpower-job-filter"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/manpower.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "line": 1161
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "matchGuides"
+        }
+      ],
+      "observed_latency_ms": 7666,
+      "viewport": "desktop",
+      "root_cause_limit": "Classification describes observed behavior and released-source comparison. Selected model payload/raw output and exact internal failure path were not independently inspected."
+    },
+    {
+      "id": "Q11",
+      "module": "manpower",
+      "question": "What if the person reviewing it only has read-only access?",
+      "actual": "If the person reviewing has read-only access, they cannot change the Job filter in Manpower Reporting. However, they can use the Search manpower feature or open the Job's Current Hours link from Production. They can also view and review data within the existing filters and search results.",
+      "expected": "Read-only users cannot change the released Job labor review BusinessSelect; Search manpower or an authorized Production Current Hours deep link can support review. Do not invent a role grant.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_context",
+        "permission_aware"
+      ],
+      "finding": "Correctly preserves Manpower context and explains the read-only Job selector restriction plus Search manpower / Production Current Hours alternatives.",
+      "recommendation": "Retain this role-dependent question.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "manpower-job-filter"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/manpower.ts"
+        }
+      ],
+      "observed_latency_ms": 3584,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q12",
+      "module": "manpower",
+      "question": "For someone allowed to enter labor, what fields and final action are needed to record a line?",
+      "actual": "To record a line in Manpower Reporting, enter work date, product category, worker, task, job or temporary label, and AM/PM hours. Add the entry and ensure hours are nonnegative and total no more than 24. Split hours into separate lines for different products. Final action is to add the entry.",
+      "expected": "Choose existing reporting group → Add New Line (or clear filters → New Group → Create). Enter work date, Product Category, Worker, Task, canonical Job or temporary label, AM/PM hours; Add Entry. Nonnegative total ≤24 hours; one product per line.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_fields_and_final_action"
+      ],
+      "finding": "Answers the requested entry fields and final Add Entry action, including 24-hour and per-product constraints. The user did not request a full navigation walkthrough.",
+      "recommendation": "Retain as a concise field-and-submit regression.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "manpower-record-labor"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/product-reporting.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/work-target.ts"
+        }
+      ],
+      "observed_latency_ms": 4156,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q13",
+      "module": "manpower",
+      "question": "If they use a temporary work label, will those hours show on a Production Job automatically?",
+      "actual": "Temporary work labels are not linked to Production Jobs, so their hours do not automatically appear in Production. To show hours in Production, the temporary label must be linked to a Production Job. Once linked, the hours will be included in the Production Job's Current Hours.",
+      "expected": "No. A temporary label is not a canonical Production Job link; hours do not appear in Production until linked. A reporting group is not a Job.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_canonical_identity"
+      ],
+      "finding": "Correctly says temporary-label hours do not automatically appear on a canonical Production Job and explains linking.",
+      "recommendation": "Retain the temporary/canonical distinction.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "manpower-record-labor"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/product-reporting.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/work-target.ts"
+        }
+      ],
+      "observed_latency_ms": 2476,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q14",
+      "module": "manpower",
+      "question": "Why can an expanded group show dates outside the period I picked?",
+      "actual": "Expanded groups show all labor entries within their defined reporting period, including dates outside a selected filter. Filters affect displayed data but not the underlying records. To limit dates, adjust the group's work date range in settings.",
+      "expected": "Analytics use the selected period, while loaded reporting groups retain complete membership across all dates. Search/filter totals reflect loaded data; wait for full available history and resolve errors before treating totals as exhaustive.",
+      "verdict": "FAIL",
+      "severity": "P2",
+      "classification": [
+        "incorrect_scope_explanation",
+        "unsupported_navigation_claim",
+        "hallucinated_control"
+      ],
+      "finding": "Invents a group work-date-range setting and muddles complete group membership with analytics-period scope. Released Manpower groups contain full membership across all dates; the visible group editor edits its name.",
+      "recommendation": "Explain analytics period versus complete group membership; remove the unsupported group date-range settings instruction.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-manpower-history"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerAnalytics.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/manpower.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "line": 1181
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "line": 199
+        }
+      ],
+      "observed_latency_ms": 2518,
+      "viewport": "desktop",
+      "root_cause_limit": "Classification describes observed behavior and released-source comparison. Selected model payload/raw output and exact internal failure path were not independently inspected."
+    },
+    {
+      "id": "Q15",
+      "module": "intake",
+      "question": "New topic, Intake: how would an authorized user start a Bid, and does that create a Production Job?",
+      "actual": "AI is unavailable right now. Here’s guidance from the TenOps Guide.\n\nOpen Intake and choose New Bid. Enter Customer and Project Name, then Create Bid. The new Bid starts Active and defaults its owner to you. Open the Bid to edit Overview details and choose Save Bid. Saved Won status plus Deposit Received Date are required for conversion. Creating a Bid does not create a Production Job; unsaved Overview edits are not carried into conversion.",
+      "expected": "Intake → New Bid → Customer and Project Name → Create Bid. It starts Active with current user as owner. Creation does not create a Production Job. Overview edits require Save Bid.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_guide_fallback"
+      ],
+      "finding": "The UI explicitly reports AI unavailable and provides the correct released Bid creation guide. Provider-failure reason and inference consumption are not established by this text.",
+      "recommendation": "Keep the truthful guide fallback; investigate availability using the separate telemetry evidence.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-intake-bid"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/client-layout-shell.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/queries.ts"
+        }
+      ],
+      "observed_latency_ms": 5324,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q16",
+      "module": "intake",
+      "question": "When is that Bid eligible to convert to Production?",
+      "actual": "A Bid is eligible to convert to Production when it has a Saved Won status and a recorded Deposit Received Date. Conversion requires Production Job creation permission. Once eligible, the user can choose 'Convert to Production' to create one canonical Job. Unsaved Bid edits are not carried forward.\n\nConvert an eligible Bid into one Production Job exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+      "expected": "For an authorized account: saved Won plus Deposit Received Date and saved/discarded edits are required; conversion creates exactly one canonical Job. This verified Developer account lacks createProductionJob, so explain the permission boundary without implying it can convert.",
+      "verdict": "PERMISSION_PASS",
+      "severity": "none",
+      "classification": [
+        "correct_eligibility",
+        "correct_permission_denial"
+      ],
+      "finding": "Saved Won/deposit and Production Job creation permission are correct. The account-specific denial is consistent with the Developer role lacking createProductionJob. Authorized conversion execution was not tested.",
+      "recommendation": "Retain eligibility facts and explicit account denial; do not interpret this as a write-bypass result.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-intake-convert"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/planning-data.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260923220000_intake_projected_planning.sql"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts",
+          "line": 70
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx",
+          "line": 65
+        }
+      ],
+      "observed_latency_ms": 3622,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q17",
+      "module": "intake",
+      "question": "Can it be converted without a Job number or a committed schedule?",
+      "actual": "A Production Job cannot be converted without a Job number or a committed schedule. The system requires both a Job number and planned start/finish dates to create and schedule a Production Job. These are necessary for the conversion process and scheduling approval.",
+      "expected": "A properly authorized account may convert without a Job number and use Plan in Production Later to leave dates uncommitted. Number is optional and not allocated automatically. Carry Forward / Set New Dates require scheduling permission. The Developer account conversion restriction remains separate.",
+      "verdict": "FAIL",
+      "severity": "P1",
+      "classification": [
+        "incorrect_workflow_prerequisite",
+        "hallucinated_requirement",
+        "context_loss"
+      ],
+      "finding": "Claims both Job number and committed schedule are required, contradicting optional Job number and Plan in Production Later. It also changes the subject from converting a Bid to converting a Production Job.",
+      "recommendation": "Preserve Bid context, explain both options are optional, and retain the current account permission boundary.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-intake-convert"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/planning-data.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260923220000_intake_projected_planning.sql"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx",
+          "line": 66
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx",
+          "line": 69
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260923220000_intake_projected_planning.sql",
+          "line": 70
+        }
+      ],
+      "observed_latency_ms": 3057,
+      "viewport": "desktop",
+      "root_cause_limit": "Classification describes observed behavior and released-source comparison. Selected model payload/raw output and exact internal failure path were not independently inspected."
+    },
+    {
+      "id": "Q18",
+      "module": "intake",
+      "question": "If a conversion times out and is retried, should there be a second Job?",
+      "actual": "Material requirements, supply evidence and lead-time boundaries exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+      "expected": "For the same Bid, an uncertain conversion retry returns the existing canonical Job; no second Job should be created. The UI says refresh to check conversion and retry will not create a second Job. Preserve the current account permission boundary; do not substitute material-assessment guidance.",
+      "verdict": "FAIL",
+      "severity": "P2",
+      "classification": [
+        "incorrect_retrieval_or_context_selection",
+        "irrelevant_permission_notice"
+      ],
+      "finding": "Answers a conversion-idempotency question with an unrelated material-assessment permission denial. Denial itself does not disclose private data, but it does not answer the question.",
+      "recommendation": "Select the Bid conversion workflow; explain a retry returns the same canonical Job, with applicable account restrictions.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-intake-convert"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/planning-data.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260923220000_intake_projected_planning.sql"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx",
+          "line": 52
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260923220000_intake_projected_planning.sql",
+          "line": 60
+        }
+      ],
+      "observed_latency_ms": 4314,
+      "viewport": "desktop",
+      "root_cause_limit": "Classification describes observed behavior and released-source comparison. Selected model payload/raw output and exact internal failure path were not independently inspected."
+    },
+    {
+      "id": "Q19",
+      "module": "samples",
+      "question": "Switching to Samples: how would I link an existing standalone Sample to a Bid?",
+      "actual": "To link an existing standalone Sample to a Bid, open the Bid in Intake, go to Tools, select Open related Samples, then choose an Existing standalone Sample and Link Sample. Note that a Sample already linked to another Bid cannot be moved. Alternatively, create a new Sample in the Bid’s Tools to start with Bid, Customer, and Project context.",
+      "expected": "Intake → Bid → Tools → Open related Samples → Existing standalone Sample → choose Sample → Link Sample. Requires existing Intake management, operational read and business write. Cannot move a Sample already linked to another Bid.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_procedure",
+        "correct_cross_module_context"
+      ],
+      "finding": "Correct Intake → Bid Tools → Open related Samples → existing standalone → Link Sample and cannot-move-linked-Sample boundary.",
+      "recommendation": "Retain this released cross-module procedure.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-bid"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidTools.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/queries.ts"
+        }
+      ],
+      "observed_latency_ms": 4248,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q20",
+      "module": "samples",
+      "question": "Does linking it update PDFs that were generated earlier?",
+      "actual": "Linking a Sample to a Bid does not update PDFs that were generated earlier. Existing generated documents remain unchanged by this action.",
+      "expected": "No. Existing generated/issued documents retain their captured historical content; later Bid context does not rewrite them.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_context",
+        "history_preserved"
+      ],
+      "finding": "Correctly says linking does not rewrite earlier generated PDFs.",
+      "recommendation": "Retain the issued-document snapshot boundary.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-bid"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidTools.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/queries.ts"
+        }
+      ],
+      "observed_latency_ms": 20663,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q21",
+      "module": "samples",
+      "question": "Separate Sample question: can I save a formula before there is a Production Job?",
+      "actual": "Yes, you can save a formula for a Sample without a Production Job. Open Toolbox → Tools → Sample Form Generator, choose New Sample, and complete the details. Save the Sample, but note that saving a draft does not generate a Sample Work Order.",
+      "expected": "Yes. Toolbox → Tools → Sample Form Generator → New Sample, choose/review Resin System and formulation, resolve conflicts → Save Sample. Requires operational-read/business-write access; canonical Production Job is not required.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_independent_document_workflow"
+      ],
+      "finding": "Correct independent Sample save, useful navigation and save-versus-Work-Order distinction. Resin setup detail is unnecessary for the yes/no question asked.",
+      "recommendation": "Retain standalone Sample support.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-save"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleResinSystemSelector.tsx"
+        }
+      ],
+      "observed_latency_ms": 2533,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q22",
+      "module": "samples",
+      "question": "Does Save Sample also issue the Sample Work Order?",
+      "actual": "Saving a Sample does not issue a Sample Work Order. You must explicitly generate a Sample Work Order after saving the Sample. Save the Sample first, then choose 'Generate Sample Work Order' in the same workspace.",
+      "expected": "No. Draft save and document issue are separate, with different validation. Generate Sample Work Order captures an issued document; Prepared By and required preparation/aggregate checks apply.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_save_issue_distinction"
+      ],
+      "finding": "Correctly distinguishes saving from issuing. Save-first wording is an unnecessary extra step: Generate Sample Work Order itself saves current changes, but the answer does not falsely claim Save Sample issues a document.",
+      "recommendation": "Prefer explaining explicit generation without imposing a separate save as a strict prerequisite.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-save"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleResinSystemSelector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-work-order"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/sample-errors.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx",
+          "line": 585
+        }
+      ],
+      "observed_latency_ms": 6616,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q23",
+      "module": "samples",
+      "question": "If the document was captured but opening its PDF failed, should I generate a fresh Work Order?",
+      "actual": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+      "expected": "No. Use Retry PDF on the existing captured entry under Sample Work Orders / generated history. Do not issue another document just to retry rendering.",
+      "verdict": "FAIL",
+      "severity": "P2",
+      "classification": [
+        "context_or_retrieval_failure",
+        "missing_recovery_guidance"
+      ],
+      "finding": "Returns honest uncertainty where the released Sample workflow explicitly provides Retry PDF on the captured document and warns against issuing another. No duplicate was created during QA.",
+      "recommendation": "Resolve the document/PDF follow-up to Sample Work Order and direct retry of the existing entry.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-work-order"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/sample-errors.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx",
+          "line": 609
+        }
+      ],
+      "observed_latency_ms": 3042,
+      "viewport": "desktop",
+      "root_cause_limit": "Classification describes observed behavior and released-source comparison. Selected model payload/raw output and exact internal failure path were not independently inspected."
+    },
+    {
+      "id": "Q24",
+      "module": "blend-sheets",
+      "question": "Switching to Blend Sheets: can you automatically predict and guarantee supplier delivery from a Blend Sheet? Explain current support only; do not submit feedback.",
+      "actual": "The TenOps Guide does not have enough verified information to confirm that workflow. This does not mean the feature is unavailable. Please check with Product.",
+      "expected": "No promised supplier delivery/Production date from a Blend Sheet. Current Bid Inspector has no employee-facing lead-time estimator. Retained assessment services do not establish a UI workflow; reviewed supplier/manual estimates can be evidence and unknowns stay unknown. Assessment does not reserve/order/mutate stock.",
+      "verdict": "PARTIAL",
+      "severity": "P3",
+      "classification": [
+        "intent_or_retrieval_coverage_gap",
+        "incomplete_supported_boundary"
+      ],
+      "finding": "Safe uncertainty avoids inventing a supplier guarantee. It is less useful than explaining the verified delivery/estimator boundary, so this is partial helpfulness rather than a factual hallucination.",
+      "recommendation": "State the supported delivery/estimator boundary and any applicable access limit, without treating undocumented functionality as absent or submitting feedback.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "material-lead"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/intake-materials/requirements.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/intake-materials/data.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "intake-future"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "material-lead"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+          "line": 1168
+        }
+      ],
+      "observed_latency_ms": 4179,
+      "viewport": "desktop",
+      "root_cause_limit": "Classification describes observed behavior and released-source comparison. Selected model payload/raw output and exact internal failure path were not independently inspected.",
+      "review_note": "Final evaluator softened the initial independent FAIL/P2 to PARTIAL/P3 because unsupported-request safety passed; current-support explanation remained incomplete."
+    },
+    {
+      "id": "Q25",
+      "module": "blend-sheets",
+      "question": "And who can use Plan Production Blend, and is the saved Sample the same as an issued Blend Sheet?",
+      "actual": "Plan Production Blend is available to employees with operational access, business-write permission, and a separate Production Blend management grant. Saved Samples are not the same as issued Blend Sheets; Samples are formula drafts, while Blend Sheets are production documents generated from them.",
+      "expected": "Operational read plus business write plus explicit production_blend.manage grant. Saved Sample/formulation, working Batch plan and issued Blend revisions are distinct. Do not infer Inventory changes from issuance or fabricate a click sequence beyond verified sources.",
+      "verdict": "PASS",
+      "severity": "none",
+      "classification": [
+        "correct_permission_requirements",
+        "correct_document_distinction"
+      ],
+      "finding": "Correct operational/business-write plus explicit Production Blend grant, and correct distinction between Sample formulas and issued Blend Sheets. It does not assert this account has that grant.",
+      "recommendation": "Retain explicit-grant and draft/issued distinctions.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+          "anchor": "knowledge-blend"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts"
+        }
+      ],
+      "observed_latency_ms": 3597,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q26",
+      "module": "proposals",
+      "question": "New topic: how would I start a Proposal before a Production Job exists?",
+      "actual": "Create, save and preview a Proposal draft exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.\n\nProposal drafts, issuance and historical revisions exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+      "expected": "With Proposal access (explicit grant or active Admin) plus business write, Toolbox → Tools → Proposal Generator → Create Proposal; complete Internal Estimate / Customer Proposal → Save Draft. A Proposal can be independent of Production Job.",
+      "verdict": "PERMISSION_PASS",
+      "severity": "none",
+      "classification": [
+        "correct_permission_denial"
+      ],
+      "finding": "Correctly withholds restricted Proposal instructions for this account. The repeated denied-source titles are presentation noise; authorized Proposal creation remains untested.",
+      "recommendation": "Keep access enforcement; combine redundant denial notices into one concise explanation.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalPanel.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts",
+          "line": 70
+        }
+      ],
+      "observed_latency_ms": 1881,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q27",
+      "module": "proposals",
+      "question": "If I preview the draft PDF, is the Proposal issued?",
+      "actual": "Create, save and preview a Proposal draft exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.\n\nIssue a Proposal or revise an issued Proposal exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.\n\nProposal drafts, issuance and historical revisions exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+      "expected": "No. Preview PDF reviews a draft. Issue / Generate PDF plus confirmation captures immutable customer Proposal and internal Estimate snapshots.",
+      "verdict": "PERMISSION_PASS",
+      "severity": "none",
+      "classification": [
+        "correct_permission_denial"
+      ],
+      "finding": "Correct account denial for Proposal draft/issuance access. Preview-versus-issue content was not evaluated because authorized guidance was withheld.",
+      "recommendation": "Keep access enforcement; reduce repeated denial notices.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalPanel.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-issue-revise"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts",
+          "line": 70
+        }
+      ],
+      "observed_latency_ms": 2428,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q28",
+      "module": "proposals",
+      "question": "How would I correct an already-issued one?",
+      "actual": "You cannot correct an already-issued Proposal because your account does not have permission to use Proposal drafts, issuance, or historical revisions. Contact an administrator to review your access.\n\nProposal drafts, issuance and historical revisions exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+      "expected": "Create Revision from history/issued Proposal, edit the new draft, review and issue it. Previous issued Proposal/internal snapshot remains immutable.",
+      "verdict": "PERMISSION_PASS",
+      "severity": "none",
+      "classification": [
+        "correct_permission_denial"
+      ],
+      "finding": "Denial is correctly scoped to the current account rather than claiming issued Proposals can never be revised. Authorized revision behavior remains untested.",
+      "recommendation": "Retain the account-qualified wording.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-issue-revise"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalPanel.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts",
+          "line": 70
+        }
+      ],
+      "observed_latency_ms": 3068,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q29",
+      "module": "proposals",
+      "question": "If someone can read Production Jobs but cannot open Proposal Generator, does Job access grant them Proposal access?",
+      "actual": "Proposal drafts, issuance and historical revisions exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.\n\nCreate, save and preview a Proposal draft exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.\n\nIssue a Proposal or revise an issued Proposal exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+      "expected": "No. Proposal access is a separate explicit account grant or administrator capability. Operational Job/Bid read access alone does not grant it; do not bypass access or assert the current account has a grant without evidence.",
+      "verdict": "PERMISSION_PASS",
+      "severity": "none",
+      "classification": [
+        "correct_permission_denial"
+      ],
+      "finding": "Proposal denial is correct. A direct explanation that Job read access does not grant Proposal access would be more useful, but the boundary is preserved; underlying authorized workflow remains untested.",
+      "recommendation": "Offer the concise separate-grant explanation where policy permits it; avoid three near-duplicate notices.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalPanel.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts",
+          "line": 70
+        }
+      ],
+      "observed_latency_ms": 1286,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    },
+    {
+      "id": "Q30",
+      "module": "inventory",
+      "question": "Switching to Inventory: how do I find current stock, and is a material-group total the same as one lot?",
+      "actual": "To find current stock, go to Inventory → Current Inventory and use the search function. A material-group total is not the same as one lot; a material group may contain multiple lots, and each lot has its own details. The table shows a combined total, but individual lots can be selected for specific information.\n\nMaterial requirements, supply evidence and lead-time boundaries exists in TenOps, but your account does not have permission to use it. Ask an administrator to review your access.",
+      "expected": "Inventory → Current Inventory → Search current stock; open material group then individual lot when multiple. Group total aggregates, selected-lot actions affect one lot. General/canonical-reserved/temporary-reserved identities remain distinct.",
+      "verdict": "PARTIAL",
+      "severity": "P3",
+      "classification": [
+        "correct_primary_answer",
+        "irrelevant_permission_notice"
+      ],
+      "finding": "Current Inventory/group-versus-lot explanation is correct. An unrelated material-assessment denial adds noise and can imply stock review needs Proposal access, though no such grant is actually given or bypassed.",
+      "recommendation": "Exclude unrelated material-assessment sources/notices from an ordinary current-stock lookup.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "inventory-stock-search"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/inventory/page.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/inventory/retrieval.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/client-layout-shell.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+          "line": 1168
+        }
+      ],
+      "observed_latency_ms": 3623,
+      "viewport": "desktop",
+      "root_cause_limit": null
+    }
+  ]
+}

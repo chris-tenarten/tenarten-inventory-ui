@@ -1,0 +1,104 @@
+{
+  "reviewedAt": "2026-10-30T17:08:32.390418+00:00",
+  "reviewMode": "Independent focused receipt/source-metadata review only; no network, test reruns, Git or mutations",
+  "candidate": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "status": "PASS for disabled operational-write TenDev staging; write canary BLOCKED by employee permission gate",
+  "tenDev": {
+    "deployment": "b3401edf-3218-45ff-af84-c8dd63e94ca8",
+    "servedAssetMatches": 34,
+    "nativeUiActor": "Existing authenticated Admin session only",
+    "normalMessagingAndInventoryUi": "PASS including static history restoration and live Job evidence exclusion",
+    "newUiRequests": 2,
+    "uploads": 0,
+    "approvalOrExecutionActions": 0
+  },
+  "tenOps": {
+    "frontendDeploymentUnchanged": "966ec1da-e537-4582-a82b-0c7a116daf58",
+    "sharedBackendChanged": true,
+    "changes": "Eleven approved migrations and accepted shared Edge code; receival preparation/execution remains disabled and allowlist empty"
+  },
+  "database": {
+    "exactAppliedMigrations": 11,
+    "atomicApplication": true,
+    "postcommitActualSha256LedgerVerified": true,
+    "newTableMetadataCount": 16,
+    "sourceAndDraftPolicyCount": 18,
+    "privateOriginalStoragePolicyCount": 7,
+    "callerNobypassExecutorAndGrantChecks": "PASS",
+    "canonicalReceivingAndStockContracts": "Preserved by exact column/body guards; no operational write test",
+    "newSharedEmployeeJwtRlsApprovalTest": false
+  },
+  "cleanup": {
+    "maintenanceEnabled": true,
+    "hourlyUtcSchedule": "23 * * * *",
+    "actualScheduledNoopRunSucceeded": true,
+    "scheduledRemovedOriginals": 0,
+    "hostedSignatureReplayConcurrencyCancellationRevocationChecks": "PASS; zero eligible source no-op only",
+    "unrelatedCronJobsUnchanged": true,
+    "sourceAndOriginalCount": 0,
+    "newHostedRetainedOriginalDeletionProof": false,
+    "retainedOriginalProtectionEvidence": "Prior isolated real Storage proof plus unchanged guard fingerprints; no hosted destructive test"
+  },
+  "meter": {
+    "policyVersion": 3,
+    "policyUnchanged": true,
+    "cutoffUtc": "2026-10-30T23:00:00+00:00",
+    "accountedMicrousdIncludingCarryover": 748026,
+    "remainingMicrousd": 3791930,
+    "outstandingReservedRowsPreserved": 1,
+    "uncertainRows": 0,
+    "sharedIntervalMeasuredSteps": 8,
+    "sharedIntervalRequests": 2,
+    "sharedIntervalActualMicrousd": 14352,
+    "attribution": "Shared interval includes possible concurrent traffic; not exclusive browser-cost attribution",
+    "newBudgetOrProviderConfiguration": false
+  },
+  "reusedEvidence": {
+    "readinessDatabaseGroups": {
+      "sharedContractCompatibility": 8,
+      "isolatedPrivateStorage": 11,
+      "isolatedPermitsAndRuntime": 9,
+      "total": 28
+    },
+    "newHostedEmployeeApprovalOrWriteLifecycleProven": false,
+    "qwenFallback": "Prior accepted hosted evidence and unchanged provider/code; not rerun"
+  },
+  "historicalIntermediateReceiptFields": {
+    "servedReadOnlyStatusSmokePending": "Superseded by later native Admin UI receipt; no employee authorization proof inferred",
+    "schedulerOnceRestorationPending": "Superseded by successful restoration receipt, then separately enabled hourly final snapshot",
+    "postapplyCleanupFalse": "Correct at atomic commit; later authorized maintenance configuration is true"
+  },
+  "genuineCanaryBlocker": {
+    "identity": "chris_dev exact email verified by root; private account receipt not copied or reopened by reviewer",
+    "role": "Developer",
+    "missingCapabilities": [
+      "adjustInventory",
+      "manageVendorsCatalog"
+    ],
+    "requiredResolution": "Choose an appropriately authorized non-Admin Inventory test identity, or obtain an explicit Product permission decision. Do not inherit Admin privileges or silently modify permissions."
+  },
+  "remainingPilotGates": [
+    "Separately approved exact synthetic identity/document/material/write canary plan and necessary budget authorization",
+    "Fresh hosted employee approval/revocation and real attachment lifecycle/write-result verification under that identity; operational writes stay OFF meanwhile"
+  ],
+  "noNewSecurityOrFundingBlockerForDisabledStaging": true,
+  "reviewerHostedCalls": 0,
+  "reviewerTestReruns": 0,
+  "reviewerGitOperations": 0,
+  "reviewerMutations": 0,
+  "evidenceSha256": {
+    "served.json": "55a6fa75d2737ba3280c22ec15d6eb63ca1e65dddf60d9fba1deb9c07c2f87db",
+    "final-hosted-readonly.json": "eba2e3616bda462dc0d1f4a3a36ce93791e4c4926e61a0c1ef9fe2ca58b51729",
+    "migration-application.json": "c39d19559c7c2087842fd8b70f71e87cc4a30e97e15d5979caa13ce14f5d3f61",
+    "postapply-metadata-verification.json": "ca8f952a28513e7b7a25e1c0eb9a854d994540524254314915c79be5fe040ea1",
+    "anonymous-hosted-smoke.json": "53d954c6b1fcc654098130fb42b989ab13214fa5a7cb4646f70cead1b6d19976",
+    "cleanup-hosted-checks.json": "8f21e7865df6755ef691b8eac8c27c2b251e67945f6bca664d801b8c5fc9d74a",
+    "scheduler-once.json": "a60a2600319a81419782931b7cd5fb5ab5de4b1d7654a3624de90aa138b82696",
+    "scheduler-restoration.json": "3d93dd07b3b224d91ec1de5089858c1e75c0208010a6d36d520f7922158e6b5d",
+    "cleanup-hourly-enabled.json": "9cedaf4baaf62ccfdbcb95e8f174047b87ae603e88a26b7f4fe37589a60e23d5",
+    "cleanup-hourly-snapshot.json": "370cfa41b3134970302296bdd515769a391d2198a7b1d9f3d61e9b92fb84fcad",
+    "cleanup-status-snapshot.json": "517fdb56371bfa2b0ba4a20e4fc689c89e699ea44d08a44784ec92e7b1d5f6fc",
+    "postflight-meter.json": "37ed7381c7d987659638b7e63600beb8bec88675ef63fcdb7dd29ffc73dd9cb8",
+    "native-messaging-inventory-smoke.json": "382a23601f48bdc49970c3826fcd321e7d8ce40c0dd304cba6462f85eb753045"
+  }
+}

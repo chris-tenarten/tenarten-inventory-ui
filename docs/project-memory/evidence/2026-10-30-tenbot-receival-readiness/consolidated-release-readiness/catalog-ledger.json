@@ -1,0 +1,20 @@
+{
+  "readOnly": true,
+  "rows": [
+    {
+      "version": "20261030110000",
+      "name": "catalog_write_authorization",
+      "appliedstatementsha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7"
+    }
+  ],
+  "requests": [
+    {
+      "name": "catalog-ledger",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query/read-only",
+      "method": "POST",
+      "status": 201,
+      "durationMs": 328
+    }
+  ],
+  "mutations": 0
+}

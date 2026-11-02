@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:53:55.736Z",
+  "result": {
+    "name": "tenbot-invoice-original-expiry",
+    "schedule": "23 * * * *",
+    "expectedCommand": true,
+    "installedInactive": true
+  },
+  "sourceWrites": 0
+}

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T21:21:34.235Z",
+  "candidate": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "deploymentId": "7cac1a67-410f-4f48-aa1c-fd883b83cd28",
+  "url": "https://7cac1a67.tendev.pages.dev",
+  "tenOpsSha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "tenOpsDeployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+  "allWritesOff": true
+}

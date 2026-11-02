@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "recordedAt": "2026-10-31T04:19:37.476Z",
+  "holderObservedWhileSleeping": true,
+  "independentRequests": true,
+  "rowLockSerialization": true,
+  "contenderLockTimeoutMs": 200,
+  "holder": {
+    "ok": true,
+    "durationMs": 4370,
+    "rows": [
+      {
+        "pg_sleep": ""
+      }
+    ]
+  },
+  "contender": {
+    "durationMs": 565,
+    "rows": []
+  },
+  "observations": [
+    {
+      "durationMs": 371,
+      "rows": [
+        {
+          "active_holders": 1
+        }
+      ]
+    }
+  ],
+  "rolledBack": true,
+  "grantActivationTested": false,
+  "positiveReplayTested": false,
+  "businessMutations": 0,
+  "inferenceCalls": 0,
+  "sharedRequests": 0
+}

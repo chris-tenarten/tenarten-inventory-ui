@@ -1,0 +1,122 @@
+{
+  "status": "RELEASED_BOTH",
+  "releaseGatesComplete": true,
+  "allAligned": true,
+  "base": "e6d1cbc58d4bc622f1cfe99adde3c9bc7d005ae3",
+  "canonical": {
+    "main": "daa79324531476f91e9e2be9e254050335e895c9",
+    "dev": "daa79324531476f91e9e2be9e254050335e895c9"
+  },
+  "files": [
+    "docs/project-memory/2026-10-22-contacts-ui-polish.md",
+    "src/app/client-layout-shell.tsx",
+    "src/modules/production/contacts/ContactsWorkspace.tsx"
+  ],
+  "targets": {
+    "tendev": {
+      "deployment": "7ec743a2-d57a-49dd-8bf1-4a23f28bebad",
+      "revision": "daa79324531476f91e9e2be9e254050335e895c9",
+      "branding": "TenDev / RESEARCH & DEVELOPMENT",
+      "verifiedAssets": 3,
+      "checks": [
+        "Contacts desktop icon absent; label/link retained; cards and Inspector hide Directory ID/raw UUID"
+      ],
+      "reviewRoutes": [],
+      "build": {
+        "target": "tendev",
+        "builds": 1,
+        "passed": true,
+        "devBranding": true,
+        "branding": "TenDev / RESEARCH & DEVELOPMENT",
+        "envLocalExcluded": true,
+        "productionSupabase": true,
+        "reviewToolsExcluded": true
+      },
+      "verified": [
+        {
+          "route": "/",
+          "sha256": "e1ee79842d6ae9bef2082f7a84ae0b00a1271b06b3df3812ed7ac9359635cf76",
+          "bytes": 17565
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "sha256": "c2db6835e4d3828c114363235ad7faf23931c80faf0f81313e3f44342513df82",
+          "bytes": 429
+        },
+        {
+          "route": "/sw.js",
+          "sha256": "cc79b86fa2fa1f492d0b83eef7ae0de0f6c0741ea972287faadc64ae624f9a07",
+          "bytes": 1588
+        }
+      ]
+    },
+    "tenops": {
+      "deployment": "6cc7ff0f-c77d-4fb9-b579-1fc80638223b",
+      "revision": "daa79324531476f91e9e2be9e254050335e895c9",
+      "branding": "TenOps / OPERATIONS CONTROL",
+      "verifiedAssets": 3,
+      "checks": [
+        "Contacts desktop icon absent; label/link retained; cards and Inspector hide Directory ID/raw UUID"
+      ],
+      "reviewRoutes": [],
+      "build": {
+        "target": "tenops",
+        "builds": 1,
+        "passed": true,
+        "devBranding": false,
+        "branding": "TenOps / OPERATIONS CONTROL",
+        "envLocalExcluded": true,
+        "productionSupabase": true,
+        "reviewToolsExcluded": true
+      },
+      "verified": [
+        {
+          "route": "/",
+          "sha256": "0e9447aee8368b7e0dcd455df0cdb891a86422f9c1f851c0b9b98b1b9ceadae0",
+          "bytes": 16292
+        },
+        {
+          "route": "/manifest.webmanifest",
+          "sha256": "f24cfc0cd69f7f52f309ef3b6b4e98510e22c75b45c0a79bf5924e570fba5654",
+          "bytes": 439
+        },
+        {
+          "route": "/sw.js",
+          "sha256": "cc79b86fa2fa1f492d0b83eef7ae0de0f6c0741ea972287faadc64ae624f9a07",
+          "bytes": 1588
+        }
+      ]
+    }
+  },
+  "rollback": {
+    "sha": "e6d1cbc58d4bc622f1cfe99adde3c9bc7d005ae3",
+    "refs": [
+      "rollback/contacts-cleanup-20261022-main",
+      "rollback/contacts-cleanup-20261022-dev"
+    ],
+    "previousDeployments": {
+      "tendev": {
+        "id": "bc73f0d1-4938-4d75-b825-fb16b87ec31d",
+        "sha": "c99316c1ec30463c40333a3f725857b0de6eb9f8",
+        "url": "https://bc73f0d1.tendev.pages.dev"
+      },
+      "tenops": {
+        "id": "20538973-44e1-4d9e-87bf-52b0b0b66ab1",
+        "sha": "c99316c1ec30463c40333a3f725857b0de6eb9f8",
+        "url": "https://20538973.tenops.pages.dev"
+      }
+    },
+    "bundle": ".tmp-contacts-release/accepted-cleanup-release.bundle",
+    "bundleSha256": "9c521d013124d61c15d6aeb8f65b1fe0979523d73f09af771ecc54223c4de582"
+  },
+  "configurationUnchanged": true,
+  "normalAuthenticationPreserved": true,
+  "fixtureInfrastructureExcluded": true,
+  "riskTier": 1,
+  "testingLevel": 1,
+  "focusedBrowserChecksPerTarget": 1,
+  "mobileSourceUnchanged": true,
+  "parallelWorkPreserved": true,
+  "productionWebPushPreserved": true,
+  "completedLocalValidationReused": true
+}

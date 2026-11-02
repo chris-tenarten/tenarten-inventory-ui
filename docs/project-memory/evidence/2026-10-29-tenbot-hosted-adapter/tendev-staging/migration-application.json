@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-10-29T23:48:15.124Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "atomicTransaction": true,
+  "durationMs": 833,
+  "migrations": [
+    {
+      "version": "20261029220000",
+      "name": "tenbot_openai_metering",
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454"
+    },
+    {
+      "version": "20261029221000",
+      "name": "tenbot_agent_history",
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31"
+    }
+  ],
+  "unchangedPrerequisiteFunctions": true,
+  "result": {
+    "meter": {
+      "ok": true,
+      "enabled": false,
+      "version": 1,
+      "expiresAt": "2026-10-29T23:48:14.637301+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 539956,
+      "remainingMicrousd": 0,
+      "totalLimitMicrousd": 0,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "usageRows": 0,
+    "historyRows": 0,
+    "appliedVersions": [
+      {
+        "name": "tenbot_openai_metering",
+        "version": "20261029220000",
+        "sourceMd5": "32c650283e576741e0d1d97e9332845b"
+      },
+      {
+        "name": "tenbot_agent_history",
+        "version": "20261029221000",
+        "sourceMd5": "be5c3401a75dac351ff14b1d84d33511"
+      }
+    ],
+    "receivalVersionPresent": false
+  }
+}

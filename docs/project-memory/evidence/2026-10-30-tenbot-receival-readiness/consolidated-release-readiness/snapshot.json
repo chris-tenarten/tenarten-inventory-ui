@@ -1,0 +1,94 @@
+{
+  "recordedAt": "2026-10-31T17:35:13.357Z",
+  "readOnly": true,
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "state": {
+    "edge": {
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 32,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "bundleSha256": "97f45d178af417b83373e5183181c6811cfa1369d4f147c731434cd0f87f077a"
+    },
+    "configuration": {
+      "flags": {
+        "TENBOT_AI_ENABLED": "true",
+        "TENBOT_OPENAI_ENABLED": "true",
+        "TENBOT_OPENAI_SPEND_AUTHORIZED": "false",
+        "TENBOT_RECEIVAL_PILOT_ENABLED": "false",
+        "TENBOT_RECEIVAL_EXECUTION_ENABLED": "false",
+        "TENBOT_INVOICE_PREPARATION_ENABLED": "false",
+        "TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED": "false"
+      },
+      "enrollmentEmpty": true,
+      "openAIKeyPresent": true,
+      "credentialValuesReadOrStored": false
+    }
+  },
+  "served": [],
+  "failures": [
+    {
+      "index": 0,
+      "message": "tenops-metadata HTTP 401"
+    },
+    {
+      "index": 1,
+      "message": "tendev-metadata HTTP 401"
+    },
+    {
+      "index": 2,
+      "message": "shared-schema HTTP 400"
+    },
+    {
+      "index": 4,
+      "message": "The expression evaluated to a falsy value:\n\n  assert(b.length<20000000)\n"
+    }
+  ],
+  "requests": [
+    {
+      "name": "edge-metadata",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/functions",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 298
+    },
+    {
+      "name": "secret-metadata",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/secrets",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 298
+    },
+    {
+      "name": "tendev-metadata",
+      "endpoint": "https://api.cloudflare.com/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tendev",
+      "method": "GET",
+      "status": 401,
+      "durationMs": 311
+    },
+    {
+      "name": "shared-schema",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query/read-only",
+      "method": "POST",
+      "status": 400,
+      "durationMs": 312
+    },
+    {
+      "name": "tenops-metadata",
+      "endpoint": "https://api.cloudflare.com/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tenops",
+      "method": "GET",
+      "status": 401,
+      "durationMs": 383
+    },
+    {
+      "name": "edge-source",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/functions/tenbot/body",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 1708
+    }
+  ],
+  "mutations": 0,
+  "inferenceCalls": 0,
+  "authSessionAccess": false
+}

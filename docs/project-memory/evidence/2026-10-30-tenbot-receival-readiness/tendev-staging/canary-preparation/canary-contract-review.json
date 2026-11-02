@@ -1,0 +1,577 @@
+{
+  "recordedAt": "2026-10-30T17:16:38.233Z",
+  "status": "Local read-only source contract review; no canary preparation or execution performed",
+  "runtime": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "source": "/private/tmp/tenops-tenbot-receival-blockers-20261030/candidate",
+  "scope": "Final one-row pending-receival canary preparation. No activation, permissions, migration application, deployment, model call or business mutation.",
+  "sources": [
+    {
+      "path": "src/lib/rbac.ts",
+      "sha256": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5"
+    },
+    {
+      "path": "src/lib/auth.tsx",
+      "sha256": "d8b42e21255414bd0f17ec1eae13921738c90e7ea35faaa7265fd907b52886ec"
+    },
+    {
+      "path": "src/app/inventory/page.tsx",
+      "sha256": "d3017e5037f9e0840097abe8b1a295f379999055e7c5e6066f08be05a0d35dc1"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-service.ts",
+      "sha256": "4cc9d6fe8164e8fe98026d499d53f5235f18ff44cfa34c46eb472f9ae8c82343"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-attachments.ts",
+      "sha256": "620cd88fc655ee194622e266fd527ea3fe92dcec2842b43f0c5e6308afac4edb"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "faaf952fc5bada2a396b43b8a40e46a36bba5209c784431d93bd03f8967b557b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "39f72d7feca6af85264eac7e431aa6e2f86ee3a063612cb5a7a4517e7c36e359"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "c8107501bd40f67a5f77131987ad2a29a6717ee258656b99b7b5138a86123ceb"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "70aacad48a2897061aa71c70cb6d9fa6f3436620cbca2ce3dfcb39d93c2fe6cc"
+    },
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc"
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63"
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441"
+    },
+    {
+      "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742"
+    },
+    {
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00"
+    },
+    {
+      "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d"
+    },
+    {
+      "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3"
+    },
+    {
+      "path": "supabase/migrations/20260923160200_partial_pending_receipts.sql",
+      "sha256": "ece9c0f4980340c45be5445cafdbb447b4e0a68ecb5bceeb52fbfba6f9a09944"
+    }
+  ],
+  "keyBoundaries": [
+    "Document preparation is not entirely read-only: private Storage/source attestation and server review persist source/draft/binding/audit metadata, even while Inventory execution remains disabled.",
+    "Normal Messaging action approve is the commit action: it obtains durable approval, mints a permit and calls canonical execution. Do not click it during preparation-only work.",
+    "The model registry has read_invoice, search_catalog, check_receival_duplicates and prepare_pending_receivals only. The prepare tool returns an artifact and has no approval/execution authority.",
+    "No unrestricted SQL or model-selected privileged business gateway exists. Caller JWT owns all canonical business RPCs; privileged capabilities are fixed source metadata, permit mint and metering only.",
+    "The existing local approval maps are not authority; durable identity/hash/current authorization permit reconciliation across hosted instances."
+  ],
+  "hostedGates": {
+    "workspace": "invoice-receivals.v1",
+    "owner": "Fresh caller.auth.getUser in supabase/functions/tenbot/index.ts, never model/body supplied.",
+    "requiredCapabilities": [
+      "readOperationalData",
+      "writeBusinessData",
+      "adjustInventory"
+    ],
+    "dependentCatalogCapability": "manageVendorsCatalog, only when a reviewed line has newMaterial",
+    "origin": "https://tendev.pages.dev",
+    "edgeSettings": [
+      "TENBOT_RECEIVAL_PILOT_ENABLED=true",
+      "TENBOT_RECEIVAL_ALLOWED_ORIGINS exactly one TenDev origin",
+      "TENBOT_RECEIVAL_EMPLOYEE_IDS includes exact current caller UUID",
+      "TENBOT_RECEIVAL_PILOT_EXPIRES_AT finite/future"
+    ],
+    "executionSetting": "TENBOT_RECEIVAL_EXECUTION_ENABLED=true required only for commit; when false action approve fails before durable approval/Inventory creation.",
+    "databaseGates": [
+      "tenbot_receival_execution_control.execution_enabled with validated_at/isolated_validation_receipt",
+      "tenbot_receival_pilot_policy enabled/start/expiry/origin/validation receipt",
+      "tenbot_receival_pilot_employees exact auth.uid",
+      "single-use matching invoice_receival_execution_permits"
+    ],
+    "preparationLimitation": "With pilot-enabled OFF, even the hosted receival workspace preparation requests are denied. Any preparation-only activation would be a separate scoped decision; execution may remain OFF."
+  },
+  "operations": [
+    {
+      "stage": "Original registration/upload",
+      "caller": "Employee JWT",
+      "rpc": "begin_invoice_receival_source",
+      "arguments": [
+        "p_filename",
+        "p_content_type",
+        "p_byte_size",
+        "p_sha256"
+      ],
+      "mutations": [
+        "invoice_receival_sources insert/reuse owner+SHA identity",
+        "Storage upload into private invoice-receival-originals using upsert:false"
+      ],
+      "reads": [
+        "get_invoice_receival_source(p_source_id)",
+        "caller-authenticated Storage download and actual-byte SHA/MIME/size verification"
+      ],
+      "identity": "storage_path is ownerId/sourceId/original; allowed PDF/JPEG/PNG <=12000000 bytes; original source fields immutable."
+    },
+    {
+      "stage": "Extraction/protected state",
+      "caller": "Fixed server metadata capability after employee-authorized original download",
+      "rpc": "record_invoice_receival_source_state",
+      "arguments": [
+        "p_actor",
+        "p_source_id",
+        "p_expected_version",
+        "p_verified_sha256",
+        "p_state"
+      ],
+      "mutations": [
+        "invoice_receival_sources lifecycle/verified_at/evidence_sha256/version/agent_state"
+      ],
+      "stateFields": [
+        "version=invoice-receival-state.v1",
+        "originalSha256",
+        "visionSha256",
+        "rawLines",
+        "sourceRows[lineId,sourceText,sourceQuantity]",
+        "draft",
+        "traceHash",
+        "document"
+      ],
+      "trustBoundary": "Service capability can attest fixed source metadata only; it cannot insert catalog or pending rows. Uploaded content and model output remain untrusted."
+    },
+    {
+      "stage": "Server review/save edits",
+      "http": "workspace=invoice-receivals.v1 action=review",
+      "bodyFields": [
+        "draftId",
+        "revision",
+        "edits",
+        "orderDetails"
+      ],
+      "caller": "Employee JWT",
+      "rpc": "prepare_invoice_receival_draft_with_source",
+      "arguments": [
+        "p_source_id",
+        "p_document",
+        "p_lines",
+        "p_metadata",
+        "p_provenance"
+      ],
+      "delegates": "prepare_invoice_receival_draft(jsonb,jsonb,jsonb,jsonb)",
+      "mutations": [
+        "invoice_receival_drafts insert immutable payload/hash",
+        "invoice_receival_source_bindings insert exact source/draft/hash",
+        "invoice_receival_audit prepared",
+        "invoice_receival_supersessions for previous same-owner same-original reviews"
+      ],
+      "editInvalidation": "If a durable review exists, runtime first calls revoke_invoice_receival_draft even when new validation later fails. No stale approval can be restored.",
+      "sourceChecks": "Each sourceLineId/sourceText/sourceQuantity exactly equals server-attested sourceRows; original SHA, MIME and extraction digest must match source.",
+      "quantityChecks": "Current catalog/package and invoiceQuantityIssues must agree; unresolved quantity/unit contradiction cannot become approval-ready."
+    },
+    {
+      "stage": "Explicit employee approval",
+      "http": "action=approve with confirmation:true",
+      "bodyFields": [
+        "draftId",
+        "revision",
+        "hash",
+        "confirmation",
+        "durableDraftId",
+        "durableHash"
+      ],
+      "caller": "Employee JWT",
+      "rpc": "approve_invoice_receival_draft",
+      "arguments": {
+        "p_draft_id": "Exact durable ID",
+        "p_expected_hash": "Exact durable immutable hash",
+        "p_confirmation": "CREATE_REVIEWED_PENDING_RECEIVALS"
+      },
+      "mutations": [
+        "invoice_receival_approvals one unique approval per draft",
+        "invoice_receival_audit approved"
+      ],
+      "checks": [
+        "Owned current invoice-receivals.v2 payload/hash",
+        "authorizationVersion current actor/capability epoch",
+        "No supersession/revocation",
+        "Current required capabilities and optional catalog permission",
+        "Unresolved duplicates held",
+        "Exact verified private original source/binding exists"
+      ],
+      "expires": "Earlier of draft expiry (30 minutes from prepare) and 10 minutes from approval",
+      "warning": "This HTTP action immediately proceeds to permit/execution in the normal implementation; there is no separate employee-only approve-without-execute button."
+    },
+    {
+      "stage": "Hosted execution permit",
+      "caller": "Allowlisted fixed server metadata RPC, not business write",
+      "rpc": "tenbot_receival_mint_execution_permit",
+      "arguments": [
+        "p_user",
+        "p_draft_id",
+        "p_expected_hash",
+        "p_approval_id",
+        "p_origin"
+      ],
+      "mutations": [
+        "invoice_receival_execution_permits insert or same-policy expired permit refresh"
+      ],
+      "checks": [
+        "Fresh actor active/non-read-only and role capabilities",
+        "Exact TenDev policy/allowlist/window",
+        "Exact owner/draft/approval/hash/current permission epochs",
+        "Source-bound immutable draft and independent catalog permission if relevant"
+      ],
+      "expires": "At most 2 minutes and no later than policy/draft/approval expiry"
+    },
+    {
+      "stage": "Canonical commit",
+      "caller": "Employee JWT; fixed SECURITY DEFINER owner tenbot_invoice_executor with NOBYPASSRLS",
+      "rpc": "execute_invoice_receival_draft",
+      "arguments": [
+        "p_draft_id",
+        "p_expected_hash",
+        "p_approval_id"
+      ],
+      "finalWrapper": "20261030190000: policy lock helper + exact permit consumed in same transaction; delegates private tenbot_execute_invoice_receival_core",
+      "core": "20261030120000 implementation, current reviewed-line validation replaced by 20261030140000",
+      "mutations": [
+        "Consume invoice_receival_execution_permits.consumed_at",
+        "Insert invoice_receival_document_claims",
+        "Optional save_purchasing_catalog_item_v2 only for explicitly approved dependent newMaterial (excluded from this canary)",
+        "Insert pending_receivals",
+        "Insert invoice_receival_executions",
+        "Insert invoice_receival_audit executed",
+        "Execution trigger retains invoice_receival_sources and clears agent_state"
+      ],
+      "atomicity": "All dependent catalog/pending/claim/receipt/audit/source-retention and permit consumption roll back together on failure.",
+      "noStockPath": "Core calls no receiving RPC and writes neither inventory_items nor inventory_transactions."
+    }
+  ],
+  "immutablePayload": {
+    "schemaVersion": "invoice-receivals.v2",
+    "authorizationVersion": "SHA-256 of actor UUID + monotonic actor/capability permission epochs",
+    "document": [
+      "sha256",
+      "supplier",
+      "reference",
+      "documentDate"
+    ],
+    "metadata": [
+      "orderedBy",
+      "orderDate",
+      "location"
+    ],
+    "lineFields": [
+      "sourceLineId",
+      "catalogSource",
+      "catalogId",
+      "quantityExpected",
+      "unit",
+      "productionJobId",
+      "sourceQuantity{quantity,unit}",
+      "sourceText",
+      "newMaterial",
+      "duplicateAcknowledgement"
+    ],
+    "serverAddedLineSnapshots": [
+      "vendor",
+      "material",
+      "size",
+      "category",
+      "jobLabel",
+      "catalogSnapshot",
+      "vendorSnapshot",
+      "quantityBasis",
+      "duplicateReview"
+    ],
+    "provenance": [
+      "model",
+      "sourceMediaType",
+      "extractionSha256",
+      "toolTraceSha256"
+    ],
+    "hash": "Server encode(sha256(convert_to(payload::text,UTF8)),hex) over PostgreSQL JSONB text; compare the returned server hash, not a separately JSON.stringify-ed browser object.",
+    "importantDate": "Runtime server review currently passes documentDate:null; orderDate is explicit employee metadata, never inferred from invoice date.",
+    "stockingUnit": "quantityBasis.inventoryStockingUnit is required null by the accepted pending-only response contract; do not invent a stocking unit from a package label."
+  },
+  "evidenceChecklist": {
+    "original": {
+      "table": "invoice_receival_sources",
+      "fields": [
+        "id",
+        "owner_user_id",
+        "sha256",
+        "content_type",
+        "byte_size",
+        "storage_path",
+        "lifecycle_state",
+        "verified_at",
+        "evidence_sha256",
+        "retained_draft_id",
+        "retained_at",
+        "agent_state",
+        "version"
+      ],
+      "expectedAfterCommit": "Same immutable original SHA/bytes/MIME; lifecycle_state=retained, retained_draft_id=exact durable ID, retained_at populated, agent_state=NULL. Fresh caller-authorized download still verifies original bytes; no public URL."
+    },
+    "binding": {
+      "table": "invoice_receival_source_bindings",
+      "fields": [
+        "draft_id",
+        "source_id",
+        "owner_user_id",
+        "content_hash",
+        "original_sha256",
+        "evidence_sha256",
+        "bound_at"
+      ],
+      "expected": "All identities/hashes match original/durable approval; binding immutable."
+    },
+    "draft": {
+      "table": "invoice_receival_drafts",
+      "fields": [
+        "id",
+        "owner_user_id",
+        "payload",
+        "content_hash",
+        "created_at",
+        "expires_at"
+      ],
+      "expected": "One included line; exact selected catalog/supplier/unit/quantity/source evidence, no newMaterial and no Job; no supersession or revocation."
+    },
+    "approval": {
+      "table": "invoice_receival_approvals",
+      "fields": [
+        "id",
+        "draft_id",
+        "owner_user_id",
+        "content_hash",
+        "confirmation",
+        "approved_at",
+        "expires_at"
+      ],
+      "expected": "Exact owner/draft/hash and literal confirmation; one unique draft approval, current actor authorization."
+    },
+    "permit": {
+      "table": "invoice_receival_execution_permits",
+      "fields": [
+        "id",
+        "owner_user_id",
+        "draft_id",
+        "approval_id",
+        "content_hash",
+        "authorization_version",
+        "policy_version",
+        "origin",
+        "issued_at",
+        "expires_at",
+        "consumed_at"
+      ],
+      "expected": "Exact identities/current epochs and a single consumed permit after successful commit."
+    },
+    "receipt": {
+      "table": "invoice_receival_executions",
+      "fields": [
+        "draft_id",
+        "approval_id",
+        "owner_user_id",
+        "content_hash",
+        "created_record_ids",
+        "created_catalog_records",
+        "executed_at"
+      ],
+      "expected": "Exactly one returned UUID, empty created_catalog_records, matching approval/hash; receipt immutable."
+    },
+    "claim": {
+      "table": "invoice_receival_document_claims",
+      "fields": [
+        "document_key",
+        "attachment_sha256",
+        "draft_id",
+        "owner_user_id"
+      ],
+      "expected": "Unique normalized supplier+reference and unique original SHA bind the same execution; exact original cannot create a second invoice batch."
+    },
+    "audit": {
+      "table": "invoice_receival_audit",
+      "fields": [
+        "id",
+        "draft_id",
+        "owner_user_id",
+        "event",
+        "content_hash",
+        "details",
+        "occurred_at"
+      ],
+      "events": [
+        "prepared",
+        "approved",
+        "executed"
+      ],
+      "expected": "Prepared provenance+lineCount1/newCatalogCount0; approved approvalId/confirmation/authorizationVersion; executed approvalId/createdRecordIds/createdCatalogRecords/documentIdentity/provenance/authorizationVersion."
+    },
+    "pending": {
+      "table": "pending_receivals",
+      "where": "id in exact returned createdRecordIds, under the same employee JWT/RLS",
+      "fields": [
+        "id",
+        "status",
+        "vendor",
+        "material_name",
+        "size",
+        "category",
+        "quantity_expected",
+        "quantity_received",
+        "unit",
+        "location",
+        "ordered_by",
+        "order_date",
+        "notes",
+        "production_job_id",
+        "temporary_job_label",
+        "received_by",
+        "received_at",
+        "receipt_inventory_item_id",
+        "receipt_transaction_id",
+        "receipt_created_inventory_item"
+      ],
+      "expected": "One pending row, exact approved quantity/unit/supplier/material/size, quantity_received=0, no Job/temporary label, no received actor/date or receipt item/transaction link; notes identify invoice reference and durable draft."
+    },
+    "stock": {
+      "tables": [
+        "inventory_items",
+        "inventory_transactions",
+        "pending_receival_receipt_batches"
+      ],
+      "narrowChecks": [
+        "No inventory_transactions rows with pending_receival_id in the exact returned IDs",
+        "No pending_receival_receipt_batches rows with pending_receival_id in the exact returned IDs",
+        "No receipt links/quantity_received on the returned pending row",
+        "If comparing on-hand quantity before/after, pin only approved caller-visible material/location stock IDs and quantity/unit; do not hash or capture unrelated live business rows."
+      ],
+      "warning": "Runtime return onHandChanged:false is a declared contract value, not an independently measured stock diff. Shared unrelated activity must not be misattributed to the canary."
+    }
+  },
+  "idempotency": {
+    "key": "Exact durable draftId/hash/approvalId with owner and current authorization",
+    "databaseGuards": [
+      "invoice_receival_executions draft_id primary key, approval_id unique",
+      "invoice_receival_document_claims document_key primary key, attachment_sha256 unique, draft_id unique",
+      "Actor/draft/resource locks and single-use same-transaction permit",
+      "Immutable approvals/audit/source bindings"
+    ],
+    "exactRetry": "A committed receipt is reconciled under fresh current permission/RLS and returns original createdRecordIds with idempotent:true; no second pending or catalog row. Do not create another invoice/reference to escape uncertainty.",
+    "afterCancellation": "Runtime allows a matching idempotent receipt to report changed current status with a notice; returns original IDs and createdCount=0, not a new write.",
+    "recordOnRetry": [
+      "Same IDs and empty new catalog set",
+      "No extra document claim/execution/committed row",
+      "No new stock transactions or receipt batches",
+      "Do not discard uncertain inference reservations"
+    ],
+    "afterPilotDisabled": "The hosted approve route still requires enabled pilot/execution gates and therefore is not an always-available receipt reader. Once write gates are OFF, reconcile non-mutatingly with get_invoice_receival_draft(p_draft_id) using the same actual caller JWT/current readOperationalData+writeBusinessData+adjustInventory, and exact returned pending IDs. Do not re-enable execution merely to inspect a receipt.",
+    "receiptReadRpc": {
+      "name": "get_invoice_receival_draft",
+      "arguments": [
+        "p_draft_id"
+      ],
+      "mutations": 0,
+      "requires": [
+        "actual authenticated auth.uid",
+        "owned draft ID",
+        "readOperationalData",
+        "writeBusinessData",
+        "adjustInventory"
+      ],
+      "fields": [
+        "id",
+        "hash",
+        "ownerId",
+        "superseded",
+        "revoked",
+        "execution.createdRecordIds",
+        "execution.createdCatalogRecords",
+        "execution.idempotent",
+        "execution.executedAt"
+      ]
+    }
+  },
+  "cancellation": {
+    "entry": "Exact35bb src/app/inventory/page.tsx handleCancelPendingReceival",
+    "clientGate": "auth.can('adjustInventory') via canAdjustPendingReceivals",
+    "employeeConfirmation": "window.confirm explicitly says cancellation will not affect inventory.",
+    "literalOperation": "supabase.from('pending_receivals').update({status:'cancelled'}).eq('id',receival.id)",
+    "rpc": null,
+    "authorization": "Existing authenticated client and pending_receivals UPDATE RLS; no model SQL, operator service-role update or new cleanup API.",
+    "safeScope": "Only the actual returned canary UUID, freshly verified pending/unreceived with quantity_received=0 and no receipt links. Never locate by an ambiguous material name.",
+    "postcheck": "Exactly that row status cancelled; quantity_received still0; no linked inventory transaction/receipt batch; retain original/durable approval/execution/document claim/audit.",
+    "importantLimit": "Existing Cancel handler has no server-side quantity_received=0 compare-and-set precondition; it is the general cancel-remaining-pending action. A concurrent Receive is outside this canary scope. If any receipt/nonzero quantity appears, stop; no automatic Undo Receive, delete, purge or stock adjustment is authorized.",
+    "cleanupRetention": "Cancel does not revoke or delete the executed invoice/original/audit. Expired abandoned draft cleanup excludes retained/executed originals."
+  },
+  "roles": {
+    "source": "src/lib/rbac.ts ROLE_CAPABILITIES + src/lib/auth.tsx accessAllowed/can + accepted build-attempt.json env keys",
+    "actualAcceptedBuild": {
+      "NEXT_PUBLIC_RBAC_MODEProvided": false,
+      "effectiveMode": "compatibility",
+      "reason": "RBAC_MODE is enforced only when NEXT_PUBLIC_RBAC_MODE exactly equals enforced. The accepted fixed build environment omits it.",
+      "tenDevFrontendEffect": "AuthProvider allows active non-Admin profiles in compatibility mode without accessDevelopmentEnvironment. This does not bypass server RPC capabilities, RLS or Inventory auth.can checks."
+    },
+    "declaredBundles": {
+      "guest": {
+        "adjustInventory": false,
+        "accessDevelopmentEnvironment": false
+      },
+      "member": {
+        "adjustInventory": false,
+        "accessDevelopmentEnvironment": false,
+        "receiveInventory": true
+      },
+      "lead": {
+        "adjustInventory": true,
+        "accessDevelopmentEnvironment": false,
+        "manageVendorsCatalog": true
+      },
+      "developer": {
+        "adjustInventory": false,
+        "accessDevelopmentEnvironment": true
+      },
+      "admin": {
+        "adjustInventory": true,
+        "accessDevelopmentEnvironment": true
+      }
+    },
+    "hardRestrictionVerdict": "No hard role-intersection impossibility in the actual accepted build: an active non-read-only Lead can enter compatibility-mode TenDev and has Inventory adjustment/create/cancel capability, subject to actual current DB role bindings. Developer still lacks Inventory adjustment in the declared bundle.",
+    "conditionalOnly": "If a future build explicitly enables enforced RBAC with TenDev developer artwork, the declared non-Admin bundles do not intersect accessDevelopmentEnvironment and adjustInventory. That is not this accepted build and must not be assumed or changed here.",
+    "correction": "Earlier statement that non-Admin Inventory+TenDev is impossible was too broad; it omitted the actual compatibility-mode branch. No role/permission change is proposed.",
+    "targetAccount": "Actual chris_dev UUID/role/current signed capabilities must be established from the separately authorized exact-account lookup and normal sign-in; account name is not authority."
+  },
+  "limits": [
+    "This is exact local source review, not a new database, signed JWT, hosted model or end-to-end write validation.",
+    "Current live hosted flags/allowlist/account/material/document/spending and Product approval are separate gates, not inferred from this source review.",
+    "Server policy scopes employee/origin/window and each approval scopes an immutable draft; it has no independent global one-document/one-row quota. The reviewed canary payload must contain exactly one line and the single designated account must remain supervised."
+  ],
+  "actions": {
+    "networkCalls": 0,
+    "inferenceCalls": 0,
+    "operationalWrites": 0,
+    "storageUploads": 0,
+    "approvals": 0,
+    "permissionChanges": 0,
+    "migrationApplications": 0,
+    "gitMutations": 0,
+    "testsRun": 0
+  }
+}

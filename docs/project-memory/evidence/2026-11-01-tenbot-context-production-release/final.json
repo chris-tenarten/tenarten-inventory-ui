@@ -1,0 +1,59 @@
+{
+  "passed": true,
+  "at": "2026-11-01T17:44:02.964Z",
+  "health": [
+    {
+      "name": "auth",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY",
+      "info": {
+        "name": "GoTrue",
+        "version": "v2.197.0",
+        "description": "GoTrue is a user registration and authentication API"
+      }
+    },
+    {
+      "name": "db",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    }
+  ],
+  "tenops": {
+    "sha": "01c0b4576a61329d973ce65ca58437ce26627be1",
+    "deploymentId": "967ed4d1-0ee8-4488-8db2-ee984cabc953",
+    "url": "https://967ed4d1.tenops.pages.dev"
+  },
+  "tendev": {
+    "sha": "509abf3be39e77d607e458a297abbaa3e592f189",
+    "deploymentId": "341a78e4-91f4-4578-b153-20c2ccd40563"
+  },
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 34,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "878717f5d18e860e16b5d6384dc56bf0c81f679bbaa907e81581d7f3a2fc8404"
+  },
+  "agentWrites": false,
+  "executionAuthorization": false,
+  "preparation": false,
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "openAISpendingAuthorized": false,
+  "ordinaryPolicyEnabled": false,
+  "ordinaryPolicyExpiresAt": "2026-10-30T23:00:00+00:00",
+  "qwenConfigured": true,
+  "terraConfigured": true,
+  "ordinarySpendingChanged": false,
+  "servedAssets": 34,
+  "canaryRouteStatus": 404,
+  "settingsSecretsFunctionsMigrationLedgerAndAccountingUnchanged": true,
+  "authenticatedEmployeeSmokePerformed": false,
+  "realProviderInferenceTested": false,
+  "operationalWrites": 0,
+  "inferenceCalls": 0,
+  "migrations": 0,
+  "pagesDeployments": 1
+}

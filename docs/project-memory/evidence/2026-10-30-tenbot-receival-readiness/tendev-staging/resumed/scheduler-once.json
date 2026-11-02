@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:02:04.198Z",
+  "targetUtc": "2026-10-30 17:02:00+00",
+  "cronRun": {
+    "jobid": 3,
+    "runid": 13908,
+    "status": "succeeded",
+    "end_time": "2026-10-30T17:02:00.191571+00:00",
+    "start_time": "2026-10-30T17:02:00.138505+00:00"
+  },
+  "runs": [
+    {
+      "id": "99b7dd27-1caf-4ef1-9587-8604b3d4586c",
+      "status": "succeeded",
+      "removed": 0,
+      "createdAt": "2026-10-30T17:02:00.166069+00:00"
+    }
+  ],
+  "removed": 0,
+  "sourceWrites": 0,
+  "unrelatedJobsUnchanged": true,
+  "restorationPending": true
+}

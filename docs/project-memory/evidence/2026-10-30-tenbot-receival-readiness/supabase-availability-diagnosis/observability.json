@@ -1,0 +1,435 @@
+{
+  "recordedAt": "2026-10-30T23:11:55.605Z",
+  "requests": [
+    {
+      "name": "metrics",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/metrics",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:11:45.362Z",
+      "timeoutMs": 20000,
+      "automaticRetries": 0,
+      "status": 500,
+      "headersMs": 10241,
+      "totalMs": 10242,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:11:55 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e19d529cac2f4-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "bodyBytes": 97,
+      "bodySha256": "79255083123f73b8dab5b2546c0566bd099b4d6b420f359e0a7d116f99a735f3",
+      "rawBodyRetained": false,
+      "available": false,
+      "safeError": "Failed to fetch project's metrics"
+    },
+    {
+      "name": "backend-aggregate-logs",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/logs",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:11:45.393Z",
+      "timeoutMs": 20000,
+      "automaticRetries": 0,
+      "querySha256": "1dd8ba555490af560b277d6d6f7eb85333448c101cda5dd80a6e6c819bf9dfab",
+      "window": {
+        "start": "2026-10-30T22:00:00Z",
+        "end": "2026-10-30T23:11:00.000Z"
+      },
+      "aggregateOnly": true,
+      "status": 200,
+      "headersMs": 1003,
+      "totalMs": 1013,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:11:46 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e19d52e8916be-IAH",
+        "content-type": "application/json"
+      },
+      "bodyBytes": 3046,
+      "bodySha256": "781da5499ac4b67a72d8efd80389f80a1f463cb6df44181257295769143461bd",
+      "rawBodyRetained": false,
+      "available": true,
+      "rows": [
+        {
+          "bucket": "2026-10-30T22:00:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 2,
+          "resource_messages": 0,
+          "source": "auth_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 0
+        },
+        {
+          "bucket": "2026-10-30T22:00:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 284,
+          "resource_messages": 0,
+          "source": "postgres_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 273
+        },
+        {
+          "bucket": "2026-10-30T22:00:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 3,
+          "resource_messages": 0,
+          "source": "postgrest_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 0
+        },
+        {
+          "bucket": "2026-10-30T22:05:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 1,
+          "resource_messages": 0,
+          "source": "auth_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 0
+        },
+        {
+          "bucket": "2026-10-30T22:05:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 400,
+          "resource_messages": 0,
+          "source": "postgres_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 389
+        },
+        {
+          "bucket": "2026-10-30T22:05:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 4,
+          "resource_messages": 0,
+          "source": "postgrest_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 0
+        },
+        {
+          "bucket": "2026-10-30T22:10:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 5,
+          "resource_messages": 0,
+          "source": "auth_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 0
+        },
+        {
+          "bucket": "2026-10-30T22:10:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 1416,
+          "resource_messages": 0,
+          "source": "postgres_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 1405
+        },
+        {
+          "bucket": "2026-10-30T22:10:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 13,
+          "resource_messages": 0,
+          "source": "postgrest_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 0
+        },
+        {
+          "bucket": "2026-10-30T22:15:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 82,
+          "resource_messages": 0,
+          "source": "postgres_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 78
+        },
+        {
+          "bucket": "2026-10-30T22:15:00",
+          "connection_capacity_messages": 0,
+          "connectivity_messages": 0,
+          "events": 3,
+          "resource_messages": 0,
+          "source": "postgrest_logs",
+          "sqlstate_53100": 0,
+          "sqlstate_53200": 0,
+          "sqlstate_53300": 0,
+          "sqlstate_57014": 0,
+          "sqlstate_57P03": 0,
+          "statement_timing_messages": 0
+        }
+      ],
+      "rowCount": 11,
+      "atLimit": false,
+      "rawMessagesOrStatementsReturned": false
+    },
+    {
+      "name": "gateway-aggregate-logs",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/logs",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:11:45.394Z",
+      "timeoutMs": 20000,
+      "automaticRetries": 0,
+      "querySha256": "47df31233c0b6840ca75a5f0c19d5821f60d81b2fc531cacdc8680948d104b73",
+      "window": {
+        "start": "2026-10-30T22:00:00Z",
+        "end": "2026-10-30T23:11:00.000Z"
+      },
+      "aggregateOnly": true,
+      "status": 200,
+      "headersMs": 1005,
+      "totalMs": 1014,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:11:46 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e19d52823c0b9-IAH",
+        "content-type": "application/json"
+      },
+      "bodyBytes": 2610,
+      "bodySha256": "1c295c0e75b68bf1495e70ed4882320d0cf7886c6c923d9445e4f3d5cb9da68e",
+      "rawBodyRetained": false,
+      "available": true,
+      "rows": [
+        {
+          "bucket": "2026-10-30T22:00:00",
+          "requests": 2,
+          "route_class": "auth_token",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:00:00",
+          "requests": 18,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:00:00",
+          "requests": 4,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T22:05:00",
+          "requests": 1,
+          "route_class": "auth_other",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:05:00",
+          "requests": 35,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:05:00",
+          "requests": 5,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T22:10:00",
+          "requests": 6,
+          "route_class": "auth_other",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:10:00",
+          "requests": 158,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:10:00",
+          "requests": 5,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T22:15:00",
+          "requests": 4,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:15:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T22:20:00",
+          "requests": 2,
+          "route_class": "auth_token",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:20:00",
+          "requests": 2,
+          "route_class": "auth_token",
+          "status": 524
+        },
+        {
+          "bucket": "2026-10-30T22:20:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:20:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 504
+        },
+        {
+          "bucket": "2026-10-30T22:20:00",
+          "requests": 3,
+          "route_class": "rest",
+          "status": 522
+        },
+        {
+          "bucket": "2026-10-30T22:20:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 524
+        },
+        {
+          "bucket": "2026-10-30T22:30:00",
+          "requests": 1,
+          "route_class": "auth_token",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:30:00",
+          "requests": 4,
+          "route_class": "auth_token",
+          "status": 522
+        },
+        {
+          "bucket": "2026-10-30T22:30:00",
+          "requests": 1,
+          "route_class": "auth_token",
+          "status": 524
+        },
+        {
+          "bucket": "2026-10-30T22:40:00",
+          "requests": 1,
+          "route_class": "auth_token",
+          "status": 522
+        },
+        {
+          "bucket": "2026-10-30T22:45:00",
+          "requests": 1,
+          "route_class": "auth_token",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:45:00",
+          "requests": 1,
+          "route_class": "auth_token",
+          "status": 504
+        },
+        {
+          "bucket": "2026-10-30T22:45:00",
+          "requests": 3,
+          "route_class": "auth_token",
+          "status": 522
+        },
+        {
+          "bucket": "2026-10-30T22:50:00",
+          "requests": 2,
+          "route_class": "auth_token",
+          "status": 504
+        },
+        {
+          "bucket": "2026-10-30T22:55:00",
+          "requests": 1,
+          "route_class": "auth_token",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T22:55:00",
+          "requests": 3,
+          "route_class": "auth_token",
+          "status": 504
+        },
+        {
+          "bucket": "2026-10-30T23:00:00",
+          "requests": 3,
+          "route_class": "auth_token",
+          "status": 504
+        },
+        {
+          "bucket": "2026-10-30T23:00:00",
+          "requests": 1,
+          "route_class": "auth_token",
+          "status": 522
+        },
+        {
+          "bucket": "2026-10-30T23:05:00",
+          "requests": 2,
+          "route_class": "auth_token",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:05:00",
+          "requests": 4,
+          "route_class": "auth_token",
+          "status": 504
+        }
+      ],
+      "rowCount": 31,
+      "atLimit": false,
+      "rawMessagesOrStatementsReturned": false
+    }
+  ],
+  "postgreSqlQueries": 0,
+  "hostedMutations": 0,
+  "credentialValuesStored": false,
+  "privacy": "Only numeric allowlisted metrics and pre-aggregated log categories; no raw logs, request headers, query text or records retained."
+}

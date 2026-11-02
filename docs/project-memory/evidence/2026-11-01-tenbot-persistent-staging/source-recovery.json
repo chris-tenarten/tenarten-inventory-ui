@@ -1,0 +1,8 @@
+{
+  "candidate": "9415adc577e5509c2473001fbd514ab644077e3c",
+  "prerequisite": "c45f12a6b10aa01b524922b654ce61b12e7be9f8",
+  "bundle": "/private/tmp/tenops-tenbot-persistent-staging-20261101/9415adc5.bundle",
+  "sha256": "017ada5a51586d13077d0efd4ce21061e225bd8a05f4809122e58dd3eda933b4",
+  "verified": true,
+  "rootRefsUnchanged": true
+}

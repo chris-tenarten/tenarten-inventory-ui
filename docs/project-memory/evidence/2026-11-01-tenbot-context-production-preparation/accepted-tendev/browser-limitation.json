@@ -1,0 +1,11 @@
+{
+  "inventoryAttempts": 1,
+  "apps": 0,
+  "browsers": 0,
+  "error": "Sky Computer Use native pipe startup failed",
+  "retried": false,
+  "authorizedNonBrowserEmployeeSessionAvailable": false,
+  "sessionsReadOrFabricated": false,
+  "authenticatedHostedFollowupsPerformed": false,
+  "authenticatedInventoryMessagingSmokePerformed": false
+}

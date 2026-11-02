@@ -1,0 +1,105 @@
+/** Fixed, reviewed control-plane recipe. Root must review before execution.
+ * No employee grant RPC, application data write, SQL input, deployment or model.
+ */
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {createHash,randomUUID} from 'node:crypto';
+import {supabaseToken} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-messaging-groups-release/lib.mjs';
+const dir='/private/tmp/tenops-tenbot-chris-dev-staging-20261030/canary-preparation/approved-execution',repo='/Users/chrisngo/source/repos/tenarten-inventory-ui';
+const ref='vxdxjhazkqhpkwdqtobp',origin='https://tendev.pages.dev',owner='3785f6b9-742e-452f-af6c-31613a983633',catalog='ba6a3690-0886-4f72-9f86-581bcc1f3b44';
+const documentSha='c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a',reference='SYN-TENDEV-RECEIVAL-20261030-01',evidenceSha='836af5bb4414611c2a2e3f8a2df4af222e9d97b9d7fe63030d17999ca1e0445c';
+const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i,sha=x=>createHash('sha256').update(x).digest('hex');
+const stable=x=>JSON.stringify(x&&typeof x==='object'?Array.isArray(x)?x.map(v=>JSON.parse(stable(v))):Object.fromEntries(Object.keys(x).sort().map(k=>[k,JSON.parse(stable(x[k]))])):x);
+const mode=process.argv[2],grantId=process.argv[3]??null,recordId=process.argv[4]??null,run=Date.now()+'-'+randomUUID(),deadline=Date.now()+120000;
+let token,phase='local-validation',mutations=0;
+const save=(name,value)=>{const file=dir+'/'+name;fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{mode:0o600,flag:'wx'});return file;};
+const fail=(code,uncertain=false)=>{const error=Error(code);error.safeCode=code;error.uncertain=uncertain;throw error;};
+const read=name=>JSON.parse(fs.readFileSync(dir+'/'+name,'utf8'));
+const off={TENBOT_RECEIVAL_PILOT_ENABLED:'false',TENBOT_RECEIVAL_EXECUTION_ENABLED:'false',TENBOT_RECEIVAL_ALLOWED_ORIGINS:origin,TENBOT_RECEIVAL_EMPLOYEE_IDS:'',TENBOT_RECEIVAL_PILOT_EXPIRES_AT:''};
+async function api(resource,method='GET',body){
+ const remaining=deadline-Date.now();if(remaining<=0)fail('CONTROL_OVERALL_TIMEOUT',mutations>0);
+ let response;try{response=await fetch(`https://api.supabase.com/v1/projects/${ref}/${resource}`,{method,headers:{Authorization:'Bearer '+token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(Math.min(15000,remaining)),redirect:'error'});}catch{fail('CONTROL_REQUEST_TIMEOUT_OR_NETWORK_UNCERTAIN',method==='POST');}
+ let raw;try{raw=await response.text();}catch{fail('CONTROL_RESPONSE_BODY_TIMEOUT_UNCERTAIN',method==='POST');}let value;try{value=raw?JSON.parse(raw):null;}catch{fail('CONTROL_RESPONSE_INVALID',method==='POST');}
+ if(!response.ok){const code=typeof value?.code==='string'&&/^[A-Z0-9]{5}$/.test(value.code)?value.code:'HTTP_'+response.status;fail('CONTROL_REQUEST_REJECTED_'+code,method==='POST'&&response.status>=500);}
+ return value;
+}
+async function mutation(label,resource,body){
+ phase=label;const before=save(`${run}-${label}.before.private.json`,{startedAt:new Date().toISOString(),mode,grantId,projectRef:ref,requestBodySha256:sha(JSON.stringify(body)),resource,phase:'prepared-before-request',secretValuesPersisted:false,automaticRetry:false});mutations++;
+ try{const value=await api(resource,'POST',body);save(`${run}-${label}.after.private.json`,{finishedAt:new Date().toISOString(),mode,grantId,phase:'request-returned-success',before,replyShape:Array.isArray(value)?'array':value===null?'empty':'object',secretValuesPersisted:false});return value;}
+ catch(error){save(`${run}-${label}.after.private.json`,{finishedAt:new Date().toISOString(),mode,grantId,phase:'stopped',code:error.safeCode??'CONTROL_LOCAL_FAILURE',uncertain:error.uncertain===true,before,automaticRetry:false,secretValuesPersisted:false});throw error;}
+}
+function secretDigests(rows){if(!Array.isArray(rows))fail('SECRET_METADATA_UNAVAILABLE');return rows.map(row=>{const value=row.digest??row.value;if(typeof row.name!=='string'||typeof value!=='string'||!/^[a-f0-9]{64}$/.test(value))fail('SECRET_DIGEST_ONLY_RESPONSE_REQUIRED');return {name:row.name,digest:value};}).sort((a,b)=>a.name.localeCompare(b.name));}
+const targetStock="lower(btrim(vendor)) in('t&m supply','t&m','tm','terrazzo & marble supply','terrazzo & marble supply co.') and lower(btrim(color))='alaska white' and regexp_replace(size,'[^0-9]','','g')='0'";
+const targetDocument=`d.owner_user_id='${owner}' and d.payload->'document'->>'sha256'='${documentSha}' and d.payload->'document'->>'reference'='${reference}'`;
+async function snapshot(){
+ phase='readonly-snapshot';const grantFilter=grantId?`id='${grantId}' and owner_user_id='${owner}'`:`owner_user_id='${owner}'`;
+ const query=`begin read only;set local lock_timeout='3s';set local statement_timeout='10s';select jsonb_build_object(
+ 'readOnly',current_setting('transaction_read_only'),'serverNow',clock_timestamp(),
+ 'profile',(select jsonb_build_object('userId',user_id,'role',role,'active',is_active,'readOnly',read_only) from public.app_users where user_id='${owner}'),
+ 'developerAdjust',(select count(*) from public.app_role_capabilities where role='developer' and capability='adjustInventory'),
+ 'grants',(select coalesce(jsonb_agg(jsonb_build_object('id',id,'ownerId',owner_user_id,'startsAt',starts_at,'expiresAt',expires_at,'revokedAt',revoked_at,'executedDraftId',executed_draft_id) order by starts_at),'[]') from public.tenbot_chris_dev_canary_grants where ${grantFilter}),
+ 'activeGrants',(select count(*) from public.tenbot_chris_dev_canary_grants where owner_user_id='${owner}' and revoked_at is null and expires_at>clock_timestamp()),
+ 'pilot',(select jsonb_build_object('enabled',enabled,'policyVersion',policy_version,'origin',allowed_origin,'startsAt',starts_at,'expiresAt',expires_at,'validationReceiptSha256',validation_receipt_sha256) from public.tenbot_receival_pilot_policy where singleton),
+ 'execution',(select jsonb_build_object('enabled',execution_enabled,'validatedAt',validated_at,'receiptPresent',nullif(btrim(isolated_validation_receipt),'') is not null) from public.tenbot_receival_execution_control where singleton),
+ 'enrolledTotal',(select count(*) from public.tenbot_receival_pilot_employees),'subjectEnrolled',exists(select 1 from public.tenbot_receival_pilot_employees where user_id='${owner}'),'otherEnrollment',(select count(*) from public.tenbot_receival_pilot_employees where user_id<>'${owner}'),
+ 'catalog',(select jsonb_build_object('id',id,'vendor',vendor,'material',item_name,'size',size,'unit',unit) from public.vendor_catalog where id='${catalog}'),
+ 'sourceCount',(select count(*) from public.invoice_receival_sources where owner_user_id='${owner}' and sha256='${documentSha}'),
+ 'draftCount',(select count(*) from public.invoice_receival_drafts d where ${targetDocument}),
+ 'executions',(select coalesce(jsonb_agg(jsonb_build_object('draftId',e.draft_id,'hash',e.content_hash,'recordIds',e.created_record_ids,'catalogCount',jsonb_array_length(e.created_catalog_records),'executedAt',e.executed_at) order by e.executed_at),'[]') from public.invoice_receival_executions e join public.invoice_receival_drafts d on d.id=e.draft_id where e.owner_user_id='${owner}' and ${targetDocument}),
+ 'matchingClaims',(select count(*) from public.invoice_receival_document_claims where attachment_sha256='${documentSha}' or document_key=public.tenbot_invoice_vendor_key('T&M Supply')||':'||regexp_replace(lower('${reference}'),'[^a-z0-9]','','g')),
+ 'pendingByReference',(select count(*) from public.pending_receivals where notes like '%${reference}%'),
+ 'boundPending',(select coalesce(jsonb_agg(jsonb_build_object('id',p.id,'quantityExpected',p.quantity_expected,'quantityReceived',p.quantity_received,'unit',p.unit,'status',p.status,'receiptInventoryId',p.receipt_inventory_item_id,'receiptTransactionId',p.receipt_transaction_id,'receivedAt',p.received_at) order by p.id),'[]') from public.pending_receivals p where ${recordId?`p.id='${recordId}' and `:''}exists(select 1 from public.invoice_receival_executions e join public.invoice_receival_drafts d on d.id=e.draft_id where e.owner_user_id='${owner}' and ${targetDocument} and p.id=any(e.created_record_ids))),
+ 'stockRows',(select coalesce(jsonb_agg(jsonb_build_object('id',id,'vendor',vendor,'color',color,'size',size,'quantity',quantity,'unit',unit) order by id),'[]') from public.inventory_items where ${targetStock}),
+ 'allStockHash',(select md5(coalesce(string_agg(to_jsonb(i)::text,',' order by id),'')) from public.inventory_items i),
+ 'inventoryTransactionCount',(select count(*) from public.inventory_transactions),
+ 'subjectDayUsageMicrousd',(select coalesce(sum(coalesce(actual_microusd,reserved_microusd)),0) from public.tenbot_openai_usage where user_id='${owner}' and created_at>=date_trunc('day',clock_timestamp() at time zone 'UTC') at time zone 'UTC'),
+ 'meter',public.tenbot_openai_meter_status(),'spendingPolicy',(select to_jsonb(p) from public.tenbot_openai_policy p where singleton)
+ ) as state;commit;`;
+ const rows=await api('database/query','POST',{query}),state=rows?.find(row=>row.state)?.state;if(!state||state.readOnly!=='on')fail('READONLY_SNAPSHOT_UNVERIFIED');
+ const stockRows=state.stockRows;state.targetStockCount=stockRows.length;state.targetStockSha256=sha(stable(stockRows));delete state.stockRows;
+ state.baselineChecks={profileUnchanged:stable(state.profile)===stable({userId:owner,role:'developer',active:true,readOnly:false}),developerGlobalAdjustmentAbsent:state.developerAdjust===0,catalogUnchanged:stable(state.catalog)===stable(baseline.state.catalog[0]),spendingPolicyUnchanged:stable(state.spendingPolicy)===stable(baseline.state.policy),targetStockUnchanged:state.targetStockSha256===sha(stable(baseline.state.stockRows)),allStockUnchanged:state.allStockHash===baseline.state.allStockHash,inventoryTransactionsUnchanged:state.inventoryTransactionCount===baseline.state.inventoryTransactionCount};
+ return state;
+}
+function flagsMatch(digests,expected){return Object.entries(expected).every(([name,value])=>digests.find(row=>row.name===name)?.digest===sha(value));}
+function protectedDigests(digests){return digests.filter(row=>!Object.hasOwn(off,row.name));}
+let baseline,window,windowSha;
+try{
+ assert(['status','enable','disable','final'].includes(mode));assert(mode==='status'?process.argv.length===3:uuid.test(grantId)&&process.argv.length===(mode==='final'&&recordId?5:4));if(recordId)assert(mode==='final'&&uuid.test(recordId));
+ baseline=read('preflight.json');assert.equal(baseline.passed,true);window=read('execution-window.json');windowSha=sha(fs.readFileSync(dir+'/execution-window.json'));
+ assert.equal(window.projectRef,ref);assert.equal(window.origin,origin);assert.equal(window.ownerId,owner);assert(typeof window.approvalReference==='string'&&window.approvalReference.trim());assert.equal(window.candidateRuntime,JSON.parse(fs.readFileSync('/private/tmp/tenops-tenbot-chris-dev-staging-20261030/candidate.json')).sha);assert.equal(window.validationReceiptSha256,evidenceSha);
+ assert.equal(sha(fs.readFileSync(repo+'/docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/temporary-chris-dev-grant/source-validation-manifest.json')),evidenceSha);
+ const start=new Date(window.startsAt).toISOString(),end=new Date(window.expiresAt).toISOString();assert(Date.parse(end)>Date.parse(start)&&Date.parse(end)-Date.parse(start)<=900000&&Date.parse(end)<=Date.parse('2026-10-30T23:00:00Z'));
+ token=supabaseToken();const beforeSecrets=secretDigests(await api('secrets')),before=await snapshot();
+ if(grantId){assert.equal(before.grants.length,1);assert.equal(before.grants[0].id,grantId);assert.equal(before.grants[0].ownerId,owner);assert.equal(Date.parse(before.grants[0].expiresAt),Date.parse(end));}
+ save(`${run}-${mode}-before.private.json`,{mode,recordedAt:new Date().toISOString(),grantId,windowSha256:windowSha,state:before,secretDigests:beforeSecrets});
+ if(mode==='enable'||mode==='final')for(const [check,passed]of Object.entries(before.baselineChecks))if(!passed)fail('BASELINE_'+check.toUpperCase()+'_FAILED');
+ if(mode==='enable'){
+  assert(Date.parse(before.serverNow)>=Date.parse(start)&&Date.parse(before.serverNow)<Date.parse(end)-60000,'Confirmed window is not current or has insufficient time');assert.equal(before.grants[0].revokedAt,null);assert.equal(before.grants[0].executedDraftId,null);assert.equal(before.activeGrants,1);assert.equal(before.pilot.enabled,false);assert.equal(before.execution.enabled,false);assert.equal(before.enrolledTotal,0);assert.equal(before.sourceCount,0);assert.equal(before.draftCount,0);assert.equal(before.executions.length,0);assert.equal(before.matchingClaims,0);assert.equal(before.pendingByReference,0);assert(flagsMatch(beforeSecrets,off),'Edge gates/enrollment must initially be OFF');
+  save(`enable-${grantId}.attempt.private.json`,{startedAt:new Date().toISOString(),grantId,windowSha256:windowSha,automaticRetry:false,scope:'Fixed metadata controls only; reconcile any previous attempt before a new recipe.'});
+  const query=`begin;set local lock_timeout='3s';set local statement_timeout='10s';do $canary$ declare g public.tenbot_chris_dev_canary_grants; n integer;begin
+   perform 1 from public.app_users where user_id='${owner}' and role='developer' and is_active and not read_only for share;if not found then raise exception 'Exact Developer baseline required';end if;lock table public.app_role_capabilities in share mode;perform pg_advisory_xact_lock(761030,2101);
+   select * into g from public.tenbot_chris_dev_canary_grants where id='${grantId}' and owner_user_id='${owner}' for share;if not found or g.revoked_at is not null or g.executed_draft_id is not null or g.starts_at<'${start}'::timestamptz or g.starts_at>clock_timestamp() or g.expires_at<>'${end}'::timestamptz or g.expires_at<=clock_timestamp()+interval '60 seconds' then raise exception 'Exact active reviewed grant required';end if;
+   if exists(select 1 from public.app_role_capabilities where role='developer' and capability='adjustInventory') or not exists(select 1 from public.app_role_capabilities where role='developer' and capability='readOperationalData') or not exists(select 1 from public.app_role_capabilities where role='developer' and capability='writeBusinessData') then raise exception 'Developer base capability drift';end if;
+   if (select count(*) from public.tenbot_receival_pilot_policy where singleton and not enabled and allowed_origin='${origin}')<>1 or (select count(*) from public.tenbot_receival_execution_control where singleton and not execution_enabled)<>1 or exists(select 1 from public.tenbot_receival_pilot_employees) then raise exception 'Pilot must be OFF with enrollment empty';end if;
+   insert into public.tenbot_receival_pilot_employees(user_id) values('${owner}');
+   update public.tenbot_receival_pilot_policy set enabled=true,starts_at=g.starts_at,expires_at=g.expires_at,validation_receipt_sha256='${evidenceSha}' where singleton;get diagnostics n=row_count;if n<>1 then raise exception 'Pilot singleton missing';end if;
+   update public.tenbot_receival_execution_control set execution_enabled=true,validated_at=clock_timestamp(),isolated_validation_receipt='Product-approved exact one-row canary; accepted real isolated database/source validation SHA256 ${evidenceSha}' where singleton;get diagnostics n=row_count;if n<>1 then raise exception 'Execution singleton missing';end if;
+  end $canary$;commit;`;
+  await mutation('sql-enable','database/query',{query});
+  const on={...off,TENBOT_RECEIVAL_PILOT_ENABLED:'true',TENBOT_RECEIVAL_EXECUTION_ENABLED:'true',TENBOT_RECEIVAL_EMPLOYEE_IDS:owner,TENBOT_RECEIVAL_PILOT_EXPIRES_AT:end};await mutation('edge-enable','secrets',Object.entries(on).map(([name,value])=>({name,value})));
+  const afterSecrets=secretDigests(await api('secrets'));assert(flagsMatch(afterSecrets,on),'Enabled Edge digest readback failed');assert.deepEqual(protectedDigests(afterSecrets),protectedDigests(beforeSecrets));
+ }else if(mode==='disable'){
+  assert.equal(before.otherEnrollment,0,'Other pilot enrollment requires owner reconciliation');assert(before.enrolledTotal<=1);await mutation('edge-disable','secrets',Object.entries(off).map(([name,value])=>({name,value})));
+  const query=`begin;set local lock_timeout='3s';set local statement_timeout='10s';do $canary$ begin if not exists(select 1 from public.tenbot_chris_dev_canary_grants where id='${grantId}' and owner_user_id='${owner}') then raise exception 'Exact grant unavailable';end if;if exists(select 1 from public.tenbot_receival_pilot_employees where user_id<>'${owner}') then raise exception 'Unexpected other enrollment';end if;update public.tenbot_receival_execution_control set execution_enabled=false where singleton;update public.tenbot_receival_pilot_policy set enabled=false where singleton;end $canary$;commit;`;
+  await mutation('sql-disable','database/query',{query});const afterSecrets=secretDigests(await api('secrets'));assert(flagsMatch(afterSecrets,off));assert.deepEqual(protectedDigests(afterSecrets),protectedDigests(beforeSecrets));
+ }
+ const state=mode==='status'||mode==='final'?before:await snapshot(),digests=secretDigests(await api('secrets'));
+ if(mode==='enable'){for(const [check,passed]of Object.entries(state.baselineChecks))if(!passed)fail('POSTENABLE_'+check.toUpperCase()+'_FAILED');assert.equal(state.pilot.enabled,true);assert.equal(state.execution.enabled,true);assert.equal(state.enrolledTotal,1);assert.equal(state.subjectEnrolled,true);assert.equal(Date.parse(state.pilot.expiresAt),Date.parse(end));assert.equal(state.pilot.validationReceiptSha256,evidenceSha);}
+ if(mode==='disable'||mode==='final'){assert.equal(state.pilot.enabled,false);assert.equal(state.execution.enabled,false);assert(flagsMatch(digests,off));}
+ if(mode==='final'){
+  assert.equal(state.activeGrants,0);assert(state.grants[0].revokedAt!==null,'Exact revocation must be recorded');assert.equal(state.enrolledTotal,0);if(recordId){assert.equal(state.executions.length,1);assert.deepEqual(state.executions[0].recordIds,[recordId]);assert.equal(state.executions[0].catalogCount,0);assert.equal(state.boundPending.length,1);const row=state.boundPending[0];assert.equal(row.id,recordId);assert.equal(row.status,'cancelled');assert.equal(Number(row.quantityExpected),1);assert.equal(Number(row.quantityReceived),0);assert.equal(row.unit,'Bag');for(const key of ['receiptInventoryId','receiptTransactionId','receivedAt'])assert.equal(row[key],null);}
+ }
+ const result={passed:true,mode,recordedAt:new Date().toISOString(),grantId,recordId,projectRef:ref,origin,windowSha256:windowSha,state,secretDigests:digests,controlPlaneMutations:mutations,operationalWrites:0,grantRpcCalls:0,paidInferenceCalls:0,automaticRetry:false};const receiptFile=save(`${run}-${mode}.private.json`,result);let disabledFile=null;
+ if(state.pilot.enabled===false&&state.execution.enabled===false&&flagsMatch(digests,off)&&state.otherEnrollment===0){const disabled={phase:mode==='status'&&state.activeGrants===0&&state.enrolledTotal===0?'activation':'cancellation',projectRef:ref,origin,observedAt:state.serverNow,sha256:sha(fs.readFileSync(receiptFile)),sqlPilotEnabled:false,sqlExecutionEnabled:false,edgePilotEnabled:false,edgeExecutionEnabled:false,sqlEmployeeIds:state.subjectEnrolled?[owner]:[],edgeEmployeeIds:[]};disabledFile=save(`${run}-disabled-state.private.json`,disabled);}
+ token=undefined;console.log(JSON.stringify({passed:true,mode,receipt:receiptFile,disabledStateReceipt:disabledFile,controlPlaneMutations:mutations,operationalWrites:0,activeGrants:state.activeGrants,enrolled:state.enrolledTotal,pendingByReference:state.pendingByReference,targetStockSha256:state.targetStockSha256,remainingHostedMicrousd:state.meter.remainingMicrousd}));
+}catch(error){token=undefined;const result={passed:false,mode,grantId,recordId,phase,code:error.safeCode??'CONTROL_LOCAL_PREFLIGHT_OR_GUARD_FAILED',uncertain:error.uncertain===true,controlPlaneMutationRequests:mutations,noAutomaticRetry:true,secretValuesPersisted:false,stop:'Read-only status/reconcile first; do not rerun enable or perform operational cleanup blindly.'};save(`${run}-stop.private.json`,result);console.log(JSON.stringify(result));process.exitCode=1;}

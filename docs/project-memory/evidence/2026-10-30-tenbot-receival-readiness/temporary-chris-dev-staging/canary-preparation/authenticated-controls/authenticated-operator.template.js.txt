@@ -1,0 +1,138 @@
+/* Prepared operator, NOT activation/canary authorization. Root injects only the
+ * already public anon key. Pasting installs functions; it performs zero HTTP,
+ * session reads or mutations. Every operation must be invoked explicitly.
+ * No token, refresh token, password, session or private original is returned.
+ */
+(() => {
+ 'use strict';
+ const ORIGIN='https://tendev.pages.dev',REF='vxdxjhazkqhpkwdqtobp',API=`https://${REF}.supabase.co`;
+ const ANON='__TENOPS_PUBLIC_ANON_KEY__';
+ const ADMIN='__TENOPS_EXPECTED_ADMIN_UUID__';
+ const EXECUTION_AUTHORIZED=false; // Prepared artifact is permanently unarmed; armReviewedWindow cannot change this.
+ const OWNER='3785f6b9-742e-452f-af6c-31613a983633',CATALOG='ba6a3690-0886-4f72-9f86-581bcc1f3b44';
+ const SHA='c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a',INVOICE='SYN-TENDEV-RECEIVAL-20261030-01';
+ const FUNDING_STOP=Date.parse('2026-10-30T23:00:00Z'); // Existing 6 p.m. Chicago funding cutoff; never extended here.
+ const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i,digest=/^[a-f0-9]{64}$/;
+ const pendingFields='id,vendor,material_name,size,quantity_expected,quantity_received,unit,status,production_job_id,temporary_job_label,is_earmarked,earmarked_job_name,receipt_inventory_item_id,receipt_transaction_id,received_at,received_by';
+ const state={busy:false,identity:null,window:null,disabled:null,grant:null,activationAttempted:false,activationUncertain:false,revocationAttempted:false,revoked:false,completed:null,cancellationAttempted:false,cancellationUncertain:false,cancelled:false};
+ const requireValue=(condition,message)=>{if(!condition)throw Error(message);};
+ const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+ const time=value=>typeof value==='string'&&Number.isFinite(Date.parse(value))?Date.parse(value):NaN;
+ const claim=token=>{try{return JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}catch{throw Error('Unusable own-session token; sign in normally.');}};
+ const text=(value,max=500)=>typeof value==='string'&&value.trim().length>0&&value.length<=max;
+ requireValue(location.origin===ORIGIN,'TenDev exact origin required.');
+ requireValue(!Object.hasOwn(window,'tenbotCanaryOperator'),'An operator is already installed; preserve its one-run state.');
+ function localSession(){
+  requireValue(location.origin===ORIGIN,'Origin changed.');
+  requireValue(!ANON.includes('__TENOPS_'),'Root must inject the existing public anon key first.');
+  const publicClaims=claim(ANON);requireValue(publicClaims.role==='anon'&&publicClaims.ref===REF,'Only this project public anon key is permitted.');
+  let saved;try{saved=JSON.parse(localStorage.getItem(`sb-${REF}-auth-token`)||'null');}catch{throw Error('Own session unavailable; sign in normally.');}
+  requireValue(object(saved)&&text(saved.access_token,8000)&&object(saved.user)&&uuid.test(saved.user.id),'Own authenticated session unavailable.');
+  const claims=claim(saved.access_token),expires=Math.min(Number(saved.expires_at)*1000,Number(claims.exp)*1000);
+  requireValue(claims.sub===saved.user.id&&claims.role==='authenticated'&&claims.iss===API+'/auth/v1','Own project session required.');
+  requireValue(Number.isFinite(expires)&&expires>Date.now()+60000,'Session is near expiry; sign in normally. No automatic refresh is performed.');
+  if(state.identity)requireValue(saved.user.id===state.identity,'Account changed; do not borrow another identity or reuse this operator across accounts.');
+  return {token:saved.access_token,id:saved.user.id,expires};
+ }
+ async function request(context,method,resource,body){
+  const current=localSession();requireValue(current.id===context.id&&current.token===context.token,'Own session changed during operation; stop and preflight again.');
+  let response;try{response=await fetch(API+resource,{method,headers:{apikey:ANON,Authorization:'Bearer '+context.token,'Content-Type':'application/json',...(method==='PATCH'?{Prefer:'return=representation'}:{})},...(body===undefined?{}:{body:JSON.stringify(body)}),credentials:'omit',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000)});}catch{throw Error('Bounded request failed or timed out. A mutation may be uncertain; do not retry blindly.');}
+  const raw=await response.text();requireValue(raw.length<=200000,'Unexpected response size; stop.');
+  let value;try{value=raw?JSON.parse(raw):null;}catch{throw Error('Unexpected response format; stop.');}
+  if(!response.ok){const code=object(value)&&typeof value.code==='string'&&/^[A-Z0-9]{5}$/.test(value.code)?value.code:'unknown';throw Error(`Caller request rejected: HTTP ${response.status}, code ${code}.`);}
+  return value;
+ }
+ const rpc=(context,name,args={})=>request(context,'POST','/rest/v1/rpc/'+name,args);
+ const rows=(context,table,query)=>request(context,'GET','/rest/v1/'+table+'?'+new URLSearchParams(query));
+ function projection(value){
+  requireValue(object(value)&&typeof value.active==='boolean'&&Number.isFinite(time(value.serverNow)),'Invalid self-grant projection.');
+  if(!value.active){requireValue(Object.keys(value).every(key=>['active','serverNow'].includes(key)),'Unexpected inactive projection.');return value;}
+  requireValue(uuid.test(value.grantId)&&value.ownerId===OWNER&&value.documentSha256===SHA&&value.documentReference===INVOICE&&value.supplier==='T&M Supply'&&value.catalogSource==='standard'&&value.catalogId===CATALOG&&value.quantityExpected==='1'&&value.unit==='Bag','Unexpected canary scope.');
+  requireValue(time(value.startsAt)<=time(value.serverNow)&&time(value.expiresAt)>time(value.serverNow)&&time(value.expiresAt)-time(value.startsAt)<=900000,'Expired or oversized grant.');
+  return value;
+ }
+ async function identity(){
+  const context=localSession(),user=await request(context,'GET','/auth/v1/user');requireValue(object(user)&&user.id===context.id,'Auth did not verify the own session.');
+  const profileReply=await rpc(context,'get_my_app_access'),profile=Array.isArray(profileReply)?profileReply.length===1?profileReply[0]:null:profileReply;
+  requireValue(object(profile)&&profile.user_id===context.id&&profile.is_active===true&&profile.read_only===false,'Active matching own profile required.');
+  requireValue((context.id===OWNER&&profile.role==='developer')||(uuid.test(ADMIN)&&context.id===ADMIN&&profile.role==='admin'),'Only genuine chris_dev/Developer or the exact reviewed permission-managing Admin may use this operator.');
+  const capabilities={};for(const name of ['readOperationalData','writeBusinessData','adjustInventory','manageRolesPermissions','manageVendorsCatalog']){const value=await rpc(context,'has_app_capability',{p_capability:name});requireValue(typeof value==='boolean','Invalid capability reply.');capabilities[name]=value;}
+  requireValue(capabilities.readOperationalData&&capabilities.writeBusinessData,'Current base capabilities unavailable.');
+  const grant=projection(await rpc(context,'get_my_tenbot_receival_canary_access'));
+  if(context.id===OWNER){requireValue(capabilities.manageRolesPermissions===false&&capabilities.manageVendorsCatalog===false,'Unexpected Developer capabilities.');requireValue(capabilities.adjustInventory===grant.active,'Effective Inventory permission does not match the self-grant state.');}
+  else requireValue(capabilities.manageRolesPermissions&&grant.active===false,'Permission-managing Admin required; its inactive self projection does not prove the employee grant state.');
+  state.identity=context.id;return {context,profile,capabilities,grant};
+ }
+ function summary(info){return {verifiedUserId:info.context.id,role:info.profile.role,isActive:true,readOnly:false,capabilities:{...info.capabilities},sessionExpiresAt:new Date(info.context.expires).toISOString(),serverNow:info.grant.serverNow,selfGrant:info.grant.active?{active:true,grantId:info.grant.grantId,ownerId:OWNER,startsAt:info.grant.startsAt,expiresAt:info.grant.expiresAt}:{active:false},writesPerformed:0,limitation:info.profile.role==='admin'?'Admin self projection cannot inspect the employee grant or global disabled gates.':'Self identity/capabilities only; no canary preparation or execution performed.'};}
+ function disabledReceipt(value,phase){
+  requireValue(object(value)&&value.phase===phase&&value.projectRef===REF&&value.origin===ORIGIN&&digest.test(value.sha256)&&Number.isFinite(time(value.observedAt)),'Exact externally verified disabled-state receipt required.');
+  requireValue(value.sqlPilotEnabled===false&&value.sqlExecutionEnabled===false&&value.edgePilotEnabled===false&&value.edgeExecutionEnabled===false,'All existing SQL/Edge write gates must be OFF.');
+  for(const list of [value.sqlEmployeeIds,value.edgeEmployeeIds])requireValue(Array.isArray(list)&&new Set(list).size===list.length&&(phase==='activation'?list.length===0:list.length<=1&&list.every(id=>id===OWNER)),'Unexpected pilot enrollment/allowlist.');
+  return Object.freeze({...value,sqlEmployeeIds:[...value.sqlEmployeeIds],edgeEmployeeIds:[...value.edgeEmployeeIds]});
+ }
+ function freshDisabled(phase,serverNow){requireValue(state.disabled?.phase===phase,'Record a fresh disabled-state receipt for this phase.');const age=time(serverNow)-time(state.disabled.observedAt);requireValue(age>=-1000&&age<=120000,'Disabled-state receipt must be fresh within two minutes; browser cannot verify operator metadata itself.');}
+ function activeOwner(info,margin=0){requireValue(info.context.id===OWNER&&info.profile.role==='developer'&&info.grant.active&&info.capabilities.adjustInventory,'Genuine chris_dev with current temporary permission required.');requireValue(state.grant&&state.grant.grantId===info.grant.grantId&&!state.revoked,'Bind only the exact active grant returned by Admin activation.');requireValue(time(info.grant.expiresAt)-time(info.grant.serverNow)>margin,'Insufficient grant lifetime; stop, do not regrant or use Admin business permissions.');return info.grant;}
+ function exactDraft(draft,expected){
+  requireValue(object(draft)&&draft.schemaVersion==='invoice-receivals.v2'&&draft.id===expected.draftId&&draft.hash===expected.hash&&draft.ownerId===OWNER&&draft.superseded!==true&&draft.revoked!==true,'Canonical own draft mismatch.');
+  requireValue(draft.document?.sha256===SHA&&draft.document?.reference===INVOICE&&draft.document?.supplier==='T&M Supply'&&Array.isArray(draft.lines)&&draft.lines.length===1,'Canonical document scope mismatch.');
+  const line=draft.lines[0];requireValue(line.catalogSource==='standard'&&line.catalogId===CATALOG&&/^1(?:\.0{1,6})?$/.test(String(line.quantityExpected))&&line.unit==='Bag'&&line.productionJobId===null&&line.newMaterial===null&&line.vendor==='T&M Supply'&&line.material==='Alaska White'&&line.size==='#0','Canonical one-row material/quantity/Job scope mismatch.');
+  requireValue(object(draft.execution)&&draft.execution.draftId===expected.draftId&&draft.execution.hash===expected.hash&&Array.isArray(draft.execution.createdRecordIds)&&draft.execution.createdRecordIds.length===1&&draft.execution.createdRecordIds[0]===expected.recordId&&Array.isArray(draft.execution.createdCatalogRecords)&&draft.execution.createdCatalogRecords.length===0,'Canonical completed execution does not prove the returned one-row ID.');
+ }
+ function fixedPending(row,status,expected=state.completed){requireValue(object(row)&&row.id===expected.recordId&&row.vendor==='T&M Supply'&&row.material_name==='Alaska White'&&row.size==='#0'&&Number(row.quantity_expected)===1&&Number(row.quantity_received)===0&&row.unit==='Bag'&&row.status===status&&row.production_job_id===null&&row.temporary_job_label===null&&row.is_earmarked===false&&row.earmarked_job_name===null&&row.receipt_inventory_item_id===null&&row.receipt_transaction_id===null&&row.received_at===null&&row.received_by===null,'Exact pending/unreceived/unlinked synthetic row precondition failed.');}
+ async function completedEvidence(info,expected){
+  activeOwner(info,30000);const draft=await rpc(info.context,'get_invoice_receival_draft',{p_draft_id:expected.draftId});exactDraft(draft,expected);
+  requireValue(expected.grantId===state.grant.grantId&&expected.grantId===info.grant.grantId,'Completed operation must bind the exact reviewed active grant.');
+  const executions=await rows(info.context,'invoice_receival_executions',{select:'draft_id,approval_id,owner_user_id,content_hash,created_record_ids,created_catalog_records,executed_at',draft_id:'eq.'+expected.draftId,owner_user_id:'eq.'+OWNER,limit:'2'});
+  requireValue(Array.isArray(executions)&&executions.length===1,'Exact own execution unavailable.');const execution=executions[0];requireValue(execution.owner_user_id===OWNER&&execution.draft_id===expected.draftId&&execution.content_hash===expected.hash&&uuid.test(execution.approval_id)&&Array.isArray(execution.created_record_ids)&&execution.created_record_ids.length===1&&execution.created_record_ids[0]===expected.recordId&&Array.isArray(execution.created_catalog_records)&&execution.created_catalog_records.length===0,'Persisted execution/returned ID mismatch.');
+  requireValue(time(execution.executed_at)>=time(info.grant.startsAt)&&time(execution.executed_at)<time(info.grant.expiresAt)&&time(draft.execution.executedAt)===time(execution.executed_at),'Persisted execution must fall within this exact grant lifetime.');
+  const approvals=await rows(info.context,'invoice_receival_approvals',{select:'id,draft_id,owner_user_id,content_hash,confirmation,approved_at',id:'eq.'+execution.approval_id,draft_id:'eq.'+expected.draftId,owner_user_id:'eq.'+OWNER,limit:'2'});
+  requireValue(Array.isArray(approvals)&&approvals.length===1&&approvals[0].content_hash===expected.hash&&approvals[0].confirmation==='CREATE_REVIEWED_PENDING_RECEIVALS'&&time(approvals[0].approved_at)<=time(execution.executed_at),'Exact prior explicit approval unavailable.');
+  const source=await rpc(info.context,'get_invoice_receival_source_for_draft',{p_draft_id:expected.draftId});requireValue(object(source)&&uuid.test(source.id)&&source.ownerId===OWNER&&source.sha256===SHA&&source.state==='retained'&&source.retainedDraftId===expected.draftId&&Number.isFinite(time(source.retainedAt)),'Exact retained private original provenance unavailable.');
+  const audit=await rows(info.context,'invoice_receival_audit',{select:'id,event,content_hash',draft_id:'eq.'+expected.draftId,owner_user_id:'eq.'+OWNER,content_hash:'eq.'+expected.hash,limit:'20'});requireValue(Array.isArray(audit)&&audit.length<20&&audit.some(row=>row.event==='approved')&&audit.filter(row=>row.event==='executed').length===1,'Exact approval/execution audit evidence unavailable.');
+  return {grantId:info.grant.grantId,draftId:expected.draftId,hash:expected.hash,recordId:expected.recordId,approvalId:execution.approval_id,sourceId:source.id,originalSha256:SHA,originalRetained:true,auditEvents:audit.map(row=>row.event),executedAt:execution.executed_at};
+ }
+ async function serial(operation){requireValue(!state.busy,'Another operator action is running; do not submit concurrently.');state.busy=true;try{return await operation();}finally{state.busy=false;}}
+ const operator=Object.freeze({
+  preflight:()=>serial(async()=>summary(await identity())),
+  armReviewedWindow(value){
+   requireValue(!state.busy&&!state.activationAttempted&&!state.grant,'A reviewed window cannot change after an activation attempt.');requireValue(object(value)&&value.confirm==='PRODUCT_APPROVED_CHRIS_DEV_ONE_ROW_WINDOW'&&text(value.approvalReference,240)&&text(value.reason),'Explicit newly reviewed Product window/reason required.');
+   const starts=time(value.startsAt),expires=time(value.expiresAt);requireValue(Number.isFinite(starts)&&expires>starts&&expires-starts<=900000&&expires<=FUNDING_STOP,'Explicit maximum-15-minute window must stay within the existing funded cutoff.');
+   state.window=Object.freeze({startsAt:value.startsAt,expiresAt:value.expiresAt,approvalReference:value.approvalReference,reason:value.reason});state.disabled=disabledReceipt(value.disabledReceipt,'activation');return {preparedOnly:true,window:{...state.window},disabledReceiptSha256:state.disabled.sha256,noHTTP:true};
+  },
+  recordCancellationDisabledReceipt(value){requireValue(!state.busy,'Operator action is running.');state.disabled=disabledReceipt(value,'cancellation');return {recordedOnly:true,disabledReceiptSha256:state.disabled.sha256,noHTTP:true};},
+  activate:confirmation=>serial(async()=>{
+   requireValue(EXECUTION_AUTHORIZED,'Mutation disabled: this prepared operator is unarmed.');
+   requireValue(confirmation==='ACTIVATE_EXACT_CHRIS_DEV_GRANT'&&state.window&&!state.activationAttempted&&!state.grant,'Separate explicit activation command and unused reviewed window required.');const info=await identity();requireValue(info.profile.role==='admin'&&info.capabilities.manageRolesPermissions,'Own permission-managing Admin session required; never use Admin for business cancellation.');
+   const now=time(info.grant.serverNow);requireValue(now>=time(state.window.startsAt)&&now<time(state.window.expiresAt)&&time(state.window.expiresAt)-now<=900000,'Confirmed execution window is not current.');requireValue(info.context.expires>time(state.window.expiresAt)+30000,'Admin session must remain valid through the reviewed window.');freshDisabled('activation',info.grant.serverNow);
+   state.activationAttempted=true;state.activationUncertain=true;const grantId=await rpc(info.context,'activate_tenbot_chris_dev_canary_grant',{p_expires_at:state.window.expiresAt,p_reason:state.window.reason});requireValue(typeof grantId==='string'&&uuid.test(grantId),'Activation result uncertain; do not retry or invent a grant ID.');
+   state.grant=Object.freeze({grantId,ownerId:OWNER,expiresAt:state.window.expiresAt,activatedBy:info.context.id});state.activationUncertain=false;return {activated:true,...state.grant,gatesEnabledByOperator:false,approvalReference:state.window.approvalReference,limitation:'RPC atomically checked SQL gates/enrollment; Edge OFF state comes from the separately verified receipt. Chris must verify the active self projection using his own session.'};
+  }),
+  bindOwnActiveGrant:grantId=>serial(async()=>{requireValue(EXECUTION_AUTHORIZED,'Prepared operator permits preflight only.');requireValue(typeof grantId==='string'&&uuid.test(grantId)&&!state.grant,'Exact returned grant ID is required once.');const info=await identity();requireValue(info.context.id===OWNER&&info.grant.active&&info.grant.grantId===grantId,'Own active grant does not match the exact Admin receipt.');state.grant=Object.freeze({grantId,ownerId:OWNER,startsAt:info.grant.startsAt,expiresAt:info.grant.expiresAt});return {bound:true,grantId,ownerId:OWNER,startsAt:info.grant.startsAt,expiresAt:info.grant.expiresAt,writesPerformed:0};}),
+  inspectCompleted:expected=>serial(async()=>{
+   requireValue(EXECUTION_AUTHORIZED,'Prepared operator permits preflight only.');requireValue(object(expected)&&uuid.test(expected.grantId)&&uuid.test(expected.draftId)&&digest.test(expected.hash)&&uuid.test(expected.recordId)&&!state.completed,'Use only actual returned grant/draft/record IDs and hash from the approved one-row UI execution.');const info=await identity();const proof=await completedEvidence(info,expected);const pending=await rows(info.context,'pending_receivals',{select:pendingFields,id:'eq.'+proof.recordId,limit:'2'});requireValue(Array.isArray(pending)&&pending.length===1,'Returned pending row unavailable.');fixedPending(pending[0],'pending',expected);state.completed=Object.freeze({...expected,...proof});return {...proof,quantityExpected:1,quantityReceived:0,unit:'Bag',status:'pending',writesPerformed:0};
+  }),
+  cancelPending:confirmation=>serial(async()=>{
+   requireValue(EXECUTION_AUTHORIZED,'Mutation disabled: this prepared operator is unarmed.');
+   requireValue(confirmation==='CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW'&&state.completed&&!state.cancellationAttempted&&!state.cancelled,'Separate explicit one-row cancellation command required.');const info=await identity();activeOwner(info,30000);freshDisabled('cancellation',info.grant.serverNow);await completedEvidence(info,state.completed);
+   const before=await rows(info.context,'pending_receivals',{select:pendingFields,id:'eq.'+state.completed.recordId,limit:'2'});requireValue(Array.isArray(before)&&before.length===1,'Exact pending row unavailable.');fixedPending(before[0],'pending');
+   const check=await identity();activeOwner(check,30000);requireValue(check.context.id===info.context.id,'Identity changed.');freshDisabled('cancellation',check.grant.serverNow);
+   const filters={select:pendingFields,id:'eq.'+state.completed.recordId,status:'eq.pending',quantity_expected:'eq.1',quantity_received:'eq.0',unit:'eq.Bag',vendor:'eq.T&M Supply',material_name:'eq.Alaska White',size:'eq.#0',production_job_id:'is.null',temporary_job_label:'is.null',is_earmarked:'eq.false',earmarked_job_name:'is.null',receipt_inventory_item_id:'is.null',receipt_transaction_id:'is.null',received_at:'is.null',received_by:'is.null'};
+   state.cancellationAttempted=true;state.cancellationUncertain=true;const updated=await request(check.context,'PATCH','/rest/v1/pending_receivals?'+new URLSearchParams(filters),{status:'cancelled'});requireValue(Array.isArray(updated)&&updated.length===1,'Cancellation had no exact returned row; stop and reconcile read-only.');fixedPending(updated[0],'cancelled');state.cancelled=true;state.cancellationUncertain=false;
+   return {cancelled:true,recordId:state.completed.recordId,draftId:state.completed.draftId,quantityExpected:1,quantityReceived:0,unit:'Bag',originalAndAuditDeleted:false,inventoryMutationRequested:false,next:'Immediately revoke the exact grant through the same Admin operator, then verify chris_dev self-grant inactive and external SQL/Edge/enrollment state.'};
+  }),
+  reconcileCancellation:()=>serial(async()=>{
+   requireValue(EXECUTION_AUTHORIZED,'Prepared operator permits preflight only.');
+   requireValue(state.completed&&state.cancellationAttempted,'No exact cancellation attempt is bound.');const info=await identity();requireValue(info.context.id===OWNER,'Only the genuine employee may reconcile this row.');const current=await rows(info.context,'pending_receivals',{select:pendingFields,id:'eq.'+state.completed.recordId,limit:'2'});requireValue(Array.isArray(current)&&current.length===1,'Exact row unavailable; stop for owner review.');if(current[0].status==='cancelled'){fixedPending(current[0],'cancelled');state.cancelled=true;state.cancellationUncertain=false;return {cancelled:true,recordId:state.completed.recordId,readOnly:true};}return {cancelled:false,recordId:state.completed.recordId,status:current[0].status,readOnly:true,stop:'No automatic retry/regrant/Admin cleanup is permitted.'};
+  }),
+  revoke:value=>serial(async()=>{
+   requireValue(EXECUTION_AUTHORIZED,'Mutation disabled: this prepared operator is unarmed.');requireValue(object(value),'Explicit reviewed revoke command required.');const {confirmation,reason}=value;
+   requireValue(confirmation==='REVOKE_EXACT_CHRIS_DEV_GRANT'&&state.grant&&state.grant.activatedBy&&text(reason),'Revoke only the exact grant returned to this Admin operator.');const info=await identity();requireValue(info.profile.role==='admin'&&info.capabilities.manageRolesPermissions&&info.context.id===state.grant.activatedBy,'Same own Admin activation session identity required.');
+   // Exact-ID revocation is idempotent. A separate explicit retry after an
+   // uncertain response uses this same UUID, never a new grant or broad lookup.
+   state.revocationAttempted=true;const result=await rpc(info.context,'revoke_tenbot_chris_dev_canary_grant',{p_grant_id:state.grant.grantId,p_reason:reason});requireValue(object(result)&&result.grantId===state.grant.grantId&&result.revoked===true&&typeof result.alreadyRevoked==='boolean','Revocation result uncertain; reconcile only this exact UUID.');state.revoked=true;return {...result,limitation:'This is the actual exact-ID RPC result, not cross-owner Admin history access. Chris must confirm his own inactive projection; root separately verifies SQL/Edge gates, enrollment, epochs and retained audit.'};
+  }),
+  localState(){return {executionAuthorized:EXECUTION_AUTHORIZED,identity:state.identity,window:state.window?{...state.window}:null,grant:state.grant?{...state.grant}:null,activationAttempted:state.activationAttempted,activationUncertain:state.activationUncertain,revoked:state.revoked,revocationAttempted:state.revocationAttempted,completed:state.completed?{draftId:state.completed.draftId,recordId:state.completed.recordId,hash:state.completed.hash}:null,cancellationAttempted:state.cancellationAttempted,cancellationUncertain:state.cancellationUncertain,cancelled:state.cancelled,noCredentialsReturned:true};},
+ });
+ Object.defineProperty(window,'tenbotCanaryOperator',{value:operator,writable:false,configurable:false});
+ return Object.freeze({installed:true,networkCalls:0,sessionReads:0,mutations:0,next:'Explicit preflight() only. No activation/window/canary is authorized by installation.'});
+})();

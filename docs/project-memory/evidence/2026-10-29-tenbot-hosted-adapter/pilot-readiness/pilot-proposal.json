@@ -1,0 +1,41 @@
+{
+  "status": "proposed-not-applied",
+  "hostedTotalAllowanceMicrousd": 4000000,
+  "includesHostedCanariesMicrousd": 20617,
+  "notAdditionalToCurrentQuarterDollar": true,
+  "legacyAccountingPreservedMicrousd": 539956,
+  "totalLimitMicrousd": 4539956,
+  "monthLimitMicrousd": 4539956,
+  "dayLimitMicrousd": 4000000,
+  "userDayLimitMicrousd": 250000,
+  "requestLimitMicrousd": 250000,
+  "remainingAtObservedBaselineMicrousd": 3979383,
+  "allowedModels": [
+    "gpt-6.1-terra"
+  ],
+  "serviceTier": "default / Standard",
+  "expiryUtc": "2026-10-30T23:00:00Z",
+  "expiryLocal": "October 30, 2026, 6 p.m. America/Chicago",
+  "expiryReason": "Before the date-only October 31 credit expiry; earlier verified funding/key restriction always wins",
+  "currentPolicyUntouched": {
+    "newAllowanceMicrousd": 250000,
+    "remainingMicrousd": 229383,
+    "expiryUtc": "2026-10-30T02:22:45.717476Z"
+  },
+  "creditGuard": {
+    "displayedAvailableUsd": 6.44,
+    "conservativePlanningAvailableMicrousd": 6430000,
+    "additionalSpendProposedMicrousd": 3979383,
+    "planningHeadroomAfterFullUseMicrousd": 2450617,
+    "freshBalanceAndLedgerRecheckAtActivation": true
+  },
+  "limits": "Retain existing request/step/rate/open limits, current per-user limits and unknown-charge reservations; one shared pool across TenDev and TenOps. Raise global day cap explicitly from current $0.25 canary to $4 for this finite window; otherwise $1/day would make the headline $4 unusable before cutoff.",
+  "notAssumed": [
+    "Promotional renewal",
+    "Unfunded $20 monthly budget",
+    "Automatic top-up",
+    "Resetting local or hosted usage"
+  ],
+  "fallback": "Qwen on budget, expiry or provider failure; writes remain disabled",
+  "productApprovalRequired": true
+}

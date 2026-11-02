@@ -1,0 +1,9 @@
+{
+  "candidate": "523f6471eaf7897c300ede04fe7ea64a837169c4",
+  "baseline": "9415adc577e5509c2473001fbd514ab644077e3c",
+  "bundle": "candidate-523f6471.bundle",
+  "sha256": "cc9bdcac800028539c47eae775ea6e1364f7a7468f2c1c2ad792697d36dc311b",
+  "verifiedAgainstPrivateFullHistory": true,
+  "privateSource": "/private/tmp/tenops-tenbot-messaging-staging-20261101/candidate",
+  "rootBranchRefsUnchanged": true
+}

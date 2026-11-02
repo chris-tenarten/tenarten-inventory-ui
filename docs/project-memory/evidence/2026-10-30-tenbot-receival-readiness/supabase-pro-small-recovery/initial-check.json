@@ -1,0 +1,212 @@
+{
+  "phase": "initial",
+  "recordedAt": "2026-10-30T23:55:40.380Z",
+  "resizeSubmittedAt": "2026-10-30T23:52:08.667Z",
+  "healthy": true,
+  "requests": [
+    {
+      "name": "database-auth-health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:55:39.650Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 291,
+      "totalMs": 300,
+      "bodyBytes": 228,
+      "bodySha256": "44e9cfbbf7ec2a5173591fd8178f332952fa16a75bffe555c623f40ea150bb2b",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:55:39 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e5a259d103942-DFW",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "services": [
+        {
+          "name": "auth",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        },
+        {
+          "name": "db",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "name": "target-project",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:55:39.951Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 122,
+      "totalMs": 122,
+      "bodyBytes": 379,
+      "bodySha256": "5f28483dc23255949704d900d98bd382df859d8e19293124724914dec5410593",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:55:40 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e5a26c8043942-DFW",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "project": {
+        "id": "vxdxjhazkqhpkwdqtobp",
+        "ref": "vxdxjhazkqhpkwdqtobp",
+        "name": "tenartenDB",
+        "region": "us-east-1",
+        "status": "ACTIVE_HEALTHY"
+      }
+    },
+    {
+      "name": "fixture-project",
+      "endpoint": "https://api.supabase.com/v1/projects/jltgxcfiprocydhbrahz",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:55:39.951Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 154,
+      "totalMs": 154,
+      "bodyBytes": 405,
+      "bodySha256": "df8846f592ed6acec4dadb79937436e85634faf50c800a6428f99a6ea6ecfc2d",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:55:40 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e5a2719a8845b-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "project": {
+        "id": "jltgxcfiprocydhbrahz",
+        "ref": "jltgxcfiprocydhbrahz",
+        "name": "tenbot-readonly-validation-20261029",
+        "region": "us-east-1",
+        "status": "ACTIVE_HEALTHY"
+      }
+    },
+    {
+      "name": "tenops-inventory-shell",
+      "endpoint": "https://tenops.pages.dev/inventory",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:55:39.952Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 182,
+      "totalMs": 183,
+      "bodyBytes": 15989,
+      "bodySha256": "98e9da035e7865c63dcd0c3519f7083e1b2f3942faf025b8ab6a7e232a7cfdb0",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:55:40 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e5a2788145618-DFW",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "TenOps Cloud — Inventory"
+    },
+    {
+      "name": "tendev-inventory-shell",
+      "endpoint": "https://tendev.pages.dev/inventory",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:55:39.952Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 176,
+      "totalMs": 178,
+      "bodyBytes": 17250,
+      "bodySha256": "1d318ac1bff0b2f2e95b1e6081f590e4e35d94bba50037d0f69ba9cbb742286a",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:55:40 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e5a278d6a6ee6-DFW",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "TenDev Cloud — Inventory"
+    },
+    {
+      "name": "resource-snapshot",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/metrics",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:55:39.953Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 390,
+      "totalMs": 425,
+      "bodyBytes": 162801,
+      "bodySha256": "98c46f2de526f652e927d79ce14cd4487140b8025fc2592f29c67f1b2be526b9",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:55:40 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e5a2779c4ddae-DFW",
+        "content-type": "text/plain"
+      },
+      "selectedSamples": [
+        {
+          "metric": "node_memory_CommitLimit_bytes",
+          "value": 2035826688
+        },
+        {
+          "metric": "node_memory_Committed_AS_bytes",
+          "value": 1509126144
+        },
+        {
+          "metric": "node_memory_MemTotal_bytes",
+          "value": 1924182016
+        },
+        {
+          "metric": "node_vmstat_oom_kill",
+          "value": 0
+        },
+        {
+          "metric": "node_memory_MemAvailable_bytes",
+          "value": 1352036352
+        },
+        {
+          "metric": "node_memory_SwapFree_bytes",
+          "value": 1073668096
+        },
+        {
+          "metric": "node_load1",
+          "value": 0.21
+        },
+        {
+          "metric": "node_load15",
+          "value": 0.08
+        },
+        {
+          "metric": "node_load5",
+          "value": 0.18
+        },
+        {
+          "metric": "node_memory_SwapTotal_bytes",
+          "value": 1073737728
+        },
+        {
+          "metric": "pg_exporter_last_scrape_error",
+          "value": 0
+        },
+        {
+          "metric": "pg_up",
+          "value": 1
+        }
+      ],
+      "snapshotOnly": true
+    }
+  ],
+  "projectConfigurationMutations": 0,
+  "businessMutations": 0,
+  "modelCalls": 0,
+  "credentialValuesStored": false
+}

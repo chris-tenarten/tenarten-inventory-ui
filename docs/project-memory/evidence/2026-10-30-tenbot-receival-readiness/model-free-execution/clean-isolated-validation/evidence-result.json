@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "fixtureRef": "ahnqbzuhpwgmispwohwv",
+  "sourceId": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+  "revision": 1,
+  "sourceVersion": 2,
+  "previewHash": "7b63a8b55d2d496c2e15d0d5f2af81fb8da06f81109c4da1dfeed89e0c8e7594",
+  "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+  "evidenceSha256": "534087aeed62e2dd4d7112e22d700b760eb0f436445de16d300fc3ca83ad7c54",
+  "realCallerPrivateUploadAndDownload": true,
+  "canonicalServerAttestation": true,
+  "protectedSyntheticTranscriptionReused": true,
+  "liveModelExtraction": false,
+  "readyForExactWindowArming": true,
+  "operationalWrites": 0,
+  "inferenceCalls": 0
+}

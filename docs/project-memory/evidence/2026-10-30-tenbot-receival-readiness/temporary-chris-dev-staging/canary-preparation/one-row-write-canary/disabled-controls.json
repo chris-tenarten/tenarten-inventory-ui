@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "mode": "disable",
+  "recordedAt": "2026-10-30T21:21:58.315Z",
+  "grantId": "9c71ec1f-43ca-4a23-a00f-fb855a3e9edd",
+  "recordId": null,
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "origin": "https://tendev.pages.dev",
+  "windowSha256": "f57fab97ec9d5b67b58580c907d607c6addf81deebb6ced15ceecfa62a626378",
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 752283,
+      "remainingMicrousd": 3787673,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "pilot": {
+      "origin": "https://tendev.pages.dev",
+      "enabled": false,
+      "startsAt": "2026-10-30T21:20:46.747468+00:00",
+      "expiresAt": "2026-10-30T21:35:00+00:00",
+      "policyVersion": 4,
+      "validationReceiptSha256": "836af5bb4414611c2a2e3f8a2df4af222e9d97b9d7fe63030d17999ca1e0445c"
+    },
+    "grants": [
+      {
+        "id": "9c71ec1f-43ca-4a23-a00f-fb855a3e9edd",
+        "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+        "startsAt": "2026-10-30T21:20:46.747468+00:00",
+        "expiresAt": "2026-10-30T21:35:00+00:00",
+        "revokedAt": null,
+        "executedDraftId": null
+      }
+    ],
+    "catalog": {
+      "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+      "size": "#0",
+      "unit": "50lb bag",
+      "vendor": "T&M Supply",
+      "material": "Alaska White"
+    },
+    "profile": {
+      "role": "developer",
+      "active": true,
+      "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+      "readOnly": false
+    },
+    "readOnly": "on",
+    "execution": {
+      "enabled": false,
+      "validatedAt": "2026-10-30T21:21:08.279871+00:00",
+      "receiptPresent": true
+    },
+    "serverNow": "2026-10-30T21:21:58.172218+00:00",
+    "draftCount": 0,
+    "executions": [],
+    "sourceCount": 0,
+    "activeGrants": 1,
+    "allStockHash": "d674637c213397c6f5c1f3c726594f73",
+    "boundPending": [],
+    "enrolledTotal": 1,
+    "matchingClaims": 0,
+    "spendingPolicy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "developerAdjust": 0,
+    "otherEnrollment": 0,
+    "subjectEnrolled": true,
+    "pendingByReference": 0,
+    "subjectDayUsageMicrousd": 0,
+    "inventoryTransactionCount": 102,
+    "targetStockCount": 0,
+    "targetStockSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "baselineChecks": {
+      "profileUnchanged": true,
+      "developerGlobalAdjustmentAbsent": true,
+      "catalogUnchanged": true,
+      "spendingPolicyUnchanged": true,
+      "targetStockUnchanged": true,
+      "allStockUnchanged": true,
+      "inventoryTransactionsUnchanged": true
+    }
+  },
+  "controlPlaneMutations": 2,
+  "operationalWrites": 0,
+  "grantRpcCalls": 0,
+  "paidInferenceCalls": 0,
+  "automaticRetry": false
+}

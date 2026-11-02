@@ -1,0 +1,53 @@
+# Prepared authenticated canary operator
+
+Status: preparation only. No command has been run against a real account or service; no real session read, HTTP request, activation, source upload, draft, approval, canary, cancellation or revocation has occurred through this operator. Eight bounded offline VM/fetch-spy groups pass; those simulated responses are not live JWT/RLS evidence.
+
+Root must replace `__TENOPS_PUBLIC_ANON_KEY__` using only the existing hosted **public anon** configuration and `__TENOPS_EXPECTED_ADMIN_UUID__` with the separately verified own Admin's public identity metadata. This author did not read the private operator-config file. Never inject an OpenAI key, service-role key, employee token or local `.env`. The template rejects a non-anon key, another project or another Admin. Paste only in the exact TenDev origin, using a dedicated reviewed browser tab. Installation performs no HTTP or session reads. `tenbotCanaryOperator.preflight()` is an explicit read-only operation.
+
+The prepared template has a literal, closure-local **`EXECUTION_AUTHORIZED=false`**. All three mutation methods reject before session reads or HTTP; grant binding, completed-record inspection and cancellation reconciliation are also unavailable in this artifact. Only explicit `preflight()` can use the network. Local window/receipt methods cannot change the constant or unlock execution. No armed file has been created. A separately reviewed armed variant may be generated only after later explicit Product authorization; the offline verifier substitutes the constant solely in memory inside a VM whose `fetch` is a synthetic spy, with no network capability.
+
+The operator reads only the existing current project's own Supabase session from browser storage, internally. Every action freshly verifies the token with `/auth/v1/user`, verifies `get_my_app_access` matches its own identity, checks current capabilities and reads the owner-scoped grant projection. Tokens, refresh tokens, passwords and complete sessions are never returned or logged, and the operator never refreshes them. A changed account or mid-operation token rotation stops the operation. The first verified account binds the instance; do not reuse it for another identity. A genuine chris_dev instance must be Developer and cannot cancel as Admin. A separate genuine permission-managing Admin instance may activate/revoke only; it cannot use the business cancellation path. Browser profiles must keep their genuine sessions isolated; signing into another same-origin tab may change all tabs' auth state.
+
+No new execution, approval or gate interface is added. The employee uses the existing TenDev invoice-review UI for any later separately approved canary. This operator has no upload, prepare, approve, execute, SQL, Storage deletion, catalog creation, stock update, grant extension or enrollment method.
+
+## Explicit commands prepared for later review
+
+No mutation command below is currently authorized or runnable in this prepared artifact. These are future reviewed command contracts, not instructions to activate it now. Root must obtain a new confirmed Product window and verify the exact current funding, disabled gates and rollout state first. An earlier proposed window must not be reused. The existing inference cutoff remains October 30, 2026, 6 p.m. Chicago (`2026-10-30T23:00:00Z`); the operator cannot extend it.
+
+1. In each actor's own TenDev tab, install the correctly injected template and explicitly call `await tenbotCanaryOperator.preflight()`. This proves only that instance's current identity/profile/capabilities/self projection. An Admin's inactive projection says nothing about the employee grant or global gate state.
+2. On the Admin instance, locally call `armReviewedWindow(...)` with exact `startsAt`, `expiresAt`, a Product approval reference, reason, and confirmation `PRODUCT_APPROVED_CHRIS_DEV_ONE_ROW_WINDOW`. This performs no HTTP. Include an externally verified disabled-state receipt as described below. The window must be at most 15 minutes and inside the current funded cutoff. Only a separately reviewed explicit `await ...activate('ACTIVATE_EXACT_CHRIS_DEV_GRANT')` can call the canonical activation RPC. SQL atomically checks disabled SQL gates/empty enrollment, preserves the Developer baseline and rejects an expiration outside the positive maximum-15-minute lifetime; it does not shorten an oversized request automatically. The browser cannot independently read shared control tables or Edge secrets; its external metadata receipt remains qualified evidence.
+3. Activation returns a nonsecret exact grant UUID and stores it in the Admin instance. On the genuine chris_dev instance, explicitly call `await ...bindOwnActiveGrant(exactReturnedGrantId)`. This is read-only and requires the same exact grant in that employee's own live projection. Never transfer a token/session between actors.
+4. After the separately approved normal UI execution returns one real record, explicitly call `await ...inspectCompleted({grantId,draftId,hash,recordId})` using only the verified grant and actual returned IDs/hash. `grantId` is mandatory; a draft/record-only object is rejected. The operator rechecks the current fixed grant, canonical owner-scoped draft, exact document/material/1-Bag scope, its canonical execution, exact owner-RLS execution/approval/audit rows and retained private-source metadata. The actual persisted execution timestamp must fall within that exact grant's start/expiry and match the canonical execution timestamp. It reads only that returned pending row, verifies pending/unreceived/no receipt links/no Job/no earmark and binds the verified ID for later cancellation. No attachment bytes or public URL are fetched or returned.
+5. Root must disable agent creation through the existing approved controls first. Locally supply a **fresh cancellation-phase disabled-state receipt**, then explicitly review `cancelPending('CANCEL_ONLY_VERIFIED_RETURNED_CANARY_ROW')`. It repeats canonical provenance and identity/permission checks, requires more than 30 seconds of remaining grant life, and sends one caller-JWT/RLS PATCH setting only `status: cancelled`. Exact-ID, status, identity fields, 1 Bag, zero received, no Job/earmark and all receipt-link/null predicates are included in the server filter. One returned representation is required. Zero rows, an unexpected row, expiry or any failed precondition stops; no broader cleanup, retry, receive/Undo, deletion or Admin business bypass follows.
+6. Immediately use the same own Admin instance's explicit `revoke({confirmation:'REVOKE_EXACT_CHRIS_DEV_GRANT',reason})`. It accepts no caller-selected grant UUID: only the one actually returned to that instance. Canonical revocation invalidates actor authority/approvals/permits, disables SQL gates and removes only chris_dev enrollment while preserving audit. Its exact-ID RPC may be explicitly repeated after an uncertain response because the server contract is idempotent. It does not automatically certify cancellation or expose cross-owner grant history. Chris then explicitly preflights his own inactive projection; root separately verifies epochs, SQL/Edge gates/enrollment, role, retained evidence and unchanged stock.
+
+## External disabled-state receipt shape
+
+The local receipt methods accept only public/nonsecret review metadata, not credential values:
+
+```js
+{
+  phase: 'activation', // or 'cancellation' for recordCancellationDisabledReceipt
+  projectRef: 'vxdxjhazkqhpkwdqtobp',
+  origin: 'https://tendev.pages.dev',
+  observedAt: 'NEW_VERIFIED_UTC_TIMESTAMP',
+  sha256: 'EXACT_SANITIZED_METADATA_RECEIPT_SHA256',
+  sqlPilotEnabled: false,
+  sqlExecutionEnabled: false,
+  edgePilotEnabled: false,
+  edgeExecutionEnabled: false,
+  sqlEmployeeIds: [],
+  edgeEmployeeIds: []
+}
+```
+
+The activation receipt requires both enrollment lists empty. A cancellation receipt permits either empty lists or only the fixed chris_dev UUID while all gates remain OFF; revoke subsequently clears the enrollment. The verified receipt must be within two minutes of the database-provided self-projection `serverNow`. Receipt hashes are assertions from root's separate authorized metadata check, not signatures the browser can independently authenticate. The canonical activation RPC remains the live SQL authority. No operator command enables any gate or changes any allowlist.
+
+## Failures and limitations
+
+- All requests are bounded to 15 seconds; no automatic retries occur. Session expiry/rotation requires a fresh read-only preflight or normal sign-in, never token borrowing or fabricated JWTs.
+- A timed-out activation may have succeeded. This instance blocks another activation and cannot automatically revoke an unknown grant UUID. Root must reconcile the exact grant through a narrow read-only metadata check, then obtain a new owner-reviewed exact-ID recovery call; this artifact supplies no recovery bypass. Do not invent an ID, broadly enumerate grants or retry activation. Losing the Admin instance has the same recovery limitation. Server expiry denies new access even if recovery/cleanup never runs, but expiry alone does not close the audit/enrollment lifecycle.
+- Cancellation is attempted once only. After an uncertain response, `reconcileCancellation()` performs only a caller-authorized read of the bound row. It never retries the PATCH or regrants. If expiry/permission revocation prevents canonical checks or cleanup first, report the exact pending state and stop. Revoke can still close authorization; it does not make an abandoned business cancellation successful.
+- Revocation may follow expiry and remains useful for audit/enrollment cleanup. Its response is actual RPC evidence only. Admin cannot use the owner-only self projection to independently certify employee state.
+- No live execution or browser validation of this prepared template is claimed. Syntax and eight offline VM groups pass: unarmed actions perform zero reads/HTTP/mutations; wrong origin/session/identity/Admin reject; canonical own provenance/exact CAS is checked; pre-CAS revocation/expiry deny; uncertain cancellation never retries; same exact Admin revoke works after expiry and with explicit idempotent replay. Root must review exact contracts and commands before read-only use. Existing isolated JWT/RLS/transaction evidence is reused; no new security certification is inferred from preparation.
+- Caller-RLS reads may deny an otherwise expected field or canonical source RPC after expiry. Such denial is a stop, never permission to use service-role business access. The operator requests no stock mutation; root must separately compare the approved stock baseline with post-canary/cancellation state.

@@ -1,0 +1,11 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/restart",
+  "method": "POST",
+  "projectName": "tenartenDB",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "authorizedAction": "ONE supported project restart, no reset/restore/configuration change",
+  "startedAt": "2026-10-30T23:26:05.578Z",
+  "timeoutMs": 30000,
+  "automaticRetries": 0,
+  "requestBodyPresent": false
+}

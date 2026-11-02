@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "at": "2026-11-01T21:31:04.112Z",
+  "checks": [
+    {
+      "path": "/auth/v1/health",
+      "status": 200,
+      "rowsRequested": 0,
+      "authenticatedEmployeeClaimed": false
+    },
+    {
+      "path": "/rest/v1/vendor_catalog?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "authenticatedEmployeeClaimed": false
+    },
+    {
+      "path": "/rest/v1/pending_receivals?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "authenticatedEmployeeClaimed": false
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "status",
+      "origin": "https://tendev.pages.dev",
+      "status": 401,
+      "durationMs": 473,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "origin": "https://tendev.pages.dev",
+      "status": 401,
+      "durationMs": 429,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "origin": "https://tendev.pages.dev",
+      "status": 401,
+      "durationMs": 337,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "status",
+      "origin": "https://tenops.pages.dev",
+      "status": 401,
+      "durationMs": 398,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "origin": "https://tenops.pages.dev",
+      "status": 401,
+      "durationMs": 77,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "origin": "https://tenops.pages.dev",
+      "status": 401,
+      "durationMs": 273,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/rest/v1/rpc/tenbot_employee_claim",
+      "status": 401,
+      "anonymousDenied": true
+    },
+    {
+      "path": "/rest/v1/rpc/tenbot_employee_page",
+      "status": 401,
+      "anonymousDenied": true
+    }
+  ],
+  "authAndRestResponsive": true,
+  "newRpcCacheReachableAndAnonymousDenied": true,
+  "authenticatedFollowUpsPerformed": false,
+  "limitation": "No connected legitimate authenticated browser/non-browser employee session. Prior unavailable browser integration not retried. No extracted tokens, impersonation, fabricated JWT or service-role operational reads. Existing10 real isolated JWT/RLS and10 local Messaging groups reused, not claimed as hosted employee results.",
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

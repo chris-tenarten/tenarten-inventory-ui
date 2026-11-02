@@ -1,0 +1,9 @@
+{
+  "confirmed": true,
+  "answer": "Confirm activation and approved canary",
+  "mechanism": "request_user_input_async action-time Computer Use confirmation",
+  "receivedAt": "2026-10-30T21:20:34.035624+00:00",
+  "scope": "Safari genuine Admin grants only chris_dev adjustInventory until2026-10-30T21:35Z; approved single-row TenDev canary/cancel/revoke; no otherwrites",
+  "windowStart": "2026-10-30T21:20:00Z",
+  "windowExpiry": "2026-10-30T21:35:00Z"
+}

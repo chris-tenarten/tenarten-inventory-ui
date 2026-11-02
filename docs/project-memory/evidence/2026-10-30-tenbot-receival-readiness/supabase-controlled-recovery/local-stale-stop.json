@@ -1,0 +1,8 @@
+{
+  "recordedAt": "2026-10-30T23:25:48.977Z",
+  "stage": "local_precondition",
+  "reason": "180-second snapshot deadline elapsed before restart process execution; no restart request sent",
+  "restartRequestsSent": 0,
+  "safeAction": "Preserve prior snapshot; obtain one fresh bounded readiness check before sole restart",
+  "timingAttribution": "The snapshot expiry is established; elapsed time is not attributed solely to an approval step."
+}

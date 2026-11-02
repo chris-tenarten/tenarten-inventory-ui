@@ -1,0 +1,185 @@
+{
+  "status": "pass",
+  "mode": "Actual isolated SDK group5-only diagnostic",
+  "calls": [
+    {
+      "actor": "employeeA",
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 307,
+      "tokenRemainingSeconds": 59,
+      "ok": true,
+      "reason": null
+    },
+    {
+      "actor": "service",
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 103,
+      "tokenRemainingSeconds": null,
+      "loaded": true
+    },
+    {
+      "actor": "employeeA",
+      "name": "tenbot_agent_commit",
+      "status": 403,
+      "error": true,
+      "code": "42501",
+      "message": "permission denied for function tenbot_agent_commit",
+      "durationMs": 409,
+      "tokenRemainingSeconds": 59,
+      "committed": false
+    },
+    {
+      "actor": "employeeA",
+      "name": "tenbot_agent_state_valid",
+      "status": 403,
+      "error": true,
+      "code": "42501",
+      "message": "permission denied for function tenbot_agent_state_valid",
+      "durationMs": 207,
+      "tokenRemainingSeconds": 58
+    },
+    {
+      "actor": "employeeB",
+      "name": "tenbot_agent_commit",
+      "status": 403,
+      "error": true,
+      "code": "42501",
+      "message": "permission denied for function tenbot_agent_commit",
+      "durationMs": 228,
+      "tokenRemainingSeconds": 58,
+      "committed": false
+    },
+    {
+      "actor": "employeeB",
+      "name": "tenbot_agent_state_valid",
+      "status": 403,
+      "error": true,
+      "code": "42501",
+      "message": "permission denied for function tenbot_agent_state_valid",
+      "durationMs": 335,
+      "tokenRemainingSeconds": 58
+    },
+    {
+      "actor": "admin",
+      "name": "tenbot_agent_commit",
+      "status": 403,
+      "error": true,
+      "code": "42501",
+      "message": "permission denied for function tenbot_agent_commit",
+      "durationMs": 193,
+      "tokenRemainingSeconds": 58,
+      "committed": false
+    },
+    {
+      "actor": "admin",
+      "name": "tenbot_agent_state_valid",
+      "status": 403,
+      "error": true,
+      "code": "42501",
+      "message": "permission denied for function tenbot_agent_state_valid",
+      "durationMs": 179,
+      "tokenRemainingSeconds": 58
+    },
+    {
+      "actor": "service",
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 79,
+      "tokenRemainingSeconds": null,
+      "committed": false
+    },
+    {
+      "actor": "service",
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 76,
+      "tokenRemainingSeconds": null,
+      "loaded": false
+    },
+    {
+      "actor": "service",
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 77,
+      "tokenRemainingSeconds": null,
+      "committed": false
+    },
+    {
+      "actor": "service",
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 74,
+      "tokenRemainingSeconds": null,
+      "loaded": false
+    },
+    {
+      "actor": "service",
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 224,
+      "tokenRemainingSeconds": null,
+      "committed": false
+    },
+    {
+      "actor": "service",
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 81,
+      "tokenRemainingSeconds": null,
+      "loaded": false
+    },
+    {
+      "actor": "employeeA",
+      "name": "tenbot_agent_release",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 196,
+      "tokenRemainingSeconds": 57,
+      "released": true
+    },
+    {
+      "actor": "employeeA",
+      "name": "tenbot_agent_release",
+      "status": 200,
+      "error": false,
+      "code": null,
+      "durationMs": 190,
+      "tokenRemainingSeconds": 57,
+      "released": true
+    }
+  ],
+  "httpCalls": 28,
+  "inferenceCalls": 0,
+  "productionRequests": 0,
+  "primaryRelease": {
+    "actor": "employeeA",
+    "name": "tenbot_agent_release",
+    "status": 200,
+    "error": false,
+    "code": null,
+    "durationMs": 196,
+    "tokenRemainingSeconds": 57,
+    "released": true
+  },
+  "cleanupReleased": true,
+  "elapsedMs": 3792
+}

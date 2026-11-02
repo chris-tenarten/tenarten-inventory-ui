@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "head": "8dc6bf62db9105d1df14be5e36ecc6fb3314f3cd",
+  "branch": "dev",
+  "commitFiles": 16,
+  "indexUnchanged": true,
+  "branchRefsUnchanged": true,
+  "priorDirtyFilesPreserved": 16,
+  "sourceHashesMatch": true,
+  "reportLinksExist": true,
+  "noNewMigrations": true,
+  "noDeployment": true
+}

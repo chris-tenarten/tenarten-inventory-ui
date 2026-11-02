@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:02:04.522Z",
+  "job": {
+    "id": 3,
+    "owner": "postgres",
+    "active": false,
+    "database": "postgres",
+    "schedule": "23 * * * *",
+    "expectedCommand": true
+  },
+  "cleanupEnabled": true,
+  "sourceWrites": 0,
+  "ordinaryWritesDisabled": true
+}

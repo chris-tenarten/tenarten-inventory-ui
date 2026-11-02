@@ -1,0 +1,130 @@
+{
+  "status": "HOLD_FIXTURE_POSITIVE_PATH_BLOCKED",
+  "recordedAt": "2026-10-31T04:20:09.754Z",
+  "authority": "Chris: TENBOT \u2014 VALIDATE MODEL-FREE EXECUTION CONTRACT; isolated fixture application and focused validation only; release preparation conditional on successful database validation.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "acceptedCandidate": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "migration": {
+    "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+    "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+    "appliedToIsolatedFixture": true,
+    "sharedApplied": false,
+    "fixtureLedgerAbsent": true,
+    "proof": "Exact source-byte application attempt plus successful object/function/readback reconciliation; no migration ledger was created."
+  },
+  "passed": [
+    "Exact migration application, five new helper bodies, seven enabled triggers, private RLS/default-OFF execution window",
+    "Six signed synthetic Auth/JWT, real PostgreSQL/REST RLS and private Storage groups",
+    "Existing other synthetic Developer resumes one-Bag preview through two fresh local runtime instances; source ID/revision/hash/evidence unchanged; no inference/download/persistence",
+    "Anonymous and cross-user denial; same signed JWT denied resume/review/source/Storage after synthetic account deactivation; account active flag restored",
+    "Rollback-only malformed/inference-enabled/wrong-identity/wrong-source/overlong/unbound window updates and deletion rejected",
+    "Two independent PostgreSQL requests: observed holder row-lock, contender bounded 200ms lock timeout; both rolled back",
+    "Final preexisting catalog/pending/stock/source/binding/draft/approval/execution/audit/grant/accounting fingerprints unchanged; role capabilities unchanged"
+  ],
+  "blocked": [
+    "Positive fixed-source execution window arm/bind, successful grant and single-use replay",
+    "Eligible <=15-minute window expiry-at-review/approval/commit",
+    "Concurrent authenticated activation/replay",
+    "Approval invalidation and AI-reserve denial through a successfully bound execution-only grant"
+  ],
+  "blockedAdditional": [
+    "Successful resume/review of the exact fixed chris_dev source through the execution-only window",
+    "Conditional shared-schema compatibility/selective release proof not started; no selective candidate SHA"
+  ],
+  "blockerEvidence": {
+    "fixedSourcePresent": false,
+    "ownerSources": [
+      {
+        "id": "edd97a2e-43cc-4734-a5dd-f8ff316417c0",
+        "hash": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+        "bound": true,
+        "owner": "3785f6b9-742e-452f-af6c-31613a983633",
+        "state": "retained",
+        "retained": true,
+        "previewHash": null,
+        "evidenceSha256": "106e734626743aa825d03c58ab3ff7a072250a952b9714f08512419175edf5ae",
+        "previewRevision": null
+      }
+    ],
+    "liveOwnerDigestUniqueIndex": "CREATE UNIQUE INDEX invoice_source_owner_digest_live ON public.invoice_receival_sources USING btree (owner_user_id, sha256) WHERE (lifecycle_state <> 'deleted'::text)",
+    "priorExecutedGrants": 1,
+    "documentClaims": 1,
+    "exactOriginalReady": false,
+    "retainedEvidenceAndClaimsPreserved": true
+  },
+  "concurrency": {
+    "actualIndependentDatabaseRequests": true,
+    "rowLockSerialization": true,
+    "holderObservedActive": true,
+    "holderDurationMs": 4370,
+    "contenderDurationMs": 565,
+    "configuredLockTimeoutMs": 200,
+    "authenticatedConcurrentActivationTested": false,
+    "successfulReplayTested": false
+  },
+  "expiry": {
+    "over15MinuteRejectionPassed": true,
+    "checkConstraintInstalled": true,
+    "eligibleWindowExpiryAtReviewApprovalCommitTested": false
+  },
+  "inferenceSeparation": {
+    "inferenceAllowedFalseConstraintPassed": true,
+    "exactReserveDenialCodeInstalled": true,
+    "successfulBoundGrantAiReservationDenialTested": false,
+    "ordinaryAccountingUnchanged": true
+  },
+  "readback": {
+    "fiveHelperBodiesExact": true,
+    "binderAndReserveExactTransformedBodies": true,
+    "canonicalAdminActivateRevokeBodiesAndAclsUnchanged": true,
+    "actualSettlementSignature": "public.tenbot_openai_settle(uuid,uuid,bigint)",
+    "actualSettlementMatchesOriginalMigrationBody": true,
+    "settlementCaveat": "Pre-apply metadata list contained a nonexistent five-argument signature, not proof of the actual settle body; final actual-signature readback matches original metering migration; this migration does not alter settlement."
+  },
+  "finalState": {
+    "pilotOff": true,
+    "executionOff": true,
+    "enrollmentCount": 0,
+    "unrevokedGrantCount": 0,
+    "windowEnabled": false,
+    "windowStartsAt": null,
+    "windowExpiresAt": null,
+    "boundGrantId": null,
+    "inferenceAllowed": false,
+    "syntheticProfileRestored": true,
+    "permissionEpochMayHaveAdvanced": true,
+    "protectedStateUnchanged": true
+  },
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "newOperationalWrites": 0,
+  "sharedProjectRequests": 0,
+  "deployments": 0,
+  "sourceChanges": false,
+  "newSelectiveCandidateSha": null,
+  "reusedEvidence": "Accepted invoice/quantity/attachment/transactional-write evidence reused; no model, PDF, broad QA, browser or deployment checks repeated.",
+  "safeNextAction": "Separately authorize and establish a clean disposable real-database fixture capable of holding the exact fixed synthetic source/preview and prerequisites, preserving this fixture\u2019s retained original, executed grant and claim. Verify free eligibility/cost before provisioning. Do not rewrite retained evidence, disable uniqueness, reset grants/claims or change approved pins to pass.",
+  "workspace": {
+    "baselineHeadPreserved": true,
+    "allElevenPredirtyFilesPreservedBeforeReceiptAppend": true,
+    "indexPreserved": true,
+    "portsAndProcessesUntouched": true
+  },
+  "scratch": "/private/tmp/tenops-tenbot-model-free-db-validation-20261030",
+  "receipts": {
+    "jwt-results.json": "834921bca38896817274a41c01eb54f5c7d261dd0807f984220815dbaea1b997",
+    "lock-result.json": "1ed376bd07a430a4c6f6ebb3ff74f405f3643e6ed6f4b1c9cf387e2137e1b458"
+  },
+  "scratchArtifactSha256": {
+    "fixture-operator.mjs": "dcbdd481613834c52d680293d12f7761dff71080ad7f7c8fe8b7ef24f423b4c4",
+    "fixture-tests.mts": "32e709cf481cd3caf9697c78e671bf9af8ce309e540b177698f22b1f9a56502c",
+    "fixture-lock-check.mjs": "d3550d9216f3bbbd0f02cfbff25390cfe1373b76a40b62bdfa26ee3617893bdb",
+    "preflight.json": "9bc61dbf5eb2985f87545e90e2a7fd9392ff286712d0c11aa0c701c1c1bd07c3",
+    "application-apply.json": "30051664c00bc9f85594a364a39dc34b50e292ded4685a53532e20e8c8ae3fa1",
+    "application-reconcile.json": "988366015c3ece9e86db61feca09bb69081218df96a0324cc1ed6a6bd5775536",
+    "supplement.json": "b193399619bf4c9febd06cc9aa44c238580209d52b9f1ecf195271a878d7c0f2",
+    "lock-attempt.json": "0fe8004d52391f09b4bf3624e1d43f67b42c8b3e486308e522baf1e80df107b2"
+  }
+}

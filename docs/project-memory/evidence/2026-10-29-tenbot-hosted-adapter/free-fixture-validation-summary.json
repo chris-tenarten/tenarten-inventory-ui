@@ -1,0 +1,129 @@
+{
+  "status": "passed-focused-isolated-database-gates",
+  "date": "2026-10-29",
+  "riskTier": 3,
+  "testingLevel": "Focused Level 3: real Auth/PostgREST/PostgreSQL; no broad application rerun",
+  "authority": "Chris's ALTERNATIVE DATABASE VALIDATION PATH: establish a separate Free fixture if eligible; no paid service, Production change, deployment or activation",
+  "candidate": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+  "fixture": {
+    "ref": "jltgxcfiprocydhbrahz",
+    "name": "tenbot-readonly-validation-20261029",
+    "organization": "tenarten-terrazzo",
+    "plan": "Free",
+    "kind": "standalone, no clone/template/Git connection",
+    "postgresVersion": "17.11",
+    "sourceBaseline": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+    "prerequisites": "19 narrowly selected released-schema fragments; real Auth and capability logic; no Job or Inventory schema/data",
+    "initialAuthUsers": 0,
+    "initialPublicTables": 0,
+    "initialStorageObjects": 0,
+    "initialVaultSecrets": 0,
+    "paidAddons": [],
+    "productionDataOrCredentialsCopied": false
+  },
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+      "applied": true
+    },
+    {
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31",
+      "applied": true
+    }
+  ],
+  "applicationMethod": "Exact file text with bounded session timeouts through fixed-ref Management SQL; not Supabase CLI ledger registration",
+  "history": {
+    "passed": true,
+    "groups": 14,
+    "httpCalls": 153,
+    "elapsedMs": 125654,
+    "inferenceCalls": 0,
+    "implicitAuthRefreshes": 0,
+    "coverage": [
+      "Real signed JWT/Auth and PostgREST; invalid/forged/expired JWT denial",
+      "Employee and Admin owner isolation; direct table/RPC denial",
+      "Durable restoration across fresh clients, source-proof and current-permission checks",
+      "Account and source-capability revocation using existing signed JWTs",
+      "Structural eligible-state validation, bounded context, tool_result/volatile field rejection; live-Job retention exclusion relies on reused runtime evidence",
+      "Concurrent CAS winner, replay denial, Clear/late-commit protection",
+      "Lease replacement and retention expiry"
+    ],
+    "receipt": "free-fixture-history-results.json",
+    "review": "free-fixture-history-independent-review.json"
+  },
+  "meter": {
+    "passed": true,
+    "checks": 14,
+    "events": 118,
+    "elapsedMs": 25171,
+    "actualInference": false,
+    "concurrentReserve": {
+      "attempts": 12,
+      "accepted": 3,
+      "budgetDenied": 9
+    },
+    "coverage": [
+      "Signed employee/Admin/anonymous ACLs and service-only financial functions",
+      "Atomic shared monetary/request/rate/open limits",
+      "Reservation ID retry prevention and concurrent idempotent settlement",
+      "Conflicting and owner-mismatched settlement rejection",
+      "Uncertain outcomes retained across connections and calendar boundaries",
+      "Inactive/revoked caller denial and settlement of existing charge",
+      "Expiry/model denial; measured overrun disables future inference",
+      "Nondecreasing imported legacy accounting"
+    ],
+    "receipt": "free-fixture-meter-results.json"
+  },
+  "harnessReconciliation": {
+    "earlierHistoryAttempts": "Two failures preserved plus successful focused diagnostics. Their original RPC error code was not captured; definitive causation is unproven.",
+    "finalTransport": "Real GoTrue sign-in/getUser then explicit Bearer signed-JWT PostgREST clients matching hosted Edge. Avoids persisted-SDK-session refresh behavior with the fixture's 60-second JWT and SDK 90-second refresh margin.",
+    "applicationOrMigrationFixRequired": false
+  },
+  "finalState": {
+    "policyEnabled": false,
+    "totalLimitMicrousd": 0,
+    "remainingMicrousd": 0,
+    "syntheticProfilesRestored": true,
+    "syntheticAuthUsers": 4,
+    "storageObjects": 0,
+    "protectedTablesRlsEnabled": true,
+    "directSelectDeniedToAuthenticatedAndService": true,
+    "ledgerAmounts": "Synthetic only; no actual OpenAI spend",
+    "receipt": "free-fixture-final-state.json"
+  },
+  "resourceState": {
+    "fixtureRetained": true,
+    "reason": "Reusable standalone Free fixture retained for Product review; no temporary paid preview branch",
+    "freeSlotsUsed": 2,
+    "freeSlotsLimit": 2,
+    "expectedInfrastructureCostUsd": 0,
+    "actualInvoiceVerified": false,
+    "paidResourcesCreated": 0
+  },
+  "unchanged": {
+    "productionMigrations": 0,
+    "productionOperationalWrites": 0,
+    "openAIInferenceCalls": 0,
+    "openAICostUsd": 0,
+    "sourceChanges": false,
+    "push": false,
+    "deployment": false,
+    "terraActivation": false,
+    "productionQwenPreserved": true,
+    "inventoryCatalogReceivalWritesDisabled": true
+  },
+  "limitations": [
+    "Minimal real released prerequisite fixture does not certify canonical Job RLS or full shared hosted schema compatibility.",
+    "No hosted Edge/provider/key authentication, browser deployment or new Qwen inference check in this pass.",
+    "No Inventory/catalog/receival execution migration or write validation."
+  ],
+  "releaseReadiness": {
+    "assistantDatabaseBlocker": "cleared within stated fixture scope",
+    "tenDevStaging": "Ready for separate Product approval; not executed",
+    "next": "Authorize only the two assistant shared-backend migrations and selective d769ab3 read-only TenDev candidate, initially disabled; securely stage separate hosted key; verify Terra/Qwen and caller-authorized Job/history canaries under finite reviewed policy before activation or TenOps promotion.",
+    "pilotProposal": "Existing unapplied $4 new allowance / $4.539956 inclusive ceiling at unchanged baseline, daily $1, employee daily $0.25, per request $0.25; reconcile/freeze local ledger and recheck credits at cutover; cutoff no later than Oct 30 2026 6 p.m. Chicago. No automatic $20 commitment."
+  },
+  "evidence": "free-fixture-evidence-manifest.json"
+}

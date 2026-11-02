@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:40:23.050Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "action": "configure",
+  "edgeWakeSecretPresent": true,
+  "privateVaultPairPresent": true,
+  "wakeEdgeMatches": true,
+  "gatewayIsApprovedPublicAnon": true,
+  "randomnessBits": 256,
+  "generatedInDatabase": true,
+  "plaintextSecretSaved": false,
+  "secretValuePrinted": false,
+  "disabledFlagsVerified": [
+    "TENBOT_RECEIVAL_PILOT_ENABLED",
+    "TENBOT_RECEIVAL_EXECUTION_ENABLED",
+    "TENBOT_RECEIVAL_CLEANUP_ENABLED",
+    "TENBOT_RECEIVAL_ALLOWED_ORIGINS",
+    "TENBOT_RECEIVAL_EMPLOYEE_IDS",
+    "TENBOT_RECEIVAL_PILOT_EXPIRES_AT"
+  ],
+  "unrelatedProviderSettingsUnchanged": true,
+  "openAIKeyUnchanged": true,
+  "paidInferenceCalls": 0,
+  "operationalWrites": 0,
+  "cleanupActivated": false
+}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-01T17:34:42.558Z",
+  "candidate": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "target": "https://tenops.pages.dev",
+  "branch": "main",
+  "command": "npm run build -- --webpack",
+  "mandatoryUnchangedPrebuild": true,
+  "canaryControls": "off; route absent",
+  "publicSettingsReused": true,
+  "environmentKeys": [
+    "CF_PAGES",
+    "CF_PAGES_BRANCH",
+    "CF_PAGES_COMMIT_SHA",
+    "CF_PAGES_URL",
+    "CI",
+    "GIT_NO_LAZY_FETCH",
+    "GIT_OPTIONAL_LOCKS",
+    "HOME",
+    "NEXT_PUBLIC_DEV_BRANDING",
+    "NEXT_PUBLIC_ENABLE_PLANNING",
+    "NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_TENBOT_CANARY_CONTROL_MODE",
+    "NEXT_TELEMETRY_DISABLED",
+    "NODE_ENV",
+    "PATH",
+    "TMPDIR"
+  ],
+  "credentialsIncluded": false,
+  "deploy": false
+}

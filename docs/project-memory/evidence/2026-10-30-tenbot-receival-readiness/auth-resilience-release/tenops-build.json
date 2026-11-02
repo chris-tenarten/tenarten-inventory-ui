@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:23:57.033Z",
+  "target": {
+    "url": "https://tenops.pages.dev",
+    "branch": "main",
+    "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3"
+  },
+  "acceptedAuthorityRevision": "ec62998aba228e615279ae7d6e81f04378e62062",
+  "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "source": "/private/tmp/tenops-auth-resilience-release-20261030/production/candidate",
+  "output": "/private/tmp/tenops-auth-resilience-release-20261030/production/candidate/out",
+  "durationMs": 31822,
+  "productionOptimizedBuild": true,
+  "mandatoryCleanCandidatePrebuild": true,
+  "mandatoryPrebuildUnchanged": true,
+  "fullHistory": true,
+  "sourceCleanAfterBuild": true,
+  "acceptedSourceAndEvidenceHashesMatched": true,
+  "soleApplicationDelta": "src/lib/auth.tsx",
+  "sourceReviewRegistryUnchanged": true,
+  "committedArtifactUnchanged": true,
+  "knowledgeSha256": "8ba0e7c2787dc667e4506284af49a4641dcd5fcf2d395312431cd12a3bcc5d3d",
+  "knowledgeEntriesUnchanged": true,
+  "structuredKnowledgeUnchanged": true,
+  "releasedAuthorityUnchanged": true,
+  "localEnvironmentFilesCopied": false,
+  "secretEnvironmentFilesExcluded": true,
+  "noInferenceCredential": true,
+  "artifactSecretPatternScanPassed": true,
+  "publicAnonMatches": 3,
+  "artifactCount": 277,
+  "artifactManifestSha256": "f291a7485795860c18aba48dd5af1884078a141fac51f0aa277abaaa88b7fe2e",
+  "canaryControlMode": "unset",
+  "omittedMaskedPublicFlags": [],
+  "reproducedMaskedPublicFlags": [
+    "NEXT_PUBLIC_ENABLE_PLANNING"
+  ],
+  "publicFlagProvenance": {
+    "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "pins": [
+      {
+        "path": "/private/tmp/tenops-tenbot-knowledge-release-20261030/release.mjs",
+        "sha256": "7ac3c6041e0bcf1b2e0282a2c750042902af1a0263679815f81bbb07364264e7"
+      },
+      {
+        "path": "/private/tmp/tenops-tenbot-knowledge-release-20261030/tenops/build-attempt.json",
+        "sha256": "13d008fce95ce0c1d4aef990efc3cfa244e7d49f3ff1fb4672449bf90277dfb1"
+      },
+      {
+        "path": "/private/tmp/tenops-tenbot-knowledge-release-20261030/tenops/build.json",
+        "sha256": "1691592440e5cdcdd0b0e3b6020ab178d672ab4a14b695925056a1f0348e8540"
+      },
+      {
+        "path": "/private/tmp/tenops-tenbot-knowledge-release-20261030/tenops/served.json",
+        "sha256": "b8b97eb0990e8307e592c7561a2cf81071c85936d61b78c7c00d26c556bfdffa"
+      }
+    ],
+    "reviewedSourceLines": "release.mjs:31-37",
+    "contract": "Accepted and served 2a3 build explicitly set masked Planning to an empty string, set dev branding false, and required falsy Planning/Early Access. This reproduces that build contract without reading a hosted secret value."
+  },
+  "proof": {
+    "status": "reviewed",
+    "semanticHolds": 0,
+    "sourceHolds": 0,
+    "unclassifiedSensitivePaths": 0,
+    "variant": "production-2a3-legacy",
+    "acceptedCandidateSources": 0,
+    "technicalCandidateSources": 0,
+    "candidateSourceCountsProvided": false,
+    "authority": null,
+    "verifier": {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "blob": "b3f76af6014524a9fa7abdc351e15058ee13e39f",
+      "sha256": "9c5443c4363d37bb4a650bd9c0ab90031d5ee50cc52d3047e9e019c41478b1b7"
+    }
+  },
+  "resumedExistingProof": true,
+  "hostedConfigurationChanges": 0,
+  "migrations": 0,
+  "deployments": 0,
+  "testReruns": 0,
+  "modelCalls": 0
+}

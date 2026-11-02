@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "candidate": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "baselinePrerequisite": "66dd0c072de3a4d81198884c2df81c96bdd0a134",
+  "bundle": "candidate.bundle",
+  "sha256": "2dcdfd3e96026d83b717e15857ed6323dc6be8cfe9c1bc1ed9e4d9b7d3aca159",
+  "bytes": 145492,
+  "verified": true,
+  "baselineEvidence": "../../2026-11-01-tenbot-job-intelligence-staging.md",
+  "privateSource": "/private/tmp/tenops-tenbot-direct-answer-finalize-20261101/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-direct-answer-finalize-20261101/candidate-git",
+  "noRootRefsChanged": true
+}

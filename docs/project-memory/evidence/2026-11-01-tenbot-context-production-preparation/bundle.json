@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "candidate": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "path": "/private/tmp/tenops-tenbot-context-production-20261101/production-context-candidate.bundle",
+  "sha256": "288ce6183aecb15e37ef8e21383d0a1e95a1988c841d56e989aae22010b9a855",
+  "bytes": 69024808,
+  "push": false
+}

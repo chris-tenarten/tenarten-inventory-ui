@@ -1,0 +1,380 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T21:31:04.327Z",
+  "sha": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "parent": "22a7e83fa042f980c535082cf605929a00dec79a",
+  "baseline": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "acceptedAuthorityRevision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "source": "/private/tmp/tenops-tenbot-production-preparation-20261031/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-production-preparation-20261031/candidate-git",
+  "output": "/private/tmp/tenops-tenbot-production-preparation-20261031/candidate/out",
+  "sourceHashes": [
+    {
+      "path": "src/modules/inventory/invoice-receival-attachments.ts",
+      "blob": "d6484eeb9fcf523652ca8c5a826866dcd3a7f7ca",
+      "sha256": "620cd88fc655ee194622e266fd527ea3fe92dcec2842b43f0c5e6308afac4edb"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-service.ts",
+      "blob": "fd9bf4b9c1152bca6f019d39b637f5de84fb19e9",
+      "sha256": "4cc9d6fe8164e8fe98026d499d53f5235f18ff44cfa34c46eb472f9ae8c82343"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-access.ts",
+      "blob": "de73ed88b22ab309442fd111925b3f6df4bfa2b1",
+      "sha256": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-execution.ts",
+      "blob": "b978f7fa9337d3e569eb9e614a1ff115351f9e2c",
+      "sha256": "d20623ca2be46394e2ca958ad123a4d75fd7c6488eea846346f22565660cbbfc"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-funding.ts",
+      "blob": "8d458662bb5179830cd860d521422dfec3f83944",
+      "sha256": "8eb5f6f963c04bed1b10717bd3fcd6ac4c249a74f42b2d1596fee238bcd17964"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "blob": "f019d31a66b2719d6777e26f9ed3b9daf1711aff",
+      "sha256": "6a3994ff906be1f34c7d9b170a9ce6f8a0464f4f4f1333c8d66b80da2e3af665"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "blob": "3b81f1d0a737c0376e32e3be9145f173ed39438f",
+      "sha256": "afcf43ec6446da08a43cbc33ed60c39649f07932c9516579df5d6e181f8c0bd8"
+    },
+    {
+      "path": "src/modules/tenbot/initialization-failure.ts",
+      "blob": "4366fc53040738bf3beb99dfc543a91fd4358d7e",
+      "sha256": "aae36eb165ecbced9b455c53afa748aa4f2d56c1d2d920e977a2811580532ec4"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "blob": "8c9614761ac12d66e8893afb090ce22aa79dd0b1",
+      "sha256": "0b42ff8592c195544d927c33b427c48fb066d1db9b85d7d6f73c81ed69f2306c"
+    },
+    {
+      "path": "src/modules/tenbot/prepared-draft-resume.ts",
+      "blob": "47fac4d66f71bf771fb29e133fc8d96db40cd3f7",
+      "sha256": "1e40d6f608921a1d149bd4734813898ca82f8473991513d4b6bad3d0c273b099"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "71bcc5d8f9c76a2d7a4a1bdc80f10b66e7ee6b52",
+      "sha256": "0bea8de12d9f0f20ef7988953a0ea60b92ad5af5eeb89809b9fbd31232946db4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "blob": "29ccba59420eda0202b5dd03407028497ab70a3c",
+      "sha256": "f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-canary-funding.ts",
+      "blob": "6d77e3bdd58c1f0ef52fd32a1a6780cb44cd74cf",
+      "sha256": "df875a6cd45c35b13198a20c062c221dd76b8e2191e5f0986401eb89a317471b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+      "blob": "bea0e13636c95718fb35d08da4b30e01c85f1395",
+      "sha256": "84a4d315742e76458bdb6ff840fbaaa195089ac2ddec5184468847abde85379d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+      "blob": "e25dc58ba1edac7488f4ead934ce2a227856365a",
+      "sha256": "37911acdadc696ab28672b66112d6b25ddf6568570a8de13d393343a0996668b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+      "blob": "eeb1e886c17f88c23a3bcd5ea7ea89387be7865d",
+      "sha256": "53e7a45ff333652e0ff62787a06d85d2f58851c0562cac8a243d78d232bf06c2"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "blob": "b6450def39482f3da1b28003357f116810b5af2c",
+      "sha256": "9e60c5101092678155920c008691420100e69d032f1aa8c544e28499d52684d1"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "blob": "9eee1e6256f5e88168eeafea1be1f93e7f50f53d",
+      "sha256": "15beeaa80b55725f6984616d58fbc9253834ecc12939991250d20934327f846a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "blob": "74c992d6e04f18dc7f16c0bdd56f6e2f24629fe8",
+      "sha256": "62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "blob": "18a8776166c69184246d90d6b0ca971042786486",
+      "sha256": "160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "blob": "96852bc575846a4928d11787a48edb6005af46d6",
+      "sha256": "6c8aadb83edf217bdae8f9d6de45fcc3b69f2ca68c35e3dd58d40ce54640311f"
+    },
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "blob": "b2ac2c70af9eb8711578f40e57039f3d606be3d9",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc"
+    },
+    {
+      "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "blob": "f041b370519383d13a3f13bfe12c28d93f00a856",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7"
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "blob": "aced236d65b7e547c3ee036e779e01196a6c5d2b",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63"
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "blob": "4a4114a4f3dbaa81869776e1298b555bcac3371c",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441"
+    },
+    {
+      "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "blob": "4c21e082ef4c30a2db43a2b24e07018e7a9ff1f2",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742"
+    },
+    {
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "blob": "73f3b70a149ea807f32022ce587caa87220e2e91",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00"
+    },
+    {
+      "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "blob": "2f34c5972127b70c9b4dc776aba6f3f90535d1fa",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d"
+    },
+    {
+      "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "blob": "a13b7303520d4ce178c1eb795513ceccdf410746",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284"
+    },
+    {
+      "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+      "blob": "1eb5003f7d00e400550ce3e5c79b99c5ba1a02ee",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03"
+    },
+    {
+      "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "blob": "3db080d20d22d18e996bd7dc226a055825e0bf72",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3"
+    },
+    {
+      "path": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+      "blob": "23bb3f091583762e72dc98ddf981668f733b7e63",
+      "sha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496"
+    },
+    {
+      "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "blob": "c539352e96864151e7ac74f75dc7381d49e7c0ba",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+    },
+    {
+      "path": "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+      "blob": "3d2dcab81d82cc1c31fc4751d9a15bec56b40765",
+      "sha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040"
+    },
+    {
+      "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+      "blob": "d6091f40e7d23e2314c4a2a7bce67e5dd993e7af",
+      "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6"
+    },
+    {
+      "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+      "blob": "c6485e36dc0b8951176eb2437aa978c1abf3e1ef",
+      "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580"
+    },
+    {
+      "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "blob": "baa7b4eb2bd1a0ee078af2808ddb32c4f8972203",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27"
+    }
+  ],
+  "selectedApplicationPaths": [
+    "src/modules/inventory/invoice-receival-attachments.ts",
+    "src/modules/inventory/invoice-receival-service.ts",
+    "src/modules/inventory/tenbot-canary-access.ts",
+    "src/modules/inventory/tenbot-canary-execution.ts",
+    "src/modules/inventory/tenbot-canary-funding.ts",
+    "src/modules/tenbot/ReceivalDraftReview.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/initialization-failure.ts",
+    "src/modules/tenbot/live-review.ts",
+    "src/modules/tenbot/prepared-draft-resume.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-canary-funding.ts",
+    "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+    "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+    "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "alreadyAppliedMigrations": [
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "blob": "b2ac2c70af9eb8711578f40e57039f3d606be3d9",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc"
+    },
+    {
+      "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "blob": "f041b370519383d13a3f13bfe12c28d93f00a856",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7"
+    },
+    {
+      "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "blob": "aced236d65b7e547c3ee036e779e01196a6c5d2b",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63"
+    },
+    {
+      "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "blob": "4a4114a4f3dbaa81869776e1298b555bcac3371c",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441"
+    },
+    {
+      "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "blob": "4c21e082ef4c30a2db43a2b24e07018e7a9ff1f2",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742"
+    },
+    {
+      "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "blob": "73f3b70a149ea807f32022ce587caa87220e2e91",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00"
+    },
+    {
+      "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "blob": "2f34c5972127b70c9b4dc776aba6f3f90535d1fa",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d"
+    },
+    {
+      "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "blob": "a13b7303520d4ce178c1eb795513ceccdf410746",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284"
+    },
+    {
+      "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+      "blob": "1eb5003f7d00e400550ce3e5c79b99c5ba1a02ee",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03"
+    },
+    {
+      "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "blob": "3db080d20d22d18e996bd7dc226a055825e0bf72",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3"
+    },
+    {
+      "path": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+      "blob": "23bb3f091583762e72dc98ddf981668f733b7e63",
+      "sha256": "dacaa8b006fd6f0c284803349d20b696c7603d67054417a595b274e9b46a3496"
+    },
+    {
+      "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "blob": "c539352e96864151e7ac74f75dc7381d49e7c0ba",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86"
+    },
+    {
+      "path": "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+      "blob": "3d2dcab81d82cc1c31fc4751d9a15bec56b40765",
+      "sha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040"
+    },
+    {
+      "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+      "blob": "d6091f40e7d23e2314c4a2a7bce67e5dd993e7af",
+      "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6"
+    },
+    {
+      "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+      "blob": "c6485e36dc0b8951176eb2437aa978c1abf3e1ef",
+      "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580"
+    },
+    {
+      "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "blob": "baa7b4eb2bd1a0ee078af2808ddb32c4f8972203",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27"
+    }
+  ],
+  "newMigrations": [],
+  "excludedPaths": [
+    "src/app/inventory/page.tsx",
+    "src/app/tenbot/canary/page.tsx",
+    "src/modules/tenbot/TenbotCanaryControl.tsx",
+    "src/modules/inventory/tenbot-canary-control.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-receival-cleanup.ts",
+    "supabase/functions/tenbot-receival-cleanup/index.ts"
+  ],
+  "unchangedProductionVerifier": true,
+  "unchangedReleaseSync": true,
+  "proof": {
+    "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+    "receiptRevision": "22a7e83fa042f980c535082cf605929a00dec79a",
+    "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+  },
+  "sourceRegistryReconciled": true,
+  "oldSourceEvidencePreserved": true,
+  "productionOnlyAncestry": true,
+  "changedPaths": [
+    "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/edge.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/final.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/mandatory-proof.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/migration-applied.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/pages.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/served.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/smoke.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/source-state.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/applied-migration-hashes.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/superseded-source-reviews.json",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "src/modules/inventory/invoice-receival-attachments.ts",
+    "src/modules/inventory/invoice-receival-service.ts",
+    "src/modules/inventory/tenbot-canary-access.ts",
+    "src/modules/inventory/tenbot-canary-execution.ts",
+    "src/modules/inventory/tenbot-canary-funding.ts",
+    "src/modules/tenbot/ReceivalDraftReview.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/initialization-failure.ts",
+    "src/modules/tenbot/live-review.ts",
+    "src/modules/tenbot/prepared-draft-resume.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-canary-funding.ts",
+    "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+    "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+    "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+    "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+    "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+    "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+    "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+    "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+    "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+    "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+    "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+    "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+    "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+    "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+    "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+    "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+    "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+    "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql"
+  ],
+  "deployed": false,
+  "hostedMutations": 0,
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "workspacePreserved": true
+}

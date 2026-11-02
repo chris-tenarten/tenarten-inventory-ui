@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "phase": "before",
+  "at": "2026-10-31T22:36:44.405Z",
+  "code": "RELEASE_STOP",
+  "safeMessage": "Cannot read properties of undefined (reading 'state')",
+  "automaticRetry": false
+}

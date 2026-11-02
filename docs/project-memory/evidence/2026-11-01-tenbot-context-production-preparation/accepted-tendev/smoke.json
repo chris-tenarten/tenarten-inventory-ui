@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "at": "2026-11-01T17:27:53.957Z",
+  "checks": [
+    {
+      "path": "/auth/v1/health",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/rest/v1/vendor_catalog?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/rest/v1/pending_receivals?select=id&limit=0",
+      "status": 200,
+      "rowsRequested": 0,
+      "employeeAuthenticationClaimed": false
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "status",
+      "status": 401,
+      "durationMs": 408,
+      "unauthenticatedDenied": true
+    },
+    {
+      "path": "/functions/v1/tenbot",
+      "action": "history",
+      "status": 401,
+      "durationMs": 338,
+      "unauthenticatedDenied": true
+    }
+  ],
+  "authAndRestResponsive": true,
+  "authenticatedFollowUpsPerformed": false,
+  "limitation": "Browser inventory unavailable; no supplied authorized non-browser employee session. No session extraction, fabricated token, service-role business read or paid model dispatch.",
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

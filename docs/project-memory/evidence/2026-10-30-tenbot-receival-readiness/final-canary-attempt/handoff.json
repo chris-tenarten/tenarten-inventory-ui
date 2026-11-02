@@ -1,0 +1,12 @@
+{
+  "authority": "Current Product AUTHORIZE FINAL HOSTED CANARY",
+  "scope": "TenDev/chris_dev, frozen SYN-TENDEV-RECEIVAL-20261030-01, existing AlaskaWhite#0, exactly1Bag, received0, maximum1 pending; no catalog/Jobs/on-hand writes",
+  "servedSha": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+  "stageReceipt": "../canary-funding-correction/staging-summary.json",
+  "privateOperator": "/private/tmp/tenops-tenbot-final-canary-20261030/operator.mjs",
+  "operatorSha256": "f5a26a8246d85338b752716a9df78457f989be8a0e2082d8ee229066af6bd9ec",
+  "freshWindowNotStarted": true,
+  "nextStep": "Wait for mandatory action-time confirmation; then arm dedicated funding from fresh DBclock and update actual Admin expiry field before authentic activation. Never reuse unsent prepared8:45PM field as authority.",
+  "safety": "No window/grant/spending/enrollment or operation activated; screen control released. Ordinary policy and accounting unchanged.",
+  "liveRetryLimitation": "Existing employee UI has no happy-path retry control; do not fabricate token/console replay or claim receipt-read proves execute retry."
+}

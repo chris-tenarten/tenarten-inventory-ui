@@ -1,0 +1,269 @@
+{
+  "recordedAt": "2026-10-30T02:12:30.949Z",
+  "label": "after-job",
+  "snapshot": {
+    "qwen": [
+      {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "outcome": "completed",
+        "createdAt": "2026-10-30T02:06:49.416187+00:00",
+        "inputTokens": 975,
+        "outputTokens": 109,
+        "estimatedNeurons": 7.832
+      },
+      {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "outcome": "failed",
+        "createdAt": "2026-10-30T02:09:43.939648+00:00",
+        "inputTokens": 976,
+        "outputTokens": 81,
+        "estimatedNeurons": 6.983
+      }
+    ],
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 572239,
+      "remainingMicrousd": 3967717,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "openai": [
+      {
+        "id": "be3adfc1-c93c-4a1d-a4fa-a7ff3cd729ac",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "ff865c29-3417-4e53-bdbc-123b0d12ed07",
+        "createdAt": "2026-10-30T01:24:49.297189+00:00",
+        "settledAt": "2026-10-30T01:24:52.35147+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 1716,
+        "reservedMicrousd": 27004
+      },
+      {
+        "id": "9373b596-b235-42cf-a7f0-32c769c77b46",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "ff865c29-3417-4e53-bdbc-123b0d12ed07",
+        "createdAt": "2026-10-30T01:24:54.88641+00:00",
+        "settledAt": "2026-10-30T01:24:56.529362+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 2391,
+        "reservedMicrousd": 31025
+      },
+      {
+        "id": "366aa08e-212f-4b39-b84f-4c608ac883f3",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "ff865c29-3417-4e53-bdbc-123b0d12ed07",
+        "createdAt": "2026-10-30T01:24:58.034091+00:00",
+        "settledAt": "2026-10-30T01:25:00.69213+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 1408,
+        "reservedMicrousd": 36184
+      },
+      {
+        "id": "31b6719e-5ae3-462d-93a6-90e5886cb325",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "da887cd7-315f-428f-a428-baed0250fba6",
+        "createdAt": "2026-10-30T01:25:31.517988+00:00",
+        "settledAt": "2026-10-30T01:25:35.731059+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 298,
+        "reservedMicrousd": 27393
+      },
+      {
+        "id": "429ee77c-0fe6-436f-a716-c682742e369e",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "da887cd7-315f-428f-a428-baed0250fba6",
+        "createdAt": "2026-10-30T01:25:39.040761+00:00",
+        "settledAt": "2026-10-30T01:25:40.978317+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 889,
+        "reservedMicrousd": 31414
+      },
+      {
+        "id": "148b8d2b-3389-4805-a0d9-37ee40c69d18",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "da887cd7-315f-428f-a428-baed0250fba6",
+        "createdAt": "2026-10-30T01:25:42.122658+00:00",
+        "settledAt": "2026-10-30T01:25:44.132991+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 1341,
+        "reservedMicrousd": 36573
+      },
+      {
+        "id": "38d853df-c8b8-4638-861b-6860f2138b67",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "a210ed1a-5993-4d20-8b1f-5f8eec6b7159",
+        "createdAt": "2026-10-30T01:27:31.93184+00:00",
+        "settledAt": "2026-10-30T01:27:34.188181+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 488,
+        "reservedMicrousd": 27943
+      },
+      {
+        "id": "901919a9-a95d-4f39-9d52-9b3474cf6d9d",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "a210ed1a-5993-4d20-8b1f-5f8eec6b7159",
+        "createdAt": "2026-10-30T01:27:39.53615+00:00",
+        "settledAt": "2026-10-30T01:27:41.28276+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 3578,
+        "reservedMicrousd": 37370
+      },
+      {
+        "id": "215a8f06-cd31-4f18-a6e2-6fefbf948b82",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "a210ed1a-5993-4d20-8b1f-5f8eec6b7159",
+        "createdAt": "2026-10-30T01:27:42.839217+00:00",
+        "settledAt": "2026-10-30T01:27:44.383198+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 1086,
+        "reservedMicrousd": 40185
+      },
+      {
+        "id": "57d485ad-292d-48bd-995f-9fe1008b2bc2",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "a210ed1a-5993-4d20-8b1f-5f8eec6b7159",
+        "createdAt": "2026-10-30T01:27:45.133591+00:00",
+        "settledAt": "2026-10-30T01:27:46.764232+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 1063,
+        "reservedMicrousd": 42774
+      },
+      {
+        "id": "18291eea-1380-4c1a-8469-92993555cf85",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "a210ed1a-5993-4d20-8b1f-5f8eec6b7159",
+        "createdAt": "2026-10-30T01:27:47.552612+00:00",
+        "settledAt": "2026-10-30T01:27:48.994528+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 1296,
+        "reservedMicrousd": 45957
+      },
+      {
+        "id": "b6a07f8f-3b76-4a45-83b0-6ffd5b663bbe",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "a210ed1a-5993-4d20-8b1f-5f8eec6b7159",
+        "createdAt": "2026-10-30T01:27:49.654373+00:00",
+        "settledAt": "2026-10-30T01:27:51.790525+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 1238,
+        "reservedMicrousd": 48763
+      },
+      {
+        "id": "c2a0d89d-ed11-4ae0-9935-bc72eef77938",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "a210ed1a-5993-4d20-8b1f-5f8eec6b7159",
+        "createdAt": "2026-10-30T01:27:52.764554+00:00",
+        "settledAt": "2026-10-30T01:27:58.639262+00:00",
+        "policyVersion": 2,
+        "actualMicrousd": 3825,
+        "reservedMicrousd": 53649
+      },
+      {
+        "id": "9690b690-b37f-4753-a0d5-1e5c3b09a6e4",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "b7ecf8f4-6652-4685-8b82-65b256fbe0df",
+        "createdAt": "2026-10-30T02:10:42.724212+00:00",
+        "settledAt": "2026-10-30T02:10:45.544192+00:00",
+        "policyVersion": 3,
+        "actualMicrousd": 1717,
+        "reservedMicrousd": 27000
+      },
+      {
+        "id": "ceb6f094-bcb7-4385-9915-57792fd74db4",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "b7ecf8f4-6652-4685-8b82-65b256fbe0df",
+        "createdAt": "2026-10-30T02:10:46.104191+00:00",
+        "settledAt": "2026-10-30T02:10:47.925308+00:00",
+        "policyVersion": 3,
+        "actualMicrousd": 2392,
+        "reservedMicrousd": 31022
+      },
+      {
+        "id": "c7544468-bd60-401f-8fa2-12fb4cbc48c1",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "b7ecf8f4-6652-4685-8b82-65b256fbe0df",
+        "createdAt": "2026-10-30T02:10:48.454056+00:00",
+        "settledAt": "2026-10-30T02:10:50.528817+00:00",
+        "policyVersion": 3,
+        "actualMicrousd": 1363,
+        "reservedMicrousd": 36180
+      },
+      {
+        "id": "001ab02d-dd32-4c44-8bd5-1361fa9f2b86",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "86ecf456-1a5a-4f1e-9cbc-bbb47286dab7",
+        "createdAt": "2026-10-30T02:12:00.488993+00:00",
+        "settledAt": "2026-10-30T02:12:03.019015+00:00",
+        "policyVersion": 3,
+        "actualMicrousd": 421,
+        "reservedMicrousd": 27504
+      },
+      {
+        "id": "8f7d2326-824f-4023-9c39-e43a89066082",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "86ecf456-1a5a-4f1e-9cbc-bbb47286dab7",
+        "createdAt": "2026-10-30T02:12:03.780313+00:00",
+        "settledAt": "2026-10-30T02:12:05.678244+00:00",
+        "policyVersion": 3,
+        "actualMicrousd": 2998,
+        "reservedMicrousd": 36128
+      },
+      {
+        "id": "1c627cb2-c1bc-4e60-a769-d60bab072a1d",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "86ecf456-1a5a-4f1e-9cbc-bbb47286dab7",
+        "createdAt": "2026-10-30T02:12:06.721397+00:00",
+        "settledAt": "2026-10-30T02:12:08.911104+00:00",
+        "policyVersion": 3,
+        "actualMicrousd": 1009,
+        "reservedMicrousd": 38717
+      },
+      {
+        "id": "cdbce81f-cc7e-4f82-85d9-8e35263fe426",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "request": "86ecf456-1a5a-4f1e-9cbc-bbb47286dab7",
+        "createdAt": "2026-10-30T02:12:09.817822+00:00",
+        "settledAt": "2026-10-30T02:12:12.750563+00:00",
+        "policyVersion": 3,
+        "actualMicrousd": 1766,
+        "reservedMicrousd": 41899
+      }
+    ],
+    "historyShape": {
+      "rows": 2,
+      "maxDisplays": 2,
+      "maxGuidance": 0,
+      "allStateValid": true
+    },
+    "receivalMigrationPresent": false
+  },
+  "privateProseRead": false,
+  "apiTokenUsageUnavailableInLedger": true
+}

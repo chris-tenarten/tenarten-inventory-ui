@@ -1,0 +1,30 @@
+{
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "projectName": "tenartenDB",
+  "requestedSize": "Small",
+  "ramGB": 2,
+  "hourlyPriceUsd": 0.0206,
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/billing/addons",
+  "method": "PATCH",
+  "body": {
+    "addon_type": "compute_instance",
+    "addon_variant": "ci_small"
+  },
+  "submittedAt": "2026-10-30T23:52:08.667Z",
+  "submitted": true,
+  "timeoutMs": 30000,
+  "automaticRetries": 0,
+  "fixtureMutationRequested": false,
+  "otherConfigurationFields": false,
+  "status": 200,
+  "headersMs": 5180,
+  "totalMs": 5181,
+  "bodyBytes": 0,
+  "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "responseHeaders": {
+    "date": "Fri, 30 Oct 2026 23:52:13 GMT",
+    "server": "cloudflare",
+    "cf-ray": "a52e54fefc7e75d5-IAH"
+  },
+  "result": "RESIZE_ACKNOWLEDGED_NOT_YET_APPLIED_PROVEN"
+}

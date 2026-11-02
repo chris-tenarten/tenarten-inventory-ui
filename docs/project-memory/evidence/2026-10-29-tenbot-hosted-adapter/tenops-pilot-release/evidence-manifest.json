@@ -1,0 +1,122 @@
+{
+  "files": [
+    {
+      "path": "activation.json",
+      "sha256": "0c7b2c84ad867e4cb5791971dc261f2e79b33703902b69289b8e01fc36cfd064"
+    },
+    {
+      "path": "after-fallback-snapshot.json",
+      "sha256": "7bb0c085c22a645cb83dc55548cb29e2903e928425a932412c08754faab8caf0"
+    },
+    {
+      "path": "after-history-snapshot.json",
+      "sha256": "7e0151cab70d116ba80c552cf770f9185956e1f8f3b2b963062218666179f600"
+    },
+    {
+      "path": "after-job-snapshot.json",
+      "sha256": "1f83aedd73de242d2f9e1fa7b57c3506362af1749badf908cadb2e72083e57f3"
+    },
+    {
+      "path": "after-nested-fallback-snapshot.json",
+      "sha256": "915a4d82a8606cd1f70d629e0286b78ca79996e0d28a3471903d3ac2a613892e"
+    },
+    {
+      "path": "after-terra-snapshot.json",
+      "sha256": "cae9130d60a08ab748990d7a04754fd55844d18002b85089c297bd0e8f290817"
+    },
+    {
+      "path": "before-fallback-snapshot.json",
+      "sha256": "857e3e0a81f9b28f6ea1a460fc85a9d9f2ad0833b5a7e8068989f6d277277c68"
+    },
+    {
+      "path": "before-nested-fallback-snapshot.json",
+      "sha256": "ecc0ce3ce4d089a8419f6c4986a9bbe97a674c6db9d43d5e847b8cdfe5076265"
+    },
+    {
+      "path": "before-terra-snapshot.json",
+      "sha256": "dc384d4bd9e508687284a47e97fdb1406bbf4595b69a3d30f612817888b419c5"
+    },
+    {
+      "path": "boundary.json",
+      "sha256": "468ad9a28cbfa526d60133f47086a914ea7dbc1a050bb9827d4d06bd55ce9381"
+    },
+    {
+      "path": "build.json",
+      "sha256": "b2d47484544bf16f745cfd1d018bc6d32864c92c52a345fd731dbe1b3adb6b30"
+    },
+    {
+      "path": "final-hosted-state.json",
+      "sha256": "41e5abcf67e3c3a6edf1601150ad6a130c8c305164eb736db2f635ae8baf6b55"
+    },
+    {
+      "path": "final-snapshot.json",
+      "sha256": "e35aa042412a5e32029aa676128c22d2201b8e04ed0a7663ce1430222713bad7"
+    },
+    {
+      "path": "history-smoke.json",
+      "sha256": "995c68b07f99c3adea7d37d5b1fdbcbc477bb5c2aef4ed5d3e1073dfb76ef524"
+    },
+    {
+      "path": "job-smoke.json",
+      "sha256": "0e2d69d9a0f463ccb267ab28de513a05edf3edd779644e6e9697b76ab05e1984"
+    },
+    {
+      "path": "metadata-auth-refresh.json",
+      "sha256": "dd56b30d30c732c58a0d2c60cc4cde915c96dfcf488a6def72d7b1092a9ca61d"
+    },
+    {
+      "path": "nested-qwen-fallback.json",
+      "sha256": "831a78bde54b3116c176af0b5354057a5d8b3ca6f662a5191c5983b3b3aaf441"
+    },
+    {
+      "path": "pages-deployment.json",
+      "sha256": "c2518985c8ae0f4be8b17f7e864b95b7dafd35e03b20e819d1c7a96fd318edcc"
+    },
+    {
+      "path": "platform-metadata.json",
+      "sha256": "c8ec1988e8c914142c6314dae17003a297ed7a73173261dae84ec52897f7f000"
+    },
+    {
+      "path": "policy-attempt.json",
+      "sha256": "77d388553fb1e653a89ef7dea757088eb2425331626a8b1971a8f091b0e69546"
+    },
+    {
+      "path": "policy.json",
+      "sha256": "52060a35f3de1b705707bff11f9bd7ddd33dc18c6db85a8288638a4ee2da4b37"
+    },
+    {
+      "path": "preflight.json",
+      "sha256": "1e10257d4cdc0c25ba600f2bfb5af1020c336fc69c9f8fc358d806fc209e7d31"
+    },
+    {
+      "path": "publication.json",
+      "sha256": "760a9d54b01132f9a54d565ba804cd223dcd231ba2419383325dd1de003d4e9e"
+    },
+    {
+      "path": "qwen-fallback.json",
+      "sha256": "f90dfdcac3e0254c4afa28835de24566a32f825563b2f1ea12bbca8a09813af1"
+    },
+    {
+      "path": "release-helper.mjs.txt",
+      "sha256": "e54c508386f3c5ab97c8d2a79137f721fb6dc7d7b9b772285237287f27dbe6b6"
+    },
+    {
+      "path": "release-summary.json",
+      "sha256": "7b096e91de9e0386970da02587bdc952309a6fcf49b0c6f2d2c5e05edb9b4438"
+    },
+    {
+      "path": "served.json",
+      "sha256": "7fc0a44e3718b5e99563d2e2e03c3adea4eb0b6d308af9a1a76ba1cd1e779941"
+    },
+    {
+      "path": "spending-enabled.json",
+      "sha256": "62b9e38018dca867be701aac5b014c5c744fd03f0d4282d4d7e5d5513dcde493"
+    },
+    {
+      "path": "terra-canary.json",
+      "sha256": "677dc030f4b6ec1e93a729994311810996f87942321f8dcabd8e2dbcd73ade83"
+    }
+  ],
+  "noSecretValues": true,
+  "privateLogsOrConfigurationCopied": false
+}

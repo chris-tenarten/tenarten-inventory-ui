@@ -1,0 +1,119 @@
+{
+  "passed": true,
+  "baseline": "66dd0c072de3a4d81198884c2df81c96bdd0a134",
+  "candidate": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "baselineIsAncestor": true,
+  "retained": [
+    {
+      "path": "src/components/GlobalMessaging.tsx",
+      "sha256": "0815f043c08ce44cece4efef2bce22e5df529816f5d95c020cf9b887ee6e4f74",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "sha256": "78853ff241f3ca5abc7ef9b868a51ef88e50f1ea6f80ae16f9c54777be8aa45b",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/my-work/inbox.ts",
+      "sha256": "c0197b144cc204ec947790ae12e5407ddc4fc663fb7d7b59588877a69c4314e4",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "f828dafa921988b3ca86bfd269102f326c4383326ec62f41cb470750d7427815",
+      "unchanged": true
+    },
+    {
+      "path": "src/modules/tenbot/history-presentation.ts",
+      "sha256": "094ab208163bc86674bb8c89093c7dbec054c1917055aeb068a561d9ad2834cd",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "e452e15feb4b325bdd4b460ba3f71f890ffd19029a2271e62a7cbfbda6b8f24d",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "8d2f7e7c1e9cc316cee0d4c032e68f2829f1fbacb328c73f156f0fe6755f66ee",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "af1cced926e719da6e4318704f432b731f2ef58d87786f9bd56260517a038ae8",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+      "sha256": "209ec2c0ffea93b5891c65ea3a29efc4d7301c335fb9dd7df7ae29489790e077",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "sha256": "718205cdbd37b07c23ee467cfab61160464093b1aeb73b4a06728bfb39c6ad35",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+      "sha256": "5ab6a975b2295403cd712bf98db00f925896915f77c14be513ef608722a7dbea",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-filters.ts",
+      "sha256": "7ec39eff8077d9663e4d02e42b3fe1dec150df8c985b4cbb9f9a8d7838e1a465",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-operational-history.ts",
+      "sha256": "4ff3e8caf4f9a33d6be6d8b1e518f95a7797a42b9bddb2d9240bcd0756a24c9a",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-history-scope.ts",
+      "sha256": "0fe4161be9c6bb7e4ce73833eabdfc283356d29ca40b20b69dfd7b0833211201",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "sha256": "55ee23fd9183fde906daa7f114bb9059ea8407da768d3b6db8e057a2e3311ee8",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "sha256": "ba11e374ee20e639a60992f32224695c82dc004eaa802224f21630057e6f17b3",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "6c8aadb83edf217bdae8f9d6de45fcc3b69f2ca68c35e3dd58d40ce54640311f",
+      "unchanged": true
+    },
+    {
+      "path": "src/lib/auth.tsx",
+      "sha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527",
+      "unchanged": true
+    },
+    {
+      "path": "src/app/inventory/page.tsx",
+      "sha256": "d3017e5037f9e0840097abe8b1a295f379999055e7c5e6066f08be05a0d35dc1",
+      "unchanged": true
+    }
+  ],
+  "applicationChanges": [
+    "supabase/functions/_shared/tenbot-job-presentation.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+  ],
+  "knowledgeClaimsUnchanged": true,
+  "newMigrations": 0,
+  "providerOrBudgetChanges": 0,
+  "frontendChanges": 0,
+  "validationReused": {
+    "directAnswer": 8,
+    "context": 16,
+    "browserTurns": 5
+  },
+  "newHostedCalls": 0,
+  "newModelCalls": 0
+}

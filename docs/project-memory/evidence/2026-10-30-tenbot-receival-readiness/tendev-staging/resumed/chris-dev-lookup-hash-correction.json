@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-10-30T16:59:13.499Z",
+  "status": "Local operator-helper correction only; actual account lookup must be rerun by root",
+  "cause": "Saved shared-schema-metadata.bodyMd5 is md5(pg_proc.prosrc), but the first helper compared it with md5(pg_get_functiondef).",
+  "savedSourceBodyMd5": "7e83083b79c3ba2a1b1b3e01c690386d",
+  "locallyReconstructedSourceBodyMd5": "7e83083b79c3ba2a1b1b3e01c690386d",
+  "savedFullDefinitionMd5": "ae6b0fa1f2e5e1655b79014a0e50266f",
+  "correctedSqlSha256": "3bf21c89757d5c4c4bd430d4f417817f1aaeda39448e75e9311fe60fb25ad55e",
+  "expectedDomain": "pg_proc.prosrc",
+  "oldAttemptEstablishedDrift": false,
+  "oldAttemptSavedCapabilities": false,
+  "correctedHelper": "inspect-chris-dev-readonly.mjs",
+  "derivationGate": "Do not save or certify derived capability results unless the actual current function source-body hash equals the reviewed source-body hash.",
+  "scope": "Exact public chris_dev profile only; no Auth listing, JWT impersonation, permission change or business-record read.",
+  "networkCallsForCorrection": 0,
+  "hostedMutations": 0,
+  "gitMutations": 0
+}

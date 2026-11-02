@@ -1,0 +1,318 @@
+{
+  "preparedAt": "2026-10-31T04:25:54.221Z",
+  "acceptedCandidate": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c",
+  "archive": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source",
+  "scope": "Fresh data-free separately verified Free Supabase project ONLY; never the preserved jlt fixture or shared Production project.",
+  "forbiddenProjectRefs": [
+    "vxdxjhazkqhpkwdqtobp",
+    "jltgxcfiprocydhbrahz"
+  ],
+  "files": [
+    {
+      "order": 1,
+      "file": "01-released-identity-foundation.sql",
+      "source": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/empty-fixture-prerequisites.sql",
+      "kind": "audited-prerequisite",
+      "sha256": "4a0a2fe62054862dde13203c185319e21b63a349613020310570a6d9852eb66e",
+      "bytes": 25042,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 2,
+      "file": "02-inventory-foundation.sql",
+      "source": "/private/tmp/tenops-tenbot-receival-execution-20261030/prerequisites.sql",
+      "kind": "audited-prerequisite",
+      "sha256": "8b46e0aead4eaddcfec7ce90546c80ca56f0034af789c83443dbd0e1ef1a26de",
+      "bytes": 23962,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 3,
+      "file": "03-20261029210000_invoice_pending_receival_approval.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "kind": "canonical-migration",
+      "sha256": "8dafe91c7938ca91f180615568272533c78ee3df935da35491713afbc818adbc",
+      "bytes": 36190,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 4,
+      "file": "04-20261029220000_tenbot_openai_metering.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "kind": "canonical-migration",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+      "bytes": 13599,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 5,
+      "file": "05-20261030110000_catalog_write_authorization.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030110000_catalog_write_authorization.sql",
+      "kind": "canonical-migration",
+      "sha256": "8f050a9b794dd8324e1858895ec7d566c17e44d1751ea68ecc7351c1c621cbc7",
+      "bytes": 3695,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 6,
+      "file": "06-20261030120000_invoice_dependent_pending_receivals.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+      "kind": "canonical-migration",
+      "sha256": "797e4e9dc359cf5eef8e853d4464221c59a6b6e4972d169282c7ca315d179e63",
+      "bytes": 51272,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 7,
+      "file": "07-20261030130000_invoice_receival_runtime_validation.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+      "kind": "canonical-migration",
+      "sha256": "388ff7dc179ba7e94ef7ab877543f792c2428359bf8d8a3c634746ce61e9a441",
+      "bytes": 12479,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 8,
+      "file": "08-shared-inventory-contract-projection.sql",
+      "source": "/private/tmp/tenops-tenbot-receival-readiness-20261030/fixture-shared-contract.sql",
+      "kind": "audited-schema-projection",
+      "sha256": "5cdf056eb939cb243a343fd48202ff857ddeaa4d2dd27f636c19f6d385a684e8",
+      "bytes": 23964,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 9,
+      "file": "09-20261030140000_invoice_receival_shared_compatibility.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+      "kind": "canonical-migration",
+      "sha256": "f9e2b2e6ffe14a88822bff0925958ae208d165b6bb5f80344878bffc1be8e742",
+      "bytes": 14206,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 10,
+      "file": "10-20261030150000_invoice_receival_originals.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030150000_invoice_receival_originals.sql",
+      "kind": "canonical-migration",
+      "sha256": "bf14113d1f14191da63155f881b2beed81b6d55f7746b0beaacb7892faa3ff00",
+      "bytes": 34797,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 11,
+      "file": "11-20261030160000_invoice_receival_pilot_permits.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+      "kind": "canonical-migration",
+      "sha256": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+      "bytes": 14987,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 12,
+      "file": "12-20261030170000_invoice_original_storage_compatibility.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+      "kind": "canonical-migration",
+      "sha256": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+      "bytes": 13206,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 13,
+      "file": "13-20261030180000_invoice_original_backend_fail_closed.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+      "kind": "canonical-migration",
+      "sha256": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03",
+      "bytes": 3674,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 14,
+      "file": "14-20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+      "kind": "canonical-migration",
+      "sha256": "534dc25e783229d07310559a10a4f570bbe9e1c45f6274d5939cffef181824d3",
+      "bytes": 4896,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 15,
+      "file": "15-20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "kind": "canonical-migration",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86",
+      "bytes": 30605,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 16,
+      "file": "16-20261030220000_tenbot_canary_control_status.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+      "kind": "canonical-migration",
+      "sha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040",
+      "bytes": 6271,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 17,
+      "file": "17-20261031010000_tenbot_canary_funding_window.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+      "kind": "canonical-migration",
+      "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6",
+      "bytes": 20473,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 18,
+      "file": "18-20261031020000_invoice_preparation_read_boundary.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+      "kind": "canonical-migration",
+      "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580",
+      "bytes": 17525,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    },
+    {
+      "order": 19,
+      "file": "19-20261031030000_tenbot_execution_only_canary_window.sql",
+      "source": "/private/tmp/tenops-tenbot-draft-execution-correction-20261030/source/supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "kind": "accepted-migration-under-test",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+      "bytes": 18199,
+      "applicationStatus": "NOT_APPLIED_BY_ASSEMBLER",
+      "exactSourceBytes": true
+    }
+  ],
+  "applicationOrder": [
+    "01-released-identity-foundation.sql",
+    "02-inventory-foundation.sql",
+    "03-20261029210000_invoice_pending_receival_approval.sql",
+    "04-20261029220000_tenbot_openai_metering.sql",
+    "05-20261030110000_catalog_write_authorization.sql",
+    "06-20261030120000_invoice_dependent_pending_receivals.sql",
+    "07-20261030130000_invoice_receival_runtime_validation.sql",
+    "08-shared-inventory-contract-projection.sql",
+    "09-20261030140000_invoice_receival_shared_compatibility.sql",
+    "10-20261030150000_invoice_receival_originals.sql",
+    "11-20261030160000_invoice_receival_pilot_permits.sql",
+    "12-20261030170000_invoice_original_storage_compatibility.sql",
+    "13-20261030180000_invoice_original_backend_fail_closed.sql",
+    "14-20261030190000_invoice_receival_pilot_policy_lock.sql",
+    "15-20261030210000_tenbot_chris_dev_canary_grant.sql",
+    "16-20261030220000_tenbot_canary_control_status.sql",
+    "17-20261031010000_tenbot_canary_funding_window.sql",
+    "18-20261031020000_invoice_preparation_read_boundary.sql",
+    "19-20261031030000_tenbot_execution_only_canary_window.sql"
+  ],
+  "execution": "Root-owned fixed-new-project operator only, one exact transactional file at a time. STOP after order14 for the explicit synthetic identity/catalog/fixed-source checkpoint, before order15 installs fixed-owner source INSERT/deferred guards. Source hashes/live predecessor checks must match; never bypass or retry an uncertain apply.",
+  "credentialsRead": false,
+  "networkCalls": 0,
+  "appliedMigrations": 0,
+  "syntheticIdentitiesCreated": 0,
+  "operationalRowsSeeded": 0,
+  "noProductionDataOrCredentials": true,
+  "authOrder": "The first audited foundation explicitly requires auth.users EMPTY. Apply01–14 first; then create NEW synthetic Auth identities/profiles/catalog and seed only the fixed UPLOADING source manifest. Continue15–19. Only then use genuine owner Storage upload/download and canonical metadata attestation to establish the ready approved synthetic tuple. Same UUID in a separate issuer is a stand-in, never the real employee session.",
+  "syntheticActors": {
+    "fixedDeveloperId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "roles": [
+      "admin",
+      "developer",
+      "member"
+    ],
+    "identityMethod": "New fixture-only Auth Admin createUser with requested fixed UUID for subject, fresh random synthetic .invalid email/password; verify returned ID, actual signIn/getUser, JWT issuer/sub/role. No session/token or Auth user copied from another project.",
+    "jwtLifetime": "Keep a verified test lifetime >180s; previous old provisioner forced60s and is unsuitable unchanged."
+  },
+  "targetSeedDeferred": {
+    "sourceId": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+    "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "sourceEvidenceSha256": "534087aeed62e2dd4d7112e22d700b760eb0f436445de16d300fc3ca83ad7c54",
+    "previewRevision": 1,
+    "previewHash": "7b63a8b55d2d496c2e15d0d5f2af81fb8da06f81109c4da1dfeed89e0c8e7594",
+    "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "catalog": "T&M Supply / Alaska White / #0 / 50lb bag / marble / turkish_aggregate",
+    "quantity": "1 Bag",
+    "originalBytes": 2877,
+    "seedAuthority": "Root-owned synthetic fixture setup only at explicit checkpoint14/15: fixed source starts UPLOADING with no agent_state/evidence. Ready source, exact accepted evidence and initial preview are attested after19 through existing canonical Storage/source contracts. No seed was executed by assembler."
+  },
+  "defaultOff": [
+    "tenbot_openai_policy.enabled=false and zero default caps",
+    "tenbot_receival_execution_control.execution_enabled=false",
+    "tenbot_receival_pilot_policy.enabled=false; enrollment empty",
+    "tenbot_chris_dev_canary_funding.enabled=false; no window/bind/usage",
+    "tenbot_chris_dev_execution_window.enabled=false; no timestamps/grant; inference_allowed=false"
+  ],
+  "ledgerCaveat": "Canonical meter migration inserts its static legacy-default configuration, not copied usage/payment/Production rows; no inference dispatch or authorization is created.",
+  "excludedNotNeeded": [
+    "20261029221000_tenbot_agent_history.sql",
+    "20261030200000_tenbot_receival_cleanup_wakes.sql",
+    "messaging-scaffold.sql",
+    "All old test seeds, grants, document claims, approvals, executions, Auth users and Storage objects"
+  ],
+  "priorAuditedProjection": "fixture-shared-contract.sql is schema/RLS/function compatibility projection with empty PO/receiving FK scaffolds, not full unrelated module certification. It installs no operational rows or external schedules.",
+  "livePinsRequired": {
+    "beforeGrant": {
+      "public.has_app_capability(text)": "7e83083b79c3ba2a1b1b3e01c690386d"
+    },
+    "beforeStorageHardening": {
+      "public.guard_invoice_receival_original_object()": "dd486def6456ad521063168ae2da0a2b"
+    },
+    "beforePreparation": {
+      "public.begin_invoice_receival_source(text,text,bigint,text)": "da3396f856c6736e7a5bbd23239a2711",
+      "public.get_invoice_receival_source(uuid)": "10750241b1fbf4014f5db37784359479",
+      "public.record_invoice_receival_source_state(uuid,uuid,integer,text,jsonb)": "11a16948c94741f7be2d59a510f8aa23",
+      "public.invoice_receival_original_allowed(text,text)": "a726b7cc254a1cd5d03100449abe03ad",
+      "public.guard_invoice_receival_original_object()": "e9e3509b2c992f25b5b640f9634b623b",
+      "public.tenbot_guard_chris_dev_canary_source()": "699a5a9d40d3307246b56711e27f16ab",
+      "public.tenbot_chris_dev_canary_commit_authorized()": "5a36467c6d12a5e0b734ff4735962aaa"
+    },
+    "beforeExecutionWindow": {
+      "public.tenbot_bind_canary_funding_grant()": "366162ba4b9d723f965758c57bb4ef72",
+      "public.tenbot_openai_canary_reserve(uuid,uuid,uuid,text,bigint,text,uuid,uuid)": "802f9b0f69a90452620cdee9748ed7dc",
+      "public.activate_tenbot_chris_dev_canary_grant(timestamptz,text)": "c2d6f546fad823a7a4ffdf8dd6cc9b1f",
+      "public.revoke_tenbot_chris_dev_canary_grant(uuid,text)": "07f4bc465c8db61d4df67cc0896a8f96"
+    }
+  },
+  "noValidationClaim": "Assembler only copied and hashed reviewed SQL bytes. No database, Auth, Storage, concurrency or hosted application check was run.",
+  "checkpoints": [
+    {
+      "afterOrder": 14,
+      "beforeOrder": 15,
+      "required": true,
+      "purpose": "Create fresh synthetic Auth identities/profiles/catalog and fixed UPLOADING manifest before canonical canary-specific INSERT guards are installed.",
+      "allowedFixtureSetup": [
+        "New synthetic Admin/developer/member Auth accounts; fixed subject UUID through fixture Auth admin createUser, no copied credentials",
+        "Exact active Developer profile plus separate synthetic Admin/negative actors; canonical role/capabilities remain unchanged",
+        "One exact existing-offer synthetic catalog target",
+        "INSERT fixed source1423… manifest with uploading lifecycle, generated canonical owner/source/original path, PDF hash/MIME/2877, agent_state NULL/evidence NULL; no approvals/drafts/claims/grants"
+      ],
+      "prohibited": [
+        "No source ID swap after insertion",
+        "No trigger/constraint disable or special seeder RPC",
+        "No retained or other fixture data edits",
+        "No inference or permission grants"
+      ]
+    },
+    {
+      "afterOrder": 19,
+      "required": true,
+      "purpose": "Use actual signed synthetic owner to canonical attachment.upload(frozenPDF); begin reuses exact alreadyseeded hash/ID and Storage creates private original. Canonical source state writer then attests exact accepted deterministic source/evidence/preview; no inference.",
+      "noFalseClaims": "Synthetic source evidence is prepared test data. Real Auth/RLS/Storage is validated separately; this setup is not model extraction or a hosted employee operation."
+    }
+  ]
+}

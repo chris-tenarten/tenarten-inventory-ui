@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "candidate": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "productionRoot": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "selectedRuntimeModules": 8,
+  "uiChanges": 1,
+  "alreadyAppliedMigrations": 1,
+  "migrationsToApply": 0,
+  "knowledgeEntriesPatchesAndReleaseAuthorityUnchanged": true,
+  "all36EdgeModulesExceptDerivedKnowledgeMatchAcceptedHosted": true,
+  "canaryRouteAndControlsAbsent": true,
+  "authInventoryMessagingToolsProviderTransportUnchanged": true,
+  "sourceScopedContextChangesOnly": true,
+  "hostedChecksReused": true,
+  "actualHostedAuthenticatedFollowups": "Not performed; accepted staging limitation retained",
+  "inferenceCalls": 0,
+  "hostedMutations": 0
+}

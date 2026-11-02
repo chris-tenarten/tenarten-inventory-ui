@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "head": "2723b1e6286885222c43f58bbfd4de66fcd79854",
+  "indexUnchanged": true,
+  "branchesUnchanged": true,
+  "preexistingDirtyPaths": 14,
+  "preexistingDirtyBytesPreserved": true,
+  "documentationAppends": [
+    {
+      "path": "docs/README.md",
+      "originalLength": 11379,
+      "originalSha256": "c2f68d927f0553259249624fa7f0121b5941842742317f4a74d0a3b6f20a5dd3",
+      "appendSha256": "d852a52466a198978acf8cf9fd57fe3bbb581882903a8d0cc3468f5722f392d1",
+      "priorBytesPreserved": true
+    },
+    {
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "originalLength": 166411,
+      "originalSha256": "57eb8b297deb930c3039ac62c5e6f1ec952aadea4a9301bfafcebeed1d6a80bf",
+      "appendSha256": "d93643c9bda7f6624e02dafd23bb6a0f29fff145c07fde966f8bf3c1d88c2df5",
+      "priorBytesPreserved": true
+    },
+    {
+      "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+      "originalLength": 185471,
+      "originalSha256": "c55f5fa532bdedae1432c341f8fea14c8d5c6737a3d676bd70df31295a9d07b8",
+      "appendSha256": "dc7c40ea9c8ee7624c2261660096ad942877567fcc2ddd141a3df3608b7a1bce",
+      "priorBytesPreserved": true
+    },
+    {
+      "path": "docs/project-memory/2026-11-01-tenbot-messaging-refinement.md",
+      "originalLength": 7853,
+      "originalSha256": "ea021cf0f62ab41cd5bb0c160b07abd0c5b878f0cca21031d1e3e4bc1eb68aad",
+      "appendSha256": "8cfe40c1fbe7bf6d0a0f4c5d062bb4a23eed980784804badca26d83f1f2b8079",
+      "priorBytesPreserved": true
+    },
+    {
+      "path": "docs/project-memory/2026-11-01-tenbot-build-verification.md",
+      "originalLength": 8010,
+      "originalSha256": "670818d9244dfb2ae406a80e80a6b9a939cadec656869232dbef91467b5ba8cd",
+      "appendSha256": "05566066e20bac0caffdf25d6d7083b013fd4f09dd46fb4d0e35d1c0df1e7f57",
+      "priorBytesPreserved": true
+    }
+  ],
+  "reviewServersUnchanged": true
+}

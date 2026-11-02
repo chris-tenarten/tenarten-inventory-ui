@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-10-29T23:03:20.875Z",
+  "httpStatus": 200,
+  "scope": "Production migration-history metadata only; no operational rows",
+  "migrationCount": 57,
+  "receivalCandidateApplied": false,
+  "safeToAvoidAutomaticParentBaselineWrite": true,
+  "hostedMutations": false
+}

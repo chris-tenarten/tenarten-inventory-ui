@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-29T22:56:11.568Z",
+  "parentProjectRef": "vxdxjhazkqhpkwdqtobp",
+  "readOnly": true,
+  "requestsAttempted": 1,
+  "timeoutMs": 8000,
+  "retried": false,
+  "credentialValuesIncluded": false,
+  "hostedMutations": false,
+  "openAiCalls": 0,
+  "branches": [],
+  "httpStatus": 200,
+  "elapsedMs": 249,
+  "status": "BRANCH_METADATA_LISTED",
+  "branchCount": 0,
+  "separateNonDefaultCandidateCount": 0,
+  "databaseIsolationVerified": false,
+  "note": "Metadata inventory only; no branch credentials, health endpoints, operational records or database connections were requested."
+}

@@ -1,0 +1,42 @@
+{
+  "verified": true,
+  "sourceEvidence": [
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "fd1606337a660ea9a4f79565e2798eb1491a3a9ab86a513e4280e6a4f560d050",
+      "acceptedRuntime": "ffcff23854fa1140dda6053092f7316f10c82dbe"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "70aacad48a2897061aa71c70cb6d9fa6f3436620cbca2ce3dfcb39d93c2fe6cc",
+      "acceptedRuntime": "ffcff23854fa1140dda6053092f7316f10c82dbe"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "9998a17fe7bb212cafab1a554d55bae33b34ba1360329f044d24fc5d51af5846",
+      "acceptedRuntime": "ffcff23854fa1140dda6053092f7316f10c82dbe"
+    }
+  ],
+  "standardCatalogCount": 1951,
+  "activeSpecialtyCatalogCount": 301,
+  "readerMaxRows": 1000,
+  "callerCatalogMetadata": [
+    {
+      "name": "vendor_catalog",
+      "rls": false,
+      "force_rls": false,
+      "authenticated_select": true
+    },
+    {
+      "name": "vendor_catalog_v2",
+      "rls": false,
+      "force_rls": false,
+      "authenticated_select": true
+    }
+  ],
+  "contract": "status invokes complete readCatalog without a material filter; exact count>MAX_ROWS returns invoice_read_incomplete before hosted canary filtering.",
+  "frontend": "Outer catch labels a hosted setup exception as a local experiment failure because receivals denotes localhost-only mode.",
+  "causalityLimit": "This is a verified blocking condition consistent with the UI failure; actual rejected HTTP response was not captured and additional failures are not excluded.",
+  "sourceChanged": false,
+  "anotherAttempt": false
+}

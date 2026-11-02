@@ -1,0 +1,48 @@
+{
+  "files": [
+    {
+      "path": "authenticated-browser-preflight.json",
+      "bytes": 2096,
+      "sha256": "ee9a261b54686057f210b3aad661fcbd28551fa08c0658ecf43518277738d48c"
+    },
+    {
+      "path": "credits-observation.json",
+      "bytes": 1131,
+      "sha256": "8f3df91bd8be9e879531880e76ece5b9d810bb830d9e27b29d95a03324e0bd0e"
+    },
+    {
+      "path": "em-review.json",
+      "bytes": 839,
+      "sha256": "4e79132f900a0f302c017ddcedf6fa92d912bb6a854e3614effbd10d57dd2812"
+    },
+    {
+      "path": "funding-and-window-proposal.json",
+      "bytes": 3576,
+      "sha256": "86f0cd9484c9f13de4455e0d8d0f6e25835455f9fc41a77b8d9069f74eef1454"
+    },
+    {
+      "path": "provider-configuration-check.json",
+      "bytes": 593,
+      "sha256": "fd7fbd01e61bad27de780f5a518c0a126983e0f1579cc5320608dcb518fe95c9"
+    },
+    {
+      "path": "readiness-findings.json",
+      "bytes": 2549,
+      "sha256": "9885ba15f46d7112ea002b6c0d683c9770fb14ff7215d9d00960e98ff0e8e961"
+    },
+    {
+      "path": "snapshot.json",
+      "bytes": 15367,
+      "sha256": "0a4dcde588568b0af1eea69eb935716e8a7d5a226c8ba7f1c61ae456ddf34143"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 5902,
+      "sha256": "2835b77e89b5420b1ed7b9bd3a1947ced121731a736c10f0adde7fe805cd3ebc"
+    }
+  ],
+  "noRawSecretDigestList": true,
+  "noCredentialValues": true,
+  "paidInferenceCalls": 0,
+  "hostedMutations": 0
+}

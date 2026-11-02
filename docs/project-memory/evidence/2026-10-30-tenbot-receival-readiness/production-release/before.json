@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "at": "2026-10-31T22:36:53.656Z",
+  "health": [
+    {
+      "name": "auth",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY",
+      "info": {
+        "name": "GoTrue",
+        "version": "v2.197.0",
+        "description": "GoTrue is a user registration and authentication API"
+      }
+    },
+    {
+      "name": "db",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    }
+  ],
+  "tenops": {
+    "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+    "deploymentId": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+    "url": "https://d01a02dc.tenops.pages.dev"
+  },
+  "tendev": {
+    "sha": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+    "deploymentId": "7cac1a67-410f-4f48-aa1c-fd883b83cd28"
+  },
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 33,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "a277db1990d40d4588fec8e1f45d940f4ba0ee421d5afb209877082e403137f8"
+  },
+  "agentWrites": false,
+  "executionAuthorization": false,
+  "preparation": false,
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "openAISpendingAuthorized": false,
+  "ordinaryPolicyEnabled": false,
+  "ordinaryPolicyExpiresAt": "2026-10-30T23:00:00+00:00",
+  "qwenConfigured": true,
+  "terraConfigured": true,
+  "ordinarySpendingChanged": false,
+  "mandatoryProofHolds": 0,
+  "acceptedTenDevEvidenceReused": true,
+  "buildReused": true,
+  "explicitApproval": "APPROVED CONSOLIDATED PRODUCTION RELEASE exactb37279c4",
+  "hostedMutations": 0
+}

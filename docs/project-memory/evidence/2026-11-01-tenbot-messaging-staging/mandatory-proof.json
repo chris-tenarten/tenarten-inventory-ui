@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "candidate": "523f6471eaf7897c300ede04fe7ea64a837169c4",
+  "status": "candidate-preparation-reviewed",
+  "holds": 0,
+  "clean": true,
+  "unchangedVerifier": true,
+  "newAcceptedRuntimeSources": 3,
+  "newRecordSourceSupersessions": 7,
+  "newMigrations": 0,
+  "knowledgeEntriesUnchanged": true
+}

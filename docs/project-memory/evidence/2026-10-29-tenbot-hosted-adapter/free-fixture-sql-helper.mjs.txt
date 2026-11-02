@@ -1,0 +1,42 @@
+// Trusted operator fixture helper. Not an application/model tool or Production gateway.
+// Fixed standalone FREE fixture only; no argument can select another project.
+import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
+const projectRef='jltgxcfiprocydhbrahz';
+const forbiddenProductionRef='vxdxjhazkqhpkwdqtobp';
+const configPath='/private/tmp/tenops-tenbot-hosted-adapter-20261029/free-project-credentials.private.json';
+const reply=value=>process.stdout.write(JSON.stringify(value)+'\n');
+try{
+ if(projectRef===forbiddenProductionRef)throw Object.assign(Error(),{code:'FIXTURE_IDENTITY_INVALID'});
+ const stat=fs.lstatSync(configPath);
+ if(!stat.isFile()||stat.isSymbolicLink()||(stat.mode&0o077)!==0||stat.uid!==process.getuid?.())throw Object.assign(Error(),{code:'FIXTURE_CONFIG_INVALID'});
+ const config=JSON.parse(fs.readFileSync(configPath,'utf8'));
+ if(config.fixtureKind!=='standalone-free'||config.projectRef!==projectRef||config.branchRef!==projectRef||config.url!=='https://'+projectRef+'.supabase.co')throw Object.assign(Error(),{code:'FIXTURE_IDENTITY_INVALID'});
+ const args=process.argv.slice(2);
+ if(args.length!==0&&(args.length!==2||args[0]!=='--file'||!args[1].startsWith('/')))throw Object.assign(Error(),{code:'INVALID_ARGUMENTS'});
+ const sql=fs.readFileSync(args.length?args[1]:0,'utf8');
+ if(!sql.trim()||Buffer.byteLength(sql)>2*1024*1024||sql.includes('\0'))throw Object.assign(Error(),{code:'INVALID_SQL_INPUT'});
+ // Fixture users/records may be returned, but never query credential values.
+ if(/vault\.decrypted_secrets|select\s+[^;]*\b(?:jwt_secret|api_key|service_role_key)\b/i.test(sql))throw Object.assign(Error(),{code:'CREDENTIAL_QUERY_PROHIBITED'});
+ let token;
+ for(const account of ['supabase','access-token']){
+  try{token=execFileSync('/usr/bin/security',['find-generic-password','-s','Supabase CLI','-a',account,'-w'],{encoding:'utf8',timeout:3000,stdio:['ignore','pipe','pipe']}).trim();break;}catch{}
+ }
+ if(token?.startsWith('go-keyring-base64:'))token=Buffer.from(token.slice(18),'base64').toString('utf8');
+ if(!token?.startsWith('sbp_'))throw Object.assign(Error(),{code:'EXISTING_MANAGEMENT_CREDENTIAL_UNAVAILABLE'});
+ const response=await fetch('https://api.supabase.com/v1/projects/'+projectRef+'/database/query',{
+  method:'POST',headers:{Authorization:'Bearer '+token,'content-type':'application/json'},
+  body:JSON.stringify({query:"set statement_timeout='5s';set lock_timeout='2s';\n"+sql}),
+  signal:AbortSignal.timeout(8000),
+ });
+ const body=await response.json().catch(()=>null);
+ if(!response.ok){
+  const message=typeof body?.message==='string'?body.message:typeof body?.error==='string'?body.error:'';
+  const code=typeof body?.code==='string'&&/^[0-9A-Z]{5}$/.test(body.code)?body.code:/(?:ERROR:\s*|SQLSTATE[\s:=]*)([0-9A-Z]{5})\b/.exec(message)?.[1]??'HTTP_'+response.status;
+  reply({ok:false,code,httpStatus:response.status});process.exitCode=1;
+ }else if(Array.isArray(body))reply({ok:true,rows:body});
+ else{reply({ok:false,code:'INVALID_DATABASE_RESPONSE',httpStatus:response.status});process.exitCode=1;}
+}catch(error){
+ const code=error.name==='TimeoutError'?'FIXTURE_HTTP_TIMEOUT':typeof error.code==='string'&&/^[A-Z0-9_]{1,80}$/.test(error.code)?error.code:'FIXTURE_HELPER_FAILED';
+ reply({ok:false,code,httpStatus:null});process.exitCode=1;
+}

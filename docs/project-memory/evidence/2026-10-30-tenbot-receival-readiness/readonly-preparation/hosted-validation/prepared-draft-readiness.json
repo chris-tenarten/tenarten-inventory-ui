@@ -1,0 +1,174 @@
+{
+  "recordedAt": "2026-10-31T03:46:44.533Z",
+  "authority": "Product COMPLETE PREPARED-DRAFT WRITE READINESS: inspection only; no activation, approval, hosted change or operational write.",
+  "riskTier": 3,
+  "validation": "Focused exact deployed-source inspection plus one bounded real read-only metadata snapshot; prior security evidence reused. No new lifecycle test or employee RPC invoked.",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "inspectedCandidate": "e357d5625734522c904fa80335e9aad5180a3fec",
+  "draft": {
+    "id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+    "hash": "7b63a8b55d2d496c2e15d0d5f2af81fb8da06f81109c4da1dfeed89e0c8e7594",
+    "rows": [
+      {
+        "size": "#0",
+        "unit": "Bag",
+        "jobId": null,
+        "lineId": "1423d4e0-1a4a-48bd-af79-28e623102da4:L8",
+        "excluded": false,
+        "quantity": "1",
+        "materialId": "standard:ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+        "materialName": "Alaska White",
+        "quantityBasis": {
+          "reasons": [],
+          "perPackage": {
+            "unit": "LB",
+            "quantity": "50",
+            "container": "Bag"
+          },
+          "sourceKind": "package_count",
+          "calculation": "source_package_count",
+          "packageCount": "1",
+          "receivalUnit": "Bag",
+          "totalMaterial": {
+            "unit": "LB",
+            "quantity": "50"
+          },
+          "receivalQuantity": "1",
+          "inventoryStockingUnit": null
+        },
+        "catalogRequest": null,
+        "sourceQuantity": {
+          "unit": "Bag",
+          "quantity": "1"
+        }
+      }
+    ],
+    "bound": false,
+    "state": "ready",
+    "status": "review_required",
+    "draftId": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+    "version": 2,
+    "retained": false,
+    "revision": 1,
+    "expiresAt": "2026-11-01T01:24:35.833487+00:00",
+    "canApprove": false,
+    "orderDetails": {
+      "location": "",
+      "orderDate": "",
+      "orderedBy": ""
+    },
+    "durableDraftId": null,
+    "evidenceSha256": "534087aeed62e2dd4d7112e22d700b760eb0f436445de16d300fc3ca83ad7c54",
+    "executionEnabled": false,
+    "privateOriginalPresent": true
+  },
+  "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+  "profileMetadata": {
+    "id": "3785f6b9-742e-452f-af6c-31613a983633",
+    "read": true,
+    "role": "developer",
+    "active": true,
+    "adjust": false,
+    "readOnly": false,
+    "writeBusiness": true
+  },
+  "employeeSessionVerifiedInThisPass": false,
+  "requiredMetadata": [
+    "orderedBy",
+    "orderDate",
+    "location"
+  ],
+  "proposedPreviouslyReviewedMetadata": {
+    "orderedBy": "chris developer",
+    "orderDate": "2026-10-30",
+    "location": "Denton"
+  },
+  "metadataProposalAuthority": "Prior corrected chris_dev canary plan; proposed only, not saved or inferred from the invoice.",
+  "canonicalTransition": {
+    "sourceRestore": true,
+    "reviewWithoutInference": true,
+    "freshCatalogAndDuplicateRevalidationRequired": true,
+    "immutableSourceQuantity": "1 Bag",
+    "newReviewHashRequiredForMetadata": true,
+    "approvalAndExecutionCombinedInUi": true,
+    "liveTransitionPerformed": false
+  },
+  "blockers": [
+    {
+      "code": "prepared-preview-resume-missing",
+      "evidence": [
+        "TenbotWorkspace.tsx:189-234 resets preview on initialization and restores eligible help history only",
+        "TenbotWorkspace.tsx:389 clears preview on upload",
+        "ReceivalDraftReview.tsx:99-106 hides review/approval in preparationOnly mode",
+        "tenbot-receival-hosted.ts:214-234 get expects an existing durable business draft"
+      ],
+      "correction": "A narrow owner-authorized model-free resume of this existing source preview into the canonical review UI; preserve evidence/quantity, never use ask to restore it."
+    },
+    {
+      "code": "used-funding-blocks-zero-inference-grant",
+      "evidence": [
+        "20261031010000_tenbot_canary_funding_window.sql:60-67 prohibits resetting/rebinding/re-enabling the used funding singleton",
+        "20261031010000_tenbot_canary_funding_window.sql:90-104 rejects new grants without unused active funding",
+        "tenbot-receival-hosted.ts:159-162 checks funding again before execute"
+      ],
+      "currentFunding": {
+        "id": "20261031-0100-4000-8000-000000000001",
+        "enabled": false,
+        "startsAt": "2026-10-31T01:22:06.351163+00:00",
+        "expiresAt": "2026-10-31T01:37:00+00:00",
+        "boundGrantId": "302932b1-f44c-4de0-91f7-a4c8b77a2687",
+        "boundSourceId": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+        "boundRequestId": "1f013dc0-0868-4653-b54f-cccf46afd7f6",
+        "budgetMicrousd": 250000
+      },
+      "correction": "Separately approved narrow zero-inference execution-window authorization, without resetting historical funding or ordinary spending. Existing deployed database trigger prevents a configuration-only solution; no migration or bypass prepared/applied in this pass."
+    }
+  ],
+  "executionSequence": [
+    "After separately reviewed corrections: recover exact source preview and enter approved metadata without ask/extraction",
+    "Recheck genuine Admin/chris_dev callers, source TTL, exact one-row scope, duplicates and all OFF states",
+    "Open one server-enforced <=15-minute execution-only window; genuine Admin activates exact chris_dev grant; enable only scoped TenDev enrollment/gates with inference OFF",
+    "Canonical review of unchanged one-Bag source creates durable draft ID/hash; chris_dev explicitly approves exact current hash; current Approve and create action performs the one transactional write",
+    "Verify returned ID, pending expected1/received0/Bag, queue, private original, approval/audit/provenance, idempotency and unchanged on-hand",
+    "Disable creation; guarded-cancel only returned pending/unreceived/unlinked row while grant remains valid; exact-grant revoke and clear enrollment/all controls"
+  ],
+  "finalState": {
+    "edgeFlagsVerifiedFalse": [
+      "TENBOT_OPENAI_SPEND_AUTHORIZED",
+      "TENBOT_INVOICE_PREPARATION_ENABLED",
+      "TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED",
+      "TENBOT_RECEIVAL_PILOT_ENABLED",
+      "TENBOT_RECEIVAL_EXECUTION_ENABLED"
+    ],
+    "pilotEnabled": false,
+    "executionEnabled": false,
+    "activeGrants": 0,
+    "enrollment": 0,
+    "durableBusinessDrafts": 0,
+    "documentClaims": 0
+  },
+  "requests": [
+    {
+      "endpoint": "secrets",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 214
+    },
+    {
+      "endpoint": "database/query",
+      "method": "POST",
+      "status": 201,
+      "durationMs": 277
+    }
+  ],
+  "newInferenceCostUsd": 0,
+  "inferenceCalls": 0,
+  "hostedMutations": 0,
+  "approvalsSubmitted": 0,
+  "operationalWrites": 0,
+  "rawReceipt": {
+    "path": "/private/tmp/tenops-tenbot-preparation-funding-20261030/prepared-draft-readiness.json",
+    "sha256": "fcd040a70380a26d3d321f1119770703b7a2fd91076d1369dafc46c427d73302",
+    "controlFieldNote": "Original controls[name]=true means digest verified equal to false, not that the flag was enabled."
+  }
+}

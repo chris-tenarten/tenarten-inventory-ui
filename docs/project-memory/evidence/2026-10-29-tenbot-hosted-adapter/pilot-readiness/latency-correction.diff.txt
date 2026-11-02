@@ -1,0 +1,36 @@
+diff --git a/scripts/verify-tenbot-agent.mts b/scripts/verify-tenbot-agent.mts
+index 807cf39..a4daa50 100644
+--- a/scripts/verify-tenbot-agent.mts
++++ b/scripts/verify-tenbot-agent.mts
+@@ -30,6 +30,19 @@ await check('model-selected multi-tool investigation and lazy discovery', async
+   const result = await run(provider([discover(['read_job', 'read_labor']), step([call('j', 'read_job')]), step([call('l', 'read_labor')]), step([], final(['e1', 'e2']))], seen), [tool('read_job'), tool('read_labor')], { authorize: async check => { phases.push(check); return true; } });
+   assert.equal(result.status, 'completed'); assert.equal(result.evidence.length, 2); assert.deepEqual(seen[0].tools.map(item => item.name), ['discover_capabilities']); assert.deepEqual(seen[1].tools.map(item => item.name), ['discover_capabilities', 'read_job', 'read_labor']); assert(phases.some(item => item.phase === 'after_model')); assert.equal(phases.at(-1)?.phase, 'publish');
+ });
++await check('successful tool results receive exactly one authorization before entering model context', async () => {
++  const order: string[] = []; const phases: AuthorizationCheck[] = [];
++  const read = tool('read_job', async () => { order.push('execute'); return { data: { hours: 12.5 } }; });
++  const model = provider([discover(['read_job']), step([call('r', 'read_job')]), request => {
++    assert.deepEqual(order, ['before_tool', 'execute', 'after_tool']);
++    assert(request.history.some(item => item.kind === 'tool_result' && item.name === 'read_job'));
++    return step([], final(['e1']));
++  }]);
++  const result = await run(model, [read], { authorize: async phase => { phases.push(phase); if (phase.tool === 'read_job') order.push(phase.phase); return true; } });
++  assert.equal(result.status, 'completed');
++  for (const name of ['discover_capabilities', 'read_job']) assert.equal(phases.filter(phase => phase.phase === 'after_tool' && phase.tool === name).length, 1);
++  assert.equal(phases.filter(phase => phase.phase === 'publish').length, 1);
++});
+ await check('native single-call rounds support a ten-step invoice-shaped investigation', async () => {
+   const rounds: AgentStep[] = [discover(['read_catalog'])]; for (let index = 0; index < 9; index++) rounds.push(step([call(`read${index}`, 'read_catalog')])); rounds.push(step([], final(['e1', 'e9'])));
+   const result = await run(provider(rounds), [tool('read_catalog')]); assert.equal(result.status, 'completed'); assert.equal(result.evidence.length, 9); assert.equal(result.trace.filter(item => item.event === 'model').length, 11);
+diff --git a/supabase/functions/_shared/tenbot-agent.ts b/supabase/functions/_shared/tenbot-agent.ts
+index 5ce93bc..33cb136 100644
+--- a/supabase/functions/_shared/tenbot-agent.ts
++++ b/supabase/functions/_shared/tenbot-agent.ts
+@@ -190,7 +190,6 @@ export async function runTenbotAgent(input: { question: string; serverContext?:
+             if (!validateStrictSchema(call.arguments, tool.parameters)) throw new Error('invalid-arguments');
+             const value = await withinDeadline(tool.execute(clone(call.arguments), { callerId: options.callerId, signal: controller.signal }), controller.signal);
+             if (!isJsonValue(value) || Object.keys(value).some(key => !['data', 'proposal'].includes(key)) || !Object.hasOwn(value, 'data') || (tool.resultSchema && !validateStrictSchema(value.data, tool.resultSchema)) || (value.proposal !== undefined && tool.kind !== 'prepare') || byteLength(value) > limits.maxResultBytes) throw new Error('invalid-tool-result');
+-            await authorize('after_tool', call.name);
+             const id = `e${result.evidence.length + 1}`; result.evidence.push({ id, tool: call.name, data: clone(value.data) });
+             if (value.proposal !== undefined) result.proposals.push({ evidenceId: id, tool: call.name, proposal: clone(value.proposal) });
+             output = { evidence_id: id, tool: call.name, data: value.data };

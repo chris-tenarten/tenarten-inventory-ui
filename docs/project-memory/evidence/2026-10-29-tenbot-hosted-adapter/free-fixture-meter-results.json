@@ -1,0 +1,866 @@
+{
+  "passed": true,
+  "phase": "Reconciled legacy spend can rise but cannot fall even above the original floor",
+  "errorCode": null,
+  "isolatedProjectRef": "jltgxcfiprocydhbrahz",
+  "parentWasNeverTargeted": true,
+  "actualSupabaseHttp": true,
+  "actualSignedJwt": true,
+  "signedJwtVerifiedActors": [
+    "employeeA",
+    "employeeB",
+    "admin",
+    "meter"
+  ],
+  "actualManagementSql": true,
+  "actualInference": false,
+  "operationalWrites": 0,
+  "databaseScope": "dedicated data-free isolated project; synthetic meter actor and own usage only",
+  "checks": [
+    "Signed Auth identities belong to this preview branch",
+    "Default policy is disabled with zero usable budget",
+    "Real employee/admin/anon JWTs cannot invoke arbitrary budget RPCs or financial tables",
+    "Twelve concurrent HTTP reservations admit exactly three against shared 3000 microUSD",
+    "Repeated ID denies a second dispatch and uncertain outcome remains fully charged across clients",
+    "Concurrent identical settlements are idempotent and conflicting settlement is rejected",
+    "Uncertain reservations remain charged after crossing UTC daily/monthly windows",
+    "Inactive employee and revoked dedicated-role capability deny new inference; prior charge can settle",
+    "Request cost and step count limits act independently",
+    "User daily, global daily and monthly monetary caps fail independently",
+    "Global/user request, rate and unresolved-open limits bound repeated calls",
+    "Expired policy and disabled challenger model cannot reserve",
+    "Measured overrun is recorded and atomically disables future inference",
+    "Reconciled legacy spend can rise but cannot fall even above the original floor"
+  ],
+  "checkCount": 14,
+  "events": [
+    {
+      "kind": "http",
+      "endpoint": "/auth/v1/token",
+      "status": 200,
+      "code": null,
+      "latencyMs": 1200
+    },
+    {
+      "kind": "http",
+      "endpoint": "/auth/v1/user",
+      "status": 200,
+      "code": null,
+      "latencyMs": 127
+    },
+    {
+      "kind": "http",
+      "endpoint": "/auth/v1/token",
+      "status": 200,
+      "code": null,
+      "latencyMs": 254
+    },
+    {
+      "kind": "http",
+      "endpoint": "/auth/v1/user",
+      "status": 200,
+      "code": null,
+      "latencyMs": 160
+    },
+    {
+      "kind": "http",
+      "endpoint": "/auth/v1/token",
+      "status": 200,
+      "code": null,
+      "latencyMs": 270
+    },
+    {
+      "kind": "http",
+      "endpoint": "/auth/v1/user",
+      "status": 200,
+      "code": null,
+      "latencyMs": 105
+    },
+    {
+      "kind": "http",
+      "endpoint": "/auth/v1/token",
+      "status": 200,
+      "code": null,
+      "latencyMs": 276
+    },
+    {
+      "kind": "http",
+      "endpoint": "/auth/v1/user",
+      "status": 200,
+      "code": null,
+      "latencyMs": 130
+    },
+    {
+      "kind": "sql",
+      "file": "001-exclusive-meter-preflight.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 776
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 516
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 200,
+      "code": null,
+      "latencyMs": 187
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 164
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 105
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 145
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 184
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 108
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 117
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 401,
+      "code": "42501",
+      "latencyMs": 96
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 401,
+      "code": "42501",
+      "latencyMs": 88
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 401,
+      "code": "42501",
+      "latencyMs": 96
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/tenbot_openai_policy",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 107
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/tenbot_openai_usage",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 98
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/tenbot_openai_policy",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 118
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/tenbot_openai_usage",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 107
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/tenbot_openai_policy",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 100
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/tenbot_openai_usage",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 89
+    },
+    {
+      "kind": "sql",
+      "file": "002-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 539
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 136
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 229
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 241
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 250
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 267
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 281
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 297
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 314
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 698
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 714
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 716
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 720
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 200,
+      "code": null,
+      "latencyMs": 126
+    },
+    {
+      "kind": "sql",
+      "file": "003-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 358
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 108
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 409,
+      "code": "23505",
+      "latencyMs": 89
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 109
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 121
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 200,
+      "code": null,
+      "latencyMs": 94
+    },
+    {
+      "kind": "sql",
+      "file": "004-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 1425
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 106
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 116
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 119
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 124
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 127
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 139
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 141
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 101
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 96
+    },
+    {
+      "kind": "sql",
+      "file": "005-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 400
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 91
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 99
+    },
+    {
+      "kind": "sql",
+      "file": "006-age-owned-uncertainty.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 342
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 200,
+      "code": null,
+      "latencyMs": 96
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 108
+    },
+    {
+      "kind": "sql",
+      "file": "007-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 348
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 118
+    },
+    {
+      "kind": "sql",
+      "file": "008-deactivate-owned-meter.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 432
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 142
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 101
+    },
+    {
+      "kind": "sql",
+      "file": "009-revoke-owned-role-read.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 372
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 403,
+      "code": "42501",
+      "latencyMs": 100
+    },
+    {
+      "kind": "sql",
+      "file": "010-restore-owned-role-read.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 354
+    },
+    {
+      "kind": "sql",
+      "file": "011-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 354
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 134
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 120
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 95
+    },
+    {
+      "kind": "sql",
+      "file": "012-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 357
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 103
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 92
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 102
+    },
+    {
+      "kind": "sql",
+      "file": "013-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 553
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 99
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 124
+    },
+    {
+      "kind": "sql",
+      "file": "014-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 587
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 93
+    },
+    {
+      "kind": "sql",
+      "file": "015-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 856
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 100
+    },
+    {
+      "kind": "sql",
+      "file": "016-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 325
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 113
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 108
+    },
+    {
+      "kind": "sql",
+      "file": "017-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 367
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 100
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 98
+    },
+    {
+      "kind": "sql",
+      "file": "018-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 395
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 110
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 98
+    },
+    {
+      "kind": "sql",
+      "file": "019-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 473
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 98
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 83
+    },
+    {
+      "kind": "sql",
+      "file": "020-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 441
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 110
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 205
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 108
+    },
+    {
+      "kind": "sql",
+      "file": "021-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 500
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 105
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 113
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 101
+    },
+    {
+      "kind": "sql",
+      "file": "022-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 432
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "22023",
+      "latencyMs": 100
+    },
+    {
+      "kind": "sql",
+      "file": "023-expire-meter-policy.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 646
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 121
+    },
+    {
+      "kind": "sql",
+      "file": "024-reset-owned-meter-case.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 970
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 200,
+      "code": null,
+      "latencyMs": 211
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_settle",
+      "status": 200,
+      "code": null,
+      "latencyMs": 140
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 200,
+      "code": null,
+      "latencyMs": 117
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_reserve",
+      "status": 400,
+      "code": "P0001",
+      "latencyMs": 108
+    },
+    {
+      "kind": "sql",
+      "file": "025-raise-carryover.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 651
+    },
+    {
+      "kind": "sql",
+      "file": "026-deny-carryover-decrease.sql",
+      "ok": false,
+      "code": "23514",
+      "latencyMs": 329
+    },
+    {
+      "kind": "http",
+      "endpoint": "/rest/v1/rpc/tenbot_openai_meter_status",
+      "status": 200,
+      "code": null,
+      "latencyMs": 151
+    },
+    {
+      "kind": "sql",
+      "file": "027-disable-and-restore-owned-meter.sql",
+      "ok": true,
+      "code": null,
+      "latencyMs": 402
+    }
+  ],
+  "latencyMs": 25171,
+  "cleanupNeeded": false
+}

@@ -1,0 +1,123 @@
+{
+  "status": "TENDEV_CONTROLS_ENABLED_EXECUTION_NOT_AUTHORIZED",
+  "recordedAt": "2026-10-30T21:04:23.474Z",
+  "authority": "Chris APPROVED ENABLED-CONTROL STAGING (repeated same request); no grant/execution authority. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "scope": "Configuration-only build/deployment of accepted source; focused hosted status/UI checks; prior DB/security evidence reused.",
+  "sourceSha": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "sourceTree": "fda1f8879c499bae004a106b0b01b1a722cf6252",
+  "implementationCommit": "1258a162557bf22d448bba19bfda1296879e1ef3",
+  "localDevHeadUnchanged": "75b0b9be9dc82e04a33297e2d4e797d9605f5166",
+  "newSourceChanges": 0,
+  "newSourceCommit": false,
+  "configuration": {
+    "name": "NEXT_PUBLIC_TENBOT_CANARY_CONTROL_MODE",
+    "value": "enabled",
+    "mechanism": "Explicit build-time override only; Pages project env/secrets unchanged.",
+    "visibleWritableOrigin": "https://tendev.pages.dev",
+    "defaultWhenOverrideAbsent": "off",
+    "noGateOrEnrollmentToggle": true
+  },
+  "deployment": "09c6a4c4-7f66-46ec-a8bd-c5d8b49be410",
+  "previousReviewDeployment": "ca014971-263c-48de-b69e-53dc44faecde",
+  "newDeploymentIdVerified": true,
+  "artifactManifestSha256": "e4038523d9d655a66da2437936a2ddad6cadcdd7432ccfc283e12ec982c2f902",
+  "servedAssets": 36,
+  "compiledPrettyRouteMode": "enabled",
+  "proofHolds": 0,
+  "buildPassed": true,
+  "hostedCallers": {
+    "admin": "Genuine own Safari Chris Ngo/Admin",
+    "owner": "Genuine own Chrome chris_dev/Developer",
+    "statusAndRefreshPassed": true,
+    "noMutationInvoked": true
+  },
+  "fixedScope": {
+    "supplier": "T&M Supply",
+    "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "expected": 1,
+    "unit": "Bag",
+    "received": 0,
+    "noCatalogOrJobOrStockChange": true
+  },
+  "final": {
+    "sqlAndEdgeWriteGatesOff": true,
+    "grants": 0,
+    "activeGrants": 0,
+    "enrollment": 0,
+    "sources": 0,
+    "drafts": 0,
+    "approvals": 0,
+    "executions": 0,
+    "createdReceivals": 0,
+    "cancellations": 0,
+    "roleCapabilitiesStockAndTransactionsUnchanged": true,
+    "usageUnchanged": true,
+    "inferenceCalls": 0,
+    "costUsd": 0,
+    "remainingHostedAllowanceUsd": 3.787673,
+    "existingFundingCutoff": "2026-10-30T23:00:00Z"
+  },
+  "migrations": {
+    "newApplied": 0,
+    "existing13Unchanged": true,
+    "readOnlyEvidenceReused": true
+  },
+  "production": {
+    "sourceSha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "deployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+    "applicationUnchanged": true,
+    "canaryRouteHttpStatus": 404,
+    "enabledFlagAbsent": true,
+    "edgeWriteOriginTenDevOnly": true,
+    "sharedRpcRbacUnchanged": true,
+    "noNewDatabaseOriginRestrictionClaimed": true
+  },
+  "operatorReview": {
+    "uniqueDeploymentIdBindingFixed": true,
+    "safeTokenFailureComparisonFixed": true,
+    "safe287ArtifactCheckPassed": true,
+    "noCredentialLeak": true
+  },
+  "proposal": {
+    "status": "PROPOSED_ONLY_REQUIRES_EXPLICIT_PRODUCT_EXECUTION_AUTHORIZATION",
+    "startsAt": "2026-10-30T21:20:00Z",
+    "expiresAt": "2026-10-30T21:35:00Z",
+    "localWindow": "October30 2026,4:20–4:35p.m.America/Chicago",
+    "maximumMinutes": 15,
+    "preconditions": [
+      "Explicit Product authorization received before the start; otherwise retire and reconfirm a fresh window.",
+      "Fresh genuine own Admin/chris_dev sessions and exact fixed operation/duplicate/permissions/budget/OFF-state checks.",
+      "No activation or inference beyond existing employee-day and finite hosted budget."
+    ],
+    "sequence": [
+      "4:20 activate exact reviewed chris_dev grant through own Admin UI until4:35 only after separate approval.",
+      "Use existing fixed control-plane procedure to enable only reviewed TenDev/chris_dev scope; employee uploads/reviews/approves exact1Bag operation.",
+      "Verify actual returned row/audit/provenance/idempotency/queue/stock, then creationOFF immediately; target4:27.",
+      "Guarded cancel while still active/unreceived/unlinked; target4:30.",
+      "Exact Admin revoke, clear enrollment/control-plane flags and reconcile; target4:32,hardexpiry4:35."
+    ],
+    "notAnActiveWindow": true,
+    "neverAssumeLateApprovalExtendsWindow": true
+  },
+  "remainingBlockers": [],
+  "remainingApprovals": [
+    "Explicit Product authorization before any grant, gate activation, invoice upload, approval, receival creation/cancellation."
+  ],
+  "limitations": [
+    "Positive hosted grant/execution/revocation/cancellation lifecycle remains intentionally untested in this pass.",
+    "Same SHA identifies accepted source; new deployment ID/artifact hashes and enabled build receipt identify this different configuration.",
+    "TenOps UI/Edge execution exclusion verified; existing shared authenticated Admin/self RPC access retains its prior RBAC."
+  ],
+  "newEdgeDeployments": 0,
+  "newMigrations": 0,
+  "tenOpsDeployments": 0,
+  "paidInferenceCalls": 0,
+  "newHostedSecretChanges": 0,
+  "pushes": 0,
+  "unrelatedWorkPreserved": true,
+  "nativeControlReleased": true,
+  "privateScratch": "/private/tmp/tenops-tenbot-control-enabled-staging-20261030"
+}

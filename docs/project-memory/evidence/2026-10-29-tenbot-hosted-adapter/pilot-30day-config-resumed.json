@@ -1,0 +1,71 @@
+{
+  "recordedAt": "2026-10-29T22:43:09.728Z",
+  "status": "PROJECT_POLICY_SAVED_HOSTED_KEY_FORM_READY_FOR_OWNER_PRIVATE_CREATION",
+  "project": {
+    "name": "TenBot",
+    "id": "proj_e3Qoebc2IckUzl282v3ys6Yl"
+  },
+  "actualActions": {
+    "authenticatedPlatformSessionVerified": true,
+    "projectMaximumKeyLifetimeChanged": true,
+    "previousMaximumDays": 1,
+    "savedMaximumDays": 30,
+    "savedMaximumSeconds": 2592000,
+    "projectPolicySaveClicked": true,
+    "readbackAfterReload": "New key creation form explicitly states: Maximum allowed for this project: 30 days.",
+    "organizationPolicyChanged": false
+  },
+  "preparedUnsubmittedForm": {
+    "keyName": "TenBotHostedTerraPilot",
+    "project": "TenBot",
+    "ownerType": "You",
+    "expirationDays": 30,
+    "permissionsMode": "Restricted",
+    "responsesPermission": "Write",
+    "responsesScope": "api.responses.write",
+    "allOtherResources": "None",
+    "uiSelectedPermissionCount": 2,
+    "createActionLabel": "Create secret key",
+    "createActionClicked": false,
+    "actualKeyCreated": false,
+    "actualKeyExpiresAtVerified": false
+  },
+  "preservedSettings": {
+    "defaultServiceTier": "Standard",
+    "allowedServiceTiers": [
+      "Standard"
+    ],
+    "modelsChanged": false,
+    "rateLimitsChanged": false,
+    "billingChanged": false,
+    "dataSharingChanged": false
+  },
+  "secretSafety": {
+    "secureSecretCaptureCapabilityAvailable": false,
+    "localOpenAiKeyRead": false,
+    "localOpenAiKeyReused": false,
+    "oneTimeSecretGeneratedOrViewed": false,
+    "secretValuesInReceipt": false,
+    "screenshotsTaken": false,
+    "uiBindingsReleasedBeforeOwnerCreation": true
+  },
+  "ownerPrivateHandoff": {
+    "formLeftOpen": true,
+    "nextAction": "Click Create secret key yourself. Privately handle the one-time secret using the approved secure-entry procedure. Close or dismiss the secret display before requesting automated metadata verification.",
+    "metadataVerification": "After the secret display is closed, inspect only the named key row and safe details/edit controls for project, owner, permissions, creation time and exact expires_at in UTC. A date-only expiry is not exact timestamp verification.",
+    "hostedSpendingInstruction": "Do not enable hosted inference spending, deploy, or apply migrations."
+  },
+  "limitations": [
+    "Actual hosted key is not created; exact key expiration is not yet verified.",
+    "Current promotional balance and expiry were not inspected; handoff form was left intact.",
+    "No secure automated secret capture capability is connected."
+  ],
+  "changes": {
+    "supabaseHostedSecrets": false,
+    "hostedInference": false,
+    "hostedSpendEnabled": false,
+    "deployment": false,
+    "migrationApplication": false,
+    "applicationSource": false
+  }
+}

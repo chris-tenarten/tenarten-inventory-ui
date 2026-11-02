@@ -1,0 +1,75 @@
+{
+  "at": "2026-11-01T21:36:52.563Z",
+  "candidate": "9415adc577e5509c2473001fbd514ab644077e3c",
+  "files": [
+    {
+      "path": "before.json",
+      "sha256": "d9519e892d0d1fd9ba75c3e657bedd0b1297f8e2e298b812983ba5b169b39abc"
+    },
+    {
+      "path": "build.json",
+      "sha256": "a1037ae3d17c1a89ba25cac767bdc5846750ddf80f12afea2f257d6b1f7c980e"
+    },
+    {
+      "path": "candidate.json",
+      "sha256": "84ccbe12551206c8bb5e67ddc951cc51deb42675b1fe84ccd3ce4b0ff6f37ae1"
+    },
+    {
+      "path": "cors.json",
+      "sha256": "493f99d00e784f9b76a8a61b2f6c66ec379bcdd5ad8a50afedd966044ecfe288"
+    },
+    {
+      "path": "documentation-appends.json",
+      "sha256": "04ab2c7b54325299699297ed3a1867971391f6527f7453f0a48d06cedda4c354"
+    },
+    {
+      "path": "edge-closure.json",
+      "sha256": "d54eacf102a0f5e71d4204e0527807609448a4be11c0ba933ef4e9324f30558d"
+    },
+    {
+      "path": "edge.json",
+      "sha256": "e5ee0f3249077a53024e214f1f7f8427cceac878a2a0ccfdd62d11407fd2d0de"
+    },
+    {
+      "path": "final.json",
+      "sha256": "df8c9e9dd3900bfc0d75e32cd964e7fbaefb0f4e697bc6e604e3ca44c33443ca"
+    },
+    {
+      "path": "mandatory-proof.json",
+      "sha256": "068708b10771903d1d283421f8cccb146874d89714b5d1d747d0eab42cb6672e"
+    },
+    {
+      "path": "migration-applied.json",
+      "sha256": "fce20534e6f780ea7151bc3c0ffbc4a1dad738868eee7deb7c7c2462869b60c3"
+    },
+    {
+      "path": "pages.json",
+      "sha256": "5bd4b6e995b78cbf69299d54da203b10410bb51e0697f81c521d9df5f7d26980"
+    },
+    {
+      "path": "served.json",
+      "sha256": "0899ac8d91f624bd34a98bbebbc22a684ad1dfa6d1e9bd198d20d37f44c9ebb7"
+    },
+    {
+      "path": "smoke.json",
+      "sha256": "5e0765520f04c6b3a64a5d8148bba326306060d8402c8e63d2fc3e26ab7761d0"
+    },
+    {
+      "path": "source-recovery.json",
+      "sha256": "4b988fd379244a66436c858f6967bbe4b1cf0345975e194b46b50eba81e46d66"
+    },
+    {
+      "path": "validation-reuse.json",
+      "sha256": "d944d860ac90331109acb262d0270ea4e3283cf09a58003267059ef60095e74f"
+    },
+    {
+      "path": "workspace-preservation.json",
+      "sha256": "125ce8710be98804b8ba57bb91269e35e37b1cbba0a6789a4cf634d64730927d"
+    }
+  ],
+  "exclusions": "No private metadata, SQL guards, command logs, credentials, operational records or model context copied.",
+  "report": {
+    "path": "../../2026-11-01-tenbot-persistent-staging.md",
+    "sha256": "f8ca9da59f82f5de154cbb7d5ce54506466e5ef1141ff0d4d6b7530c99309dfe"
+  }
+}

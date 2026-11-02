@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:46:22.227Z",
+  "sha": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "target": "tendev",
+  "deployment": "b3401edf-3218-45ff-af84-c8dd63e94ca8",
+  "url": "https://tendev.pages.dev",
+  "deploymentUrl": "https://b3401edf.tendev.pages.dev",
+  "configurationUnchanged": true,
+  "tenOpsPagesUnchanged": "966ec1da-e537-4582-a82b-0c7a116daf58",
+  "allSecretDigestsUnchanged": true,
+  "ordinaryWritesDisabled": true
+}

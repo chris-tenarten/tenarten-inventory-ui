@@ -1,0 +1,21 @@
+{
+  "fixtureRef": "ahnqbzuhpwgmispwohwv",
+  "readOnly": true,
+  "rows": [
+    {
+      "timestamp": "2026-10-31T04:32:39.326000",
+      "message": "Canary permission expired or was revoked before commit.",
+      "context": "PL/pgSQL function tenbot_chris_dev_canary_commit_authorized() line 13 at RAISE",
+      "sqlstate": "42501"
+    }
+  ],
+  "requests": [
+    {
+      "path": "projects/ahnqbzuhpwgmispwohwv/analytics/endpoints/logs",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 684
+    }
+  ],
+  "error": null
+}

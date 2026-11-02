@@ -1,0 +1,476 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:32:14.399Z",
+  "scope": "Fixed synthetic canary preparation snapshot only; no action authority",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+  "health": [
+    {
+      "name": "auth",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    },
+    {
+      "name": "db",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    }
+  ],
+  "requests": [
+    {
+      "name": "project-health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:32:13.611Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 371,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:32:13 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e8fb61f866849-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "totalMs": 380,
+      "bodyBytes": 228,
+      "bodySha256": "44e9cfbbf7ec2a5173591fd8178f332952fa16a75bffe555c623f40ea150bb2b"
+    },
+    {
+      "name": "tendev-canonical",
+      "endpoint": "https://api.cloudflare.com/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tendev",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:32:13.992Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 326,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:32:14 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e8fb81b9e7b2b-IAH",
+        "content-type": "application/json; charset=UTF-8"
+      },
+      "totalMs": 327,
+      "bodyBytes": 9940,
+      "bodySha256": "b2d569fbff9af1b712d4ebe4af61799acbd525049469ff32b761f7c77c2b7d09"
+    },
+    {
+      "name": "tenops-canonical",
+      "endpoint": "https://api.cloudflare.com/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tenops",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:32:13.993Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 389,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:32:14 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e8fb819fbb55f-IAH",
+        "content-type": "application/json; charset=UTF-8"
+      },
+      "totalMs": 392,
+      "bodyBytes": 9336,
+      "bodySha256": "1ed984aaed0f06003bf7955274f2f6a610c760c15da1c966aa338fd84b6e0cc7"
+    },
+    {
+      "name": "edge-functions",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/functions",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:32:13.993Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 136,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:32:14 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e8fb799806849-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "totalMs": 137,
+      "bodyBytes": 6635,
+      "bodySha256": "8e6577f39bcf66a45f404d881a00ba66621296825c3c5a8282bc8418fd80c9dc"
+    },
+    {
+      "name": "secret-digests",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/secrets",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:32:13.993Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 194,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:32:14 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e8fb81eb228f2-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "totalMs": 197,
+      "bodyBytes": 5571,
+      "bodySha256": "8abbafb9b43c186056cd87a4b68daeeb1d83ef641a8fc470946cfa5c6e42e4e6"
+    },
+    {
+      "name": "fixed-synthetic-canary-state",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+      "method": "POST",
+      "startedAt": "2026-10-31T00:32:13.994Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "readOnlySql": true,
+      "querySha256": "94e6838bea2a34a26b0a3606e0b53f42c108ac30f20654484764dff2729d72ba",
+      "status": 201,
+      "headersMs": 288,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:32:14 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e8fb839296c6b-DFW",
+        "content-type": "application/json"
+      },
+      "totalMs": 288,
+      "bodyBytes": 5642,
+      "bodySha256": "5e6276ea511f1e22a951bb98d4436bf64d5bcb9c93140219d44e09bcb53c9a7c"
+    }
+  ],
+  "canonicalPages": {
+    "tendev": {
+      "name": "tendev",
+      "branch": "dev",
+      "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+      "deployment": "23f8a171-5625-42d9-b874-676115cb34f5",
+      "status": "success",
+      "configSha256": "641888d7ff233d2a46a6311dea61a4c52d38ee4b154707b56776f2b2fcee2161"
+    },
+    "tenops": {
+      "name": "tenops",
+      "branch": "main",
+      "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+      "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+      "status": "success",
+      "configSha256": "a6ce272a2bd5704517e0098101f65ad1081169ad880e0c65076e57de5636a220"
+    }
+  },
+  "localPdf": {
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "bytes": 2877,
+    "reference": "SYN-TENDEV-RECEIVAL-20261030-01"
+  },
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 758624,
+      "remainingMicrousd": 3781332,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "grants": {
+      "total": 1,
+      "active": 0,
+      "auditRows": 2,
+      "unrevoked": 0,
+      "historical": {
+        "id": "9c71ec1f-43ca-4a23-a00f-fb855a3e9edd",
+        "startsAt": "2026-10-30T21:20:46.747468+00:00",
+        "expiresAt": "2026-10-30T21:35:00+00:00",
+        "revokedAt": "2026-10-30T21:22:12.716243+00:00",
+        "hasApproval": false,
+        "hasExecution": false
+      },
+      "auditByEvent": {
+        "revoked": 1,
+        "activated": 1
+      }
+    },
+    "catalog": [
+      {
+        "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+        "size": "#0",
+        "unit": "50lb bag",
+        "category": "marble",
+        "material": "Alaska White",
+        "supplier": "T&M Supply",
+        "materialClass": "turkish_aggregate"
+      }
+    ],
+    "profile": {
+      "role": "developer",
+      "active": true,
+      "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+      "readOnly": false
+    },
+    "controls": {
+      "pilot": false,
+      "permits": 0,
+      "execution": false,
+      "enrollment": 0,
+      "subjectEnrolled": false
+    },
+    "readOnly": "on",
+    "serverNow": "2026-10-31T00:32:14.239839+00:00",
+    "rpcMetadata": [
+      {
+        "owner": "postgres",
+        "bodyMd5": "c2d6f546fad823a7a4ffdf8dd6cc9b1f",
+        "definer": true,
+        "present": true,
+        "signature": "activate_tenbot_chris_dev_canary_grant(timestamp with time zone,text)",
+        "configuration": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=10s"
+        ],
+        "publicExecute": false,
+        "serviceExecute": false,
+        "anonymousExecute": false,
+        "authenticatedExecute": true
+      },
+      {
+        "owner": "tenbot_invoice_executor",
+        "bodyMd5": "f91279a0fb4a827ffca70b500ca14474",
+        "definer": true,
+        "present": true,
+        "signature": "approve_invoice_receival_draft(uuid,text,text)",
+        "configuration": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=15s"
+        ],
+        "publicExecute": false,
+        "serviceExecute": false,
+        "anonymousExecute": false,
+        "authenticatedExecute": true
+      },
+      {
+        "owner": "tenbot_invoice_executor",
+        "bodyMd5": "4329aef56968fa225f30dc3c334cc409",
+        "definer": true,
+        "present": true,
+        "signature": "execute_invoice_receival_draft(uuid,text,uuid)",
+        "configuration": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=15s"
+        ],
+        "publicExecute": false,
+        "serviceExecute": false,
+        "anonymousExecute": false,
+        "authenticatedExecute": true
+      },
+      {
+        "owner": "postgres",
+        "bodyMd5": "b29818c8e82f66d382e4d964ca56f38e",
+        "definer": true,
+        "present": true,
+        "signature": "get_invoice_receival_source_for_draft(uuid)",
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "publicExecute": false,
+        "serviceExecute": false,
+        "anonymousExecute": false,
+        "authenticatedExecute": true
+      },
+      {
+        "owner": "postgres",
+        "bodyMd5": "1619d46658263452ddc66fcc91de88e3",
+        "definer": true,
+        "present": true,
+        "signature": "get_my_tenbot_receival_canary_access()",
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "publicExecute": false,
+        "serviceExecute": false,
+        "anonymousExecute": false,
+        "authenticatedExecute": true
+      },
+      {
+        "owner": "postgres",
+        "bodyMd5": "cfc73c51d7916ea56c2af4683f395845",
+        "definer": true,
+        "present": true,
+        "signature": "get_tenbot_chris_dev_canary_control_status()",
+        "configuration": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=10s"
+        ],
+        "publicExecute": false,
+        "serviceExecute": false,
+        "anonymousExecute": false,
+        "authenticatedExecute": true
+      },
+      {
+        "owner": "postgres",
+        "bodyMd5": "1caf8d47c71f69e1df3dddbce3cc8feb",
+        "definer": true,
+        "present": true,
+        "signature": "prepare_invoice_receival_draft_with_source(uuid,jsonb,jsonb,jsonb,jsonb)",
+        "configuration": [
+          "search_path=pg_catalog, public"
+        ],
+        "publicExecute": false,
+        "serviceExecute": false,
+        "anonymousExecute": false,
+        "authenticatedExecute": true
+      },
+      {
+        "owner": "postgres",
+        "bodyMd5": "07f4bc465c8db61d4df67cc0896a8f96",
+        "definer": true,
+        "present": true,
+        "signature": "revoke_tenbot_chris_dev_canary_grant(uuid,text)",
+        "configuration": [
+          "search_path=pg_catalog, public",
+          "lock_timeout=3s",
+          "statement_timeout=10s"
+        ],
+        "publicExecute": false,
+        "serviceExecute": false,
+        "anonymousExecute": false,
+        "authenticatedExecute": true
+      }
+    ],
+    "targetStock": [],
+    "openaiPolicy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "usageByState": [
+      {
+        "rows": 79,
+        "state": "measured",
+        "newest": "2026-10-30T22:10:13.497089+00:00",
+        "oldest": "2026-10-30T01:24:49.297189+00:00",
+        "actualMicrousd": 157529,
+        "reservedMicrousd": 2992589,
+        "accountedMicrousd": 157529
+      },
+      {
+        "rows": 1,
+        "state": "reserved",
+        "newest": "2026-10-30T13:55:38.451468+00:00",
+        "oldest": "2026-10-30T13:55:38.451468+00:00",
+        "actualMicrousd": 0,
+        "reservedMicrousd": 61139,
+        "accountedMicrousd": 61139
+      }
+    ],
+    "chrisDevUsage": {
+      "allOpenRows": 0,
+      "currentUtcDay": "2026-10-31",
+      "oct30AccountedMicrousd": 6341,
+      "allOpenReservedMicrousd": 0,
+      "currentDayAccountedMicrousd": 0
+    },
+    "policyExpired": true,
+    "documentCounts": {
+      "claims": 0,
+      "drafts": 0,
+      "sources": 0,
+      "approvals": 0,
+      "executions": 0,
+      "boundPending": 0,
+      "subjectSources": 0,
+      "pendingByReference": 0
+    },
+    "oldReservation": {
+      "id": "84c8e242-4f99-4573-a6c3-6b19a01ef7ee",
+      "model": "gpt-6.1-terra",
+      "state": "reserved",
+      "rowHash": "dcb2b3de762fb16271dd9174bc7f1a11",
+      "createdAt": "2026-10-30T13:55:38.451468+00:00",
+      "settledAt": null,
+      "policyVersion": 3,
+      "actualMicrousd": null,
+      "reservedMicrousd": 61139
+    },
+    "baseCapabilities": {
+      "messaging.write": true,
+      "writeBusinessData": true,
+      "readOperationalData": true
+    },
+    "databaseStartedAt": "2026-10-30T23:53:21.428532+00:00"
+  },
+  "checks": {
+    "healthy": true,
+    "allReadsReturned": true,
+    "readOnly": true,
+    "canonicalPages": true,
+    "edge23": true,
+    "functionsUnchanged": true,
+    "edgeOff": true,
+    "secretDigestsUnchanged": true,
+    "rolePreserved": true,
+    "sqlOff": true,
+    "grantBaseline": true,
+    "duplicatesAbsent": true,
+    "exactCatalog": true,
+    "rpcPresent": true,
+    "oldReservationUnchanged": true
+  },
+  "blockers": [
+    "INFERENCE_POLICY_EXPIRED_OR_UNVERIFIED"
+  ],
+  "accountingCautions": [
+    "EXISTING_OPEN_RESERVATIONS_REMAIN_ACCOUNTED_NO_AUTOMATIC_RELEASE"
+  ],
+  "preparationOnly": true,
+  "readyToExecute": false,
+  "cautions": [
+    "Meter enabled is only a policy flag: expires_at and server time independently control funding. Remaining microusd does not authorize a dispatch.",
+    "UTC day rollover resets some day windows, never the lifetime accounted total or old reservation. Both current UTC day and fixed October30 are shown.",
+    "Old reserved/uncertain accounting remains charged; this helper never settles, releases or retries it.",
+    "Management metadata and SELECT do not certify the genuine employee/Admin sessions or live caller-JWT/RLS lifecycle. Root must use normal canary control UI for any later separately authorized action.",
+    "RPC hashes/ACL metadata establish presence and visibility only; no mutation RPC is invoked."
+  ],
+  "credentialValuesPersisted": false,
+  "rawHttpBodiesRetained": false,
+  "automaticRetries": 0,
+  "grantsChanged": 0,
+  "uploads": 0,
+  "approvals": 0,
+  "operationalWrites": 0,
+  "fundingChanges": 0,
+  "inferenceCalls": 0,
+  "functions": [
+    {
+      "slug": "tenbot",
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 23,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "sha256": "84d3589578d30af77d40bc0ace01a728f88494f1067cf1d728310a3fc43efb31"
+    }
+  ],
+  "secretMetadataScope": "All existing secret digests compared unchanged privately; no key value read. Raw digest list omitted from this repository receipt."
+}

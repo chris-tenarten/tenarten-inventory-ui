@@ -1,0 +1,154 @@
+{
+  "checkedAt": "2026-10-29T23:17:27.115Z",
+  "status": "ISOLATED_FREE_FIXTURE_READY_FOR_SYNTHETIC_BOOTSTRAP",
+  "fixtureKind": "standalone-free",
+  "projectRef": "jltgxcfiprocydhbrahz",
+  "url": "https://jltgxcfiprocydhbrahz.supabase.co",
+  "organizationPlan": "free",
+  "paidAddons": [],
+  "initialCounts": {
+    "auth_users": 0,
+    "storage_objects": 0,
+    "storage_buckets": 0,
+    "public_tables": 0,
+    "cron_exists": false,
+    "vault_exists": true
+  },
+  "vaultSecrets": 0,
+  "edgeFunctionCount": 0,
+  "customSecretCount": 0,
+  "auth": {
+    "jwtExpSeconds": 60,
+    "signupDisabled": true,
+    "emailAutoconfirm": true,
+    "externalEmailPasswordSignInEnabled": true,
+    "externalProvidersDisabled": true,
+    "authHooksDisabled": true,
+    "securityNotificationEmailDisabled": true,
+    "smtpConfigured": false,
+    "patchedKeys": [
+      "jwt_exp",
+      "disable_signup",
+      "mailer_autoconfirm",
+      "uri_allow_list"
+    ],
+    "omittedAlreadyDisabledKeys": [
+      "external_phone_enabled",
+      "external_anonymous_users_enabled",
+      "saml_enabled",
+      "custom_oauth_enabled",
+      "oauth_server_enabled",
+      "external_apple_enabled",
+      "external_azure_enabled",
+      "external_bitbucket_enabled",
+      "external_discord_enabled",
+      "external_facebook_enabled",
+      "external_figma_enabled",
+      "external_github_enabled",
+      "external_gitlab_enabled",
+      "external_google_enabled",
+      "external_kakao_enabled",
+      "external_keycloak_enabled",
+      "external_linkedin_oidc_enabled",
+      "external_slack_oidc_enabled",
+      "external_notion_enabled",
+      "external_slack_enabled",
+      "external_spotify_enabled",
+      "external_twitch_enabled",
+      "external_twitter_enabled",
+      "external_x_enabled",
+      "external_workos_enabled",
+      "external_web3_solana_enabled",
+      "external_web3_ethereum_enabled",
+      "external_zoom_enabled",
+      "hook_custom_access_token_enabled",
+      "hook_mfa_verification_attempt_enabled",
+      "hook_password_verification_attempt_enabled",
+      "hook_send_sms_enabled",
+      "hook_send_email_enabled",
+      "hook_before_user_created_enabled",
+      "hook_after_user_created_enabled",
+      "mailer_notifications_password_changed_enabled",
+      "mailer_notifications_email_changed_enabled",
+      "mailer_notifications_phone_changed_enabled",
+      "mailer_notifications_mfa_factor_enrolled_enabled",
+      "mailer_notifications_mfa_factor_unenrolled_enabled",
+      "mailer_notifications_identity_linked_enabled",
+      "mailer_notifications_identity_unlinked_enabled"
+    ],
+    "disabledFlagsRechecked": true
+  },
+  "credentialFile": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/free-project-credentials.private.json",
+  "credentialMode": "600",
+  "credentialProjectClaimsVerified": true,
+  "controlPlaneCredentialPersisted": false,
+  "productionDataOrCredentialsCopied": false,
+  "requests": [
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/secrets",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 164
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/functions",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 167
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 169
+    },
+    {
+      "path": "organizations/uxxhpnseynojdgabanrv",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 202
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/config/auth",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 211
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/database/query/read-only",
+      "method": "POST",
+      "status": 201,
+      "elapsedMs": 226
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/billing/addons",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 2296
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/database/query/read-only",
+      "method": "POST",
+      "status": 201,
+      "elapsedMs": 175
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/config/auth",
+      "method": "PATCH",
+      "status": 200,
+      "elapsedMs": 2612
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/config/auth",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 145
+    },
+    {
+      "path": "projects/jltgxcfiprocydhbrahz/api-keys",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 981
+    }
+  ]
+}

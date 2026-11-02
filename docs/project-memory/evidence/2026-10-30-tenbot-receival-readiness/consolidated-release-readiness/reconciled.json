@@ -1,0 +1,103 @@
+{
+  "recordedAt": "2026-10-31T17:38:37.990Z",
+  "readOnly": true,
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "state": {
+    "edge": {
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 32,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "bundleSha256": "97f45d178af417b83373e5183181c6811cfa1369d4f147c731434cd0f87f077a"
+    },
+    "configuration": {
+      "flags": {
+        "TENBOT_AI_ENABLED": "true",
+        "TENBOT_OPENAI_ENABLED": "true",
+        "TENBOT_OPENAI_SPEND_AUTHORIZED": "false",
+        "TENBOT_RECEIVAL_PILOT_ENABLED": "false",
+        "TENBOT_RECEIVAL_EXECUTION_ENABLED": "false",
+        "TENBOT_INVOICE_PREPARATION_ENABLED": "false",
+        "TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED": "false"
+      },
+      "enrollmentEmpty": true,
+      "openAIKeyPresent": true,
+      "credentialValuesReadOrStored": false
+    },
+    "tenops": {
+      "project": "tenops",
+      "branch": "main",
+      "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+      "deploymentId": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+      "status": "success",
+      "url": "https://d01a02dc.tenops.pages.dev",
+      "createdOn": "2026-10-31T00:24:11.063773Z"
+    },
+    "tendev": {
+      "project": "tendev",
+      "branch": "dev",
+      "sha": "e357d5625734522c904fa80335e9aad5180a3fec",
+      "deploymentId": "db4ccc2b-b30e-4f10-8ffa-0e4f8fbcf329",
+      "status": "success",
+      "url": "https://db4ccc2b.tendev.pages.dev",
+      "createdOn": "2026-10-31T03:19:40.977248Z"
+    },
+    "tenopsServed": {
+      "rootSha256": "b818a955cbc0c22c319195b8845b627b003a704b416fba74879b2198f9238e11",
+      "expectedRuntime": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+      "matchesRetainedAcceptedRoot": true
+    },
+    "tendevServed": {
+      "rootSha256": "bdc5c10b7886c53fcdebc2ae886e59a1c86a9c45aefd28873d51be240ee240a6",
+      "expectedRuntime": "e357d5625734522c904fa80335e9aad5180a3fec",
+      "matchesRetainedAcceptedRoot": true
+    }
+  },
+  "failures": [
+    {
+      "index": 2,
+      "message": "shared-schema-corrected HTTP 400"
+    }
+  ],
+  "requests": [
+    {
+      "name": "tenops-public-root",
+      "endpoint": "https://tenops.pages.dev/",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 171
+    },
+    {
+      "name": "tenops-metadata-reconciled",
+      "endpoint": "https://api.cloudflare.com/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tenops",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 275
+    },
+    {
+      "name": "tendev-public-root",
+      "endpoint": "https://tendev.pages.dev/",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 244
+    },
+    {
+      "name": "shared-schema-corrected",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query/read-only",
+      "method": "POST",
+      "status": 400,
+      "durationMs": 266
+    },
+    {
+      "name": "tendev-metadata-reconciled",
+      "endpoint": "https://api.cloudflare.com/client/v4/accounts/1c3296a9dced221746eb605be66df0f3/pages/projects/tendev",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 272
+    }
+  ],
+  "originalSnapshotPreserved": true,
+  "originalReaderSqlTypoCorrected": true,
+  "mutations": 0,
+  "inferenceCalls": 0
+}

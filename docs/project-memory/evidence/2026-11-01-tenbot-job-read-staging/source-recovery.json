@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "candidate": "75ed1f35b97bb964fc5f1d3e9587f1393f7d9356",
+  "baseline": "523f6471eaf7897c300ede04fe7ea64a837169c4",
+  "bundle": "75ed1f35.bundle",
+  "sha256": "a3055d07472e584cfb205aa27d6893c3ae74f33dc46e97a0cab772c3b6806a4c",
+  "incremental": true,
+  "rootRefsAndIndexUnchanged": true
+}

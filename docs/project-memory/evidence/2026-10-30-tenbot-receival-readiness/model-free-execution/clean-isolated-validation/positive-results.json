@@ -1,0 +1,142 @@
+{
+  "passed": false,
+  "recordedAt": "2026-10-31T04:32:40.877Z",
+  "fixtureRef": "ahnqbzuhpwgmispwohwv",
+  "acceptedCandidate": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c",
+  "migrationSha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+  "groups": [
+    {
+      "name": "real synthetic owner source and Developer baseline are exact; only genuine synthetic Admin may activate",
+      "durationMs": 500
+    },
+    {
+      "name": "fresh <=15-minute private window binds once; concurrent genuine Admin requests create exactly one scoped grant",
+      "durationMs": 1314
+    },
+    {
+      "name": "fresh actual hosted runtime instances resume pinned preview without extraction, downloads, inference or funding",
+      "durationMs": 3356
+    },
+    {
+      "name": "model-free metadata review and explicit canonical approval bind exact source, document, material and grant",
+      "durationMs": 3170
+    },
+    {
+      "name": "metadata edits invalidate previous immutable approval without changing original one-Bag quantities",
+      "durationMs": 3269
+    },
+    {
+      "name": "actual bound execution authorization cannot reserve inference or replenish any accounting",
+      "durationMs": 427
+    },
+    {
+      "name": "single-use scope rejects activation replay, rebinding and wrong owner/document/material review",
+      "durationMs": 1123
+    }
+  ],
+  "cleanupFailures": [],
+  "actualSignedAuthJwt": true,
+  "actualPostgreSQLAndRestRls": true,
+  "protectedSyntheticTranscriptionReused": true,
+  "liveModelExtraction": false,
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "inventoryWrites": 0,
+  "sharedRequests": 0,
+  "preservedFixtureRequests": 0,
+  "boundGrantId": "d5223365-d34e-4df9-a1bb-0ca9d4e85fea",
+  "serviceCalls": [
+    "record_invoice_receival_source_state",
+    "record_invoice_receival_source_state"
+  ],
+  "providers": 0,
+  "durationMs": 66873,
+  "baseline": {
+    "stock": "d41d8cd98f00b204e9800998ecf8427e",
+    "usage": "d41d8cd98f00b204e9800998ecf8427e",
+    "claims": 0,
+    "drafts": 0,
+    "grants": 0,
+    "window": {
+      "id": "20261031-0300-4000-8000-000000000001",
+      "enabled": false,
+      "armed_at": null,
+      "bound_at": null,
+      "singleton": true,
+      "source_id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+      "starts_at": null,
+      "created_at": "2026-10-31T04:28:45.754786+00:00",
+      "expires_at": null,
+      "disabled_at": null,
+      "preview_hash": "7b63a8b55d2d496c2e15d0d5f2af81fb8da06f81109c4da1dfeed89e0c8e7594",
+      "owner_user_id": "3785f6b9-742e-452f-af6c-31613a983633",
+      "bound_grant_id": null,
+      "document_sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+      "preview_revision": 1,
+      "inference_allowed": false,
+      "source_evidence_sha256": "534087aeed62e2dd4d7112e22d700b760eb0f436445de16d300fc3ca83ad7c54"
+    },
+    "catalog": "406fe990758c455b4e62c8d59c16ae7d",
+    "funding": "d4d236ecbce5f65a56040b8cc4ef117f",
+    "pending": "d41d8cd98f00b204e9800998ecf8427e",
+    "pilotOff": true,
+    "approvals": 0,
+    "serverNow": "2026-10-31T04:31:35.120344+00:00",
+    "unrevoked": 0,
+    "enrollment": 0,
+    "executions": 0,
+    "capabilities": "6f077d632fd64655c4523c14cfe5fd05",
+    "executionOff": true,
+    "transactions": 0,
+    "developerRole": "developer",
+    "ordinaryPolicy": "3abb6421ef41fae8b108b507719e3e65",
+    "originalEvidence": "0ab14afd88addc2e6e1a7cc499743bda"
+  },
+  "final": {
+    "stock": "d41d8cd98f00b204e9800998ecf8427e",
+    "usage": "d41d8cd98f00b204e9800998ecf8427e",
+    "claims": 0,
+    "drafts": 2,
+    "grants": 1,
+    "window": {
+      "id": "20261031-0300-4000-8000-000000000001",
+      "enabled": false,
+      "armed_at": "2026-10-31T04:31:36.034552+00:00",
+      "bound_at": "2026-10-31T04:31:36.169613+00:00",
+      "singleton": true,
+      "source_id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+      "starts_at": "2026-10-31T04:31:36.027608+00:00",
+      "created_at": "2026-10-31T04:28:45.754786+00:00",
+      "expires_at": "2026-10-31T04:32:36.027608+00:00",
+      "disabled_at": "2026-10-31T04:32:40.117021+00:00",
+      "preview_hash": "7b63a8b55d2d496c2e15d0d5f2af81fb8da06f81109c4da1dfeed89e0c8e7594",
+      "owner_user_id": "3785f6b9-742e-452f-af6c-31613a983633",
+      "bound_grant_id": "d5223365-d34e-4df9-a1bb-0ca9d4e85fea",
+      "document_sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+      "preview_revision": 1,
+      "inference_allowed": false,
+      "source_evidence_sha256": "534087aeed62e2dd4d7112e22d700b760eb0f436445de16d300fc3ca83ad7c54"
+    },
+    "catalog": "406fe990758c455b4e62c8d59c16ae7d",
+    "funding": "d4d236ecbce5f65a56040b8cc4ef117f",
+    "pending": "d41d8cd98f00b204e9800998ecf8427e",
+    "pilotOff": true,
+    "approvals": 1,
+    "serverNow": "2026-10-31T04:32:40.835448+00:00",
+    "unrevoked": 0,
+    "enrollment": 0,
+    "executions": 0,
+    "capabilities": "6f077d632fd64655c4523c14cfe5fd05",
+    "executionOff": true,
+    "transactions": 0,
+    "developerRole": "developer",
+    "ordinaryPolicy": "3abb6421ef41fae8b108b507719e3e65",
+    "originalEvidence": "0ab14afd88addc2e6e1a7cc499743bda"
+  },
+  "limitations": [
+    "Hosted contract/runtime executed locally with real isolated caller-scoped SDK/RPC responses, not deployed Edge/browser proof.",
+    "Canonical explicit approval RPC is separate from UI Approve and create; no successful execute was invoked.",
+    "Positive expiry-crossing review uses a bounded fixture-only delay trigger; canonical functions/guards remain unchanged.",
+    "Exact grant revoked after natural expiry; previous pre-expiry permission revocation and transactional-write evidence reused."
+  ]
+}

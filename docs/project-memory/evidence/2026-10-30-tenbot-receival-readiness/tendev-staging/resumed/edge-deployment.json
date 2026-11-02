@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T16:45:19.463Z",
+  "sha": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "functions": [
+    {
+      "slug": "tenbot",
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 18,
+      "bundleSha256": "66ef0ae4ec240704725a2d7383233a47e9c799a68adb55916b2fd23948935675",
+      "verifyJwt": true,
+      "exactOwnedModules": 30
+    },
+    {
+      "slug": "tenbot-receival-cleanup",
+      "id": "cc6fe361-717a-4c76-958c-c6682eee68ea",
+      "version": 1,
+      "bundleSha256": "cea0da79a1b7912d3a45bfd4a613800c2b4e1d360cc796ad929b4b6a2ffef13d",
+      "verifyJwt": true,
+      "exactOwnedModules": 3
+    }
+  ],
+  "allSecretDigestsUnchanged": true,
+  "meterPolicyUnchanged": true,
+  "ordinaryWritesDisabled": true,
+  "cleanupDisabled": true
+}

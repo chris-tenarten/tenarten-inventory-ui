@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "at": "2026-11-01T21:36:52.562Z",
+  "head": "a96c89b7a7c2a12984b0746fbb88f5836be6fb88",
+  "indexUnchanged": true,
+  "branchesUnchanged": true,
+  "preexistingDirtyPaths": 13,
+  "preexistingDirtyBytesUnchanged": true,
+  "rootSourceMutations": 0,
+  "newBranchOrWorktree": false,
+  "reviewServersUntouched": true,
+  "documentationAppendsPending": true
+}

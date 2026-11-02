@@ -33,3 +33,8 @@ No migration is required. No provider, spending, secret, role, permission, enrol
 Before release, Product must accept the local correction, then authorize the normal exact selective source-proof/build/staging path. The affected hosted employee tab/runtime and newly generated hosted answers remain a focused authenticated verification requirement; no browser session was borrowed or Auth bypassed. Do not claim the exact employee incident was reproduced from the public chunk or synthetic tests. Production promotion remains separately authorized.
 
 Task scratch: `/private/tmp/tenops-tenbot-messaging-refinement-20261101`; no new branch, worktree, framework or review port. Preserve all 14 pre-existing dirty paths and unrelated evidence. Commit only the five UI/helper paths, two focused verifiers, this report/evidence and task-owned appended documentation hunks. [Evidence](evidence/2026-11-01-tenbot-messaging-refinement/validation.json), [browser](evidence/2026-11-01-tenbot-messaging-refinement/browser.json), [history](evidence/2026-11-01-tenbot-messaging-refinement/history.json), [public staged source](evidence/2026-11-01-tenbot-messaging-refinement/hosted-source.json), [build](evidence/2026-11-01-tenbot-messaging-refinement/build.json). Stop for Product acceptance.
+
+
+## Superseding approved TenDev staging — November 1, 2026
+
+Product accepted e61d333 and2723b1e for matched TenDev staging. The [executed receipt](2026-11-01-tenbot-messaging-staging.md) records523f6471/Edge37 and the now-deployed selection/pin/navigation/history-presentation changes. Earlier local-only/not-deployed claims remain historical. No TenOps Pages deployment or write/provider/budget activation; genuine signed-in hosted verification remains unavailable.

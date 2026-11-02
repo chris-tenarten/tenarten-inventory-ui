@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T02:09:30.904Z",
+  "baseline": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+  "tenDevDeployment": "8e9dcd06-68b3-495f-a374-d3c0e7735ff9",
+  "tenOpsSha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "tenOpsDeployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+  "edgeVersion": 27,
+  "verifyJwt": true,
+  "allWritesOff": true,
+  "activeGrants": 0,
+  "enrollment": 0,
+  "canaryFundingEnabled": false,
+  "accountedMicros": 231813,
+  "canaryAccountedMicros": 13145,
+  "ordinaryFundingExpired": true,
+  "oldReservationPreserved": true,
+  "assistantMigrationLedgerDigest": "4b2b6647c09db43f7a0250700d36a7e0",
+  "timings": [
+    {
+      "index": 0,
+      "status": 200,
+      "durationMs": 281
+    },
+    {
+      "index": 1,
+      "status": 200,
+      "durationMs": 251
+    },
+    {
+      "index": 2,
+      "status": 200,
+      "durationMs": 203
+    },
+    {
+      "index": 3,
+      "status": 200,
+      "durationMs": 190
+    },
+    {
+      "index": 4,
+      "status": 201,
+      "durationMs": 658
+    }
+  ],
+  "mutations": 0
+}

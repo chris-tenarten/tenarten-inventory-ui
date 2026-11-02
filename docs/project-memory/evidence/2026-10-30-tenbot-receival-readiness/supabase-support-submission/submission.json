@@ -1,0 +1,41 @@
+{
+  "status": "SUBMITTED_CONFIRMED_BY_SUPABASE_UI",
+  "authority": "Chris: TENOPS — SUPABASE SUPPORT ESCALATION, October30 2026; explicitly authorizes ticket and sanitized incident evidence to Supabase Support.",
+  "channel": "Existing authenticated Supabase Dashboard support form in Chrome",
+  "url": "https://supabase.com/dashboard/support/new",
+  "submittedAtApprox": "2026-10-30T23:38Z",
+  "confirmationObservedAround": "2026-10-30T23:39Z",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "projectName": "tenartenDB",
+  "category": "Database unresponsive",
+  "severity": "High",
+  "services": [
+    "Authentication",
+    "Database"
+  ],
+  "subject": "Production impaired: tenartenDB Database/Auth outage and recurrent access failure after restart",
+  "bodyCharacters": 3187,
+  "attachment": {
+    "name": "incident-evidence.json",
+    "sha256": "e09c97031c5bed3388be46f47d5ff3c192343cdc4ac77931d355020978b1fd41",
+    "bytes": 6898,
+    "observed": "Exact file selected in native picker; one JSON attachment visible before submission"
+  },
+  "optionalSupportProjectAccess": false,
+  "confirmation": {
+    "heading": "Support request sent",
+    "message": "Your ticket has been logged for tenartenDB. We will reach out at the existing account support email.",
+    "ticketId": null,
+    "ticketIdLimitation": "No ticket number or case URL displayed in confirmation; email not accessed.",
+    "screenshotAndAccessibilityObserved": true
+  },
+  "submitClicks": 1,
+  "additionalInfrastructureActions": 0,
+  "healthOrDatabaseProbes": 0,
+  "modelCalls": 0,
+  "deploymentOrSourceChanges": 0,
+  "secretsOrEmployeeCustomerRecordsShared": false,
+  "priorDraft": "../supabase-controlled-recovery/support-escalation.json",
+  "supersedesPriorDraftStatus": true,
+  "nativeAccessReleased": true
+}

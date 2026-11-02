@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "candidate": "c45f12a6b10aa01b524922b654ce61b12e7be9f8",
+  "focusedHistoryGroups": 12,
+  "typeScript": true,
+  "targetedEslint": true,
+  "diffCheck": true,
+  "actualInference": false,
+  "actualDatabase": false,
+  "reusedEvidence": {
+    "acceptedDeterministicGroups": 44,
+    "realPostgreSQLJwtRlsGroups": 12,
+    "privatePurgeChecks": 5,
+    "localBrowserChecks": 5
+  },
+  "newChecks": [
+    "legacy Production response remains compatible",
+    "new history opt-in restricted to staged TenDev origin"
+  ],
+  "testFixtureCorrections": "Canonical fallback fixture and single-argument signature; no application defect found by these test corrections"
+}

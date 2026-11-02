@@ -1,0 +1,91 @@
+{
+  "recordedAt": "2026-10-30T23:29:13.682Z",
+  "secondsSinceRestartRequest": 188,
+  "requests": [
+    {
+      "name": "project-state",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:29:08.438Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 234,
+      "totalMs": 235,
+      "bodyBytes": 375,
+      "bodySha256": "2dc637db2abf7107aaa5bb4628a55ae4fdf03d61effa1a1dd7bb76cc7fc97ede",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:29:08 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e334c8bb2b6b7-DFW",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "project": {
+        "id": "vxdxjhazkqhpkwdqtobp",
+        "ref": "vxdxjhazkqhpkwdqtobp",
+        "name": "tenartenDB",
+        "region": "us-east-1",
+        "status": "RESTARTING"
+      }
+    },
+    {
+      "name": "final-health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:29:08.472Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 5208,
+      "totalMs": 5209,
+      "bodyBytes": 147,
+      "bodySha256": "41435852a2c499e4550581bf43be4350b38731955e2dc4e1346f9a29e946fd8f",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:29:13 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e334c880216d1-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "services": [
+        {
+          "name": "auth",
+          "healthy": false,
+          "status": "UNHEALTHY"
+        },
+        {
+          "name": "db",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        }
+      ],
+      "healthy": false
+    },
+    {
+      "name": "final-resource-snapshot",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/metrics",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:29:08.473Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 400,
+      "headersMs": 184,
+      "totalMs": 188,
+      "bodyBytes": 48,
+      "bodySha256": "8e01a2d8751de904ccfabe18805b7e26ef1f320d385bb7b770ca286c61ea40d0",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:29:08 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e334c8cb420bf-DFW",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "safeError": "Project must be active and healthy"
+    }
+  ],
+  "restartRequestsSent": 1,
+  "furtherRestartsAuthorized": false,
+  "businessMutations": 0,
+  "credentialValuesStored": false
+}

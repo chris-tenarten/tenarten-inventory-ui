@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-29T23:03:26.644Z",
+  "status": "STOPPED",
+  "phase": "create",
+  "httpStatus": 402,
+  "apiCode": null,
+  "billingActionRequired": true,
+  "errorType": "Error",
+  "message": "Supabase management request failed; no automatic retry."
+}

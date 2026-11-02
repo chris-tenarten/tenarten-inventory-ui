@@ -1,0 +1,154 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T03:31:38.840Z",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "candidate": "e357d5625734522c904fa80335e9aad5180a3fec",
+  "readOnly": true,
+  "window": {
+    "start": "2026-10-31T03:27:39.064772+00:00",
+    "end": "2026-10-31T03:30:20.801Z"
+  },
+  "ledger": {
+    "baselineAccountedMicrousd": 771769,
+    "finalAccountedMicrousd": 786171,
+    "accountedDeltaMicrousd": 14402,
+    "measuredMicrousd": 14402,
+    "unresolvedMicrousd": 0,
+    "inferenceSteps": 6,
+    "distinctRequests": 1,
+    "otherNewUsage": 0,
+    "existingRowsUnchanged": true,
+    "withinAuthorizedAllowance": true,
+    "deltaMatchesOwnUsage": true,
+    "usage": [
+      {
+        "id": "7461e254-59d0-437f-936e-0ffa639db7e0",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "createdAt": "2026-10-31T03:29:44.654611+00:00",
+        "requestId": "517da80e-060d-49bf-9587-10824b0d2bc8",
+        "settledAt": "2026-10-31T03:29:47.468324+00:00",
+        "actualMicrousd": 2323,
+        "reservedMicrousd": 30282
+      },
+      {
+        "id": "68d3efbc-4aa9-4b10-aa44-c3335abb0555",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "createdAt": "2026-10-31T03:29:47.713477+00:00",
+        "requestId": "517da80e-060d-49bf-9587-10824b0d2bc8",
+        "settledAt": "2026-10-31T03:29:53.560565+00:00",
+        "actualMicrousd": 4811,
+        "reservedMicrousd": 44900
+      },
+      {
+        "id": "2c41505f-3dca-4d18-9890-b613252ad41a",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "createdAt": "2026-10-31T03:29:53.797869+00:00",
+        "requestId": "517da80e-060d-49bf-9587-10824b0d2bc8",
+        "settledAt": "2026-10-31T03:29:55.829764+00:00",
+        "actualMicrousd": 1382,
+        "reservedMicrousd": 47894
+      },
+      {
+        "id": "aff7da36-ff98-432f-b743-cbd528b71cea",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "createdAt": "2026-10-31T03:29:56.127169+00:00",
+        "requestId": "517da80e-060d-49bf-9587-10824b0d2bc8",
+        "settledAt": "2026-10-31T03:29:58.495269+00:00",
+        "actualMicrousd": 1814,
+        "reservedMicrousd": 52102
+      },
+      {
+        "id": "eb39a389-1fb1-4939-8f2e-fda5add0e2ed",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "createdAt": "2026-10-31T03:29:58.70244+00:00",
+        "requestId": "517da80e-060d-49bf-9587-10824b0d2bc8",
+        "settledAt": "2026-10-31T03:30:02.28812+00:00",
+        "actualMicrousd": 1039,
+        "reservedMicrousd": 53542
+      },
+      {
+        "id": "7f7636c1-cf9e-43b6-b562-48ae43f53e06",
+        "model": "gpt-6.1-terra",
+        "state": "measured",
+        "createdAt": "2026-10-31T03:30:02.954834+00:00",
+        "requestId": "517da80e-060d-49bf-9587-10824b0d2bc8",
+        "settledAt": "2026-10-31T03:30:07.76543+00:00",
+        "actualMicrousd": 3033,
+        "reservedMicrousd": 57307
+      }
+    ]
+  },
+  "tokens": {
+    "available": false,
+    "inputTokens": null,
+    "outputTokens": null,
+    "reason": "Token counts are not persisted in the durable USD ledger. Use only numeric agent.usage from this actual authenticated response if separately captured; do not infer from dollars."
+  },
+  "source": {
+    "id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+    "owner": "3785f6b9-742e-452f-af6c-31613a983633",
+    "state": "ready",
+    "version": 2,
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "expiresAt": "2026-11-01T01:24:35.833487+00:00",
+    "retained": false,
+    "bound": false,
+    "privateOriginalPresent": true,
+    "draftStatus": "review_required",
+    "canApprove": false,
+    "executionEnabled": false,
+    "simulation": false,
+    "durableDraftPresent": false,
+    "supplier": "T&M Supply",
+    "referenceMatches": true,
+    "rows": [
+      {
+        "material": "Alaska White",
+        "size": "#0",
+        "quantity": "1",
+        "unit": "Bag",
+        "sourceQuantity": "1",
+        "sourceUnit": "Bag",
+        "jobPresent": false,
+        "excluded": false
+      }
+    ]
+  },
+  "diagnostics": {
+    "available": false,
+    "events": [],
+    "boundedAt100": false,
+    "fields": [
+      "stage",
+      "tool",
+      "outcome",
+      "durationMs",
+      "reasonCode"
+    ],
+    "rawMessagesRead": false,
+    "rawMessagesPersisted": false,
+    "correlation": "Exact prefix and finite test-time window only; diagnostic payload intentionally carries no caller/source/request identity.",
+    "failure": "HTTP_400"
+  },
+  "cleanupReceipt": {
+    "file": "2026-10-31T03-30-18-601Z-close-result.json",
+    "sha256": "27e1b3de9c4cb7aa94493117dc7303d186fc4df9b7dfdf8fb94f4f0dd752fc45",
+    "ordinarySpendingFalse": true,
+    "meterOff": true,
+    "operationalGatesOff": true,
+    "activeGrants": 0,
+    "enrollment": 0,
+    "stockUnchanged": true,
+    "allStockUnchanged": true,
+    "transactionsUnchanged": true
+  },
+  "extraction": "Existing ready source retains prior real PDF extraction; this test does not establish a fresh multimodal extraction.",
+  "automaticRetries": 0,
+  "hostedMutations": 0,
+  "inferenceCallsByCollector": 0
+}

@@ -1,0 +1,24 @@
+{
+  "status": "blocked",
+  "blocker": "Supabase preview branch creation returned HTTP402 requiring a billing plan upgrade; additional paid resources are not authorized.",
+  "evidence_source": "Root agent instruction; this investigator made no branch requests.",
+  "recorded_at_utc": "2026-10-29T23:04:03.462104+00:00",
+  "harness_path": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/history-auth-live.mts",
+  "harness_prepared": true,
+  "syntax_check": "pass",
+  "harness_executed": false,
+  "branch_config_received": false,
+  "groups_executed": 0,
+  "http_calls_by_harness": 0,
+  "database_tests": "NOT RUN",
+  "inference_calls": 0,
+  "database_mutations": 0,
+  "production_requests": 0,
+  "remaining_gates": [
+    "Real JWT/Auth invalid/forged/expired validation",
+    "Owner/admin/employee privacy isolation and revocation",
+    "Real durable conversation history across clients/instances",
+    "Actual SQL CAS/concurrency/replay/lease/retention validation"
+  ],
+  "next_action": "Stop for Product decision; do not provision/upgrade or substitute offline doubles as database proof."
+}

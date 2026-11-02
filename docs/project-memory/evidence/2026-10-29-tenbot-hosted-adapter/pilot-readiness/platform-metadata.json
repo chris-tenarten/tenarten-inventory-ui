@@ -1,0 +1,45 @@
+{
+  "verifiedDateLocal": "2026-10-29",
+  "method": "Existing authenticated OpenAI Platform Chrome window, accessibility metadata only",
+  "project": {
+    "name": "TenBot",
+    "id": "proj_e3Qoebc2IckUzl282v3ys6Yl"
+  },
+  "credits": {
+    "displayedAvailableUsd": 6.44,
+    "grantTotalUsd": 7,
+    "displayedUsedUsd": 0.56,
+    "state": "Available",
+    "receivedDate": "2026-10-29",
+    "expiryDate": "2026-10-31",
+    "expiryPrecision": "date only",
+    "futureRenewalVerified": false,
+    "walletUsd": 0
+  },
+  "hostedKey": {
+    "name": "TenBotHostedTerraPilot",
+    "trackingId": "key_ImfGQBcK9J5eQ9cn",
+    "status": "Active",
+    "createdAtUtc": "2026-10-29T22:46:56Z",
+    "expiresAtUtc": "2026-11-28T22:46:56Z",
+    "lastUsedShownUtc": "2026-10-30T01:24:49Z",
+    "permissions": "Restricted; Responses only",
+    "scopes": [
+      "api.responses.write",
+      "api.responses.read"
+    ],
+    "secretValueRead": false
+  },
+  "operations": {
+    "newInference": 0,
+    "billingOrCreditPurchase": false,
+    "keyOrProjectSettingsChanged": false,
+    "dataSharingChanged": false,
+    "newAccountProfileSubmitted": false,
+    "screenshots": 0,
+    "temporaryMetadataTabClosed": true,
+    "originalPlatformHomeRestored": true,
+    "uiBindingsReleased": true
+  },
+  "checkpoint": "Initial wrong Chrome window reached an unsubmitted profile form; owner selected correct already-authenticated window. No account setup form was submitted."
+}

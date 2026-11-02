@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T22:58:33.355Z",
+  "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+  "source": "/private/tmp/tenops-tenbot-auth-recovery-20261030/candidate",
+  "output": "/private/tmp/tenops-tenbot-auth-recovery-20261030/candidate/out",
+  "durationMs": 28482,
+  "productionOptimizedBuild": true,
+  "mandatoryCleanCandidatePrebuild": true,
+  "mandatoryPrebuildUnchanged": true,
+  "fullHistory": true,
+  "committedArtifactUnchanged": true,
+  "knowledgeSha256": "e4d416597970fb0c23226d9221236b3da1c06b5c3b2cfe25f2c1b9652d8973e2",
+  "sourceCleanAfterBuild": true,
+  "knowledgeEntriesUnchanged": true,
+  "structuredKnowledgeUnchanged": true,
+  "releasedAuthorityUnchanged": true,
+  "secretEnvironmentFilesExcluded": true,
+  "localEnvironmentFilesCopied": false,
+  "noInferenceCredential": true,
+  "artifactSecretPatternScanPassed": true,
+  "publicAnonMatches": 3,
+  "artifactCount": 287,
+  "artifactManifestSha256": "1e6ed7a9ca22d602bf7a92f823a0569904638a77ac5048eea98778da9ca28a81",
+  "target": {
+    "url": "https://tendev.pages.dev",
+    "branch": "dev",
+    "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf"
+  },
+  "proof": {
+    "status": "candidate-preparation-reviewed",
+    "semanticHolds": 0,
+    "sourceHolds": 0,
+    "unclassifiedSensitivePaths": 0,
+    "acceptedCandidateSources": 19,
+    "technicalCandidateSources": 5,
+    "authority": {
+      "scope": "tendev-preparation",
+      "requiresProductAcceptance": true,
+      "hostedApplicationVerified": false,
+      "deploymentAuthorized": false
+    }
+  },
+  "canaryControlMode": "enabled",
+  "canaryControlModePreserved": true,
+  "buildSettingsScope": "Reused accepted TenDev public build settings; fresh hosted release checks remain required before deployment",
+  "hostedConfigurationChanges": 0,
+  "migrations": 0,
+  "deployments": 0,
+  "testReruns": 0,
+  "paidInferenceCalls": 0
+}

@@ -1,0 +1,150 @@
+{
+  "status": "HOLD before deployment; selective source/proof/build ready",
+  "recordedAt": "2026-10-31T02:20:41.253Z",
+  "authority": "Product STAGE INVOICE METADATA CORRECTION accepts f2ecfe9 and TenDev staging; all grants/enrollment/write gates OFF",
+  "tier": 3,
+  "testingLevel": 3,
+  "implementation": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+  "preparedCandidate": "3bdfd1921b7e5f13daebf8e91a1c58c20049c13a",
+  "servedTenDev": {
+    "project": "tendev",
+    "sha": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+    "deployment": "8e9dcd06-68b3-495f-a374-d3c0e7735ff9",
+    "status": "success",
+    "durationMs": 447
+  },
+  "servedTenOps": {
+    "project": "tenops",
+    "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+    "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+    "status": "success",
+    "durationMs": 251
+  },
+  "deployments": 0,
+  "releaseChecks": {
+    "exactSelectiveSource": true,
+    "applications": 6,
+    "testsAndFixture": 3,
+    "migrations": 0,
+    "knowledgeContentUnchanged": true,
+    "unrelatedLatencyChangeExcluded": true,
+    "fullHistoryCleanCandidate": true,
+    "mandatoryProof": "PASS zero holds",
+    "mandatoryTargetBuild": "PASS",
+    "artifactCount": 287,
+    "credentialScan": "PASS"
+  },
+  "hosted": {
+    "lastCompleteMetadataCheck": {
+      "passed": true,
+      "recordedAt": "2026-10-31T02:09:30.904Z",
+      "baseline": "65e52868fed5c11e1fef310fdfd7b04bdd9a4b10",
+      "tenDevDeployment": "8e9dcd06-68b3-495f-a374-d3c0e7735ff9",
+      "tenOpsSha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+      "tenOpsDeployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+      "edgeVersion": 27,
+      "verifyJwt": true,
+      "allWritesOff": true,
+      "activeGrants": 0,
+      "enrollment": 0,
+      "canaryFundingEnabled": false,
+      "accountedMicros": 231813,
+      "canaryAccountedMicros": 13145,
+      "ordinaryFundingExpired": true,
+      "oldReservationPreserved": true,
+      "assistantMigrationLedgerDigest": "4b2b6647c09db43f7a0250700d36a7e0",
+      "timings": [
+        {
+          "index": 0,
+          "status": 200,
+          "durationMs": 281
+        },
+        {
+          "index": 1,
+          "status": 200,
+          "durationMs": 251
+        },
+        {
+          "index": 2,
+          "status": 200,
+          "durationMs": 203
+        },
+        {
+          "index": 3,
+          "status": 200,
+          "durationMs": 190
+        },
+        {
+          "index": 4,
+          "status": 201,
+          "durationMs": 658
+        }
+      ],
+      "mutations": 0
+    },
+    "boundedFollowup": [
+      {
+        "phase": "before",
+        "endpoint": "database/query",
+        "method": "POST",
+        "status": 502,
+        "durationMs": 120
+      },
+      {
+        "phase": "before",
+        "endpoint": "secrets",
+        "method": "GET",
+        "status": 502,
+        "durationMs": 122
+      },
+      {
+        "phase": "before",
+        "endpoint": "functions",
+        "method": "GET",
+        "status": 200,
+        "durationMs": 193
+      }
+    ],
+    "blocker": "Management API GET secrets and POST database/query returned HTTP502; no fresh secret-state/source-backup verification completed; no deployment attempted",
+    "databaseOutageClaimed": false,
+    "edgeSourceClosure": "NOT VERIFIED in this pass; before phase failed before download",
+    "authenticatedBrowser": {
+      "caller": "genuine existing chris_dev / Developer session",
+      "operation": "Refresh durable status only",
+      "result": "PASS, database pilot/execution OFF, enrolled0, grant revoked, funding closed; no active approval/cancellation",
+      "screenAccessReleased": true
+    },
+    "newDiagnosticRetention": "NOT VERIFIED: accepted code not deployed and no invoice investigation run"
+  },
+  "inference": {
+    "calls": 0,
+    "costUsd": 0,
+    "initialization": "NOT RUN against new candidate",
+    "extraction": "NOT RUN",
+    "catalogInvestigation": "NOT RUN",
+    "draft": "NOT RUN; no new hosted 1 Bag draft claim",
+    "blocker": "Existing hosted invoice route requires pilot enrollment and current permissions. chris_dev additionally requires a live temporary grant and bound canary funding; ordinary policy is expired and used canary funding cannot be reset. No compatible all-OFF test path exists in accepted source.",
+    "ordinarySpendingReactivated": false
+  },
+  "safety": {
+    "grantsActivated": 0,
+    "enrollmentChanges": 0,
+    "writeGatesActivated": false,
+    "uploads": 0,
+    "approvals": 0,
+    "receivalsCreated": 0,
+    "hostedMutations": 0,
+    "migrations": 0,
+    "push": false,
+    "sharedHeadIndexBranchesPreserved": true,
+    "unrelatedDirtyBytesPreserved": true,
+    "reviewServerPortsCreated": [],
+    "localhost3000Untouched": true
+  },
+  "nextSteps": [
+    "Once the Supabase Management metadata endpoints recover, perform a fresh bounded release preflight and deploy the already prepared candidate to TenDev only. No reset/restart/configuration change is authorized or prescribed by this receipt.",
+    "Product must resolve the preparation-only permission/funding test boundary before real hosted invoice inference; do not silently enable enrollment, grant access, renew ordinary spending or reset the used canary allowance.",
+    "After staging and a permitted read-only real-model check, stop for Product review before any write activation."
+  ],
+  "scratch": "/private/tmp/tenops-tenbot-metadata-staging-20261030"
+}

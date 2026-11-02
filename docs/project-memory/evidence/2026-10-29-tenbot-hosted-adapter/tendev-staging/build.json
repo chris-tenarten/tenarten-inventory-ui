@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-29T23:52:12.481Z",
+  "sha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "target": "tendev",
+  "durationMs": 16969,
+  "builds": 1,
+  "output": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/tendev-staging/source/out",
+  "files": 277,
+  "artifactManifestSha256": "b719ec1d8c869ebf0357c9bf43c796671d1fb9098502f09d1284b73297ceda85",
+  "secretEnvironmentFilesExcluded": true,
+  "onlyReviewedPublicConfiguration": true,
+  "openAICredentialAvailableToBuild": false,
+  "inventoryBusinessUiUnchanged": true,
+  "b11BoundaryDeferred": true
+}

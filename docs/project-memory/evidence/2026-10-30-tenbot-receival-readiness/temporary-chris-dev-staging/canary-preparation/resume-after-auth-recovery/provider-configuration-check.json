@@ -1,0 +1,18 @@
+{
+  "verifiedFromExistingDigestMetadataOnly": true,
+  "secretValuesRead": false,
+  "checks": {
+    "TENBOT_OPENAI_ENABLED": true,
+    "TENBOT_OPENAI_SPEND_AUTHORIZED": true,
+    "TENBOT_OPENAI_ALLOWED_ORIGINS": true,
+    "TENBOT_OPENAI_KEY_EXPIRES_AT": true
+  },
+  "knownNonSecretConfiguration": {
+    "TENBOT_OPENAI_ENABLED": "true",
+    "TENBOT_OPENAI_SPEND_AUTHORIZED": "true",
+    "TENBOT_OPENAI_ALLOWED_ORIGINS": "https://tendev.pages.dev,https://tenops.pages.dev",
+    "TENBOT_OPENAI_KEY_EXPIRES_AT": "2026-11-28T22:46:56Z"
+  },
+  "keyValuePresent": true,
+  "policyStillExpired": true
+}

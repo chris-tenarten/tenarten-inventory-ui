@@ -1,0 +1,65 @@
+{
+  "status": "PROPOSED_ONLY_NOT_AUTHORIZED_OR_APPLIED",
+  "recordedAt": "2026-10-31T00:37:28.146516+00:00",
+  "purpose": "Only the single fixed chris_dev/TenDev invoice canary; no ordinary employee write activation.",
+  "newAdditionalAllowanceMicrousd": 250000,
+  "newAdditionalAllowanceUsd": "0.25",
+  "baselineAccountedMicrousd": 758624,
+  "baselineComponents": {
+    "immutableLegacyCarryover": 539956,
+    "hostedMeasured": 157529,
+    "oldReserved": 61139
+  },
+  "total_limit_microusd": 1008624,
+  "month_limit_microusd": 1008624,
+  "day_limit_microusd": 250000,
+  "user_day_limit_microusd": 250000,
+  "request_limit_microusd": 250000,
+  "cumulativeMaximumUsd": "1.008624",
+  "baselineRequirements": "Recheck the exact accounted total and retained old reservation under the existing atomic control-plane procedure immediately before activation; abort/review if this baseline changed. No reset, release, refund or rebilling.",
+  "unchangedControls": {
+    "allowedModels": [
+      "gpt-6.1-terra"
+    ],
+    "request_step_limit": 16,
+    "global_open_limit": 8,
+    "user_open_limit": 2,
+    "allOtherExistingCallAndRateLimits": "Preserve; do not expand."
+  },
+  "currentUtcDay": "2026-10-31",
+  "chrisDevCurrentUtcDayAccountedMicrousd": 0,
+  "oneRequestEnvelope": "The $0.25 request cap covers extraction and model/tool steps sharing that request; deterministic draft review/approval/execution is not additional inference authority. No automatic additional attempt or cap increase.",
+  "executionWindow": {
+    "status": "TENTATIVE_CONTINGENT_NOT_ACTIVE",
+    "timezone": "America/Chicago",
+    "localDate": "2026-10-30",
+    "start": "20:00",
+    "end": "20:15",
+    "startsAtUtc": "2026-10-31T01:00:00Z",
+    "expiresAtUtc": "2026-10-31T01:15:00Z",
+    "maximumMinutes": 15,
+    "conditions": [
+      "Focused dated-control and spend-scope decisions resolved, corrected candidate separately accepted/staged and checked before20:00.",
+      "Explicit Product execution/funding authorization and genuine caller sessions remain available.",
+      "Fresh health, credit availability, exact invoice/catalog/quantity, duplicates, baseline ledger and OFF state pass immediately before activation.",
+      "If not ready before20:00, retire this proposal and reconfirm a new future window; never roll it forward automatically."
+    ]
+  },
+  "expires_at": "2026-10-31T01:15:00Z",
+  "activationNotBefore": "2026-10-31T01:00:00Z",
+  "paidScope": "Requires explicit TenDev/chris_dev invoice-only spend containment before funding; the existing shared provider flags alone do not provide this isolation.",
+  "cleanup": [
+    "Stop new creation immediately after verification, target20:07; disable Edge creation and both SQL write controls.",
+    "Same chris_dev guarded-cancels only actual returned pending/unreceived/unlinked synthetic row, target20:10. No fallback Admin business write.",
+    "Own Admin revokes exact newly returned grant, target20:12; remove enrollment, invalidate outstanding permit/approval authority through the existing epoch/version contracts while retaining rows and audit, and reset all execution controls OFF.",
+    "Close inference funding again without dropping charges/reservations; hard expiry20:15 remains even if cleanup cannot finish.",
+    "If grant expires before guarded cancellation, stop/report the exact row state; no regrant or bypass. Preserve audit and original."
+  ],
+  "platformCredits": {
+    "availableUsd": "6.28",
+    "expiresDisplayed": "2026-10-31",
+    "futureRenewalAssumed": false
+  },
+  "activated": false,
+  "modelCalls": 0
+}

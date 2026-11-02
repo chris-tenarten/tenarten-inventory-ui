@@ -1,0 +1,565 @@
+{
+  "date": "2026-10-29",
+  "status": "review-complete-pending-product-decision-and-proof-preparation",
+  "riskTier": "Tier3 focused source/semantic release proof; prior runtime/migration/retrieval checks reused",
+  "acceptedCandidate": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc",
+  "retainedDeployedBaseline": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "holdDecisions": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "classification": "historically-deployed",
+      "reason": "Owner-history source and executed hosted history evidence now resolve old unreleased-persistence reason.",
+      "acceptedBlob": "a0888e92a05ec479571b7c93ee5486429685cbd4",
+      "deployedBlob": "a0888e92a05ec479571b7c93ee5486429685cbd4",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "classification": "accepted-knowledge-delta",
+      "reason": "Accepted architecture retrieval and85b alias deduplication; include exact accepted bytes, not a historical-deployed label.",
+      "acceptedBlob": "0b90dd83531e6b95363322f888b5637c530bca1c",
+      "deployedBlob": "8ef3ddea8b790abdb3008e4ba2a6de3a2483941f",
+      "machineProofStatus": "pending exact accepted-source acknowledgment"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "classification": "accepted-knowledge-delta",
+      "reason": "Only accepted shared projection, source/authority proofs, registry links and selected-source grant rechecks differ from deployed baseline.",
+      "acceptedBlob": "c521fad047d387b226568f33a9213e9f4e564d3a",
+      "deployedBlob": "b3f9faea201ce99111969fef44c370691236cf36",
+      "machineProofStatus": "pending exact accepted-source acknowledgment"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "classification": "historically-deployed",
+      "reason": "Committed candidate orchestration is byte-identical to deployed runtime; dirty latency correction excluded.",
+      "acceptedBlob": "5ce93bcce182097707c3ec60b5cabd44c5f2a62d",
+      "deployedBlob": "5ce93bcce182097707c3ec60b5cabd44c5f2a62d",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "classification": "historically-deployed",
+      "reason": "Routing, fallback and durable infrastructure match executed deployed source.",
+      "acceptedBlob": "4a06c93430e86f3bfda7a02f50111c17a7800c49",
+      "deployedBlob": "4a06c93430e86f3bfda7a02f50111c17a7800c49",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "classification": "historically-deployed",
+      "reason": "Static module matches deployed source; hosted construction still excludes invoice/preparation tools. Presence grants no execution authority.",
+      "acceptedBlob": "856446f68e057f068dc04ffb2cb7f3fd3912b9ed",
+      "deployedBlob": "856446f68e057f068dc04ffb2cb7f3fd3912b9ed",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "classification": "historically-deployed",
+      "reason": "Paid accounting matches deployed source and executed canary/accounting evidence; no budget change.",
+      "acceptedBlob": "4f538fe0b23c7fdbb7a0edc6f8fa14429b18090e",
+      "deployedBlob": "4f538fe0b23c7fdbb7a0edc6f8fa14429b18090e",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "classification": "historically-deployed",
+      "reason": "Provider dispatch matches deployed source; no provider or model change.",
+      "acceptedBlob": "b3fc2b383be2115d0214fee33cb2bd2ddc74fd34",
+      "deployedBlob": "b3fc2b383be2115d0214fee33cb2bd2ddc74fd34",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "classification": "historically-deployed",
+      "reason": "Exact deployed dispatcher/RPC allowlist/JWT configuration retained.",
+      "acceptedBlob": "4328303531ec6423633ceed9a49806ea5d32d477",
+      "deployedBlob": "4328303531ec6423633ceed9a49806ea5d32d477",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+      "classification": "excluded-genuine-semantic-hold",
+      "reason": "Absent from released baseline and shared ledger; approval/execution/RLS contract remains held for any future write release. No knowledge dependency requires it.",
+      "acceptedBlob": "b2ac2c70af9eb8711578f40e57039f3d606be3d9",
+      "deployedBlob": null,
+      "machineProofStatus": "excluded from selective tree; genuine hold retained"
+    },
+    {
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "classification": "historically-deployed",
+      "reason": "Exact assistant migration applied and registered atomically on shared backend during authorized staging; final TenOps ledger readback confirms it. Do not apply again.",
+      "acceptedBlob": "da6395122e043bf1069109b815f4fda124e7e87d",
+      "deployedBlob": "da6395122e043bf1069109b815f4fda124e7e87d",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "classification": "historically-deployed",
+      "reason": "Exact assistant migration applied and registered atomically on shared backend during authorized staging; final TenOps ledger readback confirms it. Do not apply again.",
+      "acceptedBlob": "031415b57d7ddf2af760ab2760d401c86c94ff36",
+      "deployedBlob": "031415b57d7ddf2af760ab2760d401c86c94ff36",
+      "machineProofStatus": "pending committed compatible executed-source evidence"
+    },
+    {
+      "recordId": "knowledge-messaging",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "classification": "documentation-no-claim-impact",
+      "reason": "Only five appended retrieval status lines changed exact reviewed bytes in85b. The selected privacy/Proposal paragraphs and claim/grant digest are identical in reviewed, accepted and released sources. Keep canonical document; renew exact proof for selective tree.",
+      "reviewedBlob": "1d91b7de380c2d149c58aacaaf37d86ddd9de5ee",
+      "acceptedBlob": "670a3a4d615e4509bcd539abc7ffbf60cd33e357",
+      "selectedBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+      "machineProofStatus": "pending same-tree committed source receipt and updated comparison"
+    },
+    {
+      "recordId": "knowledge-proposals",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "classification": "documentation-no-claim-impact",
+      "reason": "Only five appended retrieval status lines changed exact reviewed bytes in85b. The selected privacy/Proposal paragraphs and claim/grant digest are identical in reviewed, accepted and released sources. Keep canonical document; renew exact proof for selective tree.",
+      "reviewedBlob": "1d91b7de380c2d149c58aacaaf37d86ddd9de5ee",
+      "acceptedBlob": "670a3a4d615e4509bcd539abc7ffbf60cd33e357",
+      "selectedBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+      "machineProofStatus": "pending same-tree committed source receipt and updated comparison"
+    }
+  ],
+  "counts": {
+    "currentMachinePathHolds": 12,
+    "currentMachineSourceHolds": 2,
+    "oldReasonsResolvedByExecutedEvidence": 9,
+    "acceptedRuntimeDeltaPaths": 2,
+    "unchangedDocumentClaimReviews": 2,
+    "genuineUnresolvedWriteMigrationOutsideScope": 1,
+    "mechanicallyClearedDuringThisReview": 0
+  },
+  "scope": {
+    "baseline": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+    "accepted": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc",
+    "scope": [
+      {
+        "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+        "acceptedBlob": "d0baddb6724515063567da43370437c886e60a84",
+        "baselineBlob": "2e13692d4ba402e93be982f756c3f4bd7b873baa",
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+        "acceptedBlob": "0b90dd83531e6b95363322f888b5637c530bca1c",
+        "baselineBlob": "8ef3ddea8b790abdb3008e4ba2a6de3a2483941f",
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "acceptedBlob": "c521fad047d387b226568f33a9213e9f4e564d3a",
+        "baselineBlob": "b3f9faea201ce99111969fef44c370691236cf36",
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+        "acceptedBlob": "e8f07cd86dba84e41ddc970ce717af05ac169edb",
+        "baselineBlob": "208dcdf72bebb34c780418ac94d6c0e1db12b185",
+        "requiresProofOnlyRegeneration": true
+      },
+      {
+        "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+        "acceptedBlob": "16a59ae220abcab962fc971597aa864b46b2ae70",
+        "baselineBlob": "14342301fbd17621b71f7733735331b4c70bbec3",
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "package.json",
+        "acceptedBlob": "ad66e4b8d3b39f5f59b614724da3a97bdc7f53ea",
+        "baselineBlob": "0083b1c912b502b1ab63a23df223cc357fba17de",
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "scripts/generate-tenbot-knowledge.mjs",
+        "acceptedBlob": "b3f76af6014524a9fa7abdc351e15058ee13e39f",
+        "baselineBlob": "d179f373a4cd96ba102e4e8a48cd74d033c5c699",
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "scripts/tenbot-knowledge/architecture.mjs",
+        "acceptedBlob": "f87090d98ff61914fb99844513246f37b2865b97",
+        "baselineBlob": null,
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "scripts/tenbot-knowledge/infrastructure-reviews.json",
+        "acceptedBlob": "f82a73f676687ab5516a5751a839fef8633b9c1d",
+        "baselineBlob": null,
+        "requiresProofOnlyRegeneration": true
+      },
+      {
+        "path": "scripts/tenbot-knowledge/manifest.mjs",
+        "acceptedBlob": "f9695bb04977b26f72f8da35f291a9dffc258ba9",
+        "baselineBlob": "d8b4e283e4bbef03a8bf8ee52cc7d7eaea44a9e7",
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+        "acceptedBlob": "820f0990017755b07ae07436904decf33a99c428",
+        "baselineBlob": null,
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "scripts/tenbot-knowledge/release-sync.mjs",
+        "acceptedBlob": "14d42bc8a657c107af68200c8ab7f272b7ac2230",
+        "baselineBlob": null,
+        "requiresProofOnlyRegeneration": false
+      },
+      {
+        "path": "scripts/tenbot-knowledge/source-reviews.json",
+        "acceptedBlob": "1b834e4f7d6614fc484b3fc89783b5c2b4d8abdb",
+        "baselineBlob": null,
+        "requiresProofOnlyRegeneration": true
+      }
+    ],
+    "runtimeChanges": 5,
+    "maintenanceChanges": 8,
+    "allMigrationsPreserved": true,
+    "invoiceApprovalAbsent": true,
+    "currentStateBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+    "reviewMetadataPlan": [
+      {
+        "recordId": "dm",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "selectedBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "group",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "selectedBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "inventory-activity",
+        "path": "src/app/client-layout-shell.tsx",
+        "selectedBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "inventory-pending-create",
+        "path": "src/app/inventory/page.tsx",
+        "selectedBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": [
+          "src/modules/inventory/pending-receival-contract.ts"
+        ]
+      },
+      {
+        "recordId": "inventory-pending-receive",
+        "path": "src/app/inventory/page.tsx",
+        "selectedBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": [
+          "src/modules/inventory/pending-receival-contract.ts"
+        ]
+      },
+      {
+        "recordId": "inventory-stock-movement",
+        "path": "src/app/inventory/page.tsx",
+        "selectedBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": [
+          "src/modules/inventory/pending-receival-contract.ts"
+        ]
+      },
+      {
+        "recordId": "inventory-stock-reservation",
+        "path": "src/app/inventory/page.tsx",
+        "selectedBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": [
+          "src/modules/inventory/pending-receival-contract.ts"
+        ]
+      },
+      {
+        "recordId": "inventory-stock-search",
+        "path": "src/app/inventory/page.tsx",
+        "selectedBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": [
+          "src/modules/inventory/pending-receival-contract.ts"
+        ]
+      },
+      {
+        "recordId": "inventory-stock-search",
+        "path": "src/app/client-layout-shell.tsx",
+        "selectedBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "knowledge-intake",
+        "path": "docs/project/PROJECT_MANIFEST.md",
+        "selectedBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "knowledge-inventory",
+        "path": "docs/project/PROJECT_MANIFEST.md",
+        "selectedBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+        "action": "review-and-rebind-exact-selective-source",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "knowledge-inventory",
+        "path": "src/app/inventory/page.tsx",
+        "selectedBlob": "d7f7b77a202883eabb445dde88f6f6b481cc434b",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": [
+          "src/modules/inventory/pending-receival-contract.ts"
+        ]
+      },
+      {
+        "recordId": "knowledge-manpower",
+        "path": "docs/project/PROJECT_MANIFEST.md",
+        "selectedBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "knowledge-material-assessment",
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "selectedBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "knowledge-messaging",
+        "path": "docs/project-memory/CURRENT_STATE.md",
+        "selectedBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+        "action": "review-and-rebind-exact-selective-source",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "knowledge-production",
+        "path": "src/modules/production/jobs.ts",
+        "selectedBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "knowledge-production",
+        "path": "src/modules/production/readiness.ts",
+        "selectedBlob": "669ae55ad57d6908d370c80cf88d02596192d8ae",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "knowledge-proposals",
+        "path": "docs/project-memory/CURRENT_STATE.md",
+        "selectedBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+        "action": "review-and-rebind-exact-selective-source",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "manpower-job-filter",
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "selectedBlob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "manpower-job-filter",
+        "path": "src/app/client-layout-shell.tsx",
+        "selectedBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "manpower-record-labor",
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "selectedBlob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "manpower-record-labor",
+        "path": "src/modules/manpower/product-reporting.ts",
+        "selectedBlob": "6e1c8e1dc5faa6f2ddd70b0f829213a1d89512df",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "material-lead",
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "selectedBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "message-attachments",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "selectedBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "message-reply",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "selectedBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "production-create-job",
+        "path": "src/modules/production/jobs.ts",
+        "selectedBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "production-files",
+        "path": "src/modules/production/jobs.ts",
+        "selectedBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "production-rework-create",
+        "path": "src/modules/production/rework.ts",
+        "selectedBlob": "03bb7afec7d28e45d515540d265d5c42efa49fef",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "production-rework-status",
+        "path": "src/modules/production/jobs.ts",
+        "selectedBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "share-job",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "selectedBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "workflow-intake-activity",
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "selectedBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "workflow-intake-bid",
+        "path": "src/app/client-layout-shell.tsx",
+        "selectedBlob": "08e52e6de00c69e6607feb25c934a421bbb45974",
+        "action": "omit-inapplicable-review-original-pinned-source-unchanged",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "workflow-intake-bid",
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "selectedBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "workflow-job-archive",
+        "path": "src/modules/production/components/MonthlySnapshot.tsx",
+        "selectedBlob": "dcd2631990dfc1b5093c2cba73411d45e67b9746",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "workflow-job-archive",
+        "path": "src/modules/production/jobs.ts",
+        "selectedBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "workflow-message-drafts",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "selectedBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "workflow-message-edit",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "selectedBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      },
+      {
+        "recordId": "workflow-monthly-snapshot",
+        "path": "src/modules/production/components/MonthlySnapshot.tsx",
+        "selectedBlob": "dcd2631990dfc1b5093c2cba73411d45e67b9746",
+        "action": "retain-valid-exact-comparison",
+        "nonmatchingHelperPaths": []
+      }
+    ],
+    "limitation": "Static source-tree selection proof only. No release commit, candidate gate pass, build, hosted check or promotion is claimed."
+  },
+  "evidence": [
+    {
+      "path": "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tendev-staging/selected-source-plan.json",
+      "sha256": "647039f8a4a58720f65546dba5ec16ea3a9e597b47677e323eb3535d077a7aff",
+      "status": "retained-untracked-executed-evidence; not a fresh hosted check"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tendev-staging/migration-application.json",
+      "sha256": "865d9c7c9155cbe82849ca2b84ae2c6d660491bdb6da0d500393c1625522821e",
+      "status": "retained-untracked-executed-evidence; not a fresh hosted check"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tendev-staging/edge-deployment.json",
+      "sha256": "b186f07c5a783b1eadcd07c674fbd50556c5a1b8ea6de0c12fefcfc115c73c65",
+      "status": "retained-untracked-executed-evidence; not a fresh hosted check"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tenops-pilot-release/boundary.json",
+      "sha256": "468ad9a28cbfa526d60133f47086a914ea7dbc1a050bb9827d4d06bd55ce9381",
+      "status": "retained-untracked-executed-evidence; not a fresh hosted check"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tenops-pilot-release/final-hosted-state.json",
+      "sha256": "41e5abcf67e3c3a6edf1601150ad6a130c8c305164eb736db2f635ae8baf6b55",
+      "status": "retained-untracked-executed-evidence; not a fresh hosted check"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tenops-pilot-release/release-summary.json",
+      "sha256": "7b096e91de9e0386970da02587bdc952309a6fcf49b0c6f2d2c5e05edb9b4438",
+      "status": "retained-untracked-executed-evidence; not a fresh hosted check"
+    }
+  ],
+  "requiredProofPreparation": [
+    "Preserve original executed Terra sections/evidence in committed compatible proof format; do not relabel real deployed semantics infrastructure-only.",
+    "Base selective source on9a7c624 and accepted13source paths; preserve all other baseline source/migrations/configuration.",
+    "Acknowledge exact accepted operations/session knowledge delta with accepted source evidence.",
+    "Keep23valid source comparisons; omit12whose selected source equals the original pinned blob; renew3unchanged document comparisons for actual tree: twoCurrentState plus InventoryProjectManifest.",
+    "Regenerate proof/input/artifact metadata only, with exact accepted knowledge entries/patches/grants/relations unchanged.",
+    "Commit reviewed proof/source/artifact in the authorized release preparation workspace; run unchanged full-SHA clean-candidate proof gate."
+  ],
+  "safety": "No unresolved business/permission change is required for knowledge/retrieval-only selection. Safe in scope, conditional on committed proof and clean candidate gate; no claim that a prepared candidate is release-cleared.",
+  "productDecisions": [
+    "Accept this selective scope and authorize proof-only source/evidence preparation, then normal separate release approval.",
+    "Keep invoice/write migration and dirty latency correction excluded; no new business-rule or permission decision is necessary for the knowledge delta."
+  ],
+  "validation": {
+    "currentCandidateReview": "expected exit1/review-required:12path holds+2CurrentState proof holds",
+    "knowledgeReproducibility": "pass",
+    "staticSelectiveTree": "pass:exact5runtime+8maintenance changes,all other baseline paths and migrations unchanged,invoice migration absent",
+    "reviewManifestCuration": "independently checked23retained with helpers,12inapplicable,3document rebinds",
+    "freshHostedChecks": false,
+    "newTestsOrBuilds": false
+  },
+  "currentImpactReportSha256": "ea1281a5a3088bab2d6b2d820dbd025be77b7775e2a473f80dbcbc7f434e18bc",
+  "runtimeSourceModified": false,
+  "retrievalModified": false,
+  "sharedRefsOrIndexModified": false,
+  "inferenceCalls": 0,
+  "hostedCalls": 0,
+  "push": false,
+  "deployment": false
+}

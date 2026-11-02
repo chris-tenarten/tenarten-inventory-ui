@@ -1,0 +1,52 @@
+{
+  "status": "PRODUCTION_ROOTED_CANDIDATE_PREPARED_NOT_DEPLOYED",
+  "riskTier": 3,
+  "testingLevel": "Focused Level3 release provenance/build; accepted validation reused",
+  "candidate": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "productionRoot": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "acceptedTenDev": "509abf3be39e77d607e458a297abbaa3e592f189",
+  "applicationPaths": [
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-conversation-context.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-job-session.ts"
+  ],
+  "alreadyAppliedMigrations": [
+    {
+      "path": "supabase/migrations/20261031230000_tenbot_conversation_context.sql",
+      "blob": "5e69ed688132133aaffeed8f5c555eff8b4022e6",
+      "sha256": "a75ecd0eef035cc4a71cf944724c00588216aabae3fa9d98b161d7ea7b66bb52"
+    }
+  ],
+  "migrationsToApply": [],
+  "proofStatus": "reviewed",
+  "proofHolds": 0,
+  "productionVerifierUnchanged": true,
+  "releaseSyncUnchanged": true,
+  "cleanFullHistoryCandidate": true,
+  "buildPassed": true,
+  "artifactCount": 277,
+  "canaryUiAbsent": true,
+  "knowledgeEntriesPatchesAndReleaseAuthorityUnchanged": true,
+  "hostedMutations": 0,
+  "deployments": 0,
+  "inferenceCalls": 0,
+  "broadQaReruns": 0,
+  "knownHostedLimitation": "No actual signed-in hosted followup or live Terra inference; accepted TenDev limitation retained. No credentials manufactured or borrowed.",
+  "genuineSourceProofBuildBlockers": [],
+  "remainingProductDecision": "Approve this exact Production-rooted candidate before any TenOps deployment.",
+  "productionWritePolicy": "All operational writes/execution authorization remain OFF; existing provider/spending unchanged.",
+  "evidence": {
+    "candidate.json": "e7f38f14a3d7bd5f5309367e86a53f9d40fe1eddbff58cbac3f4ee2db56a121b",
+    "mandatory-proof.json": "ecf17df493d54a350b6e83a7a3a96efcb01bff0223711558dd5143be8be4fa82",
+    "proof.json": "cc589d09fc5ad5c3a7192512cbda2f426951b295f8d0771fc1cc4f8ed1d7854d",
+    "build.json": "f1569a1fd9125aa67c91fe0865ab07e34ced84b186f825138687d69938044ec1",
+    "compatibility.json": "2fea552162a62453ca76741820d716282ffd868dc8e9d0e54e4f308329305f63",
+    "bundle.json": "bec5049c8d2b5ad93044ce4bd3c9f4eb60a62f9fb805d98407b9774c636a916b"
+  }
+}

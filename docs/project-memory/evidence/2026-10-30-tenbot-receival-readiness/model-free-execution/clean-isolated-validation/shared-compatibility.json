@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "readOnly": true,
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "baseline": "e357d5625734522c904fa80335e9aad5180a3fec",
+  "newMigrationAbsent": true,
+  "migrationSha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+  "receipt": "/private/tmp/tenops-tenbot-clean-execution-validation-20261030/shared-compatibility-readback.json",
+  "receiptSha256": "6d0830cf9451998802477f0e9660aac9fd2978b9ccdd1e9b9f2675ba4ba34b51",
+  "fourPredecessorsExact": true,
+  "sourceAndCatalogExactAndUnexpired": true,
+  "allWriteGatesOff": true,
+  "sharedMutations": 0
+}

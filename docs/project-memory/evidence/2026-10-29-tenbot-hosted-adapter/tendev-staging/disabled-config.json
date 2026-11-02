@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-10-29T23:48:33.480Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "action": "verify-disabled-config",
+  "hostedKeyPresent": true,
+  "ownerPrivateKeyEntry": true,
+  "verifiedKeyExpiry": "2026-11-28T22:46:56Z",
+  "disabledSettingDigestsMatch": {
+    "TENBOT_OPENAI_ENABLED": true,
+    "TENBOT_OPENAI_SPEND_AUTHORIZED": true,
+    "TENBOT_OPENAI_ALLOWED_ORIGINS": true,
+    "TENBOT_OPENAI_KEY_EXPIRES_AT": true
+  },
+  "qwenSecretDigestsUnchangedAcrossReadback": true,
+  "qwenNeverIncludedInWritePayload": true,
+  "qwenEnabledDigestMatches": true,
+  "secretValueExposed": false,
+  "paidInferenceCalls": 0,
+  "firstAttempt": "Settings POST returned empty success body; local JSON parser failed after request. Reconciled by GET without repeating mutation."
+}

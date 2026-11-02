@@ -1,0 +1,38 @@
+{
+  "checkedAt": "2026-10-30T16:41:04.171Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "readOnlyEndpoint": true,
+  "operationalRowsRead": 0,
+  "mutations": 0,
+  "querySha256": "c40d7221a1ba7a6f816d391517468d196fe2c820120cbd90d9209a5c06192da4",
+  "durationMs": 265,
+  "readOnly": "on",
+  "roleFlags": [
+    {
+      "role": "anon",
+      "login": false,
+      "bypassRls": false,
+      "superuser": false
+    },
+    {
+      "role": "authenticated",
+      "login": false,
+      "bypassRls": false,
+      "superuser": false
+    },
+    {
+      "role": "postgres",
+      "login": true,
+      "bypassRls": true,
+      "superuser": false
+    },
+    {
+      "role": "service_role",
+      "login": false,
+      "bypassRls": true,
+      "superuser": false
+    }
+  ],
+  "anonPublicCreate": false,
+  "authenticatedPublicCreate": false
+}

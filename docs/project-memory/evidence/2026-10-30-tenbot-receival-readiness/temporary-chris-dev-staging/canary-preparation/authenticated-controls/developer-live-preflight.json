@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-10-30T19:28:54Z",
+  "scope": "Live genuine chris_dev read-only helper preflight; no mutation contract invoked.",
+  "source": {
+    "bytes": 25239,
+    "sha256": "c8bff6f018dde06e4703f79632262db4e705c7b74fe4dd516fe651d6466108d1",
+    "partsRecovered": 34,
+    "sourceVerifiedInNativeRuntime": true,
+    "browserSha256VerifiedBeforeEvaluation": true,
+    "helperSourceChanged": false,
+    "executionAuthorized": false
+  },
+  "installation": {
+    "installed": true,
+    "networkCalls": 0,
+    "sessionReads": 0,
+    "mutations": 0
+  },
+  "preflight": {
+    "verifiedUserId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "role": "developer",
+    "isActive": true,
+    "readOnly": false,
+    "capabilities": {
+      "readOperationalData": true,
+      "writeBusinessData": true,
+      "adjustInventory": false,
+      "manageRolesPermissions": false,
+      "manageVendorsCatalog": false
+    },
+    "sessionExpiresAt": "2026-10-30T20:09:52.000Z",
+    "serverNow": "2026-10-30T19:28:54.273211+00:00",
+    "selfGrant": {
+      "active": false
+    },
+    "writesPerformed": 0
+  },
+  "requests": "Auth /user, own profile, five capability reads, owner-scoped inactive grant projection; no refresh or token returned.",
+  "cancellation": {
+    "liveMutationAttempted": false,
+    "dryRunSupported": false,
+    "currentlyAuthorized": false,
+    "reason": "adjustInventory deliberately false while no grant is active; positive cancellation requires later approved grant and exact completed canary provenance."
+  },
+  "credentialsOrTokensExposed": false,
+  "grantActivations": 0,
+  "operationalWrites": 0,
+  "paidInferenceCalls": 0,
+  "browserState": "DevTools closed; original unsubmitted Console prompt restored; Chrome remains chris_dev/Developer and unarmed helper installed."
+}

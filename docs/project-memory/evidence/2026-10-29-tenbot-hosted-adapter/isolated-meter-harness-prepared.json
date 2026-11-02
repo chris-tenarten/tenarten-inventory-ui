@@ -1,0 +1,18 @@
+{
+  "status": "blocked-not-executed",
+  "blocker": "Root reports preview-branch creation returned HTTP 402 requiring billing or a plan upgrade; Product stop condition applies.",
+  "branchCreated": false,
+  "harness": "/private/tmp/tenops-tenbot-preview-meter-20261029/meter.mjs",
+  "harnessPrepared": true,
+  "harnessSyntaxOrRuntimeValidated": false,
+  "configurationFileCreatedByThisAgent": false,
+  "managementCredentialStored": false,
+  "apiCredentialsReadByThisAgent": false,
+  "networkCallsByThisAgent": 0,
+  "databaseCallsByThisAgent": 0,
+  "inferenceCallsByThisAgent": 0,
+  "testsExecuted": 0,
+  "actualPassesClaimed": 0,
+  "databaseReleaseGates": "NOT RUN — blocked by preview-branch HTTP 402. Existing unit/RPC doubles do not substitute for actual SQL, JWT, RLS or concurrency validation.",
+  "nextAction": "No execution, billing change, alternate service or infrastructure retry without further Product direction."
+}

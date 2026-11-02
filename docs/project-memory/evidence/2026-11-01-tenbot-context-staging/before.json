@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "at": "2026-11-01T17:20:53.827Z",
+  "tenDevSha": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "tenDevDeployment": "7cac1a67-410f-4f48-aa1c-fd883b83cd28",
+  "tenOpsSha": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "tenOpsDeployment": "1576467e-ab80-41e4-b0e8-4afb1fe1f951",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 33,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "a277db1990d40d4588fec8e1f45d940f4ba0ee421d5afb209877082e403137f8"
+  },
+  "allWritesOff": true,
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "ordinarySpendingAuthorized": false,
+  "schemaCompatible": true,
+  "rlsAndPermissionsPreserved": true,
+  "newMigrationAbsent": true,
+  "hostedMutations": 0
+}

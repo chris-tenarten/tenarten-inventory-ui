@@ -1,0 +1,135 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T01:35:43.374Z",
+  "source": "Actual hosted browser Messaging + real Supabase/PostgreSQL + actual OpenAI/Qwen; no inference substitutions",
+  "turns": [
+    {
+      "question": "Walk me through creating a group conversation in Messaging, one step at a time.",
+      "actualInference": true,
+      "model": "gpt-6.1-terra",
+      "providerSteps": 3,
+      "accountedMicrousd": 5515,
+      "reservationToFinalSettlementMs": 11395,
+      "latencyMethod": "Server first reservation to last settlement; excludes final publication overhead; separate browser HTTP duration recorded for Job turn",
+      "answer": "First, open Messaging from the app header. Let me know when you\u2019re there.",
+      "scope": "workflow",
+      "correct": true
+    },
+    {
+      "question": "Messaging is open. What is the next step?",
+      "actualInference": true,
+      "model": "gpt-6.1-terra",
+      "providerSteps": 3,
+      "accountedMicrousd": 2528,
+      "reservationToFinalSettlementMs": 12615,
+      "latencyMethod": "Server first reservation to last settlement; excludes final publication overhead; separate browser HTTP duration recorded for Job turn",
+      "answer": "Choose New group. Let me know when you\u2019re there.",
+      "scope": "workflow",
+      "correct": true
+    },
+    {
+      "question": "Give me a brief Production overview, then summarize internal test Job DEV-20260803: saved status, schedule, material readiness and recorded labor. State missing information. Do not make changes.",
+      "actualInference": true,
+      "model": "gpt-6.1-terra",
+      "providerSteps": 7,
+      "accountedMicrousd": 12574,
+      "reservationToFinalSettlementMs": 26707,
+      "latencyMethod": "Server first reservation to last settlement; excludes final publication overhead; separate browser HTTP duration recorded for Job turn",
+      "scope": "volatile",
+      "correct": true,
+      "sanitizedObservedFacts": {
+        "productionNonArchivedNonTestJobs": 44,
+        "activeJobs": 16,
+        "statusCounts": {
+          "notStarted": 11,
+          "onDeck": 1,
+          "inProduction": 4
+        },
+        "unscheduledJobs": 9,
+        "fixtureJob": "DEV-20260803",
+        "savedStatus": "In Production",
+        "activeRework": false,
+        "plannedStart": "2026-08-03",
+        "plannedEnd": "2026-09-07",
+        "requestedDelivery": "2026-10-05",
+        "materialStatus": "unknown",
+        "laborHours": 0,
+        "laborEntries": 0,
+        "laborPeriod": [
+          "2026-09-30",
+          "2026-10-29"
+        ]
+      },
+      "observedLimits": [
+        "Saved dates are not a forecast",
+        "Planning complete does not establish physical material readiness",
+        "Period labor is not all-time labor or remaining-work estimate",
+        "Missing physical material sufficiency, phase/item progress, remaining-work list and labor outside the stated period",
+        "No changes were made"
+      ],
+      "browserHttpDurationMs": 33410,
+      "toolTraceLimitation": "Employee hosted responses omit raw developer tool traces. The answer covered overview, status, planning and labor; the exact five-tool sequence was not captured. The five exact tool implementations/permissions are unchanged and previous QA is reused."
+    }
+  ],
+  "totalProviderSteps": 13,
+  "completedAssistantTurns": 3,
+  "completedOperationalReadRequests": 1,
+  "accountedMicrousd": 20617,
+  "allChargesMeasured": true,
+  "uncertainReservations": 0,
+  "remainingCanaryMicrousd": 229383,
+  "pricingAndBilling": "Costs derived server-side from actual returned usage with pinned Standard pricing and conservative microUSD rounding; invoice/credit reconciliation not claimed. OpenAI token counts are not retained in current hosted ledger.",
+  "history": {
+    "firstReloadAndReopen": {
+      "restoredStaticAnswers": 2,
+      "addedInferenceCalls": 0,
+      "source": "before/after ledger receipts plus actual UI"
+    },
+    "afterLiveJobReload": {
+      "restoredStaticAnswers": 2,
+      "liveJobQuestionOrAnswerRestored": false,
+      "maxGuidance": 0,
+      "addedInferenceCalls": 0
+    },
+    "blurFocus": "DevTools and ordinary navigation/refocus observed, static answers preserved",
+    "twoUserAndRevocationEvidence": "Reuse 28 real isolated DB groups and identical migration hashes; no real employee role/account changes in shared backend"
+  },
+  "authenticatedWriteGuards": {
+    "executeActionStatus": 400,
+    "unsupportedInvoiceFieldStatus": 400,
+    "additionalInferenceCalls": 0,
+    "operationalWrites": 0
+  },
+  "normalMessaging": {
+    "sameInterface": true,
+    "header": "AI-assisted TenOps helper",
+    "infoDisclosurePresent": true,
+    "developerExperimentControlsVisible": false,
+    "receivalExecutionControlsVisible": false,
+    "desktopObserved": true,
+    "mobileEvidence": "Reused accepted local candidate; no fresh physical-mobile claim"
+  },
+  "browserTimingAfterFirstRemount": [
+    {
+      "startUtc": "2026-10-30T01:26:59.098Z",
+      "durationMs": 1027,
+      "status": 200,
+      "kind": "status"
+    },
+    {
+      "startUtc": "2026-10-30T01:27:00.128Z",
+      "durationMs": 5902,
+      "status": 200,
+      "kind": "history"
+    },
+    {
+      "startUtc": "2026-10-30T01:27:29.273Z",
+      "durationMs": 33410,
+      "status": 200,
+      "kind": "Job ask"
+    }
+  ],
+  "browserControl": "Native Chrome accessibility controls; browser automation inventory unavailable. One screenshot inspected for truncated operational text; no screenshot/private Inbox previews copied to repository. UI session released.",
+  "productionDeployment": false,
+  "inventoryCatalogReceivalWrites": false
+}

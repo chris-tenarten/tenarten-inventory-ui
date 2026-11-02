@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "candidate": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "baseline": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "path": "/private/tmp/tenops-tenbot-production-preparation-20261031/production-candidate.bundle",
+  "bytes": 60317464,
+  "sha256": "539a2f8bbb0acdd4de3b9a228e1bc8931f06d21112265bd3b8b5b39ca2247e5e",
+  "selfContainedFullHistory": true,
+  "rootRepositoryRefsUnchanged": true,
+  "privateCandidateRef": "refs/tenops/candidates/consolidated-production-20261031",
+  "proofRef": "refs/tenops/proofs/accepted-tendev-cd29",
+  "deployed": false
+}

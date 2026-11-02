@@ -1,0 +1,41 @@
+{
+  "actor": {
+    "accountedNeurons": 390.126,
+    "completed": 39,
+    "failed": 5,
+    "firstReservationAt": "2026-10-28T13:20:08.200261+00:00",
+    "inputTokens": 57436,
+    "lastReservationAt": "2026-10-28T14:11:59.282039+00:00",
+    "measuredAttempts": 44,
+    "models": [
+      "@cf/qwen/qwen3-30b-a3b-fp8"
+    ],
+    "outputTokens": 4084,
+    "reservations": 44,
+    "stillReserved": 0,
+    "tokenEstimatedNeurons": 390.126,
+    "unmeasuredAttempts": 0,
+    "unmeasuredReservedNeurons": 0
+  },
+  "actorIdentityMatchesExpectedDeveloper": true,
+  "checkedAt": "2026-10-28T14:25:22.955789+00:00",
+  "policy": {
+    "dayNeurons": 8000,
+    "dayRequests": 300,
+    "minuteRequests": 6,
+    "monthNeurons": 240000,
+    "monthRequests": 6000,
+    "version": 2
+  },
+  "sharedDay": {
+    "accountedNeurons": 486.232,
+    "reservations": 50
+  },
+  "sharedMonth": {
+    "accountedNeurons": 486.232,
+    "reservations": 50
+  },
+  "windowEnd": "2026-10-28T14:19:10.711+00:00",
+  "windowStart": "2026-10-28T13:20:00+00:00",
+  "method": "Existing linked Supabase CLI read-only transaction. Only own-actor usage totals, shared aggregate budget totals and one own-identity Boolean; no messages, tasks, feedback, prompt or answer columns read."
+}

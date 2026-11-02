@@ -1,0 +1,76 @@
+{
+  "available": true,
+  "httpStatus": 200,
+  "recordedAt": "2026-10-31T03:38:37.534Z",
+  "readOnly": true,
+  "aggregateOnly": true,
+  "start": "2026-10-31T03:27:39Z",
+  "end": "2026-10-31T03:30:20Z",
+  "sourcePrefix": "tenbot_receival_investigation",
+  "events": 15,
+  "counts": [
+    {
+      "field": "stage",
+      "value": "model",
+      "count": 6
+    },
+    {
+      "field": "stage",
+      "value": "tool",
+      "count": 5
+    },
+    {
+      "field": "stage",
+      "value": "investigation",
+      "count": 1
+    },
+    {
+      "field": "stage",
+      "value": "draft",
+      "count": 1
+    },
+    {
+      "field": "stage",
+      "value": "draft-persistence",
+      "count": 1
+    },
+    {
+      "field": "tool",
+      "value": "read_invoice",
+      "count": 1
+    },
+    {
+      "field": "tool",
+      "value": "search_catalog",
+      "count": 1
+    },
+    {
+      "field": "tool",
+      "value": "check_receival_duplicates",
+      "count": 1
+    },
+    {
+      "field": "tool",
+      "value": "prepare_pending_receivals",
+      "count": 1
+    },
+    {
+      "field": "reasonCode",
+      "value": "completed",
+      "count": 4
+    },
+    {
+      "field": "reasonCode",
+      "value": "unsupported_invoice_metadata",
+      "count": 0
+    }
+  ],
+  "durationMs": 964,
+  "rawMessagesRead": false,
+  "rawMessagesPersisted": false,
+  "correlation": "Prefix + finite test window only; diagnostics intentionally have no owner/source/request identifiers.",
+  "representationLimit": "Counts recognize exact Deno object-style and spaced/compact JSON key-value pairs; zero can also mean an unrecognized log representation.",
+  "originalEvidencePreserved": true,
+  "automaticRetries": 0,
+  "hostedMutations": 0
+}

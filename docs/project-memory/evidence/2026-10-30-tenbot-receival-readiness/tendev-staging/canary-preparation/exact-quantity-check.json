@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:21:09.337Z",
+  "exactAcceptedModules": true,
+  "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+  "source": {
+    "quantity": "1",
+    "unit": "Bag"
+  },
+  "sourceText": "Alaska White | #0 | 1 Bag",
+  "basis": {
+    "sourceKind": "package_count",
+    "packageCount": "1",
+    "perPackage": {
+      "quantity": "50",
+      "unit": "LB",
+      "container": "Bag"
+    },
+    "totalMaterial": {
+      "quantity": "50",
+      "unit": "LB"
+    },
+    "receivalQuantity": "1",
+    "receivalUnit": "Bag",
+    "inventoryStockingUnit": null,
+    "calculation": "source_package_count",
+    "reasons": []
+  },
+  "positiveCase": "1 Bag",
+  "rejected": [
+    "50 Bag (package weight substituted for package count)",
+    "1 LB (ordering unit contradicted)"
+  ],
+  "inferenceCalls": 0,
+  "modelExtractionClaimed": false,
+  "databaseCalls": 0,
+  "mutations": 0
+}

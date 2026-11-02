@@ -1,0 +1,117 @@
+{
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "secretValueAndCredentialPatternScan": "pass",
+  "credentialsCopied": false,
+  "files": [
+    {
+      "path": "free-project-preflight.json",
+      "sha256": "7338f7528714d31cda836707b4b8de7ef705c10c414b7ca17111221ff312c06e",
+      "bytes": 2041
+    },
+    {
+      "path": "free-project-creation.json",
+      "sha256": "322b621c7c18634a5ef4b82720359e3faf5953c1f38166eae42dace4f061e210",
+      "bytes": 1162
+    },
+    {
+      "path": "free-project-creation-attempt.json",
+      "sha256": "5973a55751bedb1a16e942d99fb81c92f2d71dfafb66c8172ccc3012af2c3c7a",
+      "bytes": 465
+    },
+    {
+      "path": "free-project-isolation.json",
+      "sha256": "8c7d0fdb6d7a58214b0284a311f3f0dd06013cb44eb0a41f68d82df046c3b69a",
+      "bytes": 4469
+    },
+    {
+      "path": "free-project-auth-unsupported-hook-stop.json",
+      "sha256": "d471cf1fbe0b7ea563cd11b6a18acb97b821564ba2bba14f51d63fa77c361a00",
+      "bytes": 1619
+    },
+    {
+      "path": "free-project-migration-applications.json",
+      "sha256": "3c83832f73f13e1c159ef72fb214a75629559f0b2f89163b4a183181ceaa08a5",
+      "bytes": 1023
+    },
+    {
+      "path": "free-fixture-prerequisites-manifest.json",
+      "sha256": "32f19226034d3773db95b00110e4f1894ae928906f8a4810e2d453a3749957d7",
+      "bytes": 12157
+    },
+    {
+      "path": "free-fixture-prerequisites.sql.txt",
+      "sha256": "4a0a2fe62054862dde13203c185319e21b63a349613020310570a6d9852eb66e",
+      "bytes": 25042
+    },
+    {
+      "path": "free-fixture-actors.json",
+      "sha256": "1909c99cf7de0117ed2abf3ae56abbd752a8f356aaaa335e765de10af2cb53e4",
+      "bytes": 384
+    },
+    {
+      "path": "free-fixture-history-results.json",
+      "sha256": "6f550b24b2fa0027e78f03d3618010c9457e18bd3f99029c9cf3a23b5a0e93fb",
+      "bytes": 7177
+    },
+    {
+      "path": "free-fixture-history-attempt-1.json",
+      "sha256": "d029bf98499c51ca0d8883012ea73ed0aa5284ea0246482fe226b52332604492",
+      "bytes": 993
+    },
+    {
+      "path": "free-fixture-history-attempt-2.json",
+      "sha256": "e89562103cd0ab81a8134fa23ccc94f2f3cf79ea77253a52a771372f0e5c80b1",
+      "bytes": 1315
+    },
+    {
+      "path": "free-fixture-history-focused-diagnostic.json",
+      "sha256": "51d4aee45e7d5d7edefabfb2d25245c523c6b5207dcfe4c6ae4bdece585bd710",
+      "bytes": 3657
+    },
+    {
+      "path": "free-fixture-history-group5-diagnostic.json",
+      "sha256": "88dcf1ad85ad027ab88fde2f7abbe606a2bc08631c1ff46582423cafc36dfa3b",
+      "bytes": 4419
+    },
+    {
+      "path": "free-fixture-history-group5-populated-diagnostic.json",
+      "sha256": "ef093af06486dec57ce5543df0f46e88e9f4b977045812bd56d1e94ceabce158",
+      "bytes": 4613
+    },
+    {
+      "path": "free-fixture-history-independent-review.json",
+      "sha256": "77ff97839644add7816fd85616fa073516200ffce3aa8c614afbf55a976dc321",
+      "bytes": 2176
+    },
+    {
+      "path": "free-fixture-history-verifier.mts.txt",
+      "sha256": "aff74f54b26d03a4cf731de3193addac82442383a91b4263ba27d3b6177aec3b",
+      "bytes": 22896
+    },
+    {
+      "path": "free-fixture-meter-results.json",
+      "sha256": "645c94c919ef2654db73d4b92706d0cfdcdd523e9adbbd1b08877b09b7bd941b",
+      "bytes": 19725
+    },
+    {
+      "path": "free-fixture-meter-verifier.mjs.txt",
+      "sha256": "fa5a3e8fa2b7b8f6682f665b1efcc620e76abe0197e35e44b5d1654af673dfa5",
+      "bytes": 20188
+    },
+    {
+      "path": "free-fixture-sql-helper.mjs.txt",
+      "sha256": "a4317e1783678eda5f778e7252d76072da3d38c14072b2580e24090bf0c5e396",
+      "bytes": 3344
+    },
+    {
+      "path": "free-fixture-final-state.json",
+      "sha256": "219ba866ffc90f788597632215ac93f2a2b2975968dd040c7b5b270f2cb2a242",
+      "bytes": 2380
+    },
+    {
+      "path": "free-fixture-validation-summary.json",
+      "sha256": "c87b22357441365bc3aef261b81c11c13f23bf81fc79e4101d5348bd07e85992",
+      "bytes": 6142
+    }
+  ]
+}

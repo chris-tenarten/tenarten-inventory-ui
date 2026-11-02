@@ -1,0 +1,24 @@
+{
+  "grantId": "302932b1-f44c-4de0-91f7-a4c8b77a2687",
+  "startsAt": "2026-10-31T01:22:21.723536+00:00",
+  "expiresAt": "2026-10-31T01:37:00+00:00",
+  "revokedAt": "2026-10-31T01:25:54.229072+00:00",
+  "rolePreserved": "developer",
+  "globalDeveloperAdjustInventoryEntries": 0,
+  "approvedDraft": null,
+  "executedDraft": null,
+  "events": [
+    {
+      "at": "2026-10-31T01:22:21.73299+00:00",
+      "event": "activated",
+      "actorMatchesAdmin": true
+    },
+    {
+      "at": "2026-10-31T01:25:54.231531+00:00",
+      "event": "revoked",
+      "actorMatchesAdmin": true
+    }
+  ],
+  "historicalGrantAuditUnchanged": true,
+  "genuineAdminUiActivationAndRevocation": true
+}

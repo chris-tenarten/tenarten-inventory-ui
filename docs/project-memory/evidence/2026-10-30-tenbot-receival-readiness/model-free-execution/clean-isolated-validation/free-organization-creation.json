@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-10-31T04:24:23.485Z",
+  "organization": {
+    "id": "fvzmtbjqezlpsousevyh",
+    "slug": "fvzmtbjqezlpsousevyh",
+    "name": "TenBot Isolated Validation",
+    "plan": "free"
+  },
+  "paidChanges": false,
+  "existingProjectsModified": false,
+  "requests": [
+    {
+      "path": "organizations",
+      "method": "POST",
+      "status": 201,
+      "elapsedMs": 4474
+    },
+    {
+      "path": "organizations/fvzmtbjqezlpsousevyh",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 565
+    }
+  ]
+}

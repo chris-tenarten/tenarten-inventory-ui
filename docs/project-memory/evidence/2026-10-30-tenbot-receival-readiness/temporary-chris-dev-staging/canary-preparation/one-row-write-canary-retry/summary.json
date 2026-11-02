@@ -1,0 +1,135 @@
+{
+  "status": "STOPPED_BEFORE_ACTIVATION_PREFLIGHT_UNAVAILABLE",
+  "recordedAt": "2026-10-30T22:24:29.772Z",
+  "authority": "Chris AUTHORIZE FINAL ONE-ROW CANARY RETRY; one controlled TenDev/chris_dev canary, stop on prerequisite failure. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "sourceSha": "ce157b99e31c227480c479169e0a480a6d509bf1",
+  "tenDevDeployment": "5b73e5b1-3ea7-4ebd-b572-baeea36fe2fa",
+  "edgeVersionUnchanged": 23,
+  "approvedScope": {
+    "employee": "chris_dev",
+    "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "invoice": "SYN-TENDEV-RECEIVAL-20261030-01",
+    "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "supplier": "T&M Supply",
+    "material": "Alaska White",
+    "size": "#0",
+    "quantity": 1,
+    "unit": "Bag",
+    "maximumRows": 1,
+    "received": 0,
+    "noCatalogJobOrStockChanges": true
+  },
+  "callerPreflight": {
+    "chrome": "Genuine own chris_dev / Developer; normal canary SDK UI showed Developer baseline, database pilot/execution OFF, enrollment0, historical grant Revoked.",
+    "safari": "Chris Ngo/Admin was visible before refresh. Fresh TenDev page remained at Restoring your TenOps session…; current authenticated Admin readiness not established.",
+    "credentialsBorrowedOrImpersonated": false,
+    "actionTimeConfirmationRequested": false,
+    "grantActivationClicked": false,
+    "ownerRestorationRequestedWithoutCredentials": true
+  },
+  "hostedPreflight": {
+    "passed": false,
+    "executions": 1,
+    "phase": "readonly-snapshot",
+    "httpStatus": 544,
+    "rawHttpResponseCaptured": false,
+    "failedEndpointCaptured": false,
+    "possibleRequests": "Parallel read-only Supabase database/query, secrets/functions metadata and Cloudflare Pages metadata; the original receipt does not distinguish which request returned544. Do not classify this as a proved database outage or credential failure.",
+    "serverStateResultCaptured": false,
+    "requestsRetried": false,
+    "mutations": 0,
+    "safeStopReceipt": {
+      "passed": false,
+      "phase": "readonly-snapshot",
+      "code": "HTTP_544",
+      "automaticRetry": false,
+      "mutations": 0
+    },
+    "preflightScriptSha256": "783924acbc8609b7e7a53f793ad081561857de7edd2c67cc4907c0f8b9f26225"
+  },
+  "executionWindow": {
+    "established": false,
+    "reason": "Both caller and hosted-state prerequisites must pass before choosing a fresh <=15minute window. No old timestamp reused."
+  },
+  "invoiceInitialization": {
+    "attempted": false,
+    "result": "NOT_REACHED_PREFLIGHT_BLOCKED"
+  },
+  "receivalId": null,
+  "createdRows": 0,
+  "uploads": 0,
+  "modelInferenceCalls": 0,
+  "approvals": 0,
+  "executionCalls": 0,
+  "stock": {
+    "beforeAfterFreshlyMeasured": false,
+    "operationsIssued": 0,
+    "reason": "Fresh read-only hosted snapshot failed before stock/funding/duplicate results were captured. No stock operation or pending creation was issued; do not report new before/after measurements from old evidence."
+  },
+  "idempotency": {
+    "attempted": false
+  },
+  "cancellation": {
+    "attempted": false,
+    "reason": "No returned synthetic row exists."
+  },
+  "grant": {
+    "activated": false,
+    "revocationRequired": false,
+    "reason": "No new grant was activated; existing revoked grant remains historical evidence."
+  },
+  "finalState": {
+    "allControlsUnchangedByThisAttempt": true,
+    "controlPlaneMutations": 0,
+    "grantRpcCalls": 0,
+    "enrollmentChanges": 0,
+    "operationalWrites": 0,
+    "completeFreshServerReadbackPassed": false,
+    "latestActualOwnDeveloperUi": {
+      "databasePilot": false,
+      "databaseExecution": false,
+      "enrollment": 0,
+      "historicalGrantState": "Revoked"
+    },
+    "lastSuccessfulCompleteReadback": {
+      "recordedAt": "2026-10-30T22:10:55.810Z",
+      "allWriteGatesOff": true,
+      "activeGrants": 0,
+      "historicalRevokedGrants": 1,
+      "retainedAuditRows": 2,
+      "enrollment": 0,
+      "remainingHostedMicrousd": 3781332,
+      "limitation": "Prior accepted staging observation, not a newly successful current snapshot."
+    }
+  },
+  "funding": {
+    "currentVerified": false,
+    "policyChanges": 0,
+    "existingCutoff": "2026-10-30T23:00:00Z",
+    "cutoffLocal": "October30 2026 6p.m. America/Chicago",
+    "newInferenceCharges": 0
+  },
+  "cleanup": {
+    "needed": false,
+    "performed": false,
+    "reason": "Nothing was activated, enrolled, uploaded, approved or created. No broader cleanup authorized or needed.",
+    "auditEvidencePreserved": true
+  },
+  "sourceChanges": 0,
+  "builds": 0,
+  "migrations": 0,
+  "deployments": 0,
+  "pushes": 0,
+  "gitCommits": 0,
+  "localhostProcessUntouched": true,
+  "unrelatedDirtyWorkPreserved": true,
+  "nativeControlReleased": true,
+  "remainingBlockers": [
+    "Restore genuine Safari Admin session.",
+    "A fresh bounded hosted preflight must successfully verify current funding, duplicates and disabled controls; record the failing endpoint/status safely if it fails again. No infrastructure troubleshooting or repeated calls were attempted here."
+  ],
+  "nextBoundary": "Product review. Any continuation needs both prerequisites and a fresh confirmed finite execution window within current funding; no grant/write authority is exercised by this stopped receipt."
+}

@@ -1,0 +1,7 @@
+{
+  "phase": "local source comparison before export",
+  "reason": "Separate TenDev Git object database has no Production-only baseline object; compare each exact source in its owning repository instead.",
+  "sourceExportCreated": false,
+  "canonicalGitChanges": false,
+  "hostedChanges": false
+}

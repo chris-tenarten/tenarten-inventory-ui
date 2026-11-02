@@ -1,0 +1,2477 @@
+{
+  "schemaVersion": 1,
+  "candidateRevision": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "status": "reviewed",
+  "reviewRequired": false,
+  "changedPaths": [
+    "docs/README.md",
+    "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
+    "docs/project-memory/2026-10-27-tenbot-candidate.md",
+    "docs/project-memory/2026-10-27-tenbot-privacy-correction.md",
+    "docs/project-memory/2026-10-28-tenbot-job-intelligence.md",
+    "docs/project-memory/2026-10-28-tenbot-qa-reconciliation.md",
+    "docs/project-memory/2026-10-29-manpower-default-restoration.md",
+    "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+    "docs/project-memory/2026-10-30-auth-resilience-release-proof.md",
+    "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+    "docs/project-memory/CURRENT_STATE.md",
+    "docs/project-memory/evidence/2026-10-27-intake-material-intelligence.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot-privacy-correction.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/allowance.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/desktop-real-ai.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/evaluation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/mobile-customer-replay.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/mobile-guide-fallback.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/ai-pilot/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/administrator-usage.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/desktop-communication.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/desktop-natural-prose.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/diagnostic-customer-only.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/diagnostic-evaluation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/evaluation-initial.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/evaluation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/manpower-unknown-guide.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/mobile-communication.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/mobile-keyboard-viewport.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/usage-diagnostic.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/usage-final.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/communication/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/api-regression.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/desktop-customer-edit.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/desktop-customer-permission.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/evaluation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/mobile-customer-edit.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/contacts-coverage/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/desktop-tenbot-conversation.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/mobile-keyboard-conversation.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/mobile-tenbot-conversation.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/conversation/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/api-regression.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/content-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/conversation-quality-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/conversations.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/core-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/desktop-conversational-sources.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/evaluation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/mobile-conversational-followup.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/mobile-keyboard-conversation.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/mobile-workflow-guidance.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/planning-availability.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/source-files-proof.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/usage-final.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/coverage/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/desktop-feedback.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/desktop-floating-draft.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/desktop-floating-guide.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/mobile-guide.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/mobile-keyboard-viewport.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/floating/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/avatar-sizes.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/build.log",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/desktop-conversation-dark.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/desktop-conversation-light.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/desktop-recent-menu-light.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/mobile-conversation-dark.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/mobile-conversation-list-light.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/icon/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/metadata/metadata-desktop.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/metadata/metadata-mobile.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/metadata/metadata-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/mobile-guide.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/desktop-compact-sources.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/desktop-conversation-menu.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/desktop-multiline-composer.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/desktop-privacy-details.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/mobile-compact-sources.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/mobile-source-detail.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/browser/mobile-verified-rework-eligibility.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/build.log",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/corrected-rework-first.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/corrected-rework-followup.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/final-decision.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/privacy-browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/real-rework.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/polish/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/cloudflare-account.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/evidence-manifest.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/final-account-preflight.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/final-local-usage.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/hosted-config.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/hosted-database.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/inference-preflight.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/inference-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/inference-summary.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/knowledge-reconciliation-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/package-source-audit.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/privacy-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/privacy-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/privacy-source-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/release-boundary.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/unsupported-recheck.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/unsupported-refresh-fallback.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/unsupported-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/readiness/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser-fixtures.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/bare-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/bare-review.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/browser-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/desktop-conversational-sources.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/live-ui-answer.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/mobile-conversational-followup.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/browser/mobile-keyboard-conversation.png",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/budget-policy.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/build.log",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/candidate-quality.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/comparison.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/final-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/guard-input-after.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/guard-input-before.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama31-infrastructure-correction.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama31-merged.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama31.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama33-merged.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/llama33.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/production-runtime.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/prompt-validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/quality-rubric.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/qwen3-completion.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/qwen3-infrastructure-correction.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/qwen3-merged.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/qwen3.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/selected-model.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/share-job-guard-replay.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/usage-final.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/refinement/validation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/boundary-audit.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/dependency-closure.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/evidence-manifest.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/privacy-preflight.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/privacy-release-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/provider-release-dashboard.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/provider-release-preflight.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/served-baseline.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-preflight/stopped.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/admin-ownership-rollback.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/applied-api-logging-profile.sql",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/applied-atomic-transaction.sql",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/deploy-tendev-command.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/deploy-tenops-command.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-admin-extraction.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-content-log-aggregate.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-disabled-probe.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-independent-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-production-origin.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-provider-failure-probe.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-real-inference-probe.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-source-preservation-production.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/edge-source-preservation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/fallback/correction-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/fallback/edge-results.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/final-hosted-check.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/logging-hosted-applied-v3.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/logging-http.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-corrected-independent-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-corrected-local-verification.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-failure.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-postcheck.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-reconciliation.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration-verifier-correction.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/migration.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/original-api-logging-restore-reference.sql",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/pages-edge-preservation-independent-review.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/privacy-rollback.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/production-origin-probe.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/provider-free-plan-summary.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/provider/usage-after.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/provider/usage-before.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/push-dev-command.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/push-main-command.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/release-evidence-manifest.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/schema-postcheck.sql",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenbot-hosted-security-tendev.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenbot-hosted-security-tenops.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tendev-acceptance.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tendev-build.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tendev-public-browser.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tendev-served.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenops-build.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenops-public-browser.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/release-resume/tenops-served.json",
+    "docs/project-memory/evidence/2026-10-27-tenbot/validation.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/desktop.png",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/mobile.png",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/style-dark.png",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/style-desktop.png",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/style-mobile.png",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/styling-validation.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-overview/validation.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/actions.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/boundary.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/final-check.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/hosted-bid-desktop.png",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/hosted-production-inspector.png",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/manifest.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/preflight-checkpoints.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/preflight.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/tendev-build.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/tendev-fixture-browser.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/tendev-public-browser.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/tendev-served.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/tenops-build.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/tenops-fixture-browser.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/tenops-public-browser.json",
+    "docs/project-memory/evidence/2026-10-28-bid-preparation-release/tenops-served.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-independent-qa/refinement-handoff.txt",
+    "docs/project-memory/evidence/2026-10-28-tenbot-independent-qa/transcript.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-jobs/browser.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-jobs/desktop-labor.png",
+    "docs/project-memory/evidence/2026-10-28-tenbot-jobs/mobile-ambiguous.png",
+    "docs/project-memory/evidence/2026-10-28-tenbot-jobs/mobile-planning.png",
+    "docs/project-memory/evidence/2026-10-28-tenbot-jobs/model-usage.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-jobs/tool-validation.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-jobs/validation.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/actual-answers.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/desktop-labor.png",
+    "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/keyboard.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/mobile-keyboard.png",
+    "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/mobile-planning.png",
+    "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/privacy-jobs.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/reconciliation.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-qa-reconciliation/validation.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/boundary.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/client-secrets-scan.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/disabled-smoke-first-failure.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/disabled-smoke.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/edge-results.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/enabled-smoke-harness-failure.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/enabled-smoke.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/extra-auth.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/final-check.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/hosted-diagnosis.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/job-preflight.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/manifest.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/marker-privacy-rollback.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/messaging-smoke.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/preflight.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/schema-security.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/tendev-build.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/tendev-hosted-smoke.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/tendev-public-browser.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/tendev-served.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/tenops-build.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/tenops-hosted-smoke.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/tenops-public-browser.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-release/tenops-served.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-workflow-fidelity/answer-review.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-workflow-fidelity/keyboard-results.json",
+    "docs/project-memory/evidence/2026-10-28-tenbot-workflow-fidelity/mobile-keyboard-pan.png",
+    "docs/project-memory/evidence/2026-10-28-tenbot-workflow-fidelity/source-hashes.json",
+    "docs/project-memory/evidence/2026-10-29-manpower-default-browser.json",
+    "docs/project-memory/evidence/2026-10-29-manpower-default-retrieval.json",
+    "docs/project-memory/evidence/2026-10-29-manpower-default-review-origin.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tendev-staging/edge-deployment.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tendev-staging/migration-application.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tendev-staging/selected-source-plan.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tenops-pilot-release/boundary.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tenops-pilot-release/final-hosted-state.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-hosted-adapter/tenops-pilot-release/release-summary.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-retrieval-refinement.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-selective-knowledge-preparation/comparison-curation.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-selective-knowledge-preparation/exact-source.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-selective-knowledge-preparation/release-proof-validation.json",
+    "docs/project-memory/evidence/2026-10-29-tenbot-selective-knowledge-preparation/retained-terra-receipts.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/browser-result.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/build-result.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/source-manifest.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/worker-validation.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/edge.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/final.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/mandatory-proof.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/migration-applied.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/pages.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/served.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/smoke.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/accepted-tendev/source-state.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/applied-migration-hashes.json",
+    "docs/project-memory/evidence/2026-10-31-tenbot-production-preparation/superseded-source-reviews.json",
+    "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+    "docs/project/PROJECT_MANIFEST.md",
+    "package.json",
+    "scripts/generate-tenbot-knowledge.mjs",
+    "scripts/start-manpower-progressive-review.mts",
+    "scripts/start-tenbot-ai-pilot.mjs",
+    "scripts/start-tenbot-review.mts",
+    "scripts/support/bid-preparation-browser.mjs",
+    "scripts/support/manpower-progressive-fixture.mjs",
+    "scripts/support/tenbot-ai-pilot.mjs",
+    "scripts/support/tenbot-job-database.mjs",
+    "scripts/tenbot-ai/worker.ts",
+    "scripts/tenbot-ai/wrangler.jsonc",
+    "scripts/tenbot-knowledge/architecture.mjs",
+    "scripts/tenbot-knowledge/external-reconciliation.json",
+    "scripts/tenbot-knowledge/infrastructure-reviews.json",
+    "scripts/tenbot-knowledge/manifest.mjs",
+    "scripts/tenbot-knowledge/release-evidence/manpower-20261029.json",
+    "scripts/tenbot-knowledge/release-sync.mjs",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "scripts/verify-auth-resolution-deadlines.mjs",
+    "scripts/verify-auth-startup-resolution.mjs",
+    "scripts/verify-intake-materials-browser.mjs",
+    "scripts/verify-manpower-progressive-browser.mjs",
+    "scripts/verify-manpower-progressive-retrieval.mts",
+    "scripts/verify-production-rework.mjs",
+    "scripts/verify-tenbot-ai-binding.mts",
+    "scripts/verify-tenbot-browser.mjs",
+    "scripts/verify-tenbot-edge.mjs",
+    "scripts/verify-tenbot-job-browser.mjs",
+    "scripts/verify-tenbot-job-routing.mts",
+    "scripts/verify-tenbot-jobs.mts",
+    "scripts/verify-tenbot-privacy.mts",
+    "scripts/verify-tenbot.mts",
+    "src/app/tenbot/page.tsx",
+    "src/components/GlobalMessaging.tsx",
+    "src/lib/auth.tsx",
+    "src/modules/inventory/invoice-quantity.ts",
+    "src/modules/inventory/invoice-receival-attachments.ts",
+    "src/modules/inventory/invoice-receival-service.ts",
+    "src/modules/inventory/tenbot-canary-access.ts",
+    "src/modules/inventory/tenbot-canary-execution.ts",
+    "src/modules/inventory/tenbot-canary-funding.ts",
+    "src/modules/manpower/ManpowerWorkspace.tsx",
+    "src/modules/manpower/group-presentation.ts",
+    "src/modules/manpower/product-reporting.ts",
+    "src/modules/manpower/progressive-history.ts",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/my-work/inbox.ts",
+    "src/modules/pre-production/BidTools.tsx",
+    "src/modules/pre-production/BidWorkspace.tsx",
+    "src/modules/production/components/MonthlySnapshot.tsx",
+    "src/modules/production/fixture-visibility.ts",
+    "src/modules/production/jobs.ts",
+    "src/modules/production/readiness.ts",
+    "src/modules/production/rework.ts",
+    "src/modules/tenbot/ReceivalDraftReview.tsx",
+    "src/modules/tenbot/TenbotAvatar.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/conversation-history.ts",
+    "src/modules/tenbot/events.ts",
+    "src/modules/tenbot/initialization-failure.ts",
+    "src/modules/tenbot/live-review.ts",
+    "src/modules/tenbot/prepared-draft-resume.ts",
+    "src/modules/tenbot/tenbot.css",
+    "supabase/functions/_shared/labor-hours.d.mts",
+    "supabase/functions/_shared/labor-hours.mjs",
+    "supabase/functions/_shared/production-job-facts.d.mts",
+    "supabase/functions/_shared/production-job-facts.mjs",
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-canary-funding.ts",
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+    "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+    "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-job-session.ts",
+    "supabase/functions/_shared/tenbot-job-tools.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-knowledge.ts",
+    "supabase/functions/_shared/tenbot-models.ts",
+    "supabase/functions/_shared/tenbot-openai-metering.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/_shared/tenbot-privacy.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+    "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+    "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+    "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+    "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+    "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+    "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+    "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+    "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+    "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+    "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+    "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+    "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+    "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+    "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+    "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+    "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+    "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+    "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+    "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+    "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+    "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql"
+  ],
+  "directlyAffected": [
+    {
+      "id": "dm",
+      "changes": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "kind": "semantic",
+          "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+          "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26"
+        }
+      ]
+    },
+    {
+      "id": "group",
+      "changes": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "kind": "semantic",
+          "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+          "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26"
+        }
+      ]
+    },
+    {
+      "id": "knowledge-inventory",
+      "changes": [
+        {
+          "path": "docs/project/PROJECT_MANIFEST.md",
+          "kind": "semantic",
+          "before": "f60d776dca6f9fbf40888b6cb55b5a5dc4fbd9a3",
+          "after": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248"
+        }
+      ]
+    },
+    {
+      "id": "knowledge-material-assessment",
+      "changes": [
+        {
+          "path": "src/modules/pre-production/BidWorkspace.tsx",
+          "kind": "semantic",
+          "before": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+          "after": "bcf614293603004d6e83fbfc782bbdc766cf46f5"
+        }
+      ]
+    },
+    {
+      "id": "knowledge-messaging",
+      "changes": [
+        {
+          "path": "docs/project-memory/CURRENT_STATE.md",
+          "kind": "semantic",
+          "before": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+          "after": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0"
+        }
+      ]
+    },
+    {
+      "id": "knowledge-production",
+      "changes": [
+        {
+          "path": "src/modules/production/jobs.ts",
+          "kind": "semantic",
+          "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+          "after": "0622319deb9f21e486a25511f6d98378f49987f0"
+        },
+        {
+          "path": "src/modules/production/readiness.ts",
+          "kind": "semantic",
+          "before": "4b7ca6addfa9c1a18505c7a20a6dbad996c89cc4",
+          "after": "669ae55ad57d6908d370c80cf88d02596192d8ae"
+        }
+      ]
+    },
+    {
+      "id": "knowledge-proposals",
+      "changes": [
+        {
+          "path": "docs/project-memory/CURRENT_STATE.md",
+          "kind": "semantic",
+          "before": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+          "after": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0"
+        }
+      ]
+    },
+    {
+      "id": "manpower-job-filter",
+      "changes": [
+        {
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "kind": "semantic",
+          "before": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+          "after": "9161b007d24a8d6ba6cf972b636a05bddac9c604"
+        }
+      ]
+    },
+    {
+      "id": "manpower-record-labor",
+      "changes": [
+        {
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "kind": "semantic",
+          "before": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+          "after": "9161b007d24a8d6ba6cf972b636a05bddac9c604"
+        },
+        {
+          "path": "src/modules/manpower/product-reporting.ts",
+          "kind": "semantic",
+          "before": "3f0f326c8fdc9622368fdc7d43441620faf48adc",
+          "after": "6e1c8e1dc5faa6f2ddd70b0f829213a1d89512df"
+        }
+      ]
+    },
+    {
+      "id": "material-lead",
+      "changes": [
+        {
+          "path": "src/modules/pre-production/BidWorkspace.tsx",
+          "kind": "semantic",
+          "before": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+          "after": "bcf614293603004d6e83fbfc782bbdc766cf46f5"
+        }
+      ]
+    },
+    {
+      "id": "message-attachments",
+      "changes": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "kind": "semantic",
+          "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+          "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26"
+        }
+      ]
+    },
+    {
+      "id": "message-reply",
+      "changes": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "kind": "semantic",
+          "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+          "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26"
+        }
+      ]
+    },
+    {
+      "id": "production-create-job",
+      "changes": [
+        {
+          "path": "src/modules/production/jobs.ts",
+          "kind": "semantic",
+          "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+          "after": "0622319deb9f21e486a25511f6d98378f49987f0"
+        }
+      ]
+    },
+    {
+      "id": "production-files",
+      "changes": [
+        {
+          "path": "src/modules/production/jobs.ts",
+          "kind": "semantic",
+          "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+          "after": "0622319deb9f21e486a25511f6d98378f49987f0"
+        }
+      ]
+    },
+    {
+      "id": "production-rework-create",
+      "changes": [
+        {
+          "path": "src/modules/production/rework.ts",
+          "kind": "semantic",
+          "before": "fb52a37c850a83d1a726697b0a38f397cf45e7b9",
+          "after": "03bb7afec7d28e45d515540d265d5c42efa49fef"
+        }
+      ]
+    },
+    {
+      "id": "production-rework-status",
+      "changes": [
+        {
+          "path": "src/modules/production/jobs.ts",
+          "kind": "semantic",
+          "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+          "after": "0622319deb9f21e486a25511f6d98378f49987f0"
+        }
+      ]
+    },
+    {
+      "id": "share-job",
+      "changes": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "kind": "semantic",
+          "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+          "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26"
+        }
+      ]
+    },
+    {
+      "id": "workflow-intake-activity",
+      "changes": [
+        {
+          "path": "src/modules/pre-production/BidWorkspace.tsx",
+          "kind": "semantic",
+          "before": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+          "after": "bcf614293603004d6e83fbfc782bbdc766cf46f5"
+        }
+      ]
+    },
+    {
+      "id": "workflow-intake-bid",
+      "changes": [
+        {
+          "path": "src/modules/pre-production/BidWorkspace.tsx",
+          "kind": "semantic",
+          "before": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+          "after": "bcf614293603004d6e83fbfc782bbdc766cf46f5"
+        }
+      ]
+    },
+    {
+      "id": "workflow-job-archive",
+      "changes": [
+        {
+          "path": "src/modules/production/components/MonthlySnapshot.tsx",
+          "kind": "semantic",
+          "before": "7e63b670be0fd694060e7b2d9a3ca87f8003d422",
+          "after": "dcd2631990dfc1b5093c2cba73411d45e67b9746"
+        },
+        {
+          "path": "src/modules/production/jobs.ts",
+          "kind": "semantic",
+          "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+          "after": "0622319deb9f21e486a25511f6d98378f49987f0"
+        }
+      ]
+    },
+    {
+      "id": "workflow-message-drafts",
+      "changes": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "kind": "semantic",
+          "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+          "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26"
+        }
+      ]
+    },
+    {
+      "id": "workflow-message-edit",
+      "changes": [
+        {
+          "path": "src/modules/my-work/InboxDialog.tsx",
+          "kind": "semantic",
+          "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+          "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26"
+        }
+      ]
+    },
+    {
+      "id": "workflow-monthly-snapshot",
+      "changes": [
+        {
+          "path": "src/modules/production/components/MonthlySnapshot.tsx",
+          "kind": "semantic",
+          "before": "7e63b670be0fd694060e7b2d9a3ca87f8003d422",
+          "after": "dcd2631990dfc1b5093c2cba73411d45e67b9746"
+        }
+      ]
+    }
+  ],
+  "affectedRecordIds": [
+    "dm",
+    "group",
+    "inventory-activity",
+    "inventory-pending-receive",
+    "inventory-stock-movement",
+    "inventory-stock-reservation",
+    "inventory-stock-search",
+    "knowledge-blend",
+    "knowledge-intake",
+    "knowledge-inventory",
+    "knowledge-material-assessment",
+    "knowledge-messaging",
+    "knowledge-production",
+    "knowledge-proposals",
+    "manpower-job-filter",
+    "manpower-record-labor",
+    "material-lead",
+    "message-attachments",
+    "message-reply",
+    "production-create-job",
+    "production-files",
+    "production-rework-create",
+    "production-rework-status",
+    "production-schedule",
+    "proposal-create",
+    "proposal-issue-revise",
+    "sample-bid",
+    "sample-save",
+    "sample-work-order",
+    "share-job",
+    "workflow-intake-activity",
+    "workflow-intake-bid",
+    "workflow-intake-convert",
+    "workflow-job-archive",
+    "workflow-manpower-history",
+    "workflow-material-usage",
+    "workflow-message-drafts",
+    "workflow-message-edit",
+    "workflow-monthly-snapshot",
+    "workflow-po-allocations",
+    "workflow-po-draft",
+    "workflow-po-issue",
+    "workflow-po-receivals"
+  ],
+  "dependentRecordIds": [
+    "inventory-activity",
+    "inventory-pending-receive",
+    "inventory-stock-movement",
+    "inventory-stock-reservation",
+    "inventory-stock-search",
+    "knowledge-blend",
+    "knowledge-intake",
+    "production-schedule",
+    "proposal-create",
+    "proposal-issue-revise",
+    "sample-bid",
+    "sample-save",
+    "sample-work-order",
+    "workflow-intake-convert",
+    "workflow-manpower-history",
+    "workflow-material-usage",
+    "workflow-po-allocations",
+    "workflow-po-draft",
+    "workflow-po-issue",
+    "workflow-po-receivals"
+  ],
+  "semanticRecordIds": [],
+  "extractionOnlyRecordIds": [],
+  "reviewedSemanticRecordIds": [
+    "dm",
+    "group",
+    "knowledge-inventory",
+    "knowledge-material-assessment",
+    "knowledge-messaging",
+    "knowledge-production",
+    "knowledge-proposals",
+    "manpower-job-filter",
+    "manpower-record-labor",
+    "material-lead",
+    "message-attachments",
+    "message-reply",
+    "production-create-job",
+    "production-files",
+    "production-rework-create",
+    "production-rework-status",
+    "share-job",
+    "workflow-intake-activity",
+    "workflow-intake-bid",
+    "workflow-job-archive",
+    "workflow-message-drafts",
+    "workflow-message-edit",
+    "workflow-monthly-snapshot"
+  ],
+  "unresolvedAffectedRecordIds": [],
+  "resolvedAffectedRecordIds": [
+    "dm",
+    "group",
+    "inventory-activity",
+    "inventory-pending-receive",
+    "inventory-stock-movement",
+    "inventory-stock-reservation",
+    "inventory-stock-search",
+    "knowledge-blend",
+    "knowledge-intake",
+    "knowledge-inventory",
+    "knowledge-material-assessment",
+    "knowledge-messaging",
+    "knowledge-production",
+    "knowledge-proposals",
+    "manpower-job-filter",
+    "manpower-record-labor",
+    "material-lead",
+    "message-attachments",
+    "message-reply",
+    "production-create-job",
+    "production-files",
+    "production-rework-create",
+    "production-rework-status",
+    "production-schedule",
+    "proposal-create",
+    "proposal-issue-revise",
+    "sample-bid",
+    "sample-save",
+    "sample-work-order",
+    "share-job",
+    "workflow-intake-activity",
+    "workflow-intake-bid",
+    "workflow-intake-convert",
+    "workflow-job-archive",
+    "workflow-manpower-history",
+    "workflow-material-usage",
+    "workflow-message-drafts",
+    "workflow-message-edit",
+    "workflow-monthly-snapshot",
+    "workflow-po-allocations",
+    "workflow-po-draft",
+    "workflow-po-issue",
+    "workflow-po-receivals"
+  ],
+  "unclassifiedSensitivePaths": [],
+  "acknowledgedInfrastructurePaths": [
+    "scripts/generate-tenbot-knowledge.mjs",
+    "scripts/tenbot-knowledge/architecture.mjs",
+    "scripts/tenbot-knowledge/manifest.mjs",
+    "scripts/tenbot-knowledge/release-sync.mjs",
+    "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-job-session.ts",
+    "supabase/functions/_shared/tenbot-job-tools.ts",
+    "supabase/functions/_shared/tenbot-knowledge.ts",
+    "supabase/functions/_shared/tenbot-models.ts",
+    "supabase/functions/_shared/tenbot-privacy.ts",
+    "supabase/functions/_shared/tenbot-workflow-supplement.ts"
+  ],
+  "reviewedRecordChanges": [
+    {
+      "recordId": "group",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "kind": "semantic",
+      "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "dm",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "kind": "semantic",
+      "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "share-job",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "kind": "semantic",
+      "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "material-lead",
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "kind": "semantic",
+      "before": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+      "after": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "production-create-job",
+      "path": "src/modules/production/jobs.ts",
+      "kind": "semantic",
+      "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "after": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "production-rework-create",
+      "path": "src/modules/production/rework.ts",
+      "kind": "semantic",
+      "before": "fb52a37c850a83d1a726697b0a38f397cf45e7b9",
+      "after": "03bb7afec7d28e45d515540d265d5c42efa49fef",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "production-rework-status",
+      "path": "src/modules/production/jobs.ts",
+      "kind": "semantic",
+      "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "after": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "production-files",
+      "path": "src/modules/production/jobs.ts",
+      "kind": "semantic",
+      "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "after": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "manpower-job-filter",
+      "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+      "kind": "semantic",
+      "before": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+      "after": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "manpower-record-labor",
+      "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+      "kind": "semantic",
+      "before": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+      "after": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "manpower-record-labor",
+      "path": "src/modules/manpower/product-reporting.ts",
+      "kind": "semantic",
+      "before": "3f0f326c8fdc9622368fdc7d43441620faf48adc",
+      "after": "6e1c8e1dc5faa6f2ddd70b0f829213a1d89512df",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "message-reply",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "kind": "semantic",
+      "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "message-attachments",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "kind": "semantic",
+      "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "workflow-intake-bid",
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "kind": "semantic",
+      "before": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+      "after": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "workflow-intake-activity",
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "kind": "semantic",
+      "before": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+      "after": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "workflow-job-archive",
+      "path": "src/modules/production/components/MonthlySnapshot.tsx",
+      "kind": "semantic",
+      "before": "7e63b670be0fd694060e7b2d9a3ca87f8003d422",
+      "after": "dcd2631990dfc1b5093c2cba73411d45e67b9746",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "workflow-job-archive",
+      "path": "src/modules/production/jobs.ts",
+      "kind": "semantic",
+      "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "after": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "workflow-monthly-snapshot",
+      "path": "src/modules/production/components/MonthlySnapshot.tsx",
+      "kind": "semantic",
+      "before": "7e63b670be0fd694060e7b2d9a3ca87f8003d422",
+      "after": "dcd2631990dfc1b5093c2cba73411d45e67b9746",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "workflow-message-edit",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "kind": "semantic",
+      "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "workflow-message-drafts",
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "kind": "semantic",
+      "before": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+      "after": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "knowledge-production",
+      "path": "src/modules/production/jobs.ts",
+      "kind": "semantic",
+      "before": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+      "after": "0622319deb9f21e486a25511f6d98378f49987f0",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "knowledge-production",
+      "path": "src/modules/production/readiness.ts",
+      "kind": "semantic",
+      "before": "4b7ca6addfa9c1a18505c7a20a6dbad996c89cc4",
+      "after": "669ae55ad57d6908d370c80cf88d02596192d8ae",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "knowledge-proposals",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "kind": "semantic",
+      "before": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+      "after": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "knowledge-inventory",
+      "path": "docs/project/PROJECT_MANIFEST.md",
+      "kind": "semantic",
+      "before": "f60d776dca6f9fbf40888b6cb55b5a5dc4fbd9a3",
+      "after": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "knowledge-messaging",
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "kind": "semantic",
+      "before": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+      "after": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+      "classification": "record-no-claim-impact"
+    },
+    {
+      "recordId": "knowledge-material-assessment",
+      "path": "src/modules/pre-production/BidWorkspace.tsx",
+      "kind": "semantic",
+      "before": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+      "after": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+      "classification": "record-no-claim-impact"
+    }
+  ],
+  "historicalDeployedPaths": [
+    "supabase/functions/_shared/tenbot-agent-history-store.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-canary-funding.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+    "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+    "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+    "supabase/functions/_shared/tenbot-invoice.ts",
+    "supabase/functions/_shared/tenbot-openai-metering.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+    "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+    "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+    "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+    "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+    "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+    "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+    "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+    "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+    "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+    "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+    "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+    "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+    "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+    "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+    "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+    "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+    "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+    "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+    "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+    "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+    "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql"
+  ],
+  "derivedArtifactPaths": [
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+  ],
+  "sourceReviewHolds": [],
+  "limitation": "Offline comparison against reviewed source pins. Semantic changes require source/permission/approval review; this report grants no Product acceptance, database authority, push or deployment authorization. Extraction refresh never advances a release pin automatically.",
+  "infrastructureReviewEvidence": [
+    {
+      "classification": "infrastructure-only",
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "blob": "b3f76af6014524a9fa7abdc351e15058ee13e39f",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "scripts/tenbot-knowledge/architecture.mjs",
+      "blob": "f87090d98ff61914fb99844513246f37b2865b97",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "scripts/tenbot-knowledge/manifest.mjs",
+      "blob": "f9695bb04977b26f72f8da35f291a9dffc258ba9",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "scripts/tenbot-knowledge/release-sync.mjs",
+      "blob": "14d42bc8a657c107af68200c8ab7f272b7ac2230",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "blob": "eaa9f9c108c10a72801602c1c87ca19bc84d5973",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "blob": "4bfd5f350e783118bb1d3bc043c242e920d74464",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "blob": "7a3b25454b1d0790cbd05f234e02c7e540920de4",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+      "blob": "d7ae05f56ff991dc0c267a5d2f96a7d8bd96b1d6",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-models.ts",
+      "blob": "286c1971e1c7f527c0cdf398c55eff628aeee8f9",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "blob": "bdd4ec1ddeb90994f5ad6a24cf09c1713c519066",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "blob": "66c8b1f7186923b9ccf5a973b5ee03a2bd323f60",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "blob": "d0baddb6724515063567da43370437c886e60a84",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "blob": "16a59ae220abcab962fc971597aa864b46b2ae70",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "blob": "c9e0d8c80ad936c7e62b046fba991c8bb3580eac",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "heading": "## Accepted infrastructure review — October 29, 2026"
+      }
+    },
+    {
+      "classification": "infrastructure-only",
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "blob": "0b90dd83531e6b95363322f888b5637c530bca1c",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+        "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+        "heading": "## Accepted infrastructure review — selective knowledge preparation"
+      }
+    }
+  ],
+  "sourceReviewEvidence": {
+    "recordReviews": [
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "dm",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+        "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "recordDigest": "bc307fd6417f038fcff168d590a4ad46b7107ea36665e67a71fc5a6d55c16910",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "group",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+        "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "recordDigest": "6e87c76817da022ca9355b2d1596ae9548df742613d915c75db6b4e88e293e9b",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "knowledge-inventory",
+        "path": "docs/project/PROJECT_MANIFEST.md",
+        "beforeBlob": "f60d776dca6f9fbf40888b6cb55b5a5dc4fbd9a3",
+        "afterBlob": "f975660c040ddb8dfc7c971d5d8ebd9f4e286248",
+        "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb",
+        "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Accepted record source review — selective knowledge preparation"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "knowledge-material-assessment",
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+        "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "recordDigest": "711a09a3950fee7bcfc9248e691ed44799a4eca55e1e30e02972b0d95bdac768",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "knowledge-messaging",
+        "path": "docs/project-memory/CURRENT_STATE.md",
+        "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+        "afterBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+        "recordDigest": "868e7190ae61c7e32e9963edf4669636cddd31a1cdb9a670af98713e8eb33a9c",
+        "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Accepted record source review — selective knowledge preparation"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "knowledge-production",
+        "path": "src/modules/production/jobs.ts",
+        "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+        "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "recordDigest": "15c097dff11ee0cdb20b012788135361a2df622852a4a8f6939b32f91da866f8",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "knowledge-production",
+        "path": "src/modules/production/readiness.ts",
+        "beforeBlob": "4b7ca6addfa9c1a18505c7a20a6dbad996c89cc4",
+        "afterBlob": "669ae55ad57d6908d370c80cf88d02596192d8ae",
+        "recordDigest": "15c097dff11ee0cdb20b012788135361a2df622852a4a8f6939b32f91da866f8",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "knowledge-proposals",
+        "path": "docs/project-memory/CURRENT_STATE.md",
+        "beforeBlob": "16c76dcdcef40237489c3daf027512b63f65e9b6",
+        "afterBlob": "55baa0db5c23c55a7cf36f5e4dbaef81b8b146e0",
+        "recordDigest": "64bc5848f3e589dea04a8aab52b77794bfba2379db835c1e8731746d262bb792",
+        "reviewedCandidate": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Accepted record source review — selective knowledge preparation"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "manpower-job-filter",
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "beforeBlob": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+        "afterBlob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+        "recordDigest": "1287c0fb1b17e84a4df57887b7b1570dc460849bb4593330f25583afe26b430f",
+        "additionalDependencies": [
+          {
+            "path": "src/modules/manpower/group-presentation.ts",
+            "blob": "52b23bba2a4a31d71f2c29318d3dfa6f3fd41da5"
+          },
+          {
+            "path": "src/modules/manpower/progressive-history.ts",
+            "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "manpower-record-labor",
+        "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+        "beforeBlob": "c5d64c5429b5f9d0c0411d433a8e3bdf788537ed",
+        "afterBlob": "9161b007d24a8d6ba6cf972b636a05bddac9c604",
+        "recordDigest": "60bbb13fa7e82f1e0fbcbdb33420276866307834954eb37f5954dbd4b437baa8",
+        "additionalDependencies": [
+          {
+            "path": "src/modules/manpower/group-presentation.ts",
+            "blob": "52b23bba2a4a31d71f2c29318d3dfa6f3fd41da5"
+          },
+          {
+            "path": "src/modules/manpower/progressive-history.ts",
+            "blob": "b0a4e31f9221aa9ffe6e387b3ecddfbd1d92061d"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "manpower-record-labor",
+        "path": "src/modules/manpower/product-reporting.ts",
+        "beforeBlob": "3f0f326c8fdc9622368fdc7d43441620faf48adc",
+        "afterBlob": "6e1c8e1dc5faa6f2ddd70b0f829213a1d89512df",
+        "recordDigest": "60bbb13fa7e82f1e0fbcbdb33420276866307834954eb37f5954dbd4b437baa8",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/labor-hours.mjs",
+            "blob": "594074c854e1e5055d282d5df2a945de294a059b"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "material-lead",
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+        "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "recordDigest": "80483da0f04efda329d35f1b24ae82ceecf47e89a7823f11b6e62466e2c3aadb",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "message-attachments",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+        "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "recordDigest": "a6855e912e9f78b26d9305924519b1c0cf53f27dd4459f7694d551a0bd454282",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "message-reply",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+        "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "recordDigest": "065244fc9a7c4116d49cc1b1d89b058d01632ebc41fbfff3cb2c31433eae01c7",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "production-create-job",
+        "path": "src/modules/production/jobs.ts",
+        "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+        "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "recordDigest": "5f1f6f2f5539a17bacd8d2c488ac6c9a87ee4517d9957e85d015d3d1e53ac334",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "production-files",
+        "path": "src/modules/production/jobs.ts",
+        "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+        "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "recordDigest": "970d1eaf2c7aff7405a5c5b1f8a480cd5a7211aab878ba31adb72f59e2db4a9b",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "production-rework-create",
+        "path": "src/modules/production/rework.ts",
+        "beforeBlob": "fb52a37c850a83d1a726697b0a38f397cf45e7b9",
+        "afterBlob": "03bb7afec7d28e45d515540d265d5c42efa49fef",
+        "recordDigest": "51f7f06429e436454c467fc3ac4e5f8f7185ec8c592a0042ea544aa7ad6808a8",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "production-rework-status",
+        "path": "src/modules/production/jobs.ts",
+        "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+        "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "recordDigest": "1241dd4b127390ccffd8e3a27da8fc9915eef99bdcbcf9ad3ce3a6d60e4d1b08",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "share-job",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+        "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "recordDigest": "fc4df7a747c85087a62ad91cf7b8e7988ed857a445366406ea9704549dde436b",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "workflow-intake-activity",
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+        "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "recordDigest": "5c97e8780799027ed513bcbd06d9563f08b29c6aec77734345cfde7db7a978ae",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "workflow-intake-bid",
+        "path": "src/modules/pre-production/BidWorkspace.tsx",
+        "beforeBlob": "5a4db36d21a9ca6b89a6b686a91befcf214be6c4",
+        "afterBlob": "bcf614293603004d6e83fbfc782bbdc766cf46f5",
+        "recordDigest": "8c83d76ba135c143b4afe613e9c7aa72f10997692cb350a9571e20fbef2dc5f7",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "workflow-job-archive",
+        "path": "src/modules/production/components/MonthlySnapshot.tsx",
+        "beforeBlob": "7e63b670be0fd694060e7b2d9a3ca87f8003d422",
+        "afterBlob": "dcd2631990dfc1b5093c2cba73411d45e67b9746",
+        "recordDigest": "2da50786e6d7bb5e2f085ab58e864b6f0270a88351c45909306559353e6c7af2",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "workflow-job-archive",
+        "path": "src/modules/production/jobs.ts",
+        "beforeBlob": "9db7ef3fa0aced661100bf292fccb8462a6b4113",
+        "afterBlob": "0622319deb9f21e486a25511f6d98378f49987f0",
+        "recordDigest": "2da50786e6d7bb5e2f085ab58e864b6f0270a88351c45909306559353e6c7af2",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "workflow-message-drafts",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+        "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "recordDigest": "2dfa7d12fe043f2e664cfb790afe5e42f079aece85a86c3d9e1649367db51cae",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "workflow-message-edit",
+        "path": "src/modules/my-work/InboxDialog.tsx",
+        "beforeBlob": "1e2fe3d86211d6819f0b38170e305ee4142764bf",
+        "afterBlob": "48930cbf14eaa994a7b794c54cb618f02bcf7d26",
+        "recordDigest": "7dcffd764fbb864982286711333092b30d6f73fccb0c195797a8bc1a60791628",
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      },
+      {
+        "classification": "record-no-claim-impact",
+        "recordId": "workflow-monthly-snapshot",
+        "path": "src/modules/production/components/MonthlySnapshot.tsx",
+        "beforeBlob": "7e63b670be0fd694060e7b2d9a3ca87f8003d422",
+        "afterBlob": "dcd2631990dfc1b5093c2cba73411d45e67b9746",
+        "recordDigest": "6a55318c26ae3d63aa2110333afc0a71346fe0a53c761a071c6c70765c7f1fef",
+        "additionalDependencies": [
+          {
+            "path": "supabase/functions/_shared/production-job-facts.mjs",
+            "blob": "35bd389baa4795d2ed030a8938808d40f7597742"
+          }
+        ],
+        "reviewedCandidate": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+          "heading": "## Accepted record source review — October 29, 2026"
+        }
+      }
+    ],
+    "historical": [
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+        "blob": "f9998e6752f5d028aa2f46fa33f93a79464b0e05",
+        "release": {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-27-tenbot-candidate.md",
+            "revision": "dfdef9d172c5e158a27b815b76f5294afd6c91ad",
+            "heading": "## Executed TenBot release — October 27, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261027130000_tenbot_shared_usage_pool.sql",
+        "blob": "d890020047817ec0a83524a32487f7ccf1f49196",
+        "release": {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-27-tenbot-candidate.md",
+            "revision": "dfdef9d172c5e158a27b815b76f5294afd6c91ad",
+            "heading": "## Executed TenBot release — October 27, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261027140000_tenbot_measured_free_pool.sql",
+        "blob": "a62a2c1c2b43b3a3319a5c24b6df88c633134a26",
+        "release": {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-27-tenbot-candidate.md",
+            "revision": "dfdef9d172c5e158a27b815b76f5294afd6c91ad",
+            "heading": "## Executed TenBot release — October 27, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+        "blob": "bcfd783848f2f29db99e4ee0399c457f3e5383d7",
+        "release": {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-27-tenbot-candidate.md",
+            "revision": "dfdef9d172c5e158a27b815b76f5294afd6c91ad",
+            "heading": "## Executed TenBot release — October 27, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+        "blob": "a0888e92a05ec479571b7c93ee5486429685cbd4",
+        "release": {
+          "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+            "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+            "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-hosted.ts",
+        "blob": "4a06c93430e86f3bfda7a02f50111c17a7800c49",
+        "release": {
+          "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+            "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+            "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+        "blob": "4f538fe0b23c7fdbb7a0edc6f8fa14429b18090e",
+        "release": {
+          "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+            "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+            "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+        "blob": "da6395122e043bf1069109b815f4fda124e7e87d",
+        "release": {
+          "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+            "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+            "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+        "blob": "031415b57d7ddf2af760ab2760d401c86c94ff36",
+        "release": {
+          "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+            "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+            "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+        "blob": "71bcc5d8f9c76a2d7a4a1bdc80f10b66e7ee6b52",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-agent.ts",
+        "blob": "29ccba59420eda0202b5dd03407028497ab70a3c",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-canary-funding.ts",
+        "blob": "6d77e3bdd58c1f0ef52fd32a1a6780cb44cd74cf",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+        "blob": "bea0e13636c95718fb35d08da4b30e01c85f1395",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+        "blob": "e25dc58ba1edac7488f4ead934ce2a227856365a",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+        "blob": "eeb1e886c17f88c23a3bcd5ea7ea89387be7865d",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-invoice.ts",
+        "blob": "b6450def39482f3da1b28003357f116810b5af2c",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-openai.ts",
+        "blob": "9eee1e6256f5e88168eeafea1be1f93e7f50f53d",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+        "blob": "74c992d6e04f18dc7f16c0bdd56f6e2f24629fe8",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+        "blob": "18a8776166c69184246d90d6b0ca971042786486",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/functions/tenbot/index.ts",
+        "blob": "96852bc575846a4928d11787a48edb6005af46d6",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261029210000_invoice_pending_receival_approval.sql",
+        "blob": "b2ac2c70af9eb8711578f40e57039f3d606be3d9",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030110000_catalog_write_authorization.sql",
+        "blob": "f041b370519383d13a3f13bfe12c28d93f00a856",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030120000_invoice_dependent_pending_receivals.sql",
+        "blob": "aced236d65b7e547c3ee036e779e01196a6c5d2b",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030130000_invoice_receival_runtime_validation.sql",
+        "blob": "4a4114a4f3dbaa81869776e1298b555bcac3371c",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030140000_invoice_receival_shared_compatibility.sql",
+        "blob": "4c21e082ef4c30a2db43a2b24e07018e7a9ff1f2",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030150000_invoice_receival_originals.sql",
+        "blob": "73f3b70a149ea807f32022ce587caa87220e2e91",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql",
+        "blob": "2f34c5972127b70c9b4dc776aba6f3f90535d1fa",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql",
+        "blob": "a13b7303520d4ce178c1eb795513ceccdf410746",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql",
+        "blob": "1eb5003f7d00e400550ce3e5c79b99c5ba1a02ee",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030190000_invoice_receival_pilot_policy_lock.sql",
+        "blob": "3db080d20d22d18e996bd7dc226a055825e0bf72",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030200000_tenbot_receival_cleanup_wakes.sql",
+        "blob": "23bb3f091583762e72dc98ddf981668f733b7e63",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030210000_tenbot_chris_dev_canary_grant.sql",
+        "blob": "c539352e96864151e7ac74f75dc7381d49e7c0ba",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261030220000_tenbot_canary_control_status.sql",
+        "blob": "3d2dcab81d82cc1c31fc4751d9a15bec56b40765",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261031010000_tenbot_canary_funding_window.sql",
+        "blob": "d6091f40e7d23e2314c4a2a7bce67e5dd993e7af",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261031020000_invoice_preparation_read_boundary.sql",
+        "blob": "c6485e36dc0b8951176eb2437aa978c1abf3e1ef",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      },
+      {
+        "classification": "historical-deployed",
+        "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+        "blob": "baa7b4eb2bd1a0ee078af2808ddb32c4f8972203",
+        "release": {
+          "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+          "receipt": {
+            "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+            "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+            "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+          }
+        }
+      }
+    ],
+    "holds": []
+  },
+  "recordReviewDigests": [
+    {
+      "recordId": "group",
+      "recordDigest": "6e87c76817da022ca9355b2d1596ae9548df742613d915c75db6b4e88e293e9b"
+    },
+    {
+      "recordId": "dm",
+      "recordDigest": "bc307fd6417f038fcff168d590a4ad46b7107ea36665e67a71fc5a6d55c16910"
+    },
+    {
+      "recordId": "notifications",
+      "recordDigest": "b7d3269ff23e62fc8335f3a826e0dfbdaa061a799a593c8680cb43fdde23b058"
+    },
+    {
+      "recordId": "recurring",
+      "recordDigest": "3992df7014823d3c00c56ba50f1e671427fc1be2ea88ffdd9cf27ada06775301"
+    },
+    {
+      "recordId": "share-job",
+      "recordDigest": "fc4df7a747c85087a62ad91cf7b8e7988ed857a445366406ea9704549dde436b"
+    },
+    {
+      "recordId": "sample-bid",
+      "recordDigest": "134bc2546266708e36eccdbb28b415845030c6cd572a029ac73303b87721db92"
+    },
+    {
+      "recordId": "customer-history",
+      "recordDigest": "033bb158859d0d64004dec1ebf08c2fe7c045d2d590d54858c25c7feb7fdcd25"
+    },
+    {
+      "recordId": "customer-edit",
+      "recordDigest": "91d46449af5b6d24ff60fa3bf3bd4e000b6d43c931b8dae00950f2e53de78d07"
+    },
+    {
+      "recordId": "material-lead",
+      "recordDigest": "80483da0f04efda329d35f1b24ae82ceecf47e89a7823f11b6e62466e2c3aadb"
+    },
+    {
+      "recordId": "intake-future",
+      "recordDigest": "c5fd0d4a9b6333a023bfa666f59989059970cb86e4b11d623fe2c1d35b359d5c"
+    },
+    {
+      "recordId": "production-find-job",
+      "recordDigest": "ebbeef014ef2657723dcf316dd75c400666422c61ac60323581ae6092f1c693b"
+    },
+    {
+      "recordId": "production-create-job",
+      "recordDigest": "5f1f6f2f5539a17bacd8d2c488ac6c9a87ee4517d9957e85d015d3d1e53ac334"
+    },
+    {
+      "recordId": "production-schedule",
+      "recordDigest": "007f30ae71fe2571a3caeb006de6cbe7fd3b8205eefe49aafade84aa651bad59"
+    },
+    {
+      "recordId": "production-rework-create",
+      "recordDigest": "51f7f06429e436454c467fc3ac4e5f8f7185ec8c592a0042ea544aa7ad6808a8"
+    },
+    {
+      "recordId": "production-rework-status",
+      "recordDigest": "1241dd4b127390ccffd8e3a27da8fc9915eef99bdcbcf9ad3ce3a6d60e4d1b08"
+    },
+    {
+      "recordId": "production-files",
+      "recordDigest": "970d1eaf2c7aff7405a5c5b1f8a480cd5a7211aab878ba31adb72f59e2db4a9b"
+    },
+    {
+      "recordId": "planning-phase",
+      "recordDigest": "49c7eb569ed7bda376864b9adf130ea2714aaaada880553e92ef70d2bed7831d"
+    },
+    {
+      "recordId": "planning-items",
+      "recordDigest": "b4a872a6a1a5bab4bcfc68510f804e9f93f92a3514178adcc6f21f156f33cd3f"
+    },
+    {
+      "recordId": "manpower-job-filter",
+      "recordDigest": "1287c0fb1b17e84a4df57887b7b1570dc460849bb4593330f25583afe26b430f"
+    },
+    {
+      "recordId": "manpower-record-labor",
+      "recordDigest": "60bbb13fa7e82f1e0fbcbdb33420276866307834954eb37f5954dbd4b437baa8"
+    },
+    {
+      "recordId": "inventory-stock-search",
+      "recordDigest": "44a865f03fe5a8de7fb098f235ecb62650d7d20e1cd621308bb7e010353f4c8a"
+    },
+    {
+      "recordId": "inventory-pending-create",
+      "recordDigest": "240867443b00f8f12d50578963ff6337c5a38701c9d5833f7ea0f2a384c70a00"
+    },
+    {
+      "recordId": "inventory-pending-receive",
+      "recordDigest": "53015734080f00d2a16f67984ef72f44b1de3a4695be5bfd831f423704e1257f"
+    },
+    {
+      "recordId": "inventory-stock-reservation",
+      "recordDigest": "1d52c259c505a87b45313a6fcd635126f64e40c375a6dcd906fb8f4b9893fdd0"
+    },
+    {
+      "recordId": "inventory-stock-movement",
+      "recordDigest": "2b74456d88bd763a77940da9ff284938b21aa4288bd834465677bae46dfc1f36"
+    },
+    {
+      "recordId": "inventory-activity",
+      "recordDigest": "40628496c5ba32a1eea471262593f20502117e2629e604af970dd5168be60436"
+    },
+    {
+      "recordId": "sample-save",
+      "recordDigest": "6ec4a047c21f2f8ad42cea4f022a4b22f6b1ec9609632303a442ab4cc81efd45"
+    },
+    {
+      "recordId": "sample-work-order",
+      "recordDigest": "59cc763d3f28997e47f3ea6af167403cf59578ccc36970251534a7fa3aedc278"
+    },
+    {
+      "recordId": "proposal-create",
+      "recordDigest": "8776eda8740fcaa581746bade6ebfde48113039c4de34a6ab85421ac3f669c3f"
+    },
+    {
+      "recordId": "proposal-issue-revise",
+      "recordDigest": "b144f300a79c14da747170f4697702e88b6479216c7dfe95fbf9ebbb85e719cf"
+    },
+    {
+      "recordId": "my-work-create",
+      "recordDigest": "0e671e1f66944ea27e8f71e5b8a68f44e25e6171e524846398c4bd0da660a7cc"
+    },
+    {
+      "recordId": "my-work-complete",
+      "recordDigest": "0a8fd5f4f450c31562991e7ee69c1ef02762d537852fe957fe088cd759837fa1"
+    },
+    {
+      "recordId": "message-reply",
+      "recordDigest": "065244fc9a7c4116d49cc1b1d89b058d01632ebc41fbfff3cb2c31433eae01c7"
+    },
+    {
+      "recordId": "message-attachments",
+      "recordDigest": "a6855e912e9f78b26d9305924519b1c0cf53f27dd4459f7694d551a0bd454282"
+    },
+    {
+      "recordId": "workflow-intake-bid",
+      "recordDigest": "8c83d76ba135c143b4afe613e9c7aa72f10997692cb350a9571e20fbef2dc5f7"
+    },
+    {
+      "recordId": "workflow-intake-activity",
+      "recordDigest": "5c97e8780799027ed513bcbd06d9563f08b29c6aec77734345cfde7db7a978ae"
+    },
+    {
+      "recordId": "workflow-intake-convert",
+      "recordDigest": "8a2c8675cfee3494e2f587ab2ba629802d70c2ca8952ca66dc7902fabb4d1ac8"
+    },
+    {
+      "recordId": "workflow-historical-import",
+      "recordDigest": "085d01568ee7de2ced7e4e226c908c55cac1c73f7d05fb91819cebebf2257a51"
+    },
+    {
+      "recordId": "workflow-historical-verify",
+      "recordDigest": "566985560e8e194b5f987f2f81476885fe558bb38d59b81c7ae2427a08e9ec0f"
+    },
+    {
+      "recordId": "workflow-po-draft",
+      "recordDigest": "2291b573d696d38e8d5b21f9b23af409d64b09863dc2d1625be59ab0cb11c840"
+    },
+    {
+      "recordId": "workflow-po-issue",
+      "recordDigest": "80d8f472af4cdbfe23ceb57587c95cd70cfeda83e0730b0ad31432567ff710ed"
+    },
+    {
+      "recordId": "workflow-po-allocations",
+      "recordDigest": "20c33d814628807937706eda75dd7431a0fa3d59b00cce418387c2b5a4f07b72"
+    },
+    {
+      "recordId": "workflow-po-receivals",
+      "recordDigest": "b0c5719e6bfa536692f5df7c6146f77ea2de86140f9498999b577acba5278345"
+    },
+    {
+      "recordId": "workflow-material-usage",
+      "recordDigest": "67b41e0c31e5c395a1d67ca4bf2f12d537316185994c81e7eb09f19f1e08b51b"
+    },
+    {
+      "recordId": "workflow-catalog",
+      "recordDigest": "6cdeb8a66bded8812b61cc072aaf9423f623cc0bddba898ed24a61f63d0d61cf"
+    },
+    {
+      "recordId": "workflow-transmittal",
+      "recordDigest": "6fb2e82b493d9970dbf8856e7d7f495d05b2f3d4a039b934615985db23b7fd37"
+    },
+    {
+      "recordId": "workflow-sample-label",
+      "recordDigest": "bbfecf62933e394171f9226addb289128cf7d4e6a6ca01ddd0091e3c77f110af"
+    },
+    {
+      "recordId": "workflow-sample-versions",
+      "recordDigest": "99cc2b3b8dfc9466daf27929bcd1789388579f3359eb0b167779be143f985fde"
+    },
+    {
+      "recordId": "workflow-sample-pour",
+      "recordDigest": "86002461032031decb02e9f2207e79592523722ce79f707c0d6ab832384660b3"
+    },
+    {
+      "recordId": "workflow-task-groups",
+      "recordDigest": "2ce1388bd05984c90c5aa434f59a565fa39c394abaeb5e57800eedc968918a3a"
+    },
+    {
+      "recordId": "workflow-task-files",
+      "recordDigest": "d6e3404820203d00a6427ff49343e0a3877de1e7a5f09be26236b155c7d27341"
+    },
+    {
+      "recordId": "workflow-task-effort",
+      "recordDigest": "d9d50b50c6b974156888ce2cfdb4e0576ccbc0419282a2ff8253847bf9e2ff89"
+    },
+    {
+      "recordId": "workflow-job-archive",
+      "recordDigest": "2da50786e6d7bb5e2f085ab58e864b6f0270a88351c45909306559353e6c7af2"
+    },
+    {
+      "recordId": "workflow-monthly-snapshot",
+      "recordDigest": "6a55318c26ae3d63aa2110333afc0a71346fe0a53c761a071c6c70765c7f1fef"
+    },
+    {
+      "recordId": "workflow-manpower-history",
+      "recordDigest": "6688b83633edaabf8c34d3f736d9375deddc20f8c03a7b01e58fbbb49c8feb88"
+    },
+    {
+      "recordId": "workflow-message-edit",
+      "recordDigest": "7dcffd764fbb864982286711333092b30d6f73fccb0c195797a8bc1a60791628"
+    },
+    {
+      "recordId": "workflow-message-drafts",
+      "recordDigest": "2dfa7d12fe043f2e664cfb790afe5e42f079aece85a86c3d9e1649367db51cae"
+    },
+    {
+      "recordId": "workflow-appearance",
+      "recordDigest": "442c7b795fe5c7ca38745d74b128f698d7a32c7ebe6d1bccfd32d0b55e8edf25"
+    },
+    {
+      "recordId": "knowledge-production",
+      "recordDigest": "15c097dff11ee0cdb20b012788135361a2df622852a4a8f6939b32f91da866f8"
+    },
+    {
+      "recordId": "knowledge-rework",
+      "recordDigest": "28e06eb383994876d3b728a13d0801b878373c1c30982b6b4aa1a306ce1805a3"
+    },
+    {
+      "recordId": "knowledge-timeline",
+      "recordDigest": "e2ae351a2f43668e1585af8bb18b73d2629e6bf8261f258ad4075136578f9b8d"
+    },
+    {
+      "recordId": "knowledge-manpower",
+      "recordDigest": "6d557cf15630455f3739be6975e8ac8b35052deeda56bb44f0688afc6bb83389"
+    },
+    {
+      "recordId": "knowledge-samples",
+      "recordDigest": "eadd968ac3d46d0df9580eff777dc29dedc9939badebcf6d321ec8acb7603877"
+    },
+    {
+      "recordId": "knowledge-blend",
+      "recordDigest": "d9c0f7aa08dcbdd112d6fdd3ddcf666b893989fda4653d0047bd15178a4459ea"
+    },
+    {
+      "recordId": "knowledge-sample-bid",
+      "recordDigest": "520c9a76e91f51296831f84f06350bcd9a78e70f96e957b63c23447ffd94ca52"
+    },
+    {
+      "recordId": "knowledge-proposals",
+      "recordDigest": "64bc5848f3e589dea04a8aab52b77794bfba2379db835c1e8731746d262bb792"
+    },
+    {
+      "recordId": "knowledge-inventory",
+      "recordDigest": "1d68e7c9b69b386149818664f131bd700265aeb999d81501f503d713636dc5cb"
+    },
+    {
+      "recordId": "knowledge-purchasing",
+      "recordDigest": "9d1200af5ce4e4e960d6071c63a53826f84ae662d6e347915e7901e364fdcfbb"
+    },
+    {
+      "recordId": "knowledge-contacts",
+      "recordDigest": "346e9eb25e6696e2d15b9e6873505645f67af9e8dd4b1ec74eb7a513a17d698c"
+    },
+    {
+      "recordId": "knowledge-messaging",
+      "recordDigest": "868e7190ae61c7e32e9963edf4669636cddd31a1cdb9a670af98713e8eb33a9c"
+    },
+    {
+      "recordId": "knowledge-notifications",
+      "recordDigest": "0363860386684dd3e5c23623f4a3a0387962cadca25d6f5b03eea72ab7254d36"
+    },
+    {
+      "recordId": "knowledge-intake",
+      "recordDigest": "6eebc3395a57b2b125424104a692d384e305f72b3508c9202f6fa0883eaa2c75"
+    },
+    {
+      "recordId": "knowledge-intake-timeline",
+      "recordDigest": "986754ccdcea9cfeb1572b8fba802ab305d36e5b9336fc3b1eabcb0a1bdceb54"
+    },
+    {
+      "recordId": "knowledge-material-assessment",
+      "recordDigest": "711a09a3950fee7bcfc9248e691ed44799a4eca55e1e30e02972b0d95bdac768"
+    }
+  ]
+}

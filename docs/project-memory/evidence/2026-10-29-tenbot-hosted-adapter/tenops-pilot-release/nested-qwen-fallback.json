@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T02:10:30.484215+00:00",
+  "check": "Terra origin enabled with spending explicitly paused; actual Qwen attempted, guarded guide fallback completed",
+  "question": "Can I create a group conversation without selecting any other participants?",
+  "openaiCallsAdded": 0,
+  "actualQwenAttempt": true,
+  "qwenAnswerPublished": false,
+  "verifiedGuidePublished": true,
+  "answerEvidence": "Guide requires at least one other participant and uses verified New group/Create group labels",
+  "usage": {
+    "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+    "outcome": "failed",
+    "createdAt": "2026-10-30T02:09:43.939648+00:00",
+    "inputTokens": 976,
+    "outputTokens": 81,
+    "estimatedNeurons": 6.983
+  },
+  "limitation": "Qwen did not publish its generated answer; exact provider/answer failure cause not captured. Initial direct Qwen turn completed. No broad diagnosis attempted."
+}

@@ -1,0 +1,14 @@
+{
+  "status": "PREPARED_NOT_SUBMITTED",
+  "subject": "Production impaired: tenartenDB Database/Auth outage and recurrent access failure after restart",
+  "bodyCharacters": 3187,
+  "category": "Database unresponsive",
+  "severity": "High",
+  "services": [
+    "Authentication",
+    "Database"
+  ],
+  "optionalSupportProjectAccess": false,
+  "attachment": "incident-evidence.json",
+  "attachmentSha256": "e09c97031c5bed3388be46f47d5ff3c192343cdc4ac77931d355020978b1fd41"
+}

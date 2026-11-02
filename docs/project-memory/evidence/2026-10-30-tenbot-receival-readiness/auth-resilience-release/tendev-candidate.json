@@ -1,0 +1,111 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T22:57:24.543Z",
+  "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+  "tree": "666201253dbaa01713768b8b13666cd87310b711",
+  "parent": "ce157b99e31c227480c479169e0a480a6d509bf1",
+  "baseline": "ce157b99e31c227480c479169e0a480a6d509bf1",
+  "acceptedAuthorityRevision": "ec62998aba228e615279ae7d6e81f04378e62062",
+  "ref": "refs/tenops/candidates/auth-recovery-tendev-preparation-20261030",
+  "source": "/private/tmp/tenops-tenbot-auth-recovery-20261030/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-auth-recovery-20261030/candidate-git",
+  "output": "/private/tmp/tenops-tenbot-auth-recovery-20261030/candidate/out",
+  "selectedApplicationFiles": 1,
+  "selectedVerifierFiles": 2,
+  "selectedEvidenceFiles": 4,
+  "sourceHashes": [
+    {
+      "path": "src/lib/auth.tsx",
+      "blob": "59e3baee0c73978c6253f344923bc72d02f4cc05",
+      "sha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527"
+    },
+    {
+      "path": "scripts/verify-auth-resolution-deadlines.mjs",
+      "sha256": "0813dbaca210dfd14d8a6a53d1c24478e48397f4b4011e8725c3b898daca9ea6"
+    },
+    {
+      "path": "scripts/verify-auth-startup-resolution.mjs",
+      "sha256": "10ff9fce77f9fcb12eea17a7816a5acbdae1f00cf6d10420b817615a154ee73d"
+    }
+  ],
+  "acceptedEvidence": [
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/source-manifest.json",
+      "sha256": "68fe48aeeeac9af09ec3d462210973581c74503bcd7d92d96eb1aca281f01290"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/worker-validation.json",
+      "sha256": "c49bf4e221472afa8d4ff5ff19c853359c13f429cb457c5af967d03395124985"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/browser-result.json",
+      "sha256": "967f34c0c5f313bb4d22b1bce5a59d5c375fb028fcda3a742393d9120b7cbafd"
+    },
+    {
+      "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/build-result.json",
+      "sha256": "341b43e0b83689d6085cc42e14866ff68a6d71c7c7d341ca466ffa6fe8c3b25d"
+    }
+  ],
+  "changedPaths": [
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/browser-result.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/build-result.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/source-manifest.json",
+    "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/worker-validation.json",
+    "scripts/verify-auth-resolution-deadlines.mjs",
+    "scripts/verify-auth-startup-resolution.mjs",
+    "src/lib/auth.tsx"
+  ],
+  "manualReview": {
+    "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "heading": "## Accepted manual Auth source review \u2014 bounded restoration recovery",
+    "receiptRevision": "da5a9246c8a158c0ed266668a98bf8d54701cebf"
+  },
+  "sourceReviewRegistryUnchanged": true,
+  "generatedKnowledgeArtifactUnchanged": true,
+  "knowledgeEntriesUnchanged": true,
+  "structuredKnowledgeUnchanged": true,
+  "releasedAuthorityUnchanged": true,
+  "selectedKnowledgeDependencies": [],
+  "recordSourceReviewsAdded": 0,
+  "cleanCandidate": true,
+  "fullHistoryAvailable": true,
+  "sharedIndexHeadBranchesUnchanged": true,
+  "unrelatedDirtyWorkPreserved": true,
+  "protectedDirtyFileCount": 7,
+  "allOtherApplicationAndEdgeBytesUnchanged": true,
+  "predecessorMigrationsPreserved": true,
+  "newMigrations": [],
+  "newEdgeDeploymentRequired": false,
+  "buildEnvironment": {
+    "NEXT_PUBLIC_TENBOT_CANARY_CONTROL_MODE": "enabled"
+  },
+  "reusedValidation": {
+    "offlineGroups": 9,
+    "syntheticLocalBrowserGroups": 20,
+    "originalTypesLintBuild": true,
+    "rerun": false,
+    "hostedRecoveryProven": false
+  },
+  "productionPlan": {
+    "planOnly": true,
+    "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "authBeforeBlob": "e0348f96373847dfb7a7038764da27bf896b50e9",
+    "authBeforeEqualsAcceptedParent": true,
+    "acceptedAuthAfterBlob": "59e3baee0c73978c6253f344923bc72d02f4cc05",
+    "acceptedAuthAfterSha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527",
+    "separateCandidateRequired": true,
+    "candidateCreated": false,
+    "buildRun": false,
+    "deployed": false,
+    "noTenDevAncestryOrExperimentalSourcePromotion": true
+  },
+  "proofGateRun": false,
+  "buildRun": false,
+  "deployed": false,
+  "push": false,
+  "canaryActivated": false,
+  "operationalWrites": 0,
+  "paidInferenceCalls": 0,
+  "durationMs": 1424
+}

@@ -1,0 +1,66 @@
+{
+  "recordedAt": "2026-10-30T01:48:24.722Z",
+  "readOnly": true,
+  "inferenceCalls": 0,
+  "mutations": 0,
+  "sharedProject": "vxdxjhazkqhpkwdqtobp",
+  "hostedKeyPresent": true,
+  "keyValueRead": false,
+  "configuredKeyExpiry": "2026-11-28T22:46:56Z",
+  "settings": {
+    "TENBOT_OPENAI_KEY_EXPIRES_AT": {
+      "present": true,
+      "expectedDigestMatches": true
+    },
+    "TENBOT_OPENAI_ALLOWED_ORIGINS": {
+      "present": true,
+      "expectedDigestMatches": true
+    },
+    "TENBOT_OPENAI_ENABLED": {
+      "present": true,
+      "expectedDigestMatches": true
+    },
+    "TENBOT_OPENAI_SPEND_AUTHORIZED": {
+      "present": true,
+      "expectedDigestMatches": true
+    },
+    "TENBOT_AI_ENABLED": {
+      "present": true,
+      "expectedDigestMatches": true
+    }
+  },
+  "financialState": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 2,
+      "expiresAt": "2026-10-30T02:22:45.717476+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 560573,
+      "remainingMicrousd": 229383,
+      "totalLimitMicrousd": 789956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "usage": {
+      "calls": 13,
+      "requests": 3,
+      "unmeasured": 0,
+      "accountedMicrousd": 20617
+    },
+    "policy": {
+      "userOpenLimit": 2,
+      "globalOpenLimit": 8,
+      "dayLimitMicrousd": 250000,
+      "requestStepLimit": 16,
+      "monthLimitMicrousd": 789956,
+      "userDayRequestLimit": 60,
+      "requestLimitMicrousd": 250000,
+      "userDayLimitMicrousd": 250000,
+      "globalDayRequestLimit": 300
+    }
+  },
+  "scope": "Financial/configuration metadata only; no security/history/conversation/fallback tests repeated and no operational records read"
+}

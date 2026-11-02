@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "candidate": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "artifactCount": 287,
+  "artifactManifestSha256": "c4f62ef70fcfd84cb8a695ebcb2ff5053189d603dc4db011b4cb0b985d2035da",
+  "mandatoryPrebuildUnchanged": true,
+  "committedArtifactUnchanged": true,
+  "knowledgeUnchanged": true,
+  "canaryControlMode": "enabled; unchanged from accepted TenDev baseline; server gates OFF",
+  "credentialsIncluded": false,
+  "secretPatternScanPassed": true,
+  "durationMs": 32749,
+  "deployments": 0,
+  "inferenceCalls": 0
+}

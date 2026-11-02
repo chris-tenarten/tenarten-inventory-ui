@@ -1,0 +1,46 @@
+{
+  "observedAt": "2026-10-30T21:27:19.115Z",
+  "method": "Normal genuine Safari Admin and Chrome chris_dev sessions through reviewed TenDev UI/SDK; no browser console/token extraction/impersonation.",
+  "runtime": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "deployment": "09c6a4c4-7f66-46ec-a8bd-c5d8b49be410",
+  "adminActivation": {
+    "actor": "Chris Ngo/Admin",
+    "reasonEntered": true,
+    "exactExpiry": "2026-10-30T21:35:00Z",
+    "confirmationReceivedAt": "2026-10-30T21:20:34.035624+00:00",
+    "checkboxSelected": true,
+    "activateClickedOnce": true,
+    "successMessage": "Temporary access activated. Existing pilot controls remain a separate operator step.",
+    "grantId": "9c71ec1f-43ca-4a23-a00f-fb855a3e9edd"
+  },
+  "owner": {
+    "actor": "chris developer/Developer",
+    "sameGrantProjected": true,
+    "gatesEnabledAfterOwnerRead": true,
+    "normalInventoryHardReload": true,
+    "normalMessagingTenbotOpened": true,
+    "error": "The local experiment is unavailable. Reopen TenBot after its server is ready.",
+    "attachmentControlAvailable": false,
+    "uploadAttempts": 0,
+    "sendAttempts": 0,
+    "modelCalls": 0,
+    "reviewOrApprovalAttempts": 0,
+    "receivalExecutionAttempts": 0
+  },
+  "cleanup": {
+    "newBusinessOperationsStopped": true,
+    "edgeOffThenSqlOff": true,
+    "adminExactRevocationConfirmed": true,
+    "adminSuccessMessage": "Exact grant revocation recorded. Verify the employee and hosted controls separately.",
+    "durableUiState": "Revoked",
+    "grantsActive": 0,
+    "enrollment": 0,
+    "cancellationNotApplicable": true,
+    "nativeControlReleased": true
+  },
+  "limits": [
+    "No actual HTTP response/request-id for the failing hosted invoice-status request was captured.",
+    "The 1,951-row catalog vs1,000 maximum is independently verified as a blocking condition, not proof that no additional initialization failure occurred.",
+    "Private-original, pending-record audit/idempotency/cancellation paths were never reached."
+  ]
+}

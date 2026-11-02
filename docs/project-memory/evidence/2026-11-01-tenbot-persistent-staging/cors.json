@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "at": "2026-11-01T21:35:08.009Z",
+  "method": "OPTIONS",
+  "endpoint": "/functions/v1/tenbot",
+  "status": 204,
+  "durationMs": 631,
+  "allowedOrigin": "https://tendev.pages.dev",
+  "authenticatedEmployeeClaimed": false,
+  "operationalReads": 0,
+  "inferenceCalls": 0
+}

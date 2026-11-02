@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T02:05:03.734Z",
+  "sha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "target": "tenops",
+  "deployment": "2019c461-3dab-422f-b750-64a17fcdcc2e",
+  "url": "https://tenops.pages.dev",
+  "deploymentUrl": "https://2019c461.tenops.pages.dev",
+  "initialRouting": "Qwen; TenOps excluded from Terra origin allowlist",
+  "tenDevUnchanged": "845b86cf-2d17-46a0-bef4-3712e65064c5",
+  "edgeRedeployed": false,
+  "newMigrationsApplied": false
+}

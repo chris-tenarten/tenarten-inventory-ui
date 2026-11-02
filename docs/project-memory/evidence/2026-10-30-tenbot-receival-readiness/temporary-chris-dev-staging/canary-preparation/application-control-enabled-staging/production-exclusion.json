@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T20:58:15.901Z",
+  "productionSourceSha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "productionDeployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+  "routeAbsentFromProductionSource": true,
+  "enabledBuildFlagAbsent": true,
+  "responses": [
+    {
+      "url": "https://tenops.pages.dev/",
+      "status": 200,
+      "responseSha256": "a3469bfa2b5b7bc5ed71e0f751e57f1957f0bdde3ac3b24300d8f71b428a495b",
+      "experimentalControlMarkup": false,
+      "redirected": false,
+      "finalOrigin": "https://tenops.pages.dev"
+    },
+    {
+      "url": "https://tenops.pages.dev/tenbot/canary",
+      "status": 404,
+      "responseSha256": "5b3e6489637f76c9cec7e2361b09543c9056a44865ba0e1c39c951f868657fbb",
+      "experimentalControlMarkup": false,
+      "redirected": false,
+      "finalOrigin": "https://tenops.pages.dev"
+    }
+  ],
+  "uiOriginGate": "Only exact https://tendev.pages.dev is writable; https://tenops.pages.dev is denied",
+  "edgeExecutionOriginAllowlist": "https://tendev.pages.dev",
+  "edgeAndSqlWritesOff": true,
+  "sharedRpcBoundary": "Existing Admin/self RPC authorization is shared and unchanged; UI origin gating is not claimed as a new database-RPC origin restriction.",
+  "mutations": 0
+}

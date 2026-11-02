@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "at": "2026-11-01T19:34:15.959Z",
+  "jobs": [
+    {
+      "id": 3,
+      "name": "tenbot-invoice-original-expiry",
+      "active": true,
+      "lastRuns": [
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T19:23:00.130193+00:00",
+          "start_time": "2026-11-01T19:23:00.093176+00:00"
+        },
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T18:23:00.085919+00:00",
+          "start_time": "2026-11-01T18:23:00.071968+00:00"
+        }
+      ],
+      "schedule": "23 * * * *",
+      "username": "postgres",
+      "commandHash": "b196b8a7cc744bcb4273b0bda12938de453f2bcbb0bec5d99f4f87543bd97c0b",
+      "privatePurgeOnly": false,
+      "signedDispatcherOnly": true
+    },
+    {
+      "id": 4,
+      "name": "tenbot-operational-history-expiry",
+      "active": true,
+      "lastRuns": [],
+      "schedule": "* * * * *",
+      "username": "postgres",
+      "commandHash": "2064f05be6e63d7fc1de82d1f3e67f0e35ea37d19db5f614e7c88886eb646077",
+      "privatePurgeOnly": true,
+      "signedDispatcherOnly": false
+    }
+  ],
+  "privatePostgresOnly": true,
+  "serviceRoleExecutionDenied": true,
+  "signedInvoiceJobUnchanged": true,
+  "newPermissions": 0,
+  "newSecrets": 0
+}

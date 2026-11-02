@@ -1,0 +1,32 @@
+{
+  "serverNow": "2026-10-31T01:19:04.954945+00:00",
+  "role": "developer",
+  "fundingEnabled": false,
+  "capMicrousd": 250000,
+  "canaryAccountedMicrousd": 0,
+  "activeGrants": 0,
+  "enrolled": 0,
+  "pilot": false,
+  "execution": false,
+  "duplicateCounts": {
+    "claimCount": 0,
+    "pendingReferenceCount": 0,
+    "approvalCount": 0
+  },
+  "sources": 0,
+  "drafts": 0,
+  "executions": 0,
+  "targetStock": [],
+  "ordinaryExpiry": "2026-10-30T23:00:00+00:00",
+  "legacyReservationMicrousd": 61139,
+  "cumulativeAccountedMicrousd": 758624,
+  "executionWindow": null,
+  "awaitingRequiredActionTimeConfirmation": true,
+  "status": "Execution authorized by Product; awaiting mandatory Computer Use action-time confirmation before grant expansion",
+  "grantActivation": false,
+  "fundingArmed": false,
+  "uploads": 0,
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "operationalWrites": 0
+}

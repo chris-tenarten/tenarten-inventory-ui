@@ -1,0 +1,43 @@
+{
+  "recordedAt": "2026-10-29T23:15:46.403Z",
+  "status": "CREATED_NOT_YET_READY_OR_ISOLATED",
+  "fixtureKind": "standalone-free",
+  "project": {
+    "id": "jltgxcfiprocydhbrahz",
+    "name": "tenbot-readonly-validation-20261029",
+    "status": "ACTIVE_HEALTHY",
+    "organizationId": "uxxhpnseynojdgabanrv",
+    "organizationSlug": "uxxhpnseynojdgabanrv",
+    "region": "us-east-1",
+    "createdAt": "2026-10-29T22:46:21.185966Z"
+  },
+  "organization": {
+    "id": "uxxhpnseynojdgabanrv",
+    "slug": "uxxhpnseynojdgabanrv",
+    "name": "tenarten-terrazzo",
+    "plan": "free"
+  },
+  "freePlanVerified": true,
+  "cloned": false,
+  "templateUsed": false,
+  "gitLinked": false,
+  "productionCredentialsOrDataCopied": false,
+  "passwordPersisted": false,
+  "requests": [
+    {
+      "path": "organizations/uxxhpnseynojdgabanrv",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 251
+    },
+    {
+      "path": "projects",
+      "method": "POST",
+      "status": 201,
+      "elapsedMs": 7797
+    }
+  ],
+  "expectedInfrastructureCostUsd": 0,
+  "actualInvoiceVerified": false,
+  "cleanup": "Preserve until root instructs cleanup; no automatic delete."
+}

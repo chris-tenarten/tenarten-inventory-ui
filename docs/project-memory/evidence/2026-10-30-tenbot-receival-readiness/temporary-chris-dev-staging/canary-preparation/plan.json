@@ -1,0 +1,125 @@
+{
+  "status": "PREPARED_WITH_UNAVAILABLE_AUTHENTICATED_SESSION_AND_OPERATOR_PREREQUISITES",
+  "recordedAt": "2026-10-30T19:02:05.591Z",
+  "scope": "One fixed synthetic pending receival; no execution authorized",
+  "riskTier": 3,
+  "validation": "Read-only current preflight and existing accepted source/isolated evidence only",
+  "sourceRuntime": "e9301c2f0f06bbcc65dbff18e7acbe8d4b85f911",
+  "identity": {
+    "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "account": "chris_dev",
+    "role": "developer",
+    "visibleSession": "Chris Ngo / Admin",
+    "genuineChrisDevSessionVerified": false
+  },
+  "prerequisitesUnavailable": [
+    "The visible signed-in TenDev work session is Chris/Admin, not chris_dev. No alternate employee session or credentials were accessed.",
+    "No shipped activation/revocation UI or connected secure own-session RPC/PATCH invocation channel is established. Admin activation/revocation and guarded chris_dev cancellation require their respective genuine sessions; normal Cancel UI lacks atomic predicates."
+  ],
+  "invoice": {
+    "reference": "SYN-TENDEV-RECEIVAL-20261030-01",
+    "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "bytes": 2877
+  },
+  "catalog": {
+    "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "size": "#0",
+    "unit": "50lb bag",
+    "vendor": "T&M Supply",
+    "material": "Alaska White"
+  },
+  "operation": {
+    "pendingRows": 1,
+    "quantityExpected": "1",
+    "unit": "Bag",
+    "receivedQuantity": "0",
+    "newCatalog": false,
+    "newJob": false,
+    "onHandIncrease": false
+  },
+  "proposedWindow": {
+    "date": "2026-10-30",
+    "timezone": "America/Chicago",
+    "start": "14:20",
+    "end": "14:35",
+    "startUtc": "2026-10-30T19:20:00Z",
+    "endUtc": "2026-10-30T19:35:00Z",
+    "confirmed": false,
+    "activationNotBeforeStart": true,
+    "noAutomaticRollover": true,
+    "latestCreationPhase": "14:30; stop creation and reserve at least5minutes for exact cleanup/revocation"
+  },
+  "budget": {
+    "remainingHostedUsd": 3.787673,
+    "employeeDayRemainingUsd": 0.25,
+    "requestMaximumUsd": 0.25,
+    "cutoffUtc": "2026-10-30T23:00:00+00:00",
+    "cutoffLocal": "October30 6pmChicago",
+    "changesAuthorized": false
+  },
+  "activation": {
+    "transport": "Supabase PostgREST RPC using the Admin own genuine authenticated client/session; never Management SQL, a service key, forged claims or borrowed sessions",
+    "path": "/rest/v1/rpc/activate_tenbot_chris_dev_canary_grant",
+    "required": [
+      "active non-read-only Admin",
+      "manageRolesPermissions",
+      "all SQL write gates OFF",
+      "enrollment empty"
+    ],
+    "body": {
+      "p_expires_at": "2026-10-30T19:35:00Z",
+      "p_reason": "Product-approved one-row chris_dev TenDev canary SYN-TENDEV-RECEIVAL-20261030-01; explicit 14:20–14:35 Chicago window"
+    },
+    "returned": "Exact grant UUID; retain for revocation",
+    "performed": false
+  },
+  "sequence": [
+    "Verify genuine chris_dev and own-Admin authenticated channels, fresh Product authorization/window, duplicate/catalog/budget/off-state; abort if any unavailable.",
+    "At or after14:20, own Admin explicitly activates exact user grant expiring14:35; retain UUID and verify remaining lifetime<=15minutes.",
+    "Only after activation under separate Product authorization, allowlist/enroll chris_dev for TenDev alone and enable finite SQL/Edge pilot+execution gates no later than grant expiry.",
+    "chris_dev uploads only frozen original, reviews exact catalog/1Bag/noJob/noNewMaterial/provenance and explicitly approves immutable draft; canonical transactional service creates at mostone pending row.",
+    "Verify actual returnedID, persisted1Bag/received0/queuevisibility/privateoriginal/audit/idempotent retry and no stock/receipt changes; do not create replacement rows.",
+    "By14:30 disable agent creation; while grant still active perform exact guarded same-chris_dev cancellation, then immediately own-Admin exact-grant revocation.",
+    "Verify row cancelled/unreceived, audit/original retained, grant inactive, approval/permit authority invalidated, enrollment removed, Edge/SQL gates OFF/allowlist empty, Developer/base permissions unchanged."
+  ],
+  "cancellation": {
+    "transport": "Same genuine chris_dev caller-scoped PostgREST PATCH",
+    "target": "Only actual returned pending receival UUID P",
+    "predicates": {
+      "id": "eq.P",
+      "status": "eq.pending",
+      "quantity_received": "eq.0",
+      "receipt_inventory_item_id": "is.null",
+      "receipt_transaction_id": "is.null",
+      "received_at": "is.null"
+    },
+    "body": {
+      "status": "cancelled"
+    },
+    "response": "Prefer return=representation; exactlyone returned matching row",
+    "failure": "Read only exactP after uncertain/zero result; otherwise STOP. No broader filters, Admin business cleanup, regrant, Receive/Undo or delete."
+  },
+  "revocation": {
+    "path": "/rest/v1/rpc/revoke_tenbot_chris_dev_canary_grant",
+    "body": {
+      "p_grant_id": "Exact returned activation grant UUID",
+      "p_reason": "One-row canary complete/cancelled; invalidate outstanding authority and clear enrollment"
+    },
+    "performed": false
+  },
+  "actions": {
+    "grantRpcCalls": 0,
+    "writeGateChanges": 0,
+    "enrollmentChanges": 0,
+    "uploads": 0,
+    "approvals": 0,
+    "operationalWrites": 0,
+    "inferenceCalls": 0,
+    "migrations": 0,
+    "deployments": 0,
+    "permissionChanges": 0,
+    "gitCommits": 0
+  },
+  "decision": "Stop for Product authorization after prerequisite resolution; this plan does not authorize execution."
+}

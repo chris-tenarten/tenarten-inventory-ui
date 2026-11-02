@@ -1,0 +1,313 @@
+{
+  "status": "HEALTHY_WITHIN_BOUNDED_POST_UPGRADE_WINDOW",
+  "project": "tenartenDB",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "authority": "Chris POST-UPGRADE HEALTH CHECK: bounded read-only Production diagnostics only; separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "scope": "Focused real service/resource/aggregate workload and genuine caller read checks; no application delta.",
+  "firstCaptureAt": "2026-10-31T00:07:43.461Z",
+  "followupCaptureAt": "2026-10-31T00:08:49.792Z",
+  "verifiedHealthySincePriorRecovery": "2026-10-30T23:55:39Z",
+  "durationFromFirstRecoveryToLatestHealthSeconds": 790.7920000553131,
+  "currentHealth": [
+    [
+      {
+        "name": "auth",
+        "healthy": true,
+        "status": "ACTIVE_HEALTHY"
+      },
+      {
+        "name": "db",
+        "healthy": true,
+        "status": "ACTIVE_HEALTHY"
+      }
+    ],
+    [
+      {
+        "name": "auth",
+        "healthy": true,
+        "status": "ACTIVE_HEALTHY"
+      },
+      {
+        "name": "db",
+        "healthy": true,
+        "status": "ACTIVE_HEALTHY"
+      }
+    ]
+  ],
+  "requestLatenciesMs": [
+    {
+      "name": "health",
+      "status": 200,
+      "ms": 387
+    },
+    {
+      "name": "metrics",
+      "status": 200,
+      "ms": 286
+    },
+    {
+      "name": "backend-logs",
+      "status": 200,
+      "ms": 1000
+    },
+    {
+      "name": "gateway-logs",
+      "status": 200,
+      "ms": 1296
+    },
+    {
+      "name": "database-diagnostics",
+      "status": 201,
+      "ms": 220
+    },
+    {
+      "name": "health",
+      "status": 200,
+      "ms": 310
+    },
+    {
+      "name": "metrics",
+      "status": 200,
+      "ms": 333
+    }
+  ],
+  "memoryFirst": {
+    "totalBytes": 1924182016,
+    "availableBytes": 1300049920,
+    "availablePct": 67.56377043282791,
+    "notAvailableBytes": 624132096,
+    "notAvailablePct": 32.43622956717209,
+    "committedBytes": 1641484288,
+    "commitLimitBytes": 2035826688,
+    "commitmentPct": 80.6298639110875,
+    "swapUsedBytes": 90112
+  },
+  "memoryFollowup": {
+    "totalBytes": 1924182016,
+    "availableBytes": 1289396224,
+    "availablePct": 67.01009640867572,
+    "notAvailableBytes": 634785792,
+    "notAvailablePct": 32.989903591324286,
+    "committedBytes": 1636225024,
+    "commitLimitBytes": 2035826688,
+    "commitmentPct": 80.37152836459917,
+    "swapUsedBytes": 86016
+  },
+  "cpu": {
+    "intervalSeconds": 67.29499983787537,
+    "logicalCpuCount": 2,
+    "executionPct": 1.4805446023361337,
+    "nonIdlePct": 1.9195000371996216,
+    "ioWaitPct": 0.11903876199687595,
+    "stealPct": 0.3199166728666022,
+    "load1Before": 0.13,
+    "load1After": 0.07
+  },
+  "swapAndOomCounterDeltas": {
+    "node_vmstat_pswpin": 0,
+    "node_vmstat_pswpout": 0,
+    "node_vmstat_oom_kill": 0
+  },
+  "filesystems": [
+    {
+      "labels": {
+        "device": "/dev/nvme0n1p2",
+        "fstype": "ext4",
+        "mountpoint": "/"
+      },
+      "totalBytes": 10359754752,
+      "availableBytes": 1992028160,
+      "availablePct": 19.228526231428688
+    },
+    {
+      "labels": {
+        "device": "/dev/nvme1n1",
+        "fstype": "ext4",
+        "mountpoint": "/data"
+      },
+      "totalBytes": 8350298112,
+      "availableBytes": 7984160768,
+      "availablePct": 95.61527817223875
+    }
+  ],
+  "connections": {
+    "otherClientBackends": 17,
+    "maxConnections": 90,
+    "blockedBackends": 0,
+    "idleInTransaction": 0,
+    "longestOtherClientQuerySeconds": 0,
+    "longestOtherClientTransactionSeconds": 0,
+    "postgrestPoolWaiting": 0,
+    "postgrestPoolMax": 30,
+    "latestMetricsDatabaseBackends": 20,
+    "limits": "Separate snapshot times/definitions; SQL excludes this diagnostic connection."
+  },
+  "logs": {
+    "window": {
+      "start": "2026-10-30T23:52:00Z",
+      "end": "2026-10-31T00:07:00.000Z"
+    },
+    "backendBucketRows": 29,
+    "gatewayBucketRows": 34,
+    "resultLimitsReached": false,
+    "gatewayRequests": 120,
+    "gatewayNon2xxRequests": 0,
+    "postRecoveryWholeMinuteStart": "2026-10-30T23:56:00Z",
+    "postRecoveryCategoryMentions": {
+      "capacity_mentions": 0,
+      "connectivity_mentions": 0,
+      "resource_mentions": 0,
+      "timeout_or_deadlock_mentions": 0
+    },
+    "postRecoveryRecordedPostgresEvents": 911,
+    "postRecoveryRecordedDurationsGe1s": 0,
+    "postRecoveryMaxRecordedCompletedDurationMs": 48.467,
+    "latestPostgresEventAt": "2026-10-31T00:06:00.592000",
+    "resizeConnectivityMentions": [
+      {
+        "bucket": "2026-10-30T23:53:00",
+        "source": "postgrest_logs",
+        "mentions": 8
+      }
+    ],
+    "limits": "Aggregate pattern matches and recorded completed durations, not every query or a guarantee that unfinished/unlogged work is absent. The final partial minute was excluded."
+  },
+  "schedules": {
+    "jobs": [
+      {
+        "name": "tenops-messaging-abandoned-drafts",
+        "jobid": 1,
+        "active": true,
+        "schedule": "17 * * * *",
+        "job_exists": true
+      },
+      {
+        "name": "tenops-web-push",
+        "jobid": 2,
+        "active": true,
+        "schedule": "* * * * *",
+        "job_exists": true
+      },
+      {
+        "name": "tenbot-invoice-original-expiry",
+        "jobid": 3,
+        "active": true,
+        "schedule": "23 * * * *",
+        "job_exists": true
+      }
+    ],
+    "cronSampleCoverage": {
+      "limit": 200,
+      "sampledRows": 200,
+      "oldestStartedAt": "2026-10-30T20:52:00.254229+00:00"
+    },
+    "sinceRecoveryCron": [
+      {
+        "name": "tenops-messaging-abandoned-drafts",
+        "jobid": 1,
+        "label": "since_verified_recovery",
+        "failed": 0,
+        "started": 0,
+        "succeeded": 0,
+        "last_ended": null,
+        "unfinished": 0,
+        "last_started": null,
+        "max_finished_seconds": null,
+        "connection_or_timeout_failures": 0,
+        "max_unfinished_record_age_seconds": null
+      },
+      {
+        "name": "tenops-web-push",
+        "jobid": 2,
+        "label": "since_verified_recovery",
+        "failed": 0,
+        "started": 12,
+        "succeeded": 12,
+        "last_ended": "2026-10-31T00:07:00.072854+00:00",
+        "unfinished": 0,
+        "last_started": "2026-10-31T00:07:00.056429+00:00",
+        "max_finished_seconds": 0.026486,
+        "connection_or_timeout_failures": 0,
+        "max_unfinished_record_age_seconds": null
+      },
+      {
+        "name": "tenbot-invoice-original-expiry",
+        "jobid": 3,
+        "label": "since_verified_recovery",
+        "failed": 0,
+        "started": 0,
+        "succeeded": 0,
+        "last_ended": null,
+        "unfinished": 0,
+        "last_started": null,
+        "max_finished_seconds": null,
+        "connection_or_timeout_failures": 0,
+        "max_unfinished_record_age_seconds": null
+      }
+    ],
+    "sinceRecoveryWakes": [
+      {
+        "label": "since_verified_recovery",
+        "wakes": 0,
+        "consumed": 0,
+        "last_wake": null,
+        "environment": "tendev",
+        "last_consumed": null,
+        "expired_unconsumed": 0,
+        "max_consumption_lag_seconds": null
+      },
+      {
+        "label": "since_verified_recovery",
+        "wakes": 12,
+        "consumed": 12,
+        "last_wake": "2026-10-31T00:07:00.061756+00:00",
+        "environment": "tenops",
+        "last_consumed": "2026-10-31T00:07:00.498367+00:00",
+        "expired_unconsumed": 0,
+        "max_consumption_lag_seconds": 2.318594
+      }
+    ],
+    "interpretation": "Twelve minute-job invocations succeeded, no failed/unfinished runs; all twelve TenOps wake tokens consumed. Cron enqueue success/consumption does not prove notification delivery. Hourly abandoned-draft :17 and invoice-cleanup :23 jobs were not due in the post-recovery interval. No unusual job workload is demonstrated."
+  },
+  "writeControls": {
+    "pilot": false,
+    "permits": 0,
+    "execution": false,
+    "enrollment": 0,
+    "activeGrants": 0
+  },
+  "comparison": {
+    "preUpgrade": "Database/Auth unhealthy; last historical Reports commitment 1.37 GB marked SEVERE with substantial swap. Current resource telemetry was unavailable. No confirmed OOM or workload attribution.",
+    "immediateRecovery": {
+      "at": "2026-10-30T23:55:39.953Z",
+      "availableBytes": 1352036352,
+      "availablePct": 70.26551234537679,
+      "committedBytes": 1509126144,
+      "commitmentPct": 74.1284193,
+      "swapUsedBytes": 69632
+    },
+    "interpretation": "Available RAM modestly lower and commitment higher than immediate recovery, but commitment fell between fresh samples and swap counters stayed unchanged. Compatible with post-start allocation/cache warmup; no demonstrated leak or recurring pressure. Commitment is not resident RAM usage; new-host OOM counter cannot exclude an earlier OOM."
+  },
+  "recommendation": "No additional resize, restart, job pause or query/index optimization is justified by this snapshot. Keep the existing Support investigation for the original cause; review resource trend under normal/peak use and reconcile interrupted operations before retry. No new monitoring service or scheduled change created.",
+  "limitations": [
+    "About thirteen minutes since first verified recovery, with a 67-second rate sample; not a peak-load or long-term stability proof.",
+    "No exhaustive query scan, raw SQL/event capture, pg_stat_statements export or employee/customer/message contents.",
+    "Two hourly jobs had not yet run after resize; no claim their post-resize execution was tested.",
+    "Existing expired inference cutoff and uncertain metering reservation remain unchanged; no provider test."
+  ],
+  "preserved": {
+    "sourceHead": "ec62998aba228e615279ae7d6e81f04378e62062",
+    "authCandidate": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+    "hostedApplicationRuntimes": "Unchanged TenOps 2a3e45c / TenDev ce157b99; no new release or deployment.",
+    "unrelatedWorkingTree": true,
+    "localhost3000": true
+  },
+  "hostedMutations": 0,
+  "modelCalls": 0,
+  "commits": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "privacy": "Allowlisted numeric metrics, aggregate logs and state only. No credential values, raw queries/log messages, business records, private conversations or payment details retained."
+}

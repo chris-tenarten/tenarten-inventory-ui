@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T21:04:23.473Z",
+  "method": "Normal existing native Safari/Chrome UI, authenticated own-session SDK; no developer console, token handling, impersonation or substitute accounts.",
+  "url": "https://tendev.pages.dev/tenbot/canary",
+  "sourceSha": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "deployment": "09c6a4c4-7f66-46ec-a8bd-c5d8b49be410",
+  "admin": {
+    "account": "Chris Ngo / Admin",
+    "browser": "Safari",
+    "realAuthStatusRpc": true,
+    "refreshCompleted": true,
+    "adminControlsOnly": true,
+    "reasonAndLocalExpiryFieldsVisible": true,
+    "confirmationEnabled": true,
+    "confirmationChecked": false,
+    "activationDisabledUntilExplicitConfirmation": true,
+    "activateInvoked": false,
+    "revokeAbsentWithoutExactGrant": true
+  },
+  "owner": {
+    "account": "chris developer / Developer",
+    "browser": "Chrome work",
+    "realAuthStatusRpc": true,
+    "refreshCompleted": true,
+    "adminControlsAbsent": true,
+    "ownerCancellationSectionOnly": true,
+    "edgeOffOperatorPrerequisiteVisible": true,
+    "noCompletedCanaryToCancel": true,
+    "cancelInvoked": false
+  },
+  "both": {
+    "reviewOnlyBannerAbsent": true,
+    "exactHeader": "chris_dev · SYN-TENDEV-RECEIVAL-20261030-01 · Alaska White #0 · 1 Bag",
+    "developerBaselineVerified": true,
+    "sqlPilot": false,
+    "sqlExecution": false,
+    "enrollment": 0,
+    "grant": null,
+    "durableGrantExpiry": null,
+    "noErrors": true
+  },
+  "scopeSource": {
+    "supplier": "T&M Supply",
+    "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "expected": 1,
+    "unit": "Bag",
+    "received": 0,
+    "noCatalogOrJobOrStockChange": true
+  },
+  "limits": [
+    "No actual grant expiry/revocation/cancellation lifecycle was invoked; accepted isolated evidence reused.",
+    "No enabled action confirmation was selected and no mutation button clicked.",
+    "No grant or row exists, so exact revoke/cancel buttons correctly remain absent; their canonical safeguards are unchanged.",
+    "Expiry input shown by Safari is a local empty-field presentation, not a persisted grant expiry or authorized execution window.",
+    "Role-specific durable server status and read refreshes observed; no raw Auth/network trace retained."
+  ],
+  "operationalWrites": 0,
+  "grantCalls": 0,
+  "approvalSelections": 0,
+  "inferenceCalls": 0,
+  "nativeControlReleased": true
+}

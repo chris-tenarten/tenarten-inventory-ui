@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:31:26.897Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "querySha256": "4a219f3fb932cac1a67ab8358112e2f64fdd1b0e5bf67c83ad56ff77aee5442a",
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 748026,
+      "remainingMicrousd": 3791930,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "readOnly": "on",
+    "pilotEnabled": false,
+    "executionEnabled": false,
+    "executionPermits": 0,
+    "enrolledEmployees": 0,
+    "approvedInvoiceDrafts": 0,
+    "approvedInvoiceSources": 0,
+    "approvedInvoiceDocumentClaims": 0
+  },
+  "edgeWriteFlagsDisabled": true,
+  "edgeEmployeeAllowlistEmpty": true,
+  "anthonySessionVerified": false,
+  "humanApprovalVerified": false,
+  "executionWindowConfirmed": false,
+  "operationalDataAccess": "None: no pending_receivals, Inventory, private messages or Job rows read through operator credentials",
+  "directHostedMutations": 0,
+  "permissionChanges": 0,
+  "inferenceCalls": 0,
+  "sourceUploads": 0
+}

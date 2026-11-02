@@ -1,0 +1,72 @@
+{
+  "recordedAt": "2026-10-29T23:05:43.449183+00:00",
+  "authorization": "Product authorizes one data-free preview branch, Micro compute about4hours, target<$1; stopifadditionalpaidresourcesrequired.",
+  "riskTier": 3,
+  "candidate": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+  "outcome": "STOPPED_HTTP_402_BILLING_GATE_NO_DATABASE_VALIDATION",
+  "migrations": [
+    {
+      "name": "20261029220000_tenbot_openai_metering.sql",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+      "applied": false,
+      "databaseValidated": false
+    },
+    {
+      "name": "20261029221000_tenbot_agent_history.sql",
+      "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31",
+      "applied": false,
+      "databaseValidated": false
+    }
+  ],
+  "databaseGates": {
+    "signedJwtRls": "NOT_RUN_BLOCKED_PROVISIONING_HTTP_402",
+    "employeeAdminIsolation": "NOT_RUN_BLOCKED_PROVISIONING_HTTP_402",
+    "ownerHistory": "NOT_RUN_BLOCKED_PROVISIONING_HTTP_402",
+    "permissionRevocation": "NOT_RUN_BLOCKED_PROVISIONING_HTTP_402",
+    "atomicReservations": "NOT_RUN_BLOCKED_PROVISIONING_HTTP_402",
+    "concurrentRequestsRetries": "NOT_RUN_BLOCKED_PROVISIONING_HTTP_402",
+    "uncertainCharges": "NOT_RUN_BLOCKED_PROVISIONING_HTTP_402",
+    "unauthorizedAccess": "NOT_RUN_BLOCKED_PROVISIONING_HTTP_402"
+  },
+  "cloudResourceReconciliation": {
+    "httpStatus": 200,
+    "temporaryPreviewBranches": 0,
+    "cleanupRequired": false,
+    "defaultMainDescriptorInitializedByFailedCreate": true,
+    "defaultDescriptorPreservedAsProductionMetadata": true
+  },
+  "cost": {
+    "newPreviewInstances": 0,
+    "expectedIncrementalPreviewComputeUsd": 0,
+    "actualInvoiceVerified": false,
+    "inferenceCalls": 0,
+    "inferenceCostUsd": 0
+  },
+  "tenDevTerraStagingCleared": false,
+  "remainingOwnerAction": "Resolve Supabase branch billing/eligibility under separate Product authorization, or restore/designate a responsive approved isolated environment. No automatic plan upgrade or retry.",
+  "scope": {
+    "productionOperationalWrites": 0,
+    "productionMigrationsApplied": 0,
+    "isolatedMigrationsApplied": 0,
+    "sourceChanges": false,
+    "hostedOpenAiActivation": false,
+    "keyChanged": false,
+    "qwenChanged": false,
+    "receivalWritesEnabled": false,
+    "pushOrDeployment": false
+  },
+  "localPreparedArtifacts": [
+    "/private/tmp/tenops-tenbot-hosted-adapter-20261029/branch-lifecycle.mjs",
+    "/private/tmp/tenops-tenbot-hosted-adapter-20261029/history-auth-live.mts",
+    "/private/tmp/tenops-tenbot-preview-meter-20261029/meter.mjs"
+  ],
+  "preparedArtifactsExecutedAsDatabaseTests": false,
+  "evidence": [
+    "isolated-branch-attempt.json",
+    "branch-parent-migration-preflight.json",
+    "branch-lifecycle-stop.json",
+    "branch-reconciliation.json",
+    "history-auth-live-result.json",
+    "isolated-meter-harness-prepared.json"
+  ]
+}

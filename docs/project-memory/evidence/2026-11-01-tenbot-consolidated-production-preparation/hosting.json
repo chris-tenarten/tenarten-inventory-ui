@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "at": "2026-11-02T01:47:15.472Z",
+  "productionBase": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "productionDeployment": "967ed4d1-0ee8-4488-8db2-ee984cabc953",
+  "acceptedTenDev": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "tenDevDeployment": "a13abbaf-1a44-4231-abea-d1e408cc8d94",
+  "edge": {
+    "version": 40,
+    "status": "ACTIVE",
+    "jwtVerification": true,
+    "metadataSha256": "694222bc534dc6c937a6af9c3260600e8938a16bc154d295bb8fb146520b3396"
+  },
+  "all41HostedModuleBytesMatch": true,
+  "edgeBundleSha256": "76a71a3761e039f4f2b84904984e8bf789aece15f067ec685fccf79d15d89dda",
+  "hostedMutations": 0
+}

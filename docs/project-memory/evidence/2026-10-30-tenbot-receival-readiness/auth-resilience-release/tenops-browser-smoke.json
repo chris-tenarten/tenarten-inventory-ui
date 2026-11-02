@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:25:00.450877+00:00",
+  "project": "tenops",
+  "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+  "method": "Actual native Safari UI via cua_repl; genuine own Chris/Admin session, no console or token extraction",
+  "reloadFromOrigin": true,
+  "sessionRestored": true,
+  "observedReloadToInventoryMs": 1569,
+  "timingScope": "Wall time through native reload and observation; not isolated Auth network latency",
+  "adminRolePreserved": true,
+  "inventoryRefresh": "PASS: populated table and Pending Receivals (0), no restoration/schema-cache/access failure",
+  "messaging": "PASS: normal Inbox and existing own TenBot entry loaded; settled state verified after initial transition; closed back to Inventory",
+  "messagesSubmitted": 0,
+  "inferenceCalls": 0,
+  "operationalWrites": 0,
+  "noFaultInjectionOrBroadRetest": true,
+  "reusedOfflineGroups": 9,
+  "reusedLocalBrowserGroups": 20,
+  "nativeControlReleased": true
+}

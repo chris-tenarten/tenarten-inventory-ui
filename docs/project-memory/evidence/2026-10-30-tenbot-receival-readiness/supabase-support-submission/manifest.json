@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "name": "ticket-subject.txt",
+      "sha256": "4218f2aa35e8f56c122a64dc15f1adfe2c0bf456a2980d812508c902ff4aeee9"
+    },
+    {
+      "name": "ticket-body.txt",
+      "sha256": "e4c16a1e8db99b0cb7aaaf2d54814baf16c6406873b2a7b7c960b9d6d2836d0f"
+    },
+    {
+      "name": "incident-evidence.json",
+      "sha256": "e09c97031c5bed3388be46f47d5ff3c192343cdc4ac77931d355020978b1fd41"
+    },
+    {
+      "name": "prepared.json",
+      "sha256": "1a08bc860741e5994991b2a4c06ab487a790c6b69d6c6967f8002f31a7418cda"
+    },
+    {
+      "name": "submission.json",
+      "sha256": "7c5aa97aa956b46195d458c39b83581f8ed9760662fde1de95d986fd2403adea"
+    }
+  ]
+}

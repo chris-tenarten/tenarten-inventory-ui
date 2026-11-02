@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-10-29T23:43:12.671Z",
+  "candidate": "b11b7574b72dd7ae3186477df075dbca267dc8f7",
+  "sharedRef": "vxdxjhazkqhpkwdqtobp",
+  "secretNames": [
+    "MESSAGING_CLEANUP_INVOCATION_SECRET",
+    "MONDAY_API_TOKEN",
+    "MONDAY_API_VERSION",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_DB_URL",
+    "SUPABASE_JWKS",
+    "SUPABASE_PUBLISHABLE_KEYS",
+    "SUPABASE_SECRET_KEYS",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "TENBOT_AI_ENABLED",
+    "TENBOT_ALLOWED_ORIGINS",
+    "TENBOT_CF_ACCOUNT_ID",
+    "TENBOT_CF_AI_TOKEN",
+    "TENBOT_CF_MODEL",
+    "TENDEV_WEB_PUSH_CONTACT",
+    "TENDEV_WEB_PUSH_ENABLED",
+    "TENDEV_WEB_PUSH_VAPID_KEYS",
+    "TENDEV_WEB_PUSH_WAKE_SECRET",
+    "TENOPS_ALLOWED_ORIGINS",
+    "TENOPS_LOGO_URL",
+    "TENOPS_WEB_PUSH_CONTACT",
+    "TENOPS_WEB_PUSH_ENABLED",
+    "TENOPS_WEB_PUSH_VAPID_KEYS",
+    "TENOPS_WEB_PUSH_WAKE_SECRET"
+  ],
+  "config": {
+    "TENBOT_OPENAI_ENABLED": {
+      "present": false,
+      "expectedDigestMatches": false
+    },
+    "TENBOT_OPENAI_SPEND_AUTHORIZED": {
+      "present": false,
+      "expectedDigestMatches": false
+    },
+    "TENBOT_OPENAI_ALLOWED_ORIGINS": {
+      "present": false,
+      "expectedDigestMatches": false
+    },
+    "TENBOT_OPENAI_KEY_EXPIRES_AT": {
+      "present": false,
+      "expectedDigestMatches": false
+    },
+    "TENBOT_AI_ENABLED": {
+      "present": true,
+      "expectedDigestMatches": false
+    }
+  },
+  "hostedKeyPresent": false,
+  "function": {
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 8,
+    "status": "ACTIVE",
+    "verifyJwt": true
+  },
+  "projects": [
+    {
+      "name": "tendev",
+      "productionBranch": "dev",
+      "deployment": "7ef121ad-e19e-4caf-816d-11d2c590a734",
+      "sha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "url": "https://7ef121ad.tendev.pages.dev"
+    },
+    {
+      "name": "tenops",
+      "productionBranch": "main",
+      "deployment": "6cda75a5-dc37-480c-8027-bd7806176c34",
+      "sha": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "url": "https://6cda75a5.tenops.pages.dev"
+    }
+  ],
+  "cloudflareAuthRefreshed": true,
+  "mutations": "Existing Cloudflare OAuth session refresh only; no deployment, database, secret or paid inference changes"
+}

@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T03:30:19.801Z",
+  "preparationEnabled": false,
+  "preparationSpending": false,
+  "ordinarySpending": false,
+  "meterEnabled": false,
+  "meterExpiresAt": "2026-10-30T23:00:00+00:00",
+  "pilotEnabled": false,
+  "executionEnabled": false,
+  "canaryFundingEnabled": false,
+  "activeGrants": 0,
+  "enrollment": 0,
+  "profile": {
+    "id": "3785f6b9-742e-452f-af6c-31613a983633",
+    "read": true,
+    "role": "developer",
+    "active": true,
+    "adjust": false,
+    "readOnly": false
+  },
+  "business": {
+    "audit": "d41d8cd98f00b204e9800998ecf8427e",
+    "drafts": 0,
+    "pending": 0,
+    "approvals": 0,
+    "executions": 0
+  },
+  "targetStockUnchanged": true,
+  "allStockUnchanged": true,
+  "inventoryTransactionCountUnchanged": true,
+  "oldReservation": {
+    "hash": "dcb2b3de762fb16271dd9174bc7f1a11",
+    "state": "reserved",
+    "actual": null,
+    "reserved": 61139
+  },
+  "priorCanaryAccountingPreserved": true,
+  "source": {
+    "id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+    "owner": "3785f6b9-742e-452f-af6c-31613a983633",
+    "state": "ready",
+    "version": 2,
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "expiresAt": "2026-11-01T01:24:35.833487+00:00",
+    "retained": false,
+    "bound": false,
+    "privateOriginalPresent": true,
+    "draftStatus": "review_required",
+    "canApprove": false,
+    "executionEnabled": false,
+    "simulation": false,
+    "durableDraftPresent": false,
+    "supplier": "T&M Supply",
+    "referenceMatches": true,
+    "rows": [
+      {
+        "material": "Alaska White",
+        "size": "#0",
+        "quantity": "1",
+        "unit": "Bag",
+        "sourceQuantity": "1",
+        "sourceUnit": "Bag",
+        "jobPresent": false,
+        "excluded": false
+      }
+    ]
+  },
+  "sourceEvidenceExpiresAt": "2026-11-01T01:24:35.833487+00:00",
+  "additionalCostUsd": 0.014402,
+  "priorAccountedMicrousd": 771769,
+  "finalAccountedMicrousd": 786171,
+  "otherNewUsage": 0,
+  "operationalWrites": 0
+}

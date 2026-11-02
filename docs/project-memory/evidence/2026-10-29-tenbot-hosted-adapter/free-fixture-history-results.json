@@ -1,0 +1,332 @@
+{
+  "status": "pass",
+  "mode": "Actual isolated Supabase SDK/Auth/PostgREST; no model inference",
+  "startedAt": "2026-10-29T23:26:44.743Z",
+  "elapsedMs": 125654,
+  "httpCalls": 153,
+  "httpKinds": {
+    "AuthPasswordSignIn": 4,
+    "AuthGetUser": 10,
+    "PostgrestRPC": 130,
+    "Other": 9
+  },
+  "rpcEvents": [
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_release",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_release",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_release",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_release",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_clear",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_release",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_claim",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_load",
+      "status": 200,
+      "error": false,
+      "code": null
+    },
+    {
+      "name": "tenbot_agent_commit",
+      "status": 200,
+      "error": false,
+      "code": null
+    }
+  ],
+  "inferenceCalls": 0,
+  "groups": 14,
+  "checks": [
+    {
+      "name": "real synthetic sign-in, JWT getUser and current app capability",
+      "status": "pass",
+      "durationMs": 2227
+    },
+    {
+      "name": "invalid and forged real-JWT signature are rejected by Auth and PostgREST",
+      "status": "pass",
+      "durationMs": 417
+    },
+    {
+      "name": "caller claim contains metadata only; trusted owner-bound load/commit persists actual state",
+      "status": "pass",
+      "durationMs": 884
+    },
+    {
+      "name": "ordinary employee and admin cannot claim, load, clear or directly read another owner history",
+      "status": "pass",
+      "durationMs": 986
+    },
+    {
+      "name": "authenticated client cannot invoke commit or proof validator; service cannot cross-bind owner/claim/revision",
+      "status": "pass",
+      "durationMs": 1488
+    },
+    {
+      "name": "fresh SDK clients hydrate real persisted proof state without inference and do not renew expiry",
+      "status": "pass",
+      "durationMs": 2022
+    },
+    {
+      "name": "strict server state validation rejects live/tool/native fields, invalid modes and excess context",
+      "status": "pass",
+      "durationMs": 3847
+    },
+    {
+      "name": "actual SQL CAS permits one concurrent commit and rejects replay and concurrent second claim",
+      "status": "pass",
+      "durationMs": 744
+    },
+    {
+      "name": "permission revocation denies existing signed JWT, service read/commit and hydration",
+      "status": "pass",
+      "durationMs": 891
+    },
+    {
+      "name": "revoked source permission hides retained guidance while operational-read access remains valid",
+      "status": "pass",
+      "durationMs": 1260
+    },
+    {
+      "name": "clear invalidates a real in-flight lease; late commit cannot resurrect history",
+      "status": "pass",
+      "durationMs": 509
+    },
+    {
+      "name": "expired real database lease cannot load/commit/release a replacement claim",
+      "status": "pass",
+      "durationMs": 1316
+    },
+    {
+      "name": "expired real database history is unavailable and cannot be resurrected",
+      "status": "pass",
+      "durationMs": 866
+    },
+    {
+      "name": "genuinely server-signed expired JWT is rejected by Auth and PostgREST",
+      "status": "pass",
+      "durationMs": 108164
+    }
+  ],
+  "blocked": [],
+  "operationalWrites": 0,
+  "productionRequests": 0
+}

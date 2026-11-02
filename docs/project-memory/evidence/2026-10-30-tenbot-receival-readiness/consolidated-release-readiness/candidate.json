@@ -1,0 +1,274 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T04:36:32.498Z",
+  "sha": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "tree": "d2ccac0d3385d6cbff8361e6efc4c830871d98be",
+  "parent": "f39a135c36da94906c8ddfa72dcccaa06c5b0606",
+  "baseline": "e357d5625734522c904fa80335e9aad5180a3fec",
+  "implementationRevision": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c",
+  "ref": "refs/tenops/candidates/consolidated-readiness-20261031",
+  "sourceObject": {
+    "sha": "957de31a4c4c0f7d094863f928d82b03b377a298",
+    "tree": "85de2e7e4517e92ad0522e9441d85a668d0e28a2",
+    "parent": "e357d5625734522c904fa80335e9aad5180a3fec",
+    "ref": "refs/tenops/candidates/model-free-execution-source-20261030"
+  },
+  "source": "/private/tmp/tenops-tenbot-consolidated-readiness-20261031/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-consolidated-readiness-20261031/candidate-git",
+  "output": "/private/tmp/tenops-tenbot-consolidated-readiness-20261031/candidate/out",
+  "sourceHashes": [
+    {
+      "path": "src/modules/inventory/tenbot-canary-control.ts",
+      "blob": "05059719413c17031172f5fe052e7268c516c962",
+      "sha256": "095fb9576780e94f092dd9e2f49769ee4f32cbb390ad724bd4b0f60a35974a55"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-execution.ts",
+      "blob": "b978f7fa9337d3e569eb9e614a1ff115351f9e2c",
+      "sha256": "d20623ca2be46394e2ca958ad123a4d75fd7c6488eea846346f22565660cbbfc"
+    },
+    {
+      "path": "src/modules/tenbot/ReceivalDraftReview.tsx",
+      "blob": "f019d31a66b2719d6777e26f9ed3b9daf1711aff",
+      "sha256": "6a3994ff906be1f34c7d9b170a9ce6f8a0464f4f4f1333c8d66b80da2e3af665"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotCanaryControl.tsx",
+      "blob": "031550e7ccef515063fd305e683c174c3c6b676c",
+      "sha256": "a914bcd9ffc61076fbc6fd48663d0fac75c8e25479e67fa5f5a17ad2242deb3e"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "blob": "3b81f1d0a737c0376e32e3be9145f173ed39438f",
+      "sha256": "afcf43ec6446da08a43cbc33ed60c39649f07932c9516579df5d6e181f8c0bd8"
+    },
+    {
+      "path": "src/modules/tenbot/live-review.ts",
+      "blob": "8c9614761ac12d66e8893afb090ce22aa79dd0b1",
+      "sha256": "0b42ff8592c195544d927c33b427c48fb066d1db9b85d7d6f73c81ed69f2306c"
+    },
+    {
+      "path": "src/modules/tenbot/prepared-draft-resume.ts",
+      "blob": "47fac4d66f71bf771fb29e133fc8d96db40cd3f7",
+      "sha256": "1e40d6f608921a1d149bd4734813898ca82f8473991513d4b6bad3d0c273b099"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "blob": "74c992d6e04f18dc7f16c0bdd56f6e2f24629fe8",
+      "sha256": "62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "blob": "18a8776166c69184246d90d6b0ca971042786486",
+      "sha256": "160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-database.sql",
+      "blob": "dd9fc04e883ca227a603553520709cfd1920872e",
+      "sha256": "77ed7efaaf309c6b6043051e1ead5cf79e64db99bc3ae8577725347dc780b7fd"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-lock-a.sql",
+      "blob": "79a61aeada8a1bc01f31fe149c097d075c906047",
+      "sha256": "36b6fe5f54eea557071c497e69b31ca07cbbfc418a91441e01d4086adec33e87"
+    },
+    {
+      "path": "scripts/support/tenbot-execution-window-lock-b.sql",
+      "blob": "143195cd433edb4d4a1dacc7068bf7161c26b414",
+      "sha256": "405107ddf49317589f1ea7432fe3cdf0b5a0dc6a0cfa7b38fed2d77f01342415"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-execution.mts",
+      "blob": "01d8108ad3b6df2211153018892b346a7b8a7982",
+      "sha256": "f5a298a87506dd2e6c79e66cdfc52fd49715ce2cec5f5a450544be002e9c9ba8"
+    },
+    {
+      "path": "scripts/verify-tenbot-canary-runtime.mts",
+      "blob": "f52f20abb2961f96fc5f6b4feea39e64a0726764",
+      "sha256": "b7b18734626cf4d5b364a209155092df6b658b83f548c4489b11060a5f4a9947"
+    },
+    {
+      "path": "scripts/verify-tenbot-model-free-resume.mts",
+      "blob": "75d08aa8d829a12e99d12d0a41680bb48024a7dc",
+      "sha256": "d76eaeb77397836d20f01f3f6c4dafe45d18312f8ce5c8d95e45965d080c2ee7"
+    },
+    {
+      "path": "scripts/verify-tenbot-prepared-draft-resume.mts",
+      "blob": "4582909beab4193ff8130ea56555d322186717ff",
+      "sha256": "451ef432bf95743e45e01c8ab1e4e391bbf478aeb783f3a65015d25ec73ea8ba"
+    },
+    {
+      "path": "scripts/verify-tenbot-prepared-resume-browser.mjs",
+      "blob": "3b117cfe131b65be1a853f20ed6d58bf992bf047",
+      "sha256": "67ced80cb5d3bb789bf78a4a6c202d38ae96e1c1bd887c0e187686b7844734f1"
+    },
+    {
+      "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "blob": "baa7b4eb2bd1a0ee078af2808ddb32c4f8972203",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27"
+    }
+  ],
+  "selectedApplicationFiles": 9,
+  "selectedTestFixtureFiles": 8,
+  "sourcePaths": [
+    "src/modules/inventory/tenbot-canary-control.ts",
+    "src/modules/inventory/tenbot-canary-execution.ts",
+    "src/modules/tenbot/ReceivalDraftReview.tsx",
+    "src/modules/tenbot/TenbotCanaryControl.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/live-review.ts",
+    "src/modules/tenbot/prepared-draft-resume.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "scripts/support/tenbot-execution-window-database.sql",
+    "scripts/support/tenbot-execution-window-lock-a.sql",
+    "scripts/support/tenbot-execution-window-lock-b.sql",
+    "scripts/verify-tenbot-canary-execution.mts",
+    "scripts/verify-tenbot-canary-runtime.mts",
+    "scripts/verify-tenbot-model-free-resume.mts",
+    "scripts/verify-tenbot-prepared-draft-resume.mts",
+    "scripts/verify-tenbot-prepared-resume-browser.mjs",
+    "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql"
+  ],
+  "proofOnlyChanges": [
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+  ],
+  "changedPaths": [
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+    "scripts/support/tenbot-execution-window-database.sql",
+    "scripts/support/tenbot-execution-window-lock-a.sql",
+    "scripts/support/tenbot-execution-window-lock-b.sql",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "scripts/verify-tenbot-canary-execution.mts",
+    "scripts/verify-tenbot-canary-runtime.mts",
+    "scripts/verify-tenbot-model-free-resume.mts",
+    "scripts/verify-tenbot-prepared-draft-resume.mts",
+    "scripts/verify-tenbot-prepared-resume-browser.mjs",
+    "src/modules/inventory/tenbot-canary-control.ts",
+    "src/modules/inventory/tenbot-canary-execution.ts",
+    "src/modules/tenbot/ReceivalDraftReview.tsx",
+    "src/modules/tenbot/TenbotCanaryControl.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/live-review.ts",
+    "src/modules/tenbot/prepared-draft-resume.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-receival-hosted.ts",
+    "supabase/functions/_shared/tenbot-receival-runtime.ts",
+    "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql"
+  ],
+  "appendedSourceReviews": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "blob": "74c992d6e04f18dc7f16c0bdd56f6e2f24629fe8",
+      "sha256": "62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc",
+      "reviewedCandidate": "957de31a4c4c0f7d094863f928d82b03b377a298",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "957de31a4c4c0f7d094863f928d82b03b377a298",
+        "heading": "## Accepted candidate source review — prepared-draft resume and execution-only window"
+      },
+      "acceptedAuthorityRevision": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "blob": "18a8776166c69184246d90d6b0ca971042786486",
+      "sha256": "160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e",
+      "reviewedCandidate": "957de31a4c4c0f7d094863f928d82b03b377a298",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "957de31a4c4c0f7d094863f928d82b03b377a298",
+        "heading": "## Accepted candidate source review — prepared-draft resume and execution-only window"
+      },
+      "acceptedAuthorityRevision": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "unapplied-migration",
+      "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "blob": "baa7b4eb2bd1a0ee078af2808ddb32c4f8972203",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+      "reviewedCandidate": "957de31a4c4c0f7d094863f928d82b03b377a298",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "957de31a4c4c0f7d094863f928d82b03b377a298",
+        "heading": "## Accepted candidate source review — prepared-draft resume and execution-only window"
+      },
+      "acceptedAuthorityRevision": "05bd3d4ccd1df1ecab1b17518c9fa1ad8c0cff3c"
+    }
+  ],
+  "selectedKnowledgeDependencies": [],
+  "recordSourceReviewsAdded": 0,
+  "knowledgeEntriesUnchanged": true,
+  "structuredKnowledgeUnchanged": true,
+  "releasedAuthorityUnchanged": true,
+  "existingSourceReviewsPreserved": true,
+  "currentStateUnchanged": true,
+  "cleanCandidate": true,
+  "fullHistoryAvailable": true,
+  "sharedIndexHeadBranchesUnchanged": true,
+  "unrelatedDirtyWorkPreserved": true,
+  "preparedMigrations": 1,
+  "appliedSharedMigrations": 0,
+  "newMigrations": [
+    {
+      "path": "supabase/migrations/20261031030000_tenbot_execution_only_canary_window.sql",
+      "version": "20261031030000",
+      "name": "tenbot_execution_only_canary_window",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+      "blob": "baa7b4eb2bd1a0ee078af2808ddb32c4f8972203"
+    }
+  ],
+  "newEdgeDeploymentRequired": true,
+  "edgeSlug": "tenbot",
+  "productAcceptancePending": true,
+  "prerequisiteEvidence": {
+    "database": {
+      "projectRef": "ahnqbzuhpwgmispwohwv",
+      "receipt": "/private/tmp/tenops-tenbot-clean-execution-validation-20261030/complete-positive-results.json",
+      "sha256": "656f36d0ab70e23746f77dc7ba3736dcdc2eceb0d37a04b5fac305c728d71c72"
+    },
+    "sharedCompatibility": {
+      "receipt": "/private/tmp/tenops-tenbot-clean-execution-validation-20261030/shared-compatibility-readback.json",
+      "sha256": "6d0830cf9451998802477f0e9660aac9fd2978b9ccdd1e9b9f2675ba4ba34b51"
+    }
+  },
+  "buildEnvironment": {
+    "NEXT_PUBLIC_TENBOT_CANARY_CONTROL_MODE": "enabled"
+  },
+  "unchangedSyntheticPdf": {
+    "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a"
+  },
+  "proofGateRun": false,
+  "buildRun": false,
+  "denoBundleGateRun": false,
+  "deployed": false,
+  "operationalWrites": 0,
+  "paidInferenceCalls": 0,
+  "durationMs": 5496,
+  "applicationFixes": [
+    {
+      "path": "src/modules/inventory/tenbot-canary-execution.ts",
+      "reason": "Explicit .ts extension for actual Deno resolution",
+      "beforeSha256": "02f35ae1927242ac9b19bff077bde525dc59c62c7c4668c1ef2b9dd334d8576e",
+      "afterSha256": "d20623ca2be46394e2ca958ad123a4d75fd7c6488eea846346f22565660cbbfc"
+    }
+  ],
+  "changedFromF39": [
+    "src/modules/inventory/tenbot-canary-execution.ts",
+    "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md"
+  ],
+  "newScopeNotAuthorized": false
+}

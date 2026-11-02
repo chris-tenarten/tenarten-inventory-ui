@@ -1,0 +1,48 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+  "method": "POST",
+  "startedAt": "2026-10-30T23:31:52.858Z",
+  "timeoutMs": 15000,
+  "querySha256": "4f08131175436ea9d0dc7f71fa5f8dcbc332dd6e2c588b979f83d876691b2cf8",
+  "readOnly": true,
+  "automaticRetries": 0,
+  "businessMutations": 0,
+  "status": 201,
+  "headersMs": 1410,
+  "totalMs": 1412,
+  "bodySha256": "4d133ec6fbc5f6d65618c07290fa2202376e4cd5d90f59cd2a08d25bdbbf0b77",
+  "state": {
+    "readOnly": "on",
+    "serverNow": "2026-10-30T23:31:54.023887+00:00",
+    "enrollment": 0,
+    "canaryDrafts": 0,
+    "pilotEnabled": false,
+    "backendStates": [
+      {
+        "count": 1,
+        "state": "active"
+      },
+      {
+        "count": 3,
+        "state": "idle"
+      },
+      {
+        "count": 8,
+        "state": "unknown"
+      }
+    ],
+    "canarySources": 0,
+    "maxConnections": 60,
+    "canaryReceivals": 0,
+    "canaryExecutions": 0,
+    "executionEnabled": false,
+    "executionPermits": 0,
+    "databaseStartedAt": "2026-10-30T23:30:44.699965+00:00",
+    "activeCanaryGrants": 0,
+    "inferenceReservationStates": {
+      "measured": 79,
+      "reserved": 1
+    },
+    "maxOpenTransactionAgeSeconds": 9.396353
+  }
+}

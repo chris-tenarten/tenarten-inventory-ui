@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:07:33Z",
+  "target": "https://tendev.pages.dev",
+  "sha": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "method": "Observed native Chrome accessibility UI in the user-designated work window; no browser credential extraction or screenshots",
+  "actor": "Existing authenticated Chris/Admin session; not a synthetic employee authorization test",
+  "checks": {
+    "ordinaryMessagingComposerAvailable": true,
+    "unfinishedAgentControlsNotDisplayed": true,
+    "inventoryHelpAnswered": true,
+    "helpAnswer": "Open Inventory → Pending Receivals, then expand the section.",
+    "helpSurvivedFullReloadAndReopening": true,
+    "internalTestJobReadCompleted": true,
+    "jobTarget": "DEV-20260803",
+    "jobAnswerDistinguishedSavedFactsFromUnknownForecast": true,
+    "jobEvidenceNotRestoredAfterReload": true,
+    "guidanceStillRestoredAfterJobTurn": true,
+    "inferenceNotRestartedByHistoryHydration": true,
+    "inventoryPageLoaded": true,
+    "existingPendingQueueExpanded": true,
+    "pendingQueueCount": 0
+  },
+  "newUserRequests": 2,
+  "uploads": 0,
+  "approvalActions": 0,
+  "operationalWrites": 0,
+  "liveJobAnswerOrToolResultsPersistedInEvidence": false,
+  "limitations": [
+    "UI turn latency and token totals were not instrumented; no precise UI latency claimed.",
+    "Terra metering is reconciled separately as shared interval totals, not an exported browser network trace.",
+    "Employee write approval/revocation and real hosted attachment lifecycle remain separately approved canary checks; existing 28 real isolated database groups are reused.",
+    "Qwen fallback uses prior accepted hosted proof plus unchanged code/provider settings; no forced fallback or global provider toggle was repeated."
+  ]
+}

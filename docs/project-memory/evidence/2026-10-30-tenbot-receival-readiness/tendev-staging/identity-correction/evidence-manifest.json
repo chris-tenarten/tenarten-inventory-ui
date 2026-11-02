@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-10-30T17:45:49.789Z",
+  "currentOnlyIdentity": "chris_dev",
+  "historicalProposalPreservedAndWithdrawn": true,
+  "files": [
+    {
+      "path": "anthony-action-review.json",
+      "sha256": "9edb8087b4e332dc11f5b593f41c1eba8503474820caef0dc06486276923642e"
+    },
+    {
+      "path": "canary-plan.json",
+      "sha256": "d5dd2b65a4eefeae7d40beb281b1ad3abc7c00bbefd53994169e26087eca499f"
+    },
+    {
+      "path": "identity-correction-final-review.json",
+      "sha256": "93200b48fd4f0837c32f7ab5f98cae064451fe4f223f500d8b62772ce11dff00"
+    },
+    {
+      "path": "outcome.json",
+      "sha256": "1cedd481ec570ebac0ff396134bdffceda5e792af5033ce65ccb634a5b36cb9e"
+    },
+    {
+      "path": "permission-analysis.json",
+      "sha256": "4ba8bfb3c03e7d9c09abf2ee1078f89c377023b3e04f016c5f46c035f6da630c"
+    },
+    {
+      "path": "verification-readonly.json",
+      "sha256": "a2b1a2c571018961d14efa3b99438a34d5d16d1b5b8df2ef166d54a38268e19f"
+    }
+  ],
+  "permissionChanges": 0,
+  "hostedMutations": 0,
+  "inferenceCalls": 0
+}

@@ -1,0 +1,34 @@
+{
+  "reviewedAt": "2026-10-30",
+  "authority": "Product FINAL AUTHORIZATION ONE-ROW WRITE CANARY",
+  "operatorChanges": "Runtime/deployment/window pins only; protected-secret baseline check limited to enable so OFF cleanup cannot be blocked by unrelated rotation. Existing fixed SQL gates/enrollment recipe unchanged. No grant/business writes in scripts.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "files": [
+    {
+      "path": "/private/tmp/tenops-tenbot-write-canary-20261030/fresh-preflight.mjs",
+      "bytes": 11569,
+      "sha256": "31f94e599aa938626274ba82d8aacb1f2ce6621054fcbba03d6eb4cbde69a5d2"
+    },
+    {
+      "path": "/private/tmp/tenops-tenbot-write-canary-20261030/canary-controls.mjs",
+      "bytes": 21493,
+      "sha256": "8a19b827f27445859df4c2ccb3256be641c231aa6d3179437ce04d53e90309ca"
+    },
+    {
+      "path": "/private/tmp/tenops-tenbot-write-canary-20261030/verify-created.mjs",
+      "bytes": 15589,
+      "sha256": "5c0fa61895989620231710d344c14f2281a32246f0ceb37e061b802562f82197"
+    },
+    {
+      "path": "/private/tmp/tenops-tenbot-write-canary-20261030/execution-window.json",
+      "bytes": 1024,
+      "sha256": "f57fab97ec9d5b67b58580c907d607c6addf81deebb6ced15ceecfa62a626378"
+    }
+  ],
+  "grantViaGenuineAdminUiOnly": true,
+  "businessExecutionViaGenuineChrisDevUiOnly": true,
+  "idempotentRpcRetryUiLimitation": true,
+  "newDeployment": false,
+  "newMigration": false
+}

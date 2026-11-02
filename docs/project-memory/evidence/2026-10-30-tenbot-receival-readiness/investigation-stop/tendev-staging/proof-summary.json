@@ -1,0 +1,115 @@
+{
+  "candidateRevision": "3bdfd1921b7e5f13daebf8e91a1c58c20049c13a",
+  "status": "candidate-preparation-reviewed",
+  "reviewRequired": false,
+  "sourceReviewHolds": [],
+  "semanticRecordIds": [],
+  "unclassifiedSensitivePaths": [],
+  "acceptedSources": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "blob": "29ccba59420eda0202b5dd03407028497ab70a3c",
+      "sha256": "f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98",
+      "reviewedCandidate": "818c5c131efa29e6f98237a931a7e72431a31643",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "818c5c131efa29e6f98237a931a7e72431a31643",
+        "heading": "## Accepted candidate source review — invoice metadata and safe diagnostics"
+      },
+      "acceptedAuthorityRevision": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+      "verifiedForCandidate": "3bdfd1921b7e5f13daebf8e91a1c58c20049c13a"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "a5fe128797813edbdbbec8fbf645c0725eb060f7",
+      "sha256": "c36a3963b40c4b37c2dff5a59fcdad0af24cad2d661a96c285174d70a12e9dc3",
+      "reviewedCandidate": "818c5c131efa29e6f98237a931a7e72431a31643",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "818c5c131efa29e6f98237a931a7e72431a31643",
+        "heading": "## Accepted candidate source review — invoice metadata and safe diagnostics"
+      },
+      "acceptedAuthorityRevision": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+      "verifiedForCandidate": "3bdfd1921b7e5f13daebf8e91a1c58c20049c13a"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "blob": "b6450def39482f3da1b28003357f116810b5af2c",
+      "sha256": "9e60c5101092678155920c008691420100e69d032f1aa8c544e28499d52684d1",
+      "reviewedCandidate": "818c5c131efa29e6f98237a931a7e72431a31643",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "818c5c131efa29e6f98237a931a7e72431a31643",
+        "heading": "## Accepted candidate source review — invoice metadata and safe diagnostics"
+      },
+      "acceptedAuthorityRevision": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+      "verifiedForCandidate": "3bdfd1921b7e5f13daebf8e91a1c58c20049c13a"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+      "blob": "bea0e13636c95718fb35d08da4b30e01c85f1395",
+      "sha256": "84a4d315742e76458bdb6ff840fbaaa195089ac2ddec5184468847abde85379d",
+      "reviewedCandidate": "818c5c131efa29e6f98237a931a7e72431a31643",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "818c5c131efa29e6f98237a931a7e72431a31643",
+        "heading": "## Accepted candidate source review — invoice metadata and safe diagnostics"
+      },
+      "acceptedAuthorityRevision": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+      "verifiedForCandidate": "3bdfd1921b7e5f13daebf8e91a1c58c20049c13a"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "blob": "d547f749e80787ec1fd98b820087e2dc5990f984",
+      "sha256": "eb2431bbf805f67a72ba244383a7081fd5ddd6800d47dc8525188ba44e998d71",
+      "reviewedCandidate": "818c5c131efa29e6f98237a931a7e72431a31643",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "818c5c131efa29e6f98237a931a7e72431a31643",
+        "heading": "## Accepted candidate source review — invoice metadata and safe diagnostics"
+      },
+      "acceptedAuthorityRevision": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+      "verifiedForCandidate": "3bdfd1921b7e5f13daebf8e91a1c58c20049c13a"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "blob": "1fb381084a513a0616ec0c461e69fc5b0d403215",
+      "sha256": "c744f3758a877a17a67e962d85a1de5aa68e1b1d29bf770d58beb675227eabaa",
+      "reviewedCandidate": "818c5c131efa29e6f98237a931a7e72431a31643",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "818c5c131efa29e6f98237a931a7e72431a31643",
+        "heading": "## Accepted candidate source review — invoice metadata and safe diagnostics"
+      },
+      "acceptedAuthorityRevision": "f2ecfe91329f527b1fcaa72f447fb2a068199695",
+      "verifiedForCandidate": "3bdfd1921b7e5f13daebf8e91a1c58c20049c13a"
+    }
+  ],
+  "proofSha256": "4b66b5c3d226fbdfb1ffecb500785c6fddec577c20b768c9008c8bb76958d5b0",
+  "fullProofLocalPath": "/private/tmp/tenops-tenbot-metadata-staging-20261030/candidate-proof.json",
+  "verifierUnchanged": true
+}

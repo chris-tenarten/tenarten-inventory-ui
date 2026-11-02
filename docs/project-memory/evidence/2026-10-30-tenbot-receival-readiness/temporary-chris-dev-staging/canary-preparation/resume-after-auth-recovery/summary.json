@@ -1,0 +1,145 @@
+{
+  "status": "READONLY_PREFLIGHT_PASSED_CANARY_HELD_FOR_FINITE_FUNDING_AND_CONTROL_CORRECTIONS",
+  "recordedAt": "2026-10-31T00:37:28.146516+00:00",
+  "authority": "Chris RESUME HOSTED RECEIVAL CANARY authorizes preparation only, no grant, enrollment, funding activation, upload, approval, execution, migration or deployment. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "scope": "One bounded real read-only hosted snapshot and genuine authenticated status UI; prior database/security evidence reused without rerun.",
+  "currentRuntime": {
+    "tendev": {
+      "name": "tendev",
+      "branch": "dev",
+      "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+      "deployment": "23f8a171-5625-42d9-b874-676115cb34f5",
+      "status": "success",
+      "configSha256": "641888d7ff233d2a46a6311dea61a4c52d38ee4b154707b56776f2b2fcee2161"
+    },
+    "tenops": {
+      "name": "tenops",
+      "branch": "main",
+      "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+      "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+      "status": "success",
+      "configSha256": "a6ce272a2bd5704517e0098101f65ad1081169ad880e0c65076e57de5636a220"
+    }
+  },
+  "health": [
+    {
+      "name": "auth",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    },
+    {
+      "name": "db",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    }
+  ],
+  "databaseSnapshotAt": "2026-10-31T00:32:14.399Z",
+  "currentControls": {
+    "pilot": false,
+    "permits": 0,
+    "execution": false,
+    "enrollment": 0,
+    "subjectEnrolled": false
+  },
+  "activeGrants": 0,
+  "historicalGrantRevoked": true,
+  "retainedGrantAuditRows": 2,
+  "genuineAdminTenDevVerified": true,
+  "genuineChrisDevTenDevVerified": true,
+  "developerBaseAdjustInventory": false,
+  "invoice": {
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "bytes": 2877,
+    "reference": "SYN-TENDEV-RECEIVAL-20261030-01"
+  },
+  "catalog": {
+    "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "size": "#0",
+    "unit": "50lb bag",
+    "category": "marble",
+    "material": "Alaska White",
+    "supplier": "T&M Supply",
+    "materialClass": "turkish_aggregate"
+  },
+  "operation": {
+    "pendingRows": 1,
+    "expectedQuantity": "1",
+    "unit": "Bag",
+    "receivedQuantity": "0",
+    "catalogCreates": 0,
+    "jobCreates": 0,
+    "onHandChange": 0
+  },
+  "duplicates": {
+    "claims": 0,
+    "drafts": 0,
+    "sources": 0,
+    "approvals": 0,
+    "executions": 0,
+    "boundPending": 0,
+    "subjectSources": 0,
+    "pendingByReference": 0
+  },
+  "targetStock": [],
+  "guardedCancellation": "Existing owner UI/contract present and intentionally unavailable until the exact executed canary exists; no cancellation performed.",
+  "exactRevocation": "Authenticated Admin UI and exact-grant RPC present; historical grant already revoked; no new grant/revoke action performed.",
+  "credits": {
+    "recordedAt": "2026-10-31T00:37:28.146516+00:00",
+    "observedAtUtcApproximate": "2026-10-31T00:31Z",
+    "method": "Actual authenticated Chrome UI, existing Chris profile: TenBot project settings \u2192 Personal Organization Billing overview and Credit grants. No key/payment values or screenshots captured.",
+    "project": "TenBot",
+    "projectId": "proj_e3Qoebc2IckUzl282v3ys6Yl",
+    "organization": "Personal Organization",
+    "apiCreditBalanceUsd": "6.28",
+    "grantState": "Available",
+    "grantReceivedDate": "2026-10-29",
+    "grantOriginalUsd": "7.00",
+    "grantDisplayedBalance": "6.28 / 7.00",
+    "grantExpiresDisplayedDate": "2026-10-31",
+    "exactExpirationTimeNotDisplayed": true,
+    "totalDisplayedUsed": "0.72 / 7.00",
+    "balancePrecision": "Dashboard USD amounts rounded to cents; not a per-request cost or exact reconciliation of local and hosted ledger.",
+    "futureRenewalAssumed": false,
+    "billingChanges": 0,
+    "apiCallsOrInference": 0,
+    "sourceUrl": "https://platform.openai.com/settings/organization/billing/credit-grants",
+    "officialReference": "https://developers.openai.com/api/docs/guides/chatgpt-api-credits"
+  },
+  "accounting": {
+    "accountedMicrousd": 758624,
+    "legacyCarryoverMicrousd": 539956,
+    "hostedMeasuredMicrousd": 157529,
+    "oldReservedMicrousd": 61139,
+    "remainingUnderExpiredPolicyMicrousd": 3781332,
+    "currentPolicyExpiry": "2026-10-30T23:00:00+00:00",
+    "uncertainReservationsCounter": 0,
+    "reservedRows": 1,
+    "openLimitsExhausted": false,
+    "explanation": "Positive remaining allowance and uncertainReservations=0 do not activate an expired policy or eliminate the still-reserved charge. Preserve it; it is not itself a blocker with remaining open slots."
+  },
+  "proposedAdditionalUsd": "0.25",
+  "proposedTotalMeterCapUsd": "1.008624",
+  "proposedWindow": "October30 2026,8:00\u20138:15p.m.America/Chicago, conditional and not active",
+  "remainingDecisions": [
+    "Approve focused expired-UI/operator cutoff correction and narrow TenDev staging; no console/direct-RPC workaround.",
+    "Authorize the proposed additional0.25USD finite funding after reviewing the cumulative cap and preserving all old accounting.",
+    "Resolve shared paid-routing scope: recommended focused canary-only spend containment preserving normal history/Qwen; broader paid help on both origins is not implied.",
+    "Then separately authorize the fresh exact one-row execution window after a final preflight."
+  ],
+  "noApplicationSourceChanges": true,
+  "migrations": 0,
+  "deployments": 0,
+  "permissionChanges": 0,
+  "grantChanges": 0,
+  "enrollmentChanges": 0,
+  "fundingChanges": 0,
+  "uploads": 0,
+  "approvals": 0,
+  "operationalWrites": 0,
+  "inferenceCalls": 0,
+  "gitCommits": 0,
+  "pushes": 0,
+  "privacy": "Only fixed approved synthetic canary/reference data and aggregate status. No token, API secret, payment data, private employee conversation or arbitrary operational evidence retained."
+}

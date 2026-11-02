@@ -1,0 +1,86 @@
+{
+  "recordedAt": "2026-10-30T19:21:29Z",
+  "status": "prepared-unarmed-not-executed",
+  "authority": "Current Chris instruction: verify chris_dev TenDev session and prepare controls; no grant activation or canary.",
+  "riskTier": 3,
+  "browser": {
+    "origin": "https://tendev.pages.dev",
+    "route": "/inventory",
+    "accountMenu": "chris developer, Developer",
+    "uiIdentityVerified": true,
+    "ownJwtRpcPreflightVerified": false,
+    "operatorInstalled": false,
+    "reason": "Chrome accessibility exposed incomplete local source; fidelity check stopped before paste/console. No browser security bypass attempted.",
+    "extraTabClosed": true,
+    "nativeControlReleased": true
+  },
+  "readOnlyMetadataReceipt": "identity-metadata-readonly.json",
+  "metadataObservedAt": "2026-10-30T19:14:44.791Z",
+  "controls": {
+    "executionAuthorized": false,
+    "onlyNetworkUsableMethod": "explicit read-only preflight",
+    "grantActivations": 0,
+    "invoiceUploads": 0,
+    "approvals": 0,
+    "receivalCreations": 0,
+    "cancellations": 0,
+    "revocations": 0,
+    "inferenceCalls": 0,
+    "hostedMutations": 0,
+    "credentialsOrTokensReadByOperator": 0,
+    "adminOwnJwtChannelVerified": false
+  },
+  "validation": {
+    "offlineGroupsPassed": 8,
+    "offlineOnly": true,
+    "independentSourceReview": "PASS; final documentary corrections reviewed",
+    "newLiveJwtRlsProof": false,
+    "priorIsolatedDatabaseEvidenceReused": true
+  },
+  "nextPrerequisites": [
+    "Safe delivery of exact reviewed source and read-only preflight in each separate genuine chris_dev/Admin session.",
+    "Fresh Product-approved funded <=15-minute window; previous tentative window is not active or authorized.",
+    "Fresh disabled-state/budget/catalog/document checks and separately reviewed execution-authorized artifact.",
+    "Verified gate disable followed by exact returned-row guarded cancellation before grant expiry, then immediate exact-grant revocation and readback."
+  ],
+  "sourceArtifacts": [
+    {
+      "file": "authenticated-operator.template.js.txt",
+      "sha256": "4c02cea966c3bb455a7ccd78cfab5ba8ab0da3bf2e1909a9c299e8c0c684fb56",
+      "bytes": 25051
+    },
+    {
+      "file": "README.md",
+      "sha256": "1c15c04221b0d739c1ac853bd31fc1cb1096048db521cbdc8ad41a3a7b199ca6",
+      "bytes": 10722
+    },
+    {
+      "file": "offline-results.json",
+      "sha256": "272470ec6f9b30e3725ad2cfad03d9334dc5078cc180b2f250f4030d96f9265b",
+      "bytes": 1707
+    },
+    {
+      "file": "verify-authenticated-operator-offline.mjs.txt",
+      "sha256": "f2c2d0d91d3c264385bb464e4fbcbb25096d346de1cb1a27b9f437be90ba06b4",
+      "bytes": 14994
+    },
+    {
+      "file": "prepared-artifact.json",
+      "sha256": "3b8e41b1a6c8d3d01f5a50fc8e413d8a52d1ef685153fdff4ab4643c398c21ed",
+      "bytes": 507
+    },
+    {
+      "file": "identity-metadata-readonly.json",
+      "sha256": "bf77479ed44b5d0aab70141e26b22c7ef83bf5dbaf80a4e078254ab5f0709fa7",
+      "bytes": 1096
+    }
+  ],
+  "notCopied": [
+    "operator-config.private.json",
+    "authenticated-operator.console.txt"
+  ],
+  "applicationSourceChanged": false,
+  "gitCommitCreated": false,
+  "migrationApplied": false,
+  "deploymentPerformed": false
+}

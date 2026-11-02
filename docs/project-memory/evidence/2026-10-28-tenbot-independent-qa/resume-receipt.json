@@ -1,0 +1,19 @@
+{
+  "status": "Supersedes the partial 30-question stop; prior report retained",
+  "userSteering": "User replied ready to the Chrome-restoration request; continued original authorized read-only QA",
+  "completed": "Q31–Q50 plus two focused synthetic privacy paraphrases Q51–Q52",
+  "browserOrigin": "https://tenops.pages.dev/settings → Messaging → TenBot",
+  "account": "Existing user-signed-in chris developer / Developer",
+  "viewport": "393 × 852 iPhone 16 Chrome preset",
+  "usageProof": [
+    "usage-resume-baseline.json",
+    "usage-ledger-final.json",
+    "usage-final.json"
+  ],
+  "sourceEvidence": [
+    "source-review.json",
+    "source-review-resume.json"
+  ],
+  "mutations": "Only authorized synthetic assistant conversation sends and normal official-notice read behavior. No business/configuration/feedback mutation. New local QA artifacts only.",
+  "incidentalObservationLimit": "Native initial discovery surfaced an already-open Job inspector. On native reconnection the existing DevTools Application panel also surfaced truncated session metadata. Neither was sent to TenBot or copied into QA artifacts; subsequent observations were scoped, DevTools switched away from Storage and screenshot evidence cropped. No ordinary employee DM was opened."
+}

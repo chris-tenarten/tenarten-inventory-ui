@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-29T22:15:20.604Z",
+  "requestsAttempted": 2,
+  "projectsStatus": 200,
+  "accessibleProjectCount": 1,
+  "projects": [
+    {
+      "id": "vxdxjhazkqhpkwdqtobp",
+      "name": "tenartenDB",
+      "status": "ACTIVE_HEALTHY"
+    }
+  ],
+  "onlyKnownSharedProductionProject": true,
+  "secretsStatus": 200,
+  "openAiSecretNames": [],
+  "openAiApiKeyPresent": false,
+  "hostedMutations": false,
+  "retried": false,
+  "credentialValuesIncluded": false,
+  "source": "Already captured bounded read-only Supabase Management GET /v1/projects and GET /v1/projects/vxdxjhazkqhpkwdqtobp/secrets; no additional requests while saving this receipt"
+}

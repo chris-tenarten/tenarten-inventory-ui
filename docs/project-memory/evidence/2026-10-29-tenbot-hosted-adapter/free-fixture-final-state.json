@@ -1,0 +1,85 @@
+{
+  "recordedAt": "2026-10-29",
+  "source": "Final independent fixed-ref SQL readback after both live verifiers; no inference",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "ledgerAmounts": "Synthetic test values only, not OpenAI spend",
+  "result": {
+    "ok": true,
+    "rows": [
+      {
+        "snapshot": {
+          "meter": {
+            "ok": true,
+            "enabled": false,
+            "version": 1,
+            "expiresAt": "2026-10-29T23:20:58.626737+00:00",
+            "allowedModels": [
+              "gpt-6.1-terra"
+            ],
+            "accountedMicrousd": 540058,
+            "remainingMicrousd": 0,
+            "totalLimitMicrousd": 0,
+            "uncertainReservations": 0,
+            "legacyAccountedMicrousd": 539957
+          },
+          "profiles": [
+            {
+              "role": "admin",
+              "active": true,
+              "readOnly": false,
+              "messagingWrite": false
+            },
+            {
+              "role": "developer",
+              "active": true,
+              "readOnly": false,
+              "messagingWrite": false
+            },
+            {
+              "role": "member",
+              "active": true,
+              "readOnly": false,
+              "messagingWrite": false
+            },
+            {
+              "role": "member",
+              "active": true,
+              "readOnly": false,
+              "messagingWrite": false
+            }
+          ],
+          "authUsers": 4,
+          "storageObjects": 0,
+          "postgresVersion": "17.11",
+          "protectedTables": [
+            {
+              "rls": true,
+              "name": "tenbot_agent_history",
+              "serviceSelect": false,
+              "authenticatedSelect": false
+            },
+            {
+              "rls": true,
+              "name": "tenbot_conversations",
+              "serviceSelect": false,
+              "authenticatedSelect": false
+            },
+            {
+              "rls": true,
+              "name": "tenbot_openai_policy",
+              "serviceSelect": false,
+              "authenticatedSelect": false
+            },
+            {
+              "rls": true,
+              "name": "tenbot_openai_usage",
+              "serviceSelect": false,
+              "authenticatedSelect": false
+            }
+          ],
+          "developerReadGrants": 1
+        }
+      }
+    ]
+  }
+}

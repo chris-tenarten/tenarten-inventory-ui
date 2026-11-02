@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T02:08:35.588Z",
+  "sha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "origins": [
+    "https://tendev.pages.dev",
+    "https://tenops.pages.dev"
+  ],
+  "spendingAuthorized": false,
+  "scope": "Conversational and five caller-authorized read-only Job tools",
+  "sharedPolicyVersion": 3,
+  "operationalWrites": false,
+  "hostedKeyValueRead": false,
+  "edgeRedeployed": false
+}

@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-10-30T19:30:28Z",
+  "origin": "https://tendev.pages.dev",
+  "browser": "Safari",
+  "scope": "Genuine own Admin read-only preflight; no activation/revocation invocation.",
+  "source": {
+    "bytes": 25239,
+    "sha256": "c8bff6f018dde06e4703f79632262db4e705c7b74fe4dd516fe651d6466108d1",
+    "browserSha256VerifiedBeforeEvaluation": true,
+    "helperSourceChanged": false,
+    "executionAuthorized": false
+  },
+  "installation": {
+    "installed": true,
+    "networkCalls": 0,
+    "sessionReads": 0,
+    "mutations": 0
+  },
+  "preflight": {
+    "verifiedUserId": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+    "role": "admin",
+    "isActive": true,
+    "readOnly": false,
+    "capabilities": {
+      "readOperationalData": true,
+      "writeBusinessData": true,
+      "adjustInventory": true,
+      "manageRolesPermissions": true,
+      "manageVendorsCatalog": true
+    },
+    "sessionExpiresAt": "2026-10-30T20:29:39.000Z",
+    "serverNow": "2026-10-30T19:30:28.08643+00:00",
+    "selfGrant": {
+      "active": false
+    },
+    "writesPerformed": 0
+  },
+  "contracts": {
+    "activationDryRunSupported": false,
+    "revocationDryRunSupported": false,
+    "activationInvoked": false,
+    "revocationInvoked": false,
+    "liveMutationPathProven": false
+  },
+  "browserState": "Inspector closed; Safari left on genuine Admin TenDev page. TenOps tab/session not modified.",
+  "grantActivations": 0,
+  "operationalWrites": 0,
+  "paidInferenceCalls": 0,
+  "tokensExposed": false
+}

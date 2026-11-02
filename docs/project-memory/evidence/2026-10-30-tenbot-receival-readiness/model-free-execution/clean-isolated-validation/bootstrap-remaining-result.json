@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "fixtureRef": "ahnqbzuhpwgmispwohwv",
+  "completed": [
+    {
+      "file": "15-20261030210000_tenbot_chris_dev_canary_grant.sql",
+      "sha256": "cde4ad428f0cdfd4d83b7004c95e643dd1f89d718e989a58c1b48b21c71b9b86",
+      "applied": true
+    },
+    {
+      "file": "16-20261030220000_tenbot_canary_control_status.sql",
+      "sha256": "676be4dfc845cb8060b3f0e901bee258b1493dbe061f894c2c98b7512f830040",
+      "applied": true
+    },
+    {
+      "file": "17-20261031010000_tenbot_canary_funding_window.sql",
+      "sha256": "183ab54452c72c5fe88d4310ccccfeff258f7e11abf1bb42f74fe0bd77036ce6",
+      "applied": true
+    },
+    {
+      "file": "18-20261031020000_invoice_preparation_read_boundary.sql",
+      "sha256": "35a4818b29170797f88c57e051c07def20da2f0407e4443d795893ea9ac48580",
+      "applied": true
+    },
+    {
+      "file": "19-20261031030000_tenbot_execution_only_canary_window.sql",
+      "sha256": "720752becd968dbf191f836f1ea49e5237fae43657efd04eddf3248feb2b4b27",
+      "applied": true
+    }
+  ],
+  "state": {
+    "grants": 0,
+    "pending": 0,
+    "sources": 1,
+    "pilotOff": true,
+    "authUsers": 3,
+    "windowOff": true,
+    "enrollment": 0,
+    "executionOff": true,
+    "publicTriggers": 89,
+    "networkQueuePresent": false
+  },
+  "sourceDataCopied": false,
+  "invoiceInference": false,
+  "sharedRequests": 0,
+  "preservedFixtureRequests": 0
+}

@@ -1,0 +1,14 @@
+{
+  "candidateRevision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "status": "candidate-preparation-reviewed",
+  "reviewRequired": false,
+  "sourceReviewHolds": [],
+  "semanticRecordIds": [],
+  "unclassifiedSensitivePaths": [],
+  "candidateSourceAuthority": {
+    "scope": "tendev-preparation",
+    "requiresProductAcceptance": true,
+    "hostedApplicationVerified": false,
+    "deploymentAuthorized": false
+  }
+}

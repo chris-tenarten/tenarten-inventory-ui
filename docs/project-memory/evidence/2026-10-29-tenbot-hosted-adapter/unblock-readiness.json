@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-10-29T22:58:28.638743+00:00",
+  "candidate": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+  "status": "HOLD_DATABASE_VALIDATION_NO_RESPONSIVE_ISOLATED_TARGET",
+  "riskTier": 3,
+  "productClarification": "Existing credits suffice for limited pilot; unverified monthly renewal is not a release blocker. No unfunded $20 commitment.",
+  "actualChecks": {
+    "permissionFixtureHealth": {
+      "attempts": 1,
+      "httpStatus": 0,
+      "elapsedMs": 3006,
+      "receivedBytes": 0,
+      "curlExit": 28
+    },
+    "existingPreviewBranches": {
+      "httpStatus": 200,
+      "count": 0,
+      "elapsedMs": 249,
+      "requests": 1
+    },
+    "acceptedKeyMetadataReused": {
+      "name": "TenBotHostedTerraPilot",
+      "expiresAtUtc": "2026-11-28T22:46:56Z",
+      "restrictedApiResources": [
+        "Responses"
+      ],
+      "actualScopes": [
+        "api.responses.write",
+        "api.responses.read"
+      ],
+      "freshInferenceOrAuthenticationTest": false
+    },
+    "acceptedSourceDeltaPaths": [],
+    "databaseTestsRun": 0,
+    "migrationsApplied": 0,
+    "inferenceCalls": 0,
+    "inferenceCostUsd": 0
+  },
+  "databaseGates": {
+    "signedJwtRlsIsolation": "NOT_RUN_BLOCKED",
+    "adminEmployeeHistoryPrivacy": "NOT_RUN_BLOCKED",
+    "durableHistory": "NOT_RUN_BLOCKED",
+    "permissionRevocation": "NOT_RUN_BLOCKED",
+    "atomicSharedReservations": "NOT_RUN_BLOCKED",
+    "concurrencyRetry": "NOT_RUN_BLOCKED",
+    "failureUncertainCharges": "NOT_RUN_BLOCKED"
+  },
+  "evidence": [
+    "unblock-fixture-inspection.json",
+    "unblock-existing-branches.json",
+    "unblock-db-gate-plan.json",
+    "unblock-pilot-policy.json",
+    "pilot-30day-key-verified.json"
+  ],
+  "nextOwnerChoices": [
+    "Restore existing tenops-permission-review in maintenance without schema/volume reset, then one bounded health probe and fresh local synthetic sessions.",
+    "Alternatively approve a temporary data-free Supabase preview branch on the existing plan, subject to eligibility/quoted cost, with separate project ref, no Production data/Git auto-migrations/merge, synthetic accounts only and explicit cleanup after evidence capture."
+  ],
+  "alternativeEstimate": {
+    "microComputeUsdPerHour": 0.01344,
+    "proposedHours": 4,
+    "computeOnlyUsd": 0.05376,
+    "otherUsageMayBeCharged": true,
+    "supabaseSpendCapCoversBranches": false,
+    "approvedOrCreated": false,
+    "source": "https://supabase.com/docs/guides/platform/manage-your-usage/branching"
+  },
+  "remoteOrRuntimeChanges": {
+    "hostedMutations": false,
+    "dockerCommands": 0,
+    "serviceProvisioning": false,
+    "hostedSecrets": false,
+    "paidActivation": false,
+    "push": false,
+    "deployment": false,
+    "applicationSourceChanges": false,
+    "qwenProductionChanged": false,
+    "receivalWritesEnabled": false
+  }
+}

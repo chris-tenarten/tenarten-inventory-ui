@@ -1,0 +1,118 @@
+{
+  "recordedAt": "2026-10-30T23:56:02.903Z",
+  "requests": [
+    {
+      "name": "organization",
+      "endpoint": "https://api.supabase.com/v1/organizations/uxxhpnseynojdgabanrv",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:56:00.187Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "totalMs": 247,
+      "bodyBytes": 130,
+      "bodySha256": "f5cdacd383a2e72ef85b7b1fbb87ced13fd605aea43f3aa1d9f8c394257c9c27",
+      "organization": {
+        "id": "uxxhpnseynojdgabanrv",
+        "name": "tenarten-terrazzo",
+        "plan": "pro"
+      }
+    },
+    {
+      "name": "target-addons",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/billing/addons",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:56:00.226Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "totalMs": 2066,
+      "bodyBytes": 10161,
+      "bodySha256": "f7272289027345e608188249efb486d16cb37353d9eb6adb2a07cae1afaa7f5a",
+      "selectedAddons": [
+        {
+          "type": "compute_instance",
+          "variantId": "ci_small",
+          "name": "Small"
+        }
+      ],
+      "smallOption": [
+        {
+          "type": "compute_instance",
+          "id": "ci_small",
+          "name": "Small",
+          "price": {
+            "description": "$0.0206/hour (~$15/month)",
+            "type": "usage",
+            "interval": "hourly",
+            "amount": 0.0206
+          },
+          "meta": {
+            "cpu_cores": 2,
+            "cpu_dedicated": false,
+            "memory_gb": 2,
+            "baseline_disk_io_mbs": 174,
+            "max_disk_io_mbs": 2085,
+            "connections_direct": 90,
+            "connections_pooler": 400,
+            "supported_cloud_providers": [
+              "AWS",
+              "AWS_K8S",
+              "AWS_NIMBUS"
+            ]
+          }
+        }
+      ],
+      "compute": [
+        {
+          "type": "compute_instance",
+          "variantId": "ci_small",
+          "name": "Small"
+        }
+      ]
+    },
+    {
+      "name": "fixture-addons",
+      "endpoint": "https://api.supabase.com/v1/projects/jltgxcfiprocydhbrahz/billing/addons",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:56:00.226Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "totalMs": 2677,
+      "bodyBytes": 9771,
+      "bodySha256": "3f7361f79735878bf0cb26f29ef2445faaf29a2ec1c707e00912befef13166b7",
+      "selectedAddons": [],
+      "smallOption": [
+        {
+          "type": "compute_instance",
+          "id": "ci_small",
+          "name": "Small",
+          "price": {
+            "description": "$0.0206/hour (~$15/month)",
+            "type": "usage",
+            "interval": "hourly",
+            "amount": 0.0206
+          },
+          "meta": {
+            "cpu_cores": 2,
+            "cpu_dedicated": false,
+            "memory_gb": 2,
+            "baseline_disk_io_mbs": 174,
+            "max_disk_io_mbs": 2085,
+            "connections_direct": 90,
+            "connections_pooler": 400,
+            "supported_cloud_providers": [
+              "AWS",
+              "AWS_K8S",
+              "AWS_NIMBUS"
+            ]
+          }
+        }
+      ],
+      "compute": []
+    }
+  ],
+  "configurationMutations": 0,
+  "paymentDetailsRead": false
+}

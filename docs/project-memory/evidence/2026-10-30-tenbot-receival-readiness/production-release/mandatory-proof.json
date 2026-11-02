@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "candidate": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "status": "reviewed",
+  "holds": 0,
+  "cleanCandidate": true,
+  "committedArtifactExact": true,
+  "unchangedProductionVerifier": true
+}

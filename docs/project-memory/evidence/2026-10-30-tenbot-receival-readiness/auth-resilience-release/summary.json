@@ -1,0 +1,153 @@
+{
+  "status": "DEPLOYED_TENDEV_THEN_TENOPS_AUTH_ONLY",
+  "recordedAt": "2026-10-31T00:25:50.312746+00:00",
+  "authority": "Chris APPROVED AUTH RESILIENCE RELEASE, October30: exact accepted ec62998 Auth correction, separate Production root, TenDev first then TenOps. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "scope": "Focused exact-source/zero-hold release proofs and optimized builds, followed by genuine caller restoration/Inventory/Inbox smoke. Prior 9 offline and 20 synthetic-local-browser groups reused without rerun.",
+  "acceptedSource": "ec62998aba228e615279ae7d6e81f04378e62062",
+  "authPath": "src/lib/auth.tsx",
+  "authBeforeBlob": "e0348f96373847dfb7a7038764da27bf896b50e9",
+  "authAfterBlob": "59e3baee0c73978c6253f344923bc72d02f4cc05",
+  "authSourceSha256": "c5321c1ac01daf261516c793aee72e9672aa55bf71d1c8ee4855ee7e6afb1527",
+  "behavior": {
+    "sessionRestorationDeadlineSeconds": 20,
+    "profileVerificationDeadlineSeconds": 15,
+    "timeoutFailsClosed": true,
+    "lateGenerationResultsRejected": true,
+    "persistedSdkSessionsAndExistingPermissionsPreserved": true
+  },
+  "targets": {
+    "tendev": {
+      "passed": true,
+      "recordedAt": "2026-10-31T00:19:54.754Z",
+      "project": "tendev",
+      "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+      "baseline": "ce157b99e31c227480c479169e0a480a6d509bf1",
+      "deployment": "23f8a171-5625-42d9-b874-676115cb34f5",
+      "deploymentUrl": "https://23f8a171.tendev.pages.dev",
+      "url": "https://tendev.pages.dev",
+      "authOnly": true,
+      "edgeUnchanged": true,
+      "allWriteGatesOff": true,
+      "allSettingsAndSecretsUnchanged": true,
+      "migrations": 0
+    },
+    "tenops": {
+      "passed": true,
+      "recordedAt": "2026-10-31T00:24:13.502Z",
+      "project": "tenops",
+      "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+      "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+      "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+      "deploymentUrl": "https://d01a02dc.tenops.pages.dev",
+      "url": "https://tenops.pages.dev",
+      "authOnly": true,
+      "edgeUnchanged": true,
+      "allWriteGatesOff": true,
+      "allSettingsAndSecretsUnchanged": true,
+      "migrations": 0
+    }
+  },
+  "sourceScope": {
+    "applicationFiles": [
+      "src/lib/auth.tsx"
+    ],
+    "verifierFiles": [
+      "scripts/verify-auth-resolution-deadlines.mjs",
+      "scripts/verify-auth-startup-resolution.mjs"
+    ],
+    "evidenceFiles": [
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/source-manifest.json",
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/worker-validation.json",
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/browser-result.json",
+      "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/hosted-preflight-diagnosis/build-result.json"
+    ],
+    "manualReviewFiles": {
+      "tendev": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+      "tenops": "docs/project-memory/2026-10-30-auth-resilience-release-proof.md"
+    },
+    "selectedPathsPerTarget": 8,
+    "noTenDevExperimentalAncestryInProduction": true,
+    "allOtherApplicationEdgeKnowledgeMigrationAndConfigurationFilesUnchanged": true,
+    "sourceReviewRegistryAndCommittedKnowledgeArtifactUnchanged": true
+  },
+  "releaseGates": {
+    "tendev": {
+      "proofStatus": "candidate-preparation-reviewed",
+      "holds": 0,
+      "buildPassed": true,
+      "buildDurationMs": 25044,
+      "artifactCount": 287,
+      "servedAssetsVerified": 34,
+      "authenticatedSmokePassed": true
+    },
+    "tenops": {
+      "proofStatus": "reviewed",
+      "holds": 0,
+      "buildPassed": true,
+      "buildDurationMs": 31822,
+      "artifactCount": 277,
+      "servedAssetsVerified": 34,
+      "authenticatedSmokePassed": true
+    }
+  },
+  "hostedHealth": [
+    {
+      "name": "auth",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY",
+      "info": {
+        "name": "GoTrue",
+        "version": "v2.197.0",
+        "description": "GoTrue is a user registration and authentication API"
+      }
+    },
+    {
+      "name": "db",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    }
+  ],
+  "writeControls": {
+    "pilot": false,
+    "execution": false,
+    "activeGrants": 0,
+    "enrollment": 0,
+    "permits": 0
+  },
+  "preserved": {
+    "edgeVersion": 23,
+    "edgeJwtVerification": true,
+    "allEdgeFunctionMetadataAndSecretDigestsUnchanged": true,
+    "buildConfigurationsUnchanged": true,
+    "providerRoutingAndSpendingPolicyUnchanged": true,
+    "existingExpiredInferenceCutoffNotExtended": true,
+    "oldUncertainReservationUnchanged": true,
+    "migrationLedgerUnchanged": true,
+    "allSevenPreexistingDirtyFilesByteIdenticalBeforeReceiptAppends": true,
+    "sharedHeadIndexRefsBranchesUnchanged": true
+  },
+  "releasePreparationNotes": [
+    "Initial bounded metadata read failed before per-endpoint details were retained. Local Cloudflare OAuth expiration was observed; normal existing-session wrangler whoami refresh succeeded, followed by successful preflight. No original HTTP status is asserted and no broader OAuth login/scopes were added.",
+    "Production original mandatory proof succeeded (reviewed, all holds zero), but the scratch wrapper incorrectly expected newer TenDev metadata. Only the scratch wrapper was corrected to the pinned unchanged 2a3 verifier contract; the original proof/stop are retained and exact proof bytes reused. No gate, verifier, knowledge schema or application bytes changed.",
+    "Production masked Planning flag was reproduced as explicit empty string from pinned accepted 2a3 build/served provenance, rather than guessing its hidden value. Production Early Access remains falsy and branding false; no hosted setting changed.",
+    "Production candidate exists in isolated private Git. The verified 12KB incremental Git bundle retains exact b918 commit against the existing 2a3 prerequisite for durable source continuity. No main/dev branch move or Git push occurred."
+  ],
+  "limitations": [
+    "No live outage was injected into either shared application; timeout/stale-response cases reuse the accepted 9 offline/20 synthetic browser evidence.",
+    "This bounds application waits; it does not repair an unhealthy Supabase service or establish the initiating outage cause.",
+    "Messaging smoke was a normal authorized Inbox/own TenBot-list read, without another employee conversation, message submission or new inference.",
+    "Receival writes remain disabled; no canary retry, grant activation or inference-budget extension."
+  ],
+  "remainingReleaseBlockers": [],
+  "migrationsApplied": 0,
+  "permissionChanges": 0,
+  "operationalWrites": 0,
+  "inferenceCalls": 0,
+  "edgeDeployments": 0,
+  "pagesDeployments": 2,
+  "hostedConfigOrComputeChanges": 0,
+  "pushes": 0,
+  "privacy": "No credentials, request authorization headers, raw employee conversation, Job evidence, customer records or private document contents retained in release receipts."
+}

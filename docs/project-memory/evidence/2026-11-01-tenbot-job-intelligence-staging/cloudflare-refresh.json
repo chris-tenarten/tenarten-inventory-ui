@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "status": 0,
+  "error": null,
+  "durationMs": 2178,
+  "existingWhoamiRefresh": true,
+  "configChanged": true,
+  "scopesUnchanged": true,
+  "credentialsPrinted": false,
+  "hostedConfigurationChanges": 0,
+  "requiresFreshManagementVerification": true
+}

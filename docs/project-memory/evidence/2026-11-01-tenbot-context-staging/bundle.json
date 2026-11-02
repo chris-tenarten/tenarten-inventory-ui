@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "candidate": "509abf3be39e77d607e458a297abbaa3e592f189",
+  "acceptedImplementation": "a5a5a14d06095d9cbc098f39fa5bf3aa7b4ab5e1",
+  "path": "/private/tmp/tenops-tenbot-context-staging-20261101/context-tendev-candidate.bundle",
+  "sha256": "a479fe147fc77bafb9347d7058d01bb6fe6ba67b25132195dd28761d430e55b5",
+  "bytes": 68997534,
+  "push": false
+}

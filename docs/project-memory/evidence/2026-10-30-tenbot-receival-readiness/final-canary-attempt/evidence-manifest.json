@@ -1,0 +1,41 @@
+{
+  "recordedAt": "2026-10-31T01:31:07.233239+00:00",
+  "operatorSha256": "f5a26a8246d85338b752716a9df78457f989be8a0e2082d8ee229066af6bd9ec",
+  "diagnosticSha256": "ebe90487f8ab679b3c7a1a4cd92644c870fd8489125a1d1e83bfb90bab6bf864",
+  "files": [
+    {
+      "path": "execution-window.json",
+      "sha256": "54bbdc9a130b04b833d991cb0bbf1dfc99feaba91cff3c51b399f13ae61bd91f"
+    },
+    {
+      "path": "final-controls.json",
+      "sha256": "f2b3c6462fc2fa20868eea6a0c0a89e3c8a739debb86da8b0d91e8203235c937"
+    },
+    {
+      "path": "grant-audit.json",
+      "sha256": "51ad43747e3df3d6d7a86f75d7272507cc3439ed1ecd719fd049d45fd190900e"
+    },
+    {
+      "path": "handoff.json",
+      "sha256": "c850dd3a637010546f18f5100573cf9a21ed37f23b5b6d23ded2985c11b6c2ec"
+    },
+    {
+      "path": "inference-usage.json",
+      "sha256": "44a93776c325114fc12adf63361f4984f3e9f5f6d6c4ec837fea96e6792e897a"
+    },
+    {
+      "path": "outcome.json",
+      "sha256": "c5a74bfa8ae8557a31eb4f5c0968fde0e186a2b735eaedc4bd6bc1a35e5179b3"
+    },
+    {
+      "path": "preflight.json",
+      "sha256": "68636bf5bc5460327562537f3f364a642a6f34847ba2d38aa63b2dddaa4ee9dd"
+    },
+    {
+      "path": "source-evidence.json",
+      "sha256": "da9a6f48170257f2d290ecd401b6dd73e25f4eb4ac51d1073a3fb0e61ede4bb5"
+    }
+  ],
+  "privateOperatorReceiptsPreserved": "/private/tmp/tenops-tenbot-final-canary-20261030",
+  "secretValuesPublished": false
+}

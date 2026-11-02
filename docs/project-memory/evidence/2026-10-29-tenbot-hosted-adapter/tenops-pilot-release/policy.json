@@ -1,0 +1,107 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T02:08:31.511Z",
+  "approvedHostedTotalMicrousd": 4000000,
+  "before": {
+    "policy": {
+      "enabled": true,
+      "version": 2,
+      "singleton": true,
+      "expires_at": "2026-10-30T02:22:45.717476+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 250000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 789956,
+      "total_limit_microusd": 789956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 2,
+      "expiresAt": "2026-10-30T02:22:45.717476+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 560573,
+      "remainingMicrousd": 229383,
+      "totalLimitMicrousd": 789956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "usage": {
+      "calls": 13,
+      "requests": 3,
+      "unmeasured": 0,
+      "accountedMicrousd": 20617
+    }
+  },
+  "after": {
+    "policy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 560573,
+      "remainingMicrousd": 3979383,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "usage": {
+      "calls": 13,
+      "requests": 3,
+      "unmeasured": 0,
+      "accountedMicrousd": 20617
+    }
+  },
+  "priorUsageFieldsUnchanged": true,
+  "carryoverPreserved": true,
+  "allOtherLimitsPreserved": true,
+  "terraOriginsStillTenDevOnly": true,
+  "noRenewalAssumed": true,
+  "reconciliation": {
+    "reason": "Management query returns only final SELECT; initial receipt parser expected two result sets after a successfully committed transaction",
+    "policyUpdateRepeated": false,
+    "verification": "Exact policy fields and all retained reservation/settlement fields compared with pre-update snapshots"
+  }
+}

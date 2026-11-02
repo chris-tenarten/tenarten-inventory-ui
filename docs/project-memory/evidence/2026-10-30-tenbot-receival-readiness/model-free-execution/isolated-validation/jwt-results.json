@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "recordedAt": "2026-10-31T04:17:14.696Z",
+  "groups": [
+    {
+      "name": "genuine signed synthetic Auth JWTs identify Admin and Developer callers; independent execution window is dormant",
+      "durationMs": 817
+    },
+    {
+      "name": "anonymous and unrelated signed users cannot read execution status, private table or helper functions",
+      "durationMs": 772
+    },
+    {
+      "name": "actual owner JWT resumes the existing one-Bag preview across fresh runtime instances with no inference or persistence",
+      "durationMs": 1341
+    },
+    {
+      "name": "cross-user and anonymous RPC, RLS and private attachment access reject the other synthetic owner",
+      "durationMs": 944
+    },
+    {
+      "name": "permission revocation between preparation and review denies the same signed JWT and is restored exactly",
+      "durationMs": 1479
+    },
+    {
+      "name": "real PostgreSQL rejects dormant/invalid/overlong/scope/inference-authority changes without retaining mutations",
+      "durationMs": 765
+    }
+  ],
+  "actualSignedAuthJwt": true,
+  "actualGetUserVerification": true,
+  "actualPostgreSQL": true,
+  "actualRestRls": true,
+  "actualPrivateStorageDenials": true,
+  "genericOwnerResumePassed": true,
+  "fixedChrisDevPositiveResume": false,
+  "fixedExecutionAuthorizationPassed": false,
+  "fixedSourceAbsent": true,
+  "priorRetainedSourcePreserved": true,
+  "profileRestored": true,
+  "permissionEpochMayAdvanceIntentionally": true,
+  "sourceIdentityRevisionAndEvidenceUnchanged": true,
+  "inferenceCalls": 0,
+  "inferenceCostUsd": 0,
+  "operationalWrites": 0,
+  "sharedRequests": 0,
+  "durationMs": 7320,
+  "blockedGates": [
+    "Positive fixed-source execution window arm/bind, successful grant and single-use replay",
+    "Eligible <=15-minute window expiry-at-review/approval/commit",
+    "Concurrent authenticated activation/replay",
+    "Approval invalidation and AI-reserve denial through a successfully bound execution-only grant"
+  ],
+  "reusedEvidence": "Prior accepted invoice/quantity/private-original/transactional-write results; no model or PDF processing repeated."
+}

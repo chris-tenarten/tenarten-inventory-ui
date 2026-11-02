@@ -1,0 +1,48 @@
+{
+  "status": "PREPARED_NOT_DEPLOYED",
+  "candidate": "b37279c4c39f37792aac3966cde3825b71c67351",
+  "baseline": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "acceptedTenDev": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "proof": {
+    "passed": true,
+    "status": "reviewed",
+    "holds": 0,
+    "productionVerifierUnchanged": true,
+    "releaseSyncUnchanged": true
+  },
+  "build": {
+    "passed": true,
+    "artifacts": 277,
+    "canaryRouteAbsent": true
+  },
+  "hostedAuthenticatedSmoke": {
+    "performed": false,
+    "limitation": "Browser automation unavailable; user explicitly forbids further retries. Established test infrastructure has no supplied authorized non-browser shared-project employee session. No authentication bypass or session extraction."
+  },
+  "reuse": {
+    "isolatedDatabaseValidation": true,
+    "invoiceQuantityPrivacyQA": true,
+    "hostedSharedMigrationAndEdgeEvidence": true
+  },
+  "migrationsToApply": [],
+  "productionAgentWrites": "OFF",
+  "executionAuthorization": "OFF",
+  "grants": 0,
+  "enrollment": 0,
+  "gatesBasis": "Accepted staged final reconciliation reused; no hosted state modified or newly inspected in this pass",
+  "ordinarySpendingPolicyChanged": false,
+  "hostedMutations": 0,
+  "inferenceCalls": 0,
+  "deployments": 0,
+  "genuineRemainingDecision": "Separate Product approval before TenOps promotion; authenticated smoke limitation retained",
+  "files": {
+    "candidate.json": "90cdaaedfff0d0e361c0624d6ab6b1ae3a75a9e112d0e033fd563f8eaefd6b7e",
+    "proof.json": "a66cd53147d800e139165f93f5a09f06aabb35391f85e8ea074c809ae2e53b67",
+    "compatibility.json": "31eda6ccda16423428f23aaad636b3e67c22ad2d957f6cefcb0eb0b222a8746f",
+    "build-attempt.json": "63bb13c223e39765da5da8feff1cd15431528145bb54815e58d4487a8a676bc6",
+    "build-command-result.json": "16ca65cb07c0f3e96c555b31c4f8c66ac228b5320abb8fb25c535a0c0b979145",
+    "build.json": "9ad92d7fe7ec2aed4772272a9c5b46cedc879206e20b3eee0dd26ae1644c163a",
+    "build-artifacts.json": "887f8272f49353d9102a10faad85d2ea5a6ad68e19da97a4e61e60ea9771744a",
+    "bundle.json": "ea4037ba57bc6d7b05e6259f9374a9d43bbb81d43bc7bc5cf17f6475e61a8408"
+  }
+}

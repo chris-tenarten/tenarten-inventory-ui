@@ -1,0 +1,147 @@
+{
+  "status": "ABORTED_BEFORE_UPLOAD_EXACT_GRANT_REVOKED_ALL_EXECUTION_OFF",
+  "recordedAt": "2026-10-30T21:27:19.174Z",
+  "authority": "Chris FINAL AUTHORIZATION ONE-ROW WRITE CANARY plus Computer Use action-time confirmation; safety boundary stops new operations on verification failure. Separate Advisory unavailable.",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "executedScope": {
+    "identity": "chris_dev only",
+    "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "invoice": "SYN-TENDEV-RECEIVAL-20261030-01",
+    "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "supplier": "T&M Supply",
+    "material": "Alaska White",
+    "size": "#0",
+    "quantityExpected": 1,
+    "unit": "Bag",
+    "maximumRows": 1,
+    "window": {
+      "startsAt": "2026-10-30T21:20:00Z",
+      "expiresAt": "2026-10-30T21:35:00Z"
+    }
+  },
+  "runtime": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "deployment": "09c6a4c4-7f66-46ec-a8bd-c5d8b49be410",
+  "positiveHostedEvidence": {
+    "genuineAdminActivation": true,
+    "genuineOwnerGrantProjection": true,
+    "exactScopeRolloutEnabled": true,
+    "edgeThenSqlCreationDisabled": true,
+    "genuineAdminExactRevocation": true,
+    "originalAdminAuditActorVerified": true,
+    "baseDeveloperRoleAndGlobalCapabilitiesPreserved": true
+  },
+  "createdRecordId": null,
+  "persistedReceival": null,
+  "recordCreatedCount": 0,
+  "invoiceUploaded": false,
+  "modelInferenceCalls": 0,
+  "modelInferenceCostUsd": 0,
+  "reviewSaved": false,
+  "approvalIssued": false,
+  "receivalExecutionIssued": false,
+  "retryOrIdempotencyTested": false,
+  "cancellation": {
+    "attempted": false,
+    "reason": "No receival exists; no cancellation target or broader cleanup authorized."
+  },
+  "grant": {
+    "id": "9c71ec1f-43ca-4a23-a00f-fb855a3e9edd",
+    "activatedBy": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+    "activatedAt": "2026-10-30T21:20:46.747468+00:00",
+    "expiresAt": "2026-10-30T21:35:00+00:00",
+    "revokedBy": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+    "revokedAt": "2026-10-30T21:22:12.716243+00:00",
+    "retained": true,
+    "auditEvents": [
+      {
+        "id": 1,
+        "event": "activated",
+        "actorId": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "occurredAt": "2026-10-30T21:20:46.818001+00:00"
+      },
+      {
+        "id": 2,
+        "event": "revoked",
+        "actorId": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "occurredAt": "2026-10-30T21:22:12.740337+00:00"
+      }
+    ],
+    "approvedDraftId": null,
+    "executedDraftId": null
+  },
+  "stock": {
+    "targetBeforeRows": 0,
+    "targetAfterRows": 0,
+    "targetBeforeQuantity": 0,
+    "targetAfterQuantity": 0,
+    "targetSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "allBeforeHash": "d674637c213397c6f5c1f3c726594f73",
+    "allAfterHash": "d674637c213397c6f5c1f3c726594f73",
+    "inventoryTransactionsBefore": 102,
+    "inventoryTransactionsAfter": 102,
+    "unchanged": true
+  },
+  "final": {
+    "activeGrants": 0,
+    "totalHistoricalGrants": 1,
+    "retainedGrantAuditRows": 2,
+    "developerRole": "developer",
+    "globalDeveloperAdjustInventory": false,
+    "sqlPilot": false,
+    "sqlExecution": false,
+    "edgePilot": false,
+    "edgeExecution": false,
+    "enrollment": 0,
+    "edgeEmployeeIds": [],
+    "edgeExpiry": "",
+    "sourceRows": 0,
+    "draftRows": 0,
+    "claimRows": 0,
+    "executionRows": 0,
+    "matchingPendingRows": 0,
+    "allSecretValueDigestsRestoredToInitial": true,
+    "spendingPolicyUnchanged": true,
+    "remainingHostedAllowanceUsd": 3.787673,
+    "uncertainReservations": 0
+  },
+  "actualHostedMutationBoundary": {
+    "grantActivations": 1,
+    "grantRevocations": 1,
+    "grantAuditRowsRetained": 2,
+    "controlPlaneMutationRequests": 4,
+    "businessReceivalCatalogJobStockWrites": 0,
+    "permissionAndPolicyLifecycleMetadataChangedAsExpected": true,
+    "noBlanketZeroHostedMutationClaim": true
+  },
+  "unexpectedBehavior": {
+    "observed": "The local experiment is unavailable. Reopen TenBot after its server is ready.",
+    "at": "Hosted invoice workspace initialization before attachment control/upload",
+    "verifiedBlockingCondition": "standard catalog1951 exceeds complete-readerMAX_ROWS1000; full read precedes canary filter",
+    "frontendErrorMislabelConfirmed": true,
+    "underlyingHttpResponseCaptured": false,
+    "otherFailuresNotExcluded": true
+  },
+  "remainingReleaseGates": [
+    "Focused correction of full-catalog startup compatibility while preserving complete-evidence/count protections and caller authorization.",
+    "Expose the actual safe hosted setup error rather than localhost-only wording.",
+    "Separately accepted staged correction and a newly authorized one-row canary/window; this attempt is closed and will not be reactivated.",
+    "Pending-record provenance, actual idempotent retry and guarded cancellation remain untested in hosted canary."
+  ],
+  "noFurtherOperationsThisWindow": true,
+  "uiControlBuildRemainsEnabledButNoGrantOrWriteGates": true,
+  "originalPdfPreservedLocally": true,
+  "privateStorageOriginalNotCreated": true,
+  "grantAndAuditEvidenceRetained": true,
+  "newMigrations": 0,
+  "newDeployments": 0,
+  "newSourceChanges": 0,
+  "pushes": 0,
+  "newCommit": false,
+  "tenOpsApplicationUnchanged": true,
+  "otherEmployeeAccountsUsed": false,
+  "personalContextIntegration": false,
+  "unrelatedWorkPreserved": true,
+  "privateScratch": "/private/tmp/tenops-tenbot-write-canary-20261030"
+}

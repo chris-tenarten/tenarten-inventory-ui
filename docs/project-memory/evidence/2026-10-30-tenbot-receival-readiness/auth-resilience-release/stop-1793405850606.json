@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "phase": "preflight",
+  "recordedAt": "2026-10-31T00:17:30.597Z",
+  "code": "INVARIANT_FAILED",
+  "safeFrames": [
+    "hosted-release.mjs:42:366",
+    "hosted-release.mjs:47:82",
+    "hosted-release.mjs:52:119"
+  ],
+  "automaticRetry": false,
+  "noRawErrorOrSecrets": true
+}

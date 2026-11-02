@@ -1,0 +1,21 @@
+{
+  "recordedAt": "2026-10-30T02:06:44.212851+00:00",
+  "method": "Existing authenticated Chrome Platform metadata only",
+  "project": "TenBot",
+  "displayedCreditUsd": 6.44,
+  "creditExpiryDate": "2026-10-31",
+  "futureRenewalAssumed": false,
+  "key": {
+    "name": "TenBotHostedTerraPilot",
+    "status": "Active",
+    "expiresAtUtc": "2026-11-28T22:46:56Z",
+    "permissions": [
+      "api.responses.write",
+      "api.responses.read"
+    ],
+    "scope": "Responses only",
+    "secretValueRead": false
+  },
+  "projectTier": "Standard",
+  "settingsChanged": false
+}

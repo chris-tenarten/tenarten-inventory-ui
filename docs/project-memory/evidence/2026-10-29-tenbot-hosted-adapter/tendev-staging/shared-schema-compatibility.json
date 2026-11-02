@@ -1,0 +1,1688 @@
+{
+  "recordedAt": "2026-10-29T23:46:17.093Z",
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "sqlSha256": "0c09a11906a43af41182985e79e3ebf324783044a5bca5443d40627705a90701",
+  "durationMs": 640,
+  "result": [
+    {
+      "preflight": {
+        "gates": {
+          "roles_ok": true,
+          "columns_ok": true,
+          "owner_fk_ok": true,
+          "routines_ok": true,
+          "relations_ok": true,
+          "private_acl_ok": true,
+          "new_objects_absent": true,
+          "auth_identity_fk_ok": true,
+          "legacy_clear_cascade_ok": true,
+          "privileged_rpc_anon_denied": true,
+          "assistant_versions_unregistered": true,
+          "excluded_receival_version_unregistered": true
+        },
+        "roles": [
+          {
+            "name": "anon",
+            "present": true
+          },
+          {
+            "name": "authenticated",
+            "present": true
+          },
+          {
+            "name": "postgres",
+            "present": true
+          },
+          {
+            "name": "service_role",
+            "present": true
+          }
+        ],
+        "columns": [
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "auth.users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "capability",
+            "default_hash": null,
+            "expected_type": "text",
+            "relation_name": "public.app_role_capabilities",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "role",
+            "default_hash": null,
+            "expected_type": "text",
+            "relation_name": "public.app_role_capabilities",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "boolean",
+            "column_name": "is_active",
+            "default_hash": "b326b5062b2f0e69046810717534cb09",
+            "expected_type": "boolean",
+            "relation_name": "public.app_users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "boolean",
+            "column_name": "job_updates_post",
+            "default_hash": "68934a3e9455fa72420237eb05902327",
+            "expected_type": "boolean",
+            "relation_name": "public.app_users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "boolean",
+            "column_name": "messaging_write",
+            "default_hash": "68934a3e9455fa72420237eb05902327",
+            "expected_type": "boolean",
+            "relation_name": "public.app_users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "boolean",
+            "column_name": "production_blend_manage",
+            "default_hash": "68934a3e9455fa72420237eb05902327",
+            "expected_type": "boolean",
+            "relation_name": "public.app_users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "boolean",
+            "column_name": "read_only",
+            "default_hash": "68934a3e9455fa72420237eb05902327",
+            "expected_type": "boolean",
+            "relation_name": "public.app_users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "role",
+            "default_hash": null,
+            "expected_type": "text",
+            "relation_name": "public.app_users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "boolean",
+            "column_name": "sample_labels_generate",
+            "default_hash": "68934a3e9455fa72420237eb05902327",
+            "expected_type": "boolean",
+            "relation_name": "public.app_users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "user_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.app_users",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "id",
+            "default_hash": "f3b72bb359a50b640590970a2ab8e514",
+            "expected_type": null,
+            "relation_name": "public.job_updates",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "job_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.job_updates",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "boolean",
+            "column_name": "requires_follow_up",
+            "default_hash": "68934a3e9455fa72420237eb05902327",
+            "expected_type": "boolean",
+            "relation_name": "public.job_updates",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "timestamp with time zone",
+            "column_name": "resolved_at",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.job_updates",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "timestamp with time zone",
+            "column_name": "archived_at",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "text",
+            "column_name": "customer",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "numeric(10,2)",
+            "column_name": "estimated_man_hours",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "id",
+            "default_hash": "f3b72bb359a50b640590970a2ab8e514",
+            "expected_type": "uuid",
+            "relation_name": "public.jobs",
+            "required_not_null": true,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "text",
+            "column_name": "job_number",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "material_status",
+            "default_hash": "01ef3e7e55bf7555349ed3a07036fcb6",
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "name",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "date",
+            "column_name": "planned_end",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "date",
+            "column_name": "planned_start",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "production_status",
+            "default_hash": "558f9307c2b55257d08f243039925cef",
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "date",
+            "column_name": "requested_delivery_date",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "timestamp with time zone",
+            "column_name": "updated_at",
+            "default_hash": "75230039beb12ce952f24927f2bfa2f2",
+            "expected_type": null,
+            "relation_name": "public.jobs",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "numeric(6,2)",
+            "column_name": "am_hours",
+            "default_hash": "cfcd208495d565ef66e7dff9f98764da",
+            "expected_type": null,
+            "relation_name": "public.manpower_entries",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "id",
+            "default_hash": "f3b72bb359a50b640590970a2ab8e514",
+            "expected_type": null,
+            "relation_name": "public.manpower_entries",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "uuid",
+            "column_name": "job_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.manpower_entries",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "numeric(6,2)",
+            "column_name": "pm_hours",
+            "default_hash": "cfcd208495d565ef66e7dff9f98764da",
+            "expected_type": null,
+            "relation_name": "public.manpower_entries",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "uuid",
+            "column_name": "rework_cycle_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.manpower_entries",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "timestamp with time zone",
+            "column_name": "updated_at",
+            "default_hash": "75230039beb12ce952f24927f2bfa2f2",
+            "expected_type": null,
+            "relation_name": "public.manpower_entries",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "date",
+            "column_name": "work_date",
+            "default_hash": null,
+            "expected_type": "date",
+            "relation_name": "public.manpower_entries",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "id",
+            "default_hash": "f3b72bb359a50b640590970a2ab8e514",
+            "expected_type": null,
+            "relation_name": "public.production_rework_cycles",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "job_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.production_rework_cycles",
+            "required_not_null": true,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "date",
+            "column_name": "planned_end",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.production_rework_cycles",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "date",
+            "column_name": "planned_start",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.production_rework_cycles",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "production_status",
+            "default_hash": "558f9307c2b55257d08f243039925cef",
+            "expected_type": null,
+            "relation_name": "public.production_rework_cycles",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "integer",
+            "column_name": "sequence_number",
+            "default_hash": null,
+            "expected_type": null,
+            "relation_name": "public.production_rework_cycles",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "timestamp with time zone",
+            "column_name": "updated_at",
+            "default_hash": "75230039beb12ce952f24927f2bfa2f2",
+            "expected_type": null,
+            "relation_name": "public.production_rework_cycles",
+            "required_not_null": false,
+            "authenticated_column_select": true
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "answer",
+            "default_hash": null,
+            "expected_type": "text",
+            "relation_name": "public.tenbot_conversation_turns",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "conversation_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.tenbot_conversation_turns",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "bigint",
+            "column_name": "id",
+            "default_hash": null,
+            "expected_type": "bigint",
+            "relation_name": "public.tenbot_conversation_turns",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "owner_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.tenbot_conversation_turns",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "question",
+            "default_hash": null,
+            "expected_type": "text",
+            "relation_name": "public.tenbot_conversation_turns",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "timestamp with time zone",
+            "column_name": "expires_at",
+            "default_hash": "4278cf848328c1869698d760895cc6b3",
+            "expected_type": "timestamp with time zone",
+            "relation_name": "public.tenbot_conversations",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "id",
+            "default_hash": "f3b72bb359a50b640590970a2ab8e514",
+            "expected_type": "uuid",
+            "relation_name": "public.tenbot_conversations",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "owner_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.tenbot_conversations",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "integer",
+            "column_name": "version",
+            "default_hash": "cfcd208495d565ef66e7dff9f98764da",
+            "expected_type": "integer",
+            "relation_name": "public.tenbot_conversations",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "timestamp with time zone",
+            "column_name": "created_at",
+            "default_hash": "75230039beb12ce952f24927f2bfa2f2",
+            "expected_type": "timestamp with time zone",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "numeric",
+            "column_name": "estimated_neurons",
+            "default_hash": null,
+            "expected_type": "numeric",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": false,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "id",
+            "default_hash": "f3b72bb359a50b640590970a2ab8e514",
+            "expected_type": "uuid",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "bigint",
+            "column_name": "input_tokens",
+            "default_hash": null,
+            "expected_type": "bigint",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": false,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "text",
+            "column_name": "model",
+            "default_hash": null,
+            "expected_type": "text",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": false,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "text",
+            "column_name": "outcome",
+            "default_hash": "96b666e63f65c9aefc87f3cea8441f38",
+            "expected_type": "text",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": false,
+            "actual_type": "bigint",
+            "column_name": "output_tokens",
+            "default_hash": null,
+            "expected_type": "bigint",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": false,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "numeric",
+            "column_name": "reserved_neurons",
+            "default_hash": "3644a684f98ea8fe223c713b77189a77",
+            "expected_type": "numeric",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "numeric",
+            "column_name": "reserved_usd",
+            "default_hash": null,
+            "expected_type": "numeric",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          },
+          {
+            "present": true,
+            "not_null": true,
+            "actual_type": "uuid",
+            "column_name": "user_id",
+            "default_hash": null,
+            "expected_type": "uuid",
+            "relation_name": "public.tenbot_usage",
+            "required_not_null": true,
+            "authenticated_column_select": null
+          }
+        ],
+        "policies": [
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "bdc4206c374c8950b4c1cfb943836703",
+            "permissive": "PERMISSIVE",
+            "policyname": "role_capabilities_read_active",
+            "relation_name": "public.app_role_capabilities"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_delete",
+            "relation_name": "public.app_role_capabilities"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": null,
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_insert",
+            "relation_name": "public.app_role_capabilities"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_update",
+            "relation_name": "public.app_role_capabilities"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "0c24945c3fa178ed8d2310a56b304c4d",
+            "permissive": "PERMISSIVE",
+            "policyname": "app_users_read_self",
+            "relation_name": "public.app_users"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_delete",
+            "relation_name": "public.app_users"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": null,
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_insert",
+            "relation_name": "public.app_users"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_update",
+            "relation_name": "public.app_users"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "anon"
+            ],
+            "check_md5": "b326b5062b2f0e69046810717534cb09",
+            "using_md5": null,
+            "permissive": "PERMISSIVE",
+            "policyname": "Allow anon insert job updates",
+            "relation_name": "public.job_updates"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "anon"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Allow anon read job updates",
+            "relation_name": "public.job_updates"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": "b326b5062b2f0e69046810717534cb09",
+            "using_md5": null,
+            "permissive": "PERMISSIVE",
+            "policyname": "Allow authenticated insert job updates",
+            "relation_name": "public.job_updates"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Allow authenticated read job updates",
+            "relation_name": "public.job_updates"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "public"
+            ],
+            "check_md5": "af04da2b37e4948d9cf8870c61b88684",
+            "using_md5": null,
+            "permissive": "RESTRICTIVE",
+            "policyname": "job_updates_post_permission",
+            "relation_name": "public.job_updates"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_delete",
+            "relation_name": "public.job_updates"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": null,
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_insert",
+            "relation_name": "public.job_updates"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_update",
+            "relation_name": "public.job_updates"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "anon"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Allow anon delete jobs",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "anon"
+            ],
+            "check_md5": "b326b5062b2f0e69046810717534cb09",
+            "using_md5": null,
+            "permissive": "PERMISSIVE",
+            "policyname": "Allow anon insert jobs",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "anon"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Allow anon read jobs",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "anon"
+            ],
+            "check_md5": "b326b5062b2f0e69046810717534cb09",
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Allow anon update jobs",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility authenticated delete jobs",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": "b326b5062b2f0e69046810717534cb09",
+            "using_md5": null,
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility authenticated insert jobs",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility authenticated read jobs",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": "b326b5062b2f0e69046810717534cb09",
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility authenticated update jobs",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_delete",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": null,
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_insert",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_update",
+            "relation_name": "public.jobs"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility authenticated delete manpower entries",
+            "relation_name": "public.manpower_entries"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": "b326b5062b2f0e69046810717534cb09",
+            "using_md5": null,
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility authenticated insert manpower entries",
+            "relation_name": "public.manpower_entries"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility authenticated read manpower entries",
+            "relation_name": "public.manpower_entries"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": "b326b5062b2f0e69046810717534cb09",
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility authenticated update manpower entries",
+            "relation_name": "public.manpower_entries"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_delete",
+            "relation_name": "public.manpower_entries"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": null,
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_insert",
+            "relation_name": "public.manpower_entries"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_update",
+            "relation_name": "public.manpower_entries"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "b326b5062b2f0e69046810717534cb09",
+            "permissive": "PERMISSIVE",
+            "policyname": "Compatibility read Production Rework",
+            "relation_name": "public.production_rework_cycles"
+          },
+          {
+            "cmd": "DELETE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_delete",
+            "relation_name": "public.production_rework_cycles"
+          },
+          {
+            "cmd": "INSERT",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": null,
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_insert",
+            "relation_name": "public.production_rework_cycles"
+          },
+          {
+            "cmd": "UPDATE",
+            "roles": [
+              "anon",
+              "authenticated"
+            ],
+            "check_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "using_md5": "c345d5c83916bd1d6046074ea852b8b8",
+            "permissive": "RESTRICTIVE",
+            "policyname": "tenops_business_write_update",
+            "relation_name": "public.production_rework_cycles"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "98fdf3c42e8ba4b54eddc52c600f7348",
+            "permissive": "PERMISSIVE",
+            "policyname": "tenbot_turn_owner",
+            "relation_name": "public.tenbot_conversation_turns"
+          },
+          {
+            "cmd": "SELECT",
+            "roles": [
+              "authenticated"
+            ],
+            "check_md5": null,
+            "using_md5": "98fdf3c42e8ba4b54eddc52c600f7348",
+            "permissive": "PERMISSIVE",
+            "policyname": "tenbot_conversation_owner",
+            "relation_name": "public.tenbot_conversations"
+          }
+        ],
+        "readOnly": true,
+        "routines": [
+          {
+            "owner": "supabase_auth_admin",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "cdef18c69c4f4cbbced2eaf81e628b49",
+            "signature": "auth.uid()",
+            "volatility": "s",
+            "result_type": "uuid",
+            "auth_execute": null,
+            "actual_result": "uuid",
+            "must_be_definer": false,
+            "service_execute": null,
+            "security_definer": false,
+            "reviewed_settings": [],
+            "actual_anon_execute": true,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "supabase_admin",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "e1a046161f98ad675fc327d1ef1b7899",
+            "signature": "pg_catalog.gen_random_uuid()",
+            "volatility": "v",
+            "result_type": "uuid",
+            "auth_execute": null,
+            "actual_result": "uuid",
+            "must_be_definer": false,
+            "service_execute": null,
+            "security_definer": false,
+            "reviewed_settings": [],
+            "actual_anon_execute": true,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "6f5fbfe7e792b389dcd343d6c9b7e5c9",
+            "signature": "public.get_my_app_access()",
+            "volatility": "s",
+            "result_type": null,
+            "auth_execute": true,
+            "actual_result": "TABLE(user_id uuid, display_name text, role text, is_active boolean, read_only boolean, messaging_write boolean, production_blend_manage boolean, sample_labels_generate boolean, job_updates_post boolean)",
+            "must_be_definer": true,
+            "service_execute": true,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "7e83083b79c3ba2a1b1b3e01c690386d",
+            "signature": "public.has_app_capability(text)",
+            "volatility": "s",
+            "result_type": "boolean",
+            "auth_execute": true,
+            "actual_result": "boolean",
+            "must_be_definer": true,
+            "service_execute": true,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": true,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "29ee1acc902663d3960af0c75539996c",
+            "signature": "public.has_proposal_access()",
+            "volatility": "s",
+            "result_type": "boolean",
+            "auth_execute": true,
+            "actual_result": "boolean",
+            "must_be_definer": true,
+            "service_execute": null,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "08a639991121cadc573a72ef0b9f9417",
+            "signature": "public.tenbot_append_conversation_turn(uuid,text,integer,text,text)",
+            "volatility": "v",
+            "result_type": "boolean",
+            "auth_execute": false,
+            "actual_result": "boolean",
+            "must_be_definer": true,
+            "service_execute": true,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": false,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "47ebd705ff7655990453b5572f4ab1ef",
+            "signature": "public.tenbot_clear_conversation(text)",
+            "volatility": "v",
+            "result_type": "boolean",
+            "auth_execute": true,
+            "actual_result": "boolean",
+            "must_be_definer": true,
+            "service_execute": false,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": true,
+            "actual_service_execute": false
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "ac61f5555e03763481bfaa0a68ce6bf1",
+            "signature": "public.tenbot_finish_usage(uuid,text,text,bigint,bigint,numeric)",
+            "volatility": "v",
+            "result_type": "void",
+            "auth_execute": false,
+            "actual_result": "void",
+            "must_be_definer": true,
+            "service_execute": true,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": false,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "0a72381703589b6d560e0bf8096ae507",
+            "signature": "public.tenbot_list_feedback(text,text)",
+            "volatility": "v",
+            "result_type": "jsonb",
+            "auth_execute": true,
+            "actual_result": "jsonb",
+            "must_be_definer": true,
+            "service_execute": null,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "c42bcd0abe69d0d718b2b6ccad91b8e7",
+            "signature": "public.tenbot_load_conversation(text)",
+            "volatility": "v",
+            "result_type": "jsonb",
+            "auth_execute": true,
+            "actual_result": "jsonb",
+            "must_be_definer": true,
+            "service_execute": false,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": true,
+            "actual_service_execute": false
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "d2b07c939fe58488b26eda572c349d7a",
+            "signature": "public.tenbot_reserve_usage(uuid,text,numeric)",
+            "volatility": "v",
+            "result_type": "uuid",
+            "auth_execute": false,
+            "actual_result": "uuid",
+            "must_be_definer": true,
+            "service_execute": true,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": false,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "842cd13eb42f44efc5b3d803ec41eecf",
+            "signature": "public.tenbot_review_feedback(uuid,text,text)",
+            "volatility": "v",
+            "result_type": "void",
+            "auth_execute": true,
+            "actual_result": "void",
+            "must_be_definer": true,
+            "service_execute": null,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "7b7321599bb6d6f67b6a3819345afe76",
+            "signature": "public.tenbot_submit_feedback(jsonb,boolean)",
+            "volatility": "v",
+            "result_type": "uuid",
+            "auth_execute": true,
+            "actual_result": "uuid",
+            "must_be_definer": true,
+            "service_execute": null,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          },
+          {
+            "owner": "postgres",
+            "present": true,
+            "prokind": "f",
+            "body_md5": "548d2481432a5881c4da1c83fef0f008",
+            "signature": "public.tenbot_usage_summary()",
+            "volatility": "v",
+            "result_type": "jsonb",
+            "auth_execute": true,
+            "actual_result": "jsonb",
+            "must_be_definer": true,
+            "service_execute": null,
+            "security_definer": true,
+            "reviewed_settings": [
+              "search_path=pg_catalog, public"
+            ],
+            "actual_anon_execute": false,
+            "actual_auth_execute": true,
+            "actual_service_execute": true
+          }
+        ],
+        "relations": [
+          {
+            "rls": true,
+            "name": "auth.users",
+            "owner": "supabase_auth_admin",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": false,
+            "private_table": false,
+            "service_select": false,
+            "has_primary_key": true,
+            "authenticated_select": false
+          },
+          {
+            "rls": true,
+            "name": "public.app_role_capabilities",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": false,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": true
+          },
+          {
+            "rls": true,
+            "name": "public.app_users",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": false,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": true
+          },
+          {
+            "rls": true,
+            "name": "public.job_updates",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": true,
+            "rls_required": true,
+            "private_table": false,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": true
+          },
+          {
+            "rls": true,
+            "name": "public.jobs",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": false,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": true
+          },
+          {
+            "rls": true,
+            "name": "public.manpower_entries",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": false,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": true
+          },
+          {
+            "rls": true,
+            "name": "public.production_rework_cycles",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": false,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": true
+          },
+          {
+            "rls": true,
+            "name": "public.tenbot_conversation_turns",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": true,
+            "service_select": false,
+            "has_primary_key": true,
+            "authenticated_select": false
+          },
+          {
+            "rls": true,
+            "name": "public.tenbot_conversations",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": true,
+            "service_select": false,
+            "has_primary_key": true,
+            "authenticated_select": false
+          },
+          {
+            "rls": true,
+            "name": "public.tenbot_feedback",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": true,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": false
+          },
+          {
+            "rls": true,
+            "name": "public.tenbot_feedback_history",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": true,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": false
+          },
+          {
+            "rls": true,
+            "name": "public.tenbot_usage",
+            "owner": "postgres",
+            "relkind": "r",
+            "force_rls": false,
+            "anon_select": false,
+            "rls_required": true,
+            "private_table": true,
+            "service_select": true,
+            "has_primary_key": true,
+            "authenticated_select": false
+          }
+        ],
+        "foreignKeys": [
+          {
+            "columns": [
+              "created_by_user_id"
+            ],
+            "confdeltype": "a",
+            "relation_name": "public.app_users",
+            "referenced_columns": [
+              "id"
+            ],
+            "referenced_relation": "auth.users"
+          },
+          {
+            "columns": [
+              "updated_by_user_id"
+            ],
+            "confdeltype": "a",
+            "relation_name": "public.app_users",
+            "referenced_columns": [
+              "id"
+            ],
+            "referenced_relation": "auth.users"
+          },
+          {
+            "columns": [
+              "user_id"
+            ],
+            "confdeltype": "c",
+            "relation_name": "public.app_users",
+            "referenced_columns": [
+              "id"
+            ],
+            "referenced_relation": "auth.users"
+          },
+          {
+            "columns": [
+              "conversation_id"
+            ],
+            "confdeltype": "c",
+            "relation_name": "public.tenbot_conversation_turns",
+            "referenced_columns": [
+              "id"
+            ],
+            "referenced_relation": "public.tenbot_conversations"
+          },
+          {
+            "columns": [
+              "owner_id"
+            ],
+            "confdeltype": "a",
+            "relation_name": "public.tenbot_conversation_turns",
+            "referenced_columns": [
+              "user_id"
+            ],
+            "referenced_relation": "public.app_users"
+          },
+          {
+            "columns": [
+              "owner_id"
+            ],
+            "confdeltype": "a",
+            "relation_name": "public.tenbot_conversations",
+            "referenced_columns": [
+              "user_id"
+            ],
+            "referenced_relation": "public.app_users"
+          }
+        ],
+        "limitations": [
+          "Catalog compatibility is not caller JWT/RLS behavioral certification.",
+          "Existing assistant objects or stamps require stop/reconciliation; do not replay or overwrite migrations.",
+          "This query never reads private conversations, employee profiles, Job records, document content or secret stores.",
+          "Synthetic Free-fixture ledger values must never enter the real inference journal."
+        ],
+        "preparedFor": "d769ab3+b11b757",
+        "checkedAtUtc": "2026-10-29T23:46:16.854392",
+        "serverVersion": "17.6",
+        "preapplyGatePass": true,
+        "newTypeCollisions": [],
+        "newTriggerCollision": false,
+        "newRoutineCollisions": [],
+        "newRelationCollisions": [],
+        "newHistoryPolicyCollision": false,
+        "targetedMigrationVersions": [],
+        "existingMeterAggregateOnly": null
+      }
+    }
+  ]
+}

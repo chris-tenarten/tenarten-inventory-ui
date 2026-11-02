@@ -1,0 +1,44 @@
+{
+  "reason": "Reconcile current exact shared Edge34 and applied migration with accepted TenDev evidence; preserve original historical receipts",
+  "rows": [
+    {
+      "classification": "historical-deployed",
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "blob": "a0888e92a05ec479571b7c93ee5486429685cbd4",
+      "release": {
+        "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+        }
+      }
+    },
+    {
+      "classification": "historical-deployed",
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "blob": "4a06c93430e86f3bfda7a02f50111c17a7800c49",
+      "release": {
+        "revision": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-29-tenbot-architecture-knowledge.md",
+          "revision": "cc5f4fa778215302ea90e37f590e492bae404b1f",
+          "heading": "## Executed Terra release evidence reconciliation — October 29, 2026"
+        }
+      }
+    },
+    {
+      "classification": "historical-deployed",
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "71bcc5d8f9c76a2d7a4a1bdc80f10b66e7ee6b52",
+      "release": {
+        "revision": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+        "receipt": {
+          "path": "docs/project-memory/2026-10-31-tenbot-production-source-proof.md",
+          "revision": "22a7e83fa042f980c535082cf605929a00dec79a",
+          "heading": "## Executed shared TenBot adapter and migration reconciliation — October 31, 2026"
+        }
+      }
+    }
+  ]
+}

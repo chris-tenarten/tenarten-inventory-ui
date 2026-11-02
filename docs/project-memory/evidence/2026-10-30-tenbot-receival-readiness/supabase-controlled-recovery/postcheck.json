@@ -1,0 +1,106 @@
+{
+  "recordedAt": "2026-10-30T23:27:16.302Z",
+  "requests": [
+    {
+      "name": "post-restart-health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:27:05.600Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 10701,
+      "totalMs": 10701,
+      "bodySha256": "2213ad320ddfb7bb01a4bfccb2723a6401b6858e4c0eeb1359598d71019ac88b",
+      "bodyBytes": 181,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:27:16 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e304cbd8cd132-DFW",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "rawBodyRetained": false,
+      "services": [
+        {
+          "name": "auth",
+          "healthy": false,
+          "status": "UNHEALTHY"
+        },
+        {
+          "name": "db",
+          "healthy": false,
+          "status": "UNHEALTHY"
+        }
+      ],
+      "healthy": false
+    },
+    {
+      "name": "post-restart-resource-snapshot",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/metrics",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:27:05.642Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 400,
+      "headersMs": 180,
+      "totalMs": 186,
+      "bodySha256": "8e01a2d8751de904ccfabe18805b7e26ef1f320d385bb7b770ca286c61ea40d0",
+      "bodyBytes": 48,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:27:05 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e304cbec82562-DFW",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "rawBodyRetained": false,
+      "safeError": "HTTP_400"
+    },
+    {
+      "name": "tenops-basic-page",
+      "endpoint": "https://tenops.pages.dev/inventory",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:27:05.643Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 199,
+      "totalMs": 202,
+      "bodySha256": "98e9da035e7865c63dcd0c3519f7083e1b2f3942faf025b8ab6a7e232a7cfdb0",
+      "bodyBytes": 15989,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:27:05 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e304d290d7888-DFW",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "rawBodyRetained": false,
+      "pageTitle": "TenOps Cloud — Inventory"
+    },
+    {
+      "name": "tendev-basic-page",
+      "endpoint": "https://tendev.pages.dev/inventory",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:27:05.643Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 292,
+      "totalMs": 293,
+      "bodySha256": "1d318ac1bff0b2f2e95b1e6081f590e4e35d94bba50037d0f69ba9cbb742286a",
+      "bodyBytes": 17250,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:27:05 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e304dbf127bd4-DFW",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "rawBodyRetained": false,
+      "pageTitle": "TenDev Cloud — Inventory"
+    }
+  ],
+  "restartRequestsSent": 1,
+  "automaticRetries": 0,
+  "otherHostedMutations": 0,
+  "modelCalls": 0,
+  "credentialValuesStored": false
+}

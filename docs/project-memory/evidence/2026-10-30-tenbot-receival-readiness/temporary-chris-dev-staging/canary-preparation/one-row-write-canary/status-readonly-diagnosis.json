@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-10-30T21:24:00.458Z",
+  "passed": true,
+  "readOnly": true,
+  "state": {
+    "policies": null,
+    "readOnly": "on",
+    "standardCatalogCount": 1951,
+    "activeSpecialtyCatalogCount": 301
+  },
+  "sourceReaderMaxRows": 1000,
+  "mutationRequests": 0,
+  "grantReactivation": false,
+  "activeHostedStatusRetried": false,
+  "limitation": "Aggregate management counts and policy metadata, not replay of the failed caller response."
+}

@@ -1,0 +1,23 @@
+{
+  "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "pins": [
+    {
+      "path": "/private/tmp/tenops-tenbot-knowledge-release-20261030/release.mjs",
+      "sha256": "7ac3c6041e0bcf1b2e0282a2c750042902af1a0263679815f81bbb07364264e7"
+    },
+    {
+      "path": "/private/tmp/tenops-tenbot-knowledge-release-20261030/tenops/build-attempt.json",
+      "sha256": "13d008fce95ce0c1d4aef990efc3cfa244e7d49f3ff1fb4672449bf90277dfb1"
+    },
+    {
+      "path": "/private/tmp/tenops-tenbot-knowledge-release-20261030/tenops/build.json",
+      "sha256": "1691592440e5cdcdd0b0e3b6020ab178d672ab4a14b695925056a1f0348e8540"
+    },
+    {
+      "path": "/private/tmp/tenops-tenbot-knowledge-release-20261030/tenops/served.json",
+      "sha256": "b8b97eb0990e8307e592c7561a2cf81071c85936d61b78c7c00d26c556bfdffa"
+    }
+  ],
+  "reviewedSourceLines": "release.mjs:31-37",
+  "contract": "Accepted and served 2a3 build explicitly set masked Planning to an empty string, set dev branding false, and required falsy Planning/Early Access. This reproduces that build contract without reading a hosted secret value."
+}

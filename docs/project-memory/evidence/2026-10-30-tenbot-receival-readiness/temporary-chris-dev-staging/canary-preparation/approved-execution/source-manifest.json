@@ -1,0 +1,9 @@
+{
+  "sourceSha256": "51925a340ece9e1aab639af7e8bbfa16361829b1d3290ed6fe6049a72e1e8244",
+  "sourceBytes": 25238,
+  "parts": 34,
+  "originalSha256": "c8bff6f018dde06e4703f79632262db4e705c7b74fe4dd516fe651d6466108d1",
+  "onlyChange": "const EXECUTION_AUTHORIZED=false to true",
+  "authority": "Current Product APPROVED ONE-ROW HOSTED WRITE CANARY",
+  "activationPerformed": false
+}

@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-10-31T00:37:28.146516+00:00",
+  "observedAtUtcApproximate": "2026-10-31T00:31Z",
+  "method": "Actual authenticated Chrome UI, existing Chris profile: TenBot project settings \u2192 Personal Organization Billing overview and Credit grants. No key/payment values or screenshots captured.",
+  "project": "TenBot",
+  "projectId": "proj_e3Qoebc2IckUzl282v3ys6Yl",
+  "organization": "Personal Organization",
+  "apiCreditBalanceUsd": "6.28",
+  "grantState": "Available",
+  "grantReceivedDate": "2026-10-29",
+  "grantOriginalUsd": "7.00",
+  "grantDisplayedBalance": "6.28 / 7.00",
+  "grantExpiresDisplayedDate": "2026-10-31",
+  "exactExpirationTimeNotDisplayed": true,
+  "totalDisplayedUsed": "0.72 / 7.00",
+  "balancePrecision": "Dashboard USD amounts rounded to cents; not a per-request cost or exact reconciliation of local and hosted ledger.",
+  "futureRenewalAssumed": false,
+  "billingChanges": 0,
+  "apiCallsOrInference": 0,
+  "sourceUrl": "https://platform.openai.com/settings/organization/billing/credit-grants",
+  "officialReference": "https://developers.openai.com/api/docs/guides/chatgpt-api-credits"
+}

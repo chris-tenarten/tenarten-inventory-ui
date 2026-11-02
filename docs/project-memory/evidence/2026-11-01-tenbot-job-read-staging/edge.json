@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "at": "2026-11-02T00:24:07.835Z",
+  "candidate": "75ed1f35b97bb964fc5f1d3e9587f1393f7d9356",
+  "function": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 38,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "5a64d9e92402bfb0ea9581f2f02fa1672b181b382897a6a80b341ff37d8aa7a9"
+  },
+  "relativeModules": 41,
+  "bundleSha256": "157cefe0974618508f67bede6412855f375d54178e96cb72be6bdb293d913365",
+  "jwtVerification": true,
+  "exactHostedModuleBytes": true,
+  "secretsAndOtherFunctionsUnchanged": true,
+  "allWritesOff": true
+}

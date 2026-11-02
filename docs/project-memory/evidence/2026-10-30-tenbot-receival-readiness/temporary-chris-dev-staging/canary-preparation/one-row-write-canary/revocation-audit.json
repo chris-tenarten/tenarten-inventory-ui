@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T21:25:34.872Z",
+  "readOnly": true,
+  "result": {
+    "audit": [
+      {
+        "id": 1,
+        "event": "activated",
+        "actorId": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "occurredAt": "2026-10-30T21:20:46.818001+00:00"
+      },
+      {
+        "id": 2,
+        "event": "revoked",
+        "actorId": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "occurredAt": "2026-10-30T21:22:12.740337+00:00"
+      }
+    ],
+    "grant": {
+      "id": "9c71ec1f-43ca-4a23-a00f-fb855a3e9edd",
+      "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+      "startsAt": "2026-10-30T21:20:46.747468+00:00",
+      "expiresAt": "2026-10-30T21:35:00+00:00",
+      "revokedAt": "2026-10-30T21:22:12.716243+00:00",
+      "revokedBy": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+      "capability": "adjustInventory",
+      "activatedBy": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+      "approvedDraftId": null,
+      "executedDraftId": null
+    },
+    "enrollment": 0,
+    "subjectRole": "developer",
+    "activeGrants": 0,
+    "developerGlobalAdjust": 0
+  },
+  "mutations": 0
+}

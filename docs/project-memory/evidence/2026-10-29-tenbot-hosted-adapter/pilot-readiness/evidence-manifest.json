@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "path": "latency-breakdown.json",
+      "sha256": "ed09dc9f611f1ceb4d3bf7e090866e9be8b9aaf8d6f76d6334a6327e5c3ba965"
+    },
+    {
+      "path": "latency-correction.json",
+      "sha256": "680676f756cc237fe68bec9889502aa7d72985633e518cd08677381b96baf1f1"
+    },
+    {
+      "path": "hosted-metadata.json",
+      "sha256": "168fd72d87b84e07308e18358746f7fff043e73f29847e05e3282abbb068e2e1"
+    },
+    {
+      "path": "platform-metadata.json",
+      "sha256": "d4f74dce43e2c093d39a66ab73d88cfe96ed70f40d425a4231d8bdc3483ce895"
+    },
+    {
+      "path": "pilot-proposal.json",
+      "sha256": "f54dc254a88388233e0e5f784f9c9fa1dde18a8bf23ff569455ae8e661b9a8aa"
+    },
+    {
+      "path": "promotion-plan.json",
+      "sha256": "a8899ddd6936af7fcff3518896a701b1a024b9cef309647388ecf5dede5f6076"
+    },
+    {
+      "path": "latency-correction.diff.txt",
+      "sha256": "91ac0fee31e265be7708dc1499945998d925d500a82b6e779464ba6c35e0290a"
+    }
+  ],
+  "allNewEvidenceReadOnlyOrOffline": true,
+  "inferenceCallsThisPass": 0,
+  "hostedMutationsThisPass": 0
+}

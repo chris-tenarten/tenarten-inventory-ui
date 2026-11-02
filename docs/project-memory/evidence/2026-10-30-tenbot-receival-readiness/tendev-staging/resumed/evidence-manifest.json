@@ -1,0 +1,168 @@
+{
+  "recordedAt": "2026-10-30T17:10:23.210Z",
+  "files": [
+    {
+      "path": "summary.json",
+      "sha256": "d9ffd313398f4e591ec7050265384a961ca60fd45be82ce608d123db3fd143c6"
+    },
+    {
+      "path": "approved-migration-hashes.json",
+      "sha256": "86b86931be9ef4136356b44ff9004768eb99fe27d7ee1061828b8b5d5785f9a6"
+    },
+    {
+      "path": "preapply-compatibility-verdict.json",
+      "sha256": "ac2e4b8321b89d8435d438bb1e4a1d34dede2b18879259db53ffe5bed2b029d1"
+    },
+    {
+      "path": "affected-schema-drift.json",
+      "sha256": "c130890f197f74b2dd3b1d7542e166cdee40cbb4df0c9da0e50870c58da692f9"
+    },
+    {
+      "path": "preapply-prerequisites.json",
+      "sha256": "75052c6109d05777397612df876b65ff52eab64250e55f64b4b8e599733fb2ef"
+    },
+    {
+      "path": "preapply-role-privileges.json",
+      "sha256": "67507bc62c4299dc1a7523424626f3d60e01c0a2bb74f68c6596a040057ddf94"
+    },
+    {
+      "path": "preapply-meter-snapshot.json",
+      "sha256": "b24d3eaafbaac4ccd7c247c0076869300897d452e15a4bf17ab126f0100a4453"
+    },
+    {
+      "path": "private-cleanup-configuration.json",
+      "sha256": "4b6c5a41c61a9390ae48a6f36866978fe00c07171302c4794e95a04d44184a21"
+    },
+    {
+      "path": "migration-application.json",
+      "sha256": "c39d19559c7c2087842fd8b70f71e87cc4a30e97e15d5979caa13ce14f5d3f61"
+    },
+    {
+      "path": "independent-postapply-evidence-review.json",
+      "sha256": "81d4193b80fcf1dd3483f78ac0bdd554ada9ad90bc29dcdfb2029435bd6f7381"
+    },
+    {
+      "path": "postapply-metadata-verification.json",
+      "sha256": "ca8f952a28513e7b7a25e1c0eb9a854d994540524254314915c79be5fe040ea1"
+    },
+    {
+      "path": "edge-deployment.json",
+      "sha256": "699e07e3832af2cf1593403fd4aec2e1990e4f6d40f8ac223251e13780cbff1c"
+    },
+    {
+      "path": "tenbot-edge-deployment.json",
+      "sha256": "279d61595b7cb801909382c25d6769234739d4f2ac431295736affde930854c3"
+    },
+    {
+      "path": "tenbot-receival-cleanup-edge-deployment.json",
+      "sha256": "2d935f587e7dffe8be38abd2584e155e4c1b9666fe3429aaf0d8abb14bed7516"
+    },
+    {
+      "path": "pages-deployment.json",
+      "sha256": "2d8afd8f7c3e16579da2a0cf8e101f6ce3be53485f20b2706ee52800b11e637a"
+    },
+    {
+      "path": "served.json",
+      "sha256": "55a6fa75d2737ba3280c22ec15d6eb63ca1e65dddf60d9fba1deb9c07c2f87db"
+    },
+    {
+      "path": "anonymous-hosted-smoke.json",
+      "sha256": "53d954c6b1fcc654098130fb42b989ab13214fa5a7cb4646f70cead1b6d19976"
+    },
+    {
+      "path": "native-messaging-inventory-smoke.json",
+      "sha256": "382a23601f48bdc49970c3826fcd321e7d8ce40c0dd304cba6462f85eb753045"
+    },
+    {
+      "path": "cleanup-install.json",
+      "sha256": "ad01bbc239db032930e49b6a2eed2a05bb008261e72ebe55834052186454362b"
+    },
+    {
+      "path": "cleanup-maintenance-enabled.json",
+      "sha256": "741d5e3899dc75c468e6f4817de93e4d1d319a8153626b1c25c985b1cf098bb5"
+    },
+    {
+      "path": "cleanup-hosted-checks.json",
+      "sha256": "8f21e7865df6755ef691b8eac8c27c2b251e67945f6bca664d801b8c5fc9d74a"
+    },
+    {
+      "path": "scheduler-once.json",
+      "sha256": "a60a2600319a81419782931b7cd5fb5ab5de4b1d7654a3624de90aa138b82696"
+    },
+    {
+      "path": "scheduler-restoration.json",
+      "sha256": "3d93dd07b3b224d91ec1de5089858c1e75c0208010a6d36d520f7922158e6b5d"
+    },
+    {
+      "path": "cleanup-hourly-enabled.json",
+      "sha256": "9cedaf4baaf62ccfdbcb95e8f174047b87ae603e88a26b7f4fe37589a60e23d5"
+    },
+    {
+      "path": "cleanup-status-snapshot.json",
+      "sha256": "517fdb56371bfa2b0ba4a20e4fc689c89e699ea44d08a44784ec92e7b1d5f6fc"
+    },
+    {
+      "path": "final-hosted-readonly.json",
+      "sha256": "eba2e3616bda462dc0d1f4a3a36ce93791e4c4926e61a0c1ef9fe2ca58b51729"
+    },
+    {
+      "path": "postflight-meter.json",
+      "sha256": "37ed7381c7d987659638b7e63600beb8bec88675ef63fcdb7dd29ffc73dd9cb8"
+    },
+    {
+      "path": "chris-dev-lookup-hash-correction.json",
+      "sha256": "edfcd9a9badf1d8e98d878cca11e018663876691d9a9670fa39d45c074464548"
+    },
+    {
+      "path": "canary-plan-final.json",
+      "sha256": "0ae31e2e4deb5662add9a8d347387301102c9176f27aada0f8bc25825e459099"
+    },
+    {
+      "path": "final-evidence-review.json",
+      "sha256": "2faecd57236c3abeb2a6c023b075c3a8a984c45799b69eb9adca3288d10a41cd"
+    }
+  ],
+  "privateScratch": "/private/tmp/tenops-tenbot-receival-tendev-resume-20261030",
+  "operatorHashes": [
+    {
+      "name": "apply-approved.mjs",
+      "sha256": "f05160f6a759b008b58c9814c1c3ee192193e7cb4467df3884977378e5c67cd9"
+    },
+    {
+      "name": "configure-private-cleanup.mjs",
+      "sha256": "e0eb060bf5314fe11e4b1a09382e58bd0ecbf92840f4d1b13ab55288b78fb23b"
+    },
+    {
+      "name": "preparedeploy.mjs",
+      "sha256": "ff87e8e60055d9a6448c57231a0299510d99b870d80898b90b7966a309d03ee1"
+    },
+    {
+      "name": "cleanup-operator.mjs",
+      "sha256": "de3f650a23dbb16c8c911a22aa00b020d2915636574abff742fcfa40948131d3"
+    },
+    {
+      "name": "cleanup-hosted-noop-checks.mjs",
+      "sha256": "c36c8e7944ad44b6dc43cebde9e9bd7042ba07a7c8792f1ea812fee05622056d"
+    },
+    {
+      "name": "scheduler-once.mjs",
+      "sha256": "44d3bd1c7216968c48e53d7328f5a31101e217c91916232603ee21363f4bb57a"
+    },
+    {
+      "name": "anonymous-smoke.mjs",
+      "sha256": "e5f63d8120b034e57b6d9f85fa6be6bed89f5f20e6e469a51e10eecf74095dc9"
+    },
+    {
+      "name": "postflight-meter.mjs",
+      "sha256": "bc30fade9ce2a3fbe97630cf98ebd06799b2ec35dc7cfa00ba7c81ef654fb00c"
+    },
+    {
+      "name": "final-readonly.mjs",
+      "sha256": "b562f0cdf6ad3eee72b8ca6bdf7558fdb8ceb3288c6b17b3710ec197023054fa"
+    }
+  ],
+  "excluded": [
+    "Raw API responses/configuration, browser sessions, secret digests snapshots, source bundles and deployment logs; all secrets and one-use wake payloads.",
+    "Exact account login predicate is private; evidence records only the Product-named test profile and current capabilities."
+  ]
+}

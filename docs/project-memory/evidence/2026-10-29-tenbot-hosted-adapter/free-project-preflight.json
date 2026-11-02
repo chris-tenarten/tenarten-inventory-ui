@@ -1,0 +1,88 @@
+{
+  "checkedAt": "2026-10-29T23:15:24.088Z",
+  "status": "ELIGIBLE_EXISTING_FREE_ORGANIZATION",
+  "organizations": [
+    {
+      "id": "uxxhpnseynojdgabanrv",
+      "slug": "uxxhpnseynojdgabanrv",
+      "name": "tenarten-terrazzo",
+      "plan": "free"
+    }
+  ],
+  "projects": [
+    {
+      "id": "vxdxjhazkqhpkwdqtobp",
+      "name": "tenartenDB",
+      "status": "ACTIVE_HEALTHY",
+      "organizationId": "uxxhpnseynojdgabanrv",
+      "organizationSlug": "uxxhpnseynojdgabanrv",
+      "region": "us-east-1",
+      "createdAt": "2026-03-27T14:21:51.267673Z"
+    }
+  ],
+  "activeFreeProjectCount": 1,
+  "documentedFreeLimit": 2,
+  "selectedOrganization": {
+    "id": "uxxhpnseynojdgabanrv",
+    "slug": "uxxhpnseynojdgabanrv",
+    "name": "tenarten-terrazzo",
+    "plan": "free"
+  },
+  "entitlements": [
+    {
+      "feature": "instances.compute_update_available_sizes",
+      "hasAccess": false,
+      "config": {
+        "enabled": false,
+        "set": []
+      }
+    },
+    {
+      "feature": "branching_limit",
+      "hasAccess": false,
+      "config": {
+        "enabled": false,
+        "value": 0,
+        "unlimited": false,
+        "unit": "branches"
+      }
+    },
+    {
+      "feature": "project_pausing",
+      "hasAccess": true,
+      "config": {
+        "enabled": true
+      }
+    }
+  ],
+  "freePlanVerified": true,
+  "creationAllowed": true,
+  "quotaLimitation": "Account-visible inventory plus current Free plan; server still enforces owner/admin shared quota without paid fallback.",
+  "requests": [
+    {
+      "path": "projects",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 213
+    },
+    {
+      "path": "organizations",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 273
+    },
+    {
+      "path": "organizations/uxxhpnseynojdgabanrv",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 115
+    },
+    {
+      "path": "organizations/uxxhpnseynojdgabanrv/entitlements",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 121
+    }
+  ],
+  "mutations": false
+}

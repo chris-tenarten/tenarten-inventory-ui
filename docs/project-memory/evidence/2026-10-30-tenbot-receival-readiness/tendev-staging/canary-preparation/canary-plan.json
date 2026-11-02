@@ -1,0 +1,271 @@
+{
+  "schema": "tenbot-receival-canary-plan.v1",
+  "status": "PREPARED_ONLY_AWAITING_EXPLICIT_PRODUCT_APPROVAL",
+  "preparedAt": "2026-10-30T17:26:08.393Z",
+  "authority": "Product PREPARE FINAL RECEIVAL WRITE CANARY; accepts disabled TenDev35bb. No execution, activation, permission changes, additional migrations, push or deployment authorized.",
+  "riskTier": 3,
+  "testingLevel": "Focused Level3 preparation; no lifecycle/security campaign or canary executed",
+  "runtime": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "tenDevDeployment": "b3401edf-3218-45ff-af84-c8dd63e94ca8",
+  "sharedProject": "vxdxjhazkqhpkwdqtobp",
+  "identity": {
+    "proposed": true,
+    "dedicatedSynthetic": false,
+    "dedicatedSyntheticFinding": "No active named synthetic/test Inventory-capable profile identified. Four existing non-Admin Lead profiles meet capabilities; only the selected proposal is retained here.",
+    "userId": "92edea19-e431-4493-9a1b-3c3ecf32aeae",
+    "displayName": "Anthony Iorio",
+    "role": "lead",
+    "isActive": true,
+    "readOnly": false,
+    "capabilities": {
+      "adjustInventory": true,
+      "messaging.write": true,
+      "writeBusinessData": true,
+      "readOperationalData": true,
+      "manageVendorsCatalog": true,
+      "accessDevelopmentEnvironment": false
+    },
+    "reason": "Existing non-Admin operational Lead, chosen as proposed real employee fallback. Product must approve this exact real identity; no Chris/Admin inheritance or chris_dev promotion.",
+    "normalAuthentication": "Anthony signs in normally and personally reviews/approves. No password/token sharing, impersonation, Auth creation or privileged business client.",
+    "signedSessionVerified": false,
+    "requiredFreshChecks": [
+      "Auth.getUser user.id equals this UUID",
+      "Own profile active/Lead/non-read-only",
+      "Own has_app_capability RPCs readOperationalData/writeBusinessData/adjustInventory/messaging.write true",
+      "No change in role/capability permission epoch before approval/commit"
+    ],
+    "tenDevAccess": {
+      "accessDevelopmentEnvironment": false,
+      "acceptedBuildMode": "compatibility",
+      "source": "Accepted clean build omits NEXT_PUBLIC_RBAC_MODE; auth.tsx permits active Lead in this existing mode. No mode or permission change."
+    },
+    "catalogCreationCapabilityExistsButExcluded": true
+  },
+  "catalog": {
+    "source": "standard",
+    "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+    "supplier": "T&M Supply",
+    "material": "Alaska White",
+    "size": "#0",
+    "category": "marble",
+    "materialClass": "turkish_aggregate",
+    "vendorSku": null,
+    "originalCatalogUnit": "50lb bag",
+    "snapshotSha256": "d1f36457f987804be315ba04f98b75f035e4c9f50db650c007337b409b56f3b2",
+    "selectionEvidence": "Exact normal authenticated TenDev Catalog UI selection, then bounded public-anon PostgREST reference lookup of only the selected catalogue tuple; no SQL/service-role or employee session used",
+    "employeeScopedRevalidationRequired": true,
+    "referenceRows": 1,
+    "pricesRead": false
+  },
+  "invoice": {
+    "reference": "SYN-TENDEV-RECEIVAL-20261030-01",
+    "date": "2026-10-30",
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "byteSize": 2877,
+    "mediaType": "application/pdf",
+    "pages": 1,
+    "path": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/canary-preparation/output/pdf/synthetic-tendev-receival-20261030-01.pdf",
+    "uploaded": false,
+    "synthetic": true,
+    "priceOrPayment": false,
+    "physicalShipment": false,
+    "materialLine": "Alaska White | #0 | 1 Bag",
+    "modelExtractionPerformed": false,
+    "modelBehavior": "After approval of this plan use real Terra attachment inference and catalog tools. Do not substitute this offline PDF text check for live extraction; no model-authored SQL or automatic approval."
+  },
+  "operation": {
+    "includedLines": 1,
+    "pendingRecords": 1,
+    "quantityExpected": "1",
+    "unit": "Bag",
+    "immutableSourceQuantity": {
+      "quantity": "1",
+      "unit": "Bag"
+    },
+    "quantityBasis": {
+      "sourceKind": "package_count",
+      "packageCount": "1",
+      "perPackage": {
+        "quantity": "50",
+        "unit": "LB",
+        "container": "Bag"
+      },
+      "totalMaterial": {
+        "quantity": "50",
+        "unit": "LB"
+      },
+      "receivalQuantity": "1",
+      "receivalUnit": "Bag",
+      "inventoryStockingUnit": null,
+      "calculation": "source_package_count",
+      "reasons": []
+    },
+    "receivedQuantity": "0",
+    "status": "pending",
+    "productionJobId": null,
+    "temporaryJobLabel": null,
+    "newMaterial": null,
+    "newCatalogRecords": 0,
+    "newSupplierRecords": 0,
+    "metadata": {
+      "orderedBy": "Anthony Iorio",
+      "orderDate": "2026-10-30",
+      "location": "Denton"
+    },
+    "documentDateInCurrentServerPayload": null,
+    "documentDateEvidence": "PDF date immutable; current runtime stores documentDate:null and uses explicit orderDate. No date inference/correction in this task.",
+    "approval": "Only exact immutable server-reviewed payload hash, explicit confirmation CREATE_REVIEWED_PENDING_RECEIVALS, current permission epoch and fresh one-use permit. HTTP approve immediately executes; never click during preparation.",
+    "serverAssigned": "Source/draft/approval/permit/pending IDs and durable payload hash are generated at execution-time review; no fictitious IDs preassigned."
+  },
+  "window": {
+    "date": "2026-10-30",
+    "timezone": "America/Chicago",
+    "startsLocal": "2026-10-30T13:00:00-05:00",
+    "expiresLocal": "2026-10-30T13:15:00-05:00",
+    "startsUtc": "2026-10-30T18:00:00Z",
+    "expiresUtc": "2026-10-30T18:15:00Z",
+    "durationMinutes": 15,
+    "activationAuthorized": false,
+    "missedWindow": "Do not extend or start late automatically. Return for an updated exact Product-approved window; existing inference stops23:00Z regardless."
+  },
+  "spending": {
+    "newInferenceThisPreparation": 0,
+    "preparationCostUsd": 0,
+    "proposedCanaryMaximumUsd": 0.25,
+    "enforcement": "Existing selected-employee UTC-day server limit across every request, plus existing $0.25/request and request-step limit16; do not rely on an unenforced $0.05 estimate.",
+    "selectedEmployeeTodayMicrousd": 0,
+    "selectedEmployeeRemainingUsd": 0.25,
+    "hostedRemainingUsd": 3.79193,
+    "hostedTotalAllowanceUsd": 4,
+    "globalDailyLimitUsd": 4,
+    "existingExpiryUtc": "2026-10-30T23:00:00Z",
+    "policyChanges": false,
+    "promotionalRenewalAssumed": false,
+    "recheckBeforeActivation": true
+  },
+  "futureActivation": {
+    "notPerformed": true,
+    "requiresSeparateApproval": true,
+    "oneEmployeeOnly": "92edea19-e431-4493-9a1b-3c3ecf32aeae",
+    "origin": "https://tendev.pages.dev",
+    "edgeFlagsToEnableOnlyWithinApprovedWindow": [
+      "TENBOT_RECEIVAL_PILOT_ENABLED",
+      "TENBOT_RECEIVAL_EXECUTION_ENABLED"
+    ],
+    "edgeAllowlist": "TENBOT_RECEIVAL_EMPLOYEE_IDS exact single selected UUID; expiry18:15Z",
+    "databaseControlMetadata": [
+      "tenbot_receival_execution_control validated enable; receipt pinned to accepted evidence",
+      "tenbot_receival_pilot_policy enabled only18:00–18:15Z, exact origin/validation receipt",
+      "tenbot_receival_pilot_employees one selected UUID; version triggers invalidate old permits"
+    ],
+    "rbacChanges": 0,
+    "credentialsChanged": false,
+    "scopeLimitation": "Existing controls bind caller/origin/window and exact immutable approval, not a global one-row quota. Operator/employee must inspect that this sole approved payload contains only this document/material/1Bag/noJob/noNewMaterial; no other request or approval is authorized.",
+    "ordinaryEmployeeAndProductionBoundaries": "Current SQL/Edge gates OFF and allowlists empty. During any later approved window only this exact caller is enrolled, other employees remain denied; hosted workspace hard-locks TenDev origin and Production UI has no experimental route. Origin is not a substitute for JWT/RLS or an isolated database."
+  },
+  "expectedMutations": {
+    "allFutureUnexecuted": true,
+    "operational": [
+      "Exactly one pending_receivals insert: selected material/source identity, status pending, quantity_expected1, quantity_received0, unitBag, no received actor/date/receipt links, Job/temp label null.",
+      "Exactly one guarded cancellation of only that returned unreceived row: status cancelled; retain row/history."
+    ],
+    "originalAndReview": [
+      "One private invoice-receival-originals object, owner/sourceId/original; original SHA/bytes immutable; no duplicate normal-message upload.",
+      "One invoice_receival_sources row, server verified state updates, one current reviewed invoice_receival_drafts/source_binding and prepared audit. Any edit supersedes/revokes approval and must remain within this same plan.",
+      "One durable invoice_receival_approvals and approved audit; one execution permit consumed in the canonical transaction."
+    ],
+    "commit": [
+      "One invoice_receival_document_claims identity/hash claim, invoice_receival_executions receipt listing one actual pending UUID and zero catalog IDs, executed audit.",
+      "Existing source row marked retained with exact draft ID; raw agent_state cleared."
+    ],
+    "metering": "Actual bounded OpenAI reservation/settlement rows, unknown count; retain full uncertain reservations.",
+    "controls": "Temporarily enable only the one-employee feature policy then disable/revoke allowlist; no RBAC/profile/capability changes.",
+    "forbidden": [
+      "No catalog/vendor creation or edits",
+      "No Jobs/POs or customer/employee operational changes",
+      "No inventory_items/stock quantity changes",
+      "No inventory_transactions or pending_receival_receipt_batches",
+      "No Receive/Undo/stock adjustment, hard deletion or unrelated cancellation"
+    ]
+  },
+  "verificationPlan": [
+    "Before activation verify exact signed actor/capabilities and existing funding, runtime, catalog tuple/package and window; capture caller-authorized baseline for only this material/location stock IDs and quantities/units, not unrelated stock or private Job data.",
+    "Privately upload exact PDF bytes once, genuine Terra extraction/tool investigation, prefill explicit order metadata; fresh duplicate/source/canonical server review. Confirm one current line exact catalog UUID, 1Bag, source1Bag, no unresolved ambiguity/confirmed duplicate, noJob/noNewMaterial. Compare durable server hash and PDF/source/binding SHA; human explicit approval only after this check.",
+    "Canonical approved commit; response must contain exactly one real UUID P and createdCatalogRecords[]. Read P under same caller JWT/RLS; assert statuspending/expected1/received0/unitBag/vendorT&M Supply/materialAlaskaWhite/size#0/categorymarble/metadata and no receipt links.",
+    "Open ordinary Inventory Pending Receivals and identify that same P using the response ID/document reference. Verify persisted receipt, approval/hash, unique document claim, prepared/approved/executed audit and source retention/provenance; do not publish raw unrelated evidence.",
+    "Measure target stock baseline unchanged and zero inventory_transactions/pending_receival_receipt_batches linked to P. A response flag alone is not proof. If relevant stock changed concurrently, stop/report rather than attributing it to this canary.",
+    "Retry the exact approved draft/hash/confirmation once while window remains valid. Require same P/idempotent reconciliation and no extra pending/catalog/claim/execution or stock event. Never create a second document/reference/approval to escape uncertainty.",
+    "Disable experimental execution and pilot/remove enrollment immediately after result/retry (and always by18:15Z), preserving meter rows/reservations and existing cleanup. Read receipts afterward via own get_invoice_receival_draft, never by re-enabling writes.",
+    "Perform only the separately approved atomic conditional cancellation below through same actual employee JWT. Read P afterward and ensure statuscancelled/received0/no receipt links; queue excludes P; retained original/hash/draft/approval/execution/audit/document claim remain available only through authorized access.",
+    "Final verify original Edge/SQL gates OFF, employee allowlist0, all operational mutations attributable only to P, stock unchanged and no unrelated record changed; record actual IDs/cost/results."
+  ],
+  "cancellation": {
+    "notPerformed": true,
+    "requiresExplicitProductApproval": true,
+    "returnedIdVariable": "P=only actual createdRecordIds[0]; require one UUID, never search by name alone",
+    "mechanism": "Existing caller-scoped pending_receivals status-update contract, with additional atomic PostgREST predicate filters; no new service, migration, application change, operator SQL or privileged credential.",
+    "method": "PATCH",
+    "path": "/rest/v1/pending_receivals",
+    "body": {
+      "status": "cancelled"
+    },
+    "atomicFilters": {
+      "id": "eq.P",
+      "status": "eq.pending",
+      "quantity_received": "eq.0",
+      "receipt_inventory_item_id": "is.null",
+      "receipt_transaction_id": "is.null",
+      "received_at": "is.null"
+    },
+    "prefer": "return=representation",
+    "requireRows": 1,
+    "zeroRows": "Read only P to reconcile. Alreadycancelled+stillunreceived is a completed cancellation; any receipt, changed/missing record or permission failure stops cleanup. Never loosen filters, Undo Receive, delete or adjust stock.",
+    "retention": "No source/draft/approval/execution/audit/document-claim deletion. Completed source remains retained and excluded from expiry cleanup.",
+    "uiLimitation": "Normal Cancel UI itself lacks this compare-and-set condition; do not describe its pre-read as atomic protection. This proposed one-off guarded use has not executed."
+  },
+  "environmentDisclosure": {
+    "sharedDatabase": true,
+    "productionApplicationDeployed": false,
+    "sharedInventoryVisibility": "This is TenDev-launched, not an isolated data branch: the synthetic pending row will be temporarily visible in the existing shared TenOps Pending Receivals queue under normal permissions. Product approval must cover that exact shared-row mutation and cancellation.",
+    "noPhysicalReceiving": "Keep the brief created-row verification period controlled. Atomic cancellation refuses an already received row; do not ask the agent to receive it or send external notifications."
+  },
+  "currentVerifiedState": {
+    "pilot": false,
+    "execution": false,
+    "allowlistedEmployees": 0,
+    "sourceUploads": 0,
+    "reviewedDrafts": 0,
+    "approvals": 0,
+    "executionPermits": 0,
+    "executions": 0,
+    "allProviderKeyDigestsUnchanged": true,
+    "exactPublicTenDevAssets": 4,
+    "readOnlyControlsReceipt": "final-controls-readonly.json"
+  },
+  "unprovenUntilApprovedExecution": [
+    "Actual normal Anthony signed-in session and caller RPCs (only current role metadata verified now)",
+    "Real hosted PDF extraction/review/approval/pending result/stock/idempotent retry/guarded cancellation for this document",
+    "Atomic guarded cancellation receipt under this caller; source review and prior database proof are not a new live result"
+  ],
+  "stopConditions": [
+    "Missing actual caller session/capability, identity or catalog drift",
+    "Any funding/authorization/inference uncertainty not safely reconciled",
+    "Review differs from one exact included source-backed material1Bag/noJob/noNewMaterial",
+    "Confirmed duplicate/source hash mismatch/unresolved ambiguous line",
+    "Any second pending/catalog row, unexpected stock receipt/transaction or unrelated write",
+    "Window expired or Product approval absent"
+  ],
+  "changesPerformed": {
+    "applicationSource": 0,
+    "permissionChanges": 0,
+    "authUsersCreated": 0,
+    "featureActivation": 0,
+    "hostedMutations": 0,
+    "migrations": 0,
+    "inferenceCalls": 0,
+    "push": 0,
+    "deployment": 0,
+    "operationalWrites": 0,
+    "localFilesOnly": true
+  }
+}

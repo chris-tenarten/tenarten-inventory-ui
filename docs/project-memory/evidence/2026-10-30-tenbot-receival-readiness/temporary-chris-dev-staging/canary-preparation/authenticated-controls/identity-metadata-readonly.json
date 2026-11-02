@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-10-30T19:14:44.791Z",
+  "readOnly": true,
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 752283,
+      "remainingMicrousd": 3787673,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "pilot": false,
+    "subject": {
+      "id": "3785f6b9-742e-452f-af6c-31613a983633",
+      "role": "developer",
+      "active": true,
+      "readOnly": false
+    },
+    "enrolled": 0,
+    "readOnly": "on",
+    "execution": false,
+    "grantRows": 0,
+    "ownerAdmin": [
+      {
+        "id": "553948ec-f71e-4c06-9da8-6ad3755584d7",
+        "name": "Chris Ngo",
+        "role": "admin",
+        "active": true,
+        "readOnly": false
+      }
+    ],
+    "grantAuditRows": 0,
+    "adminManageRolesPermissions": true
+  },
+  "adminOwnJwtChannelVerified": false,
+  "browserDeveloperRoleVerified": true,
+  "mutations": 0,
+  "inferenceCalls": 0
+}

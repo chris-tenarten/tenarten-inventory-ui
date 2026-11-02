@@ -1,0 +1,1293 @@
+{
+  "phase": "current",
+  "recordedAt": "2026-10-31T00:07:43.461Z",
+  "healthy": true,
+  "requests": [
+    {
+      "name": "health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:07:41.774Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 382,
+      "totalMs": 387,
+      "bodyBytes": 228,
+      "bodySha256": "44e9cfbbf7ec2a5173591fd8178f332952fa16a75bffe555c623f40ea150bb2b",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:07:42 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e6bc72cb29381-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "services": [
+        {
+          "name": "auth",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        },
+        {
+          "name": "db",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "name": "metrics",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/metrics",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:07:42.163Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "status": 200,
+      "headersMs": 258,
+      "totalMs": 286,
+      "bodyBytes": 233893,
+      "bodySha256": "4668e85fb41fc05b97f51503ff47799ad3bfef77d759ea0ef4bea690821df1cd",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:07:42 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e6bc8ae669381-IAH",
+        "content-type": "text/plain"
+      },
+      "selectedSamples": [
+        {
+          "metric": "node_memory_SReclaimable_bytes",
+          "labels": {},
+          "value": 44732416
+        },
+        {
+          "metric": "node_memory_MemTotal_bytes",
+          "labels": {},
+          "value": 1924182016
+        },
+        {
+          "metric": "node_memory_SwapFree_bytes",
+          "labels": {},
+          "value": 1073647616
+        },
+        {
+          "metric": "node_vmstat_pswpin",
+          "labels": {},
+          "value": 0
+        },
+        {
+          "metric": "node_load1",
+          "labels": {},
+          "value": 0.13
+        },
+        {
+          "metric": "node_vmstat_oom_kill",
+          "labels": {},
+          "value": 0
+        },
+        {
+          "metric": "node_vmstat_pswpout",
+          "labels": {},
+          "value": 22
+        },
+        {
+          "metric": "node_load5",
+          "labels": {},
+          "value": 0.06
+        },
+        {
+          "metric": "node_disk_io_time_seconds_total",
+          "labels": {
+            "device": "nvme0n1"
+          },
+          "value": 10.752
+        },
+        {
+          "metric": "node_disk_io_time_seconds_total",
+          "labels": {
+            "device": "nvme1n1"
+          },
+          "value": 1.6
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "idle"
+          },
+          "value": 826.04
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "iowait"
+          },
+          "value": 5.93
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "irq"
+          },
+          "value": 0
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "nice"
+          },
+          "value": 0.01
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "softirq"
+          },
+          "value": 0.36
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "steal"
+          },
+          "value": 2.34
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "system"
+          },
+          "value": 9.07
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "0",
+            "mode": "user"
+          },
+          "value": 23.12
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "idle"
+          },
+          "value": 830.44
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "iowait"
+          },
+          "value": 4.89
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "irq"
+          },
+          "value": 0
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "nice"
+          },
+          "value": 0.01
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "softirq"
+          },
+          "value": 0.67
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "steal"
+          },
+          "value": 2.3
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "system"
+          },
+          "value": 8.83
+        },
+        {
+          "metric": "node_cpu_seconds_total",
+          "labels": {
+            "cpu": "1",
+            "mode": "user"
+          },
+          "value": 20.71
+        },
+        {
+          "metric": "node_filesystem_size_bytes",
+          "labels": {
+            "device": "/dev/nvme0n1p2",
+            "fstype": "ext4",
+            "mountpoint": "/"
+          },
+          "value": 10359754752
+        },
+        {
+          "metric": "node_filesystem_size_bytes",
+          "labels": {
+            "device": "/dev/nvme1n1",
+            "fstype": "ext4",
+            "mountpoint": "/data"
+          },
+          "value": 8350298112
+        },
+        {
+          "metric": "node_load15",
+          "labels": {},
+          "value": 0.05
+        },
+        {
+          "metric": "node_memory_MemAvailable_bytes",
+          "labels": {},
+          "value": 1300049920
+        },
+        {
+          "metric": "node_memory_Committed_AS_bytes",
+          "labels": {},
+          "value": 1641484288
+        },
+        {
+          "metric": "node_memory_SwapTotal_bytes",
+          "labels": {},
+          "value": 1073737728
+        },
+        {
+          "metric": "node_memory_CommitLimit_bytes",
+          "labels": {},
+          "value": 2035826688
+        },
+        {
+          "metric": "node_memory_Buffers_bytes",
+          "labels": {},
+          "value": 27979776
+        },
+        {
+          "metric": "node_memory_Cached_bytes",
+          "labels": {},
+          "value": 1347301376
+        },
+        {
+          "metric": "node_memory_MemFree_bytes",
+          "labels": {},
+          "value": 115838976
+        },
+        {
+          "metric": "node_filesystem_avail_bytes",
+          "labels": {
+            "device": "/dev/nvme0n1p2",
+            "fstype": "ext4",
+            "mountpoint": "/"
+          },
+          "value": 1992036352
+        },
+        {
+          "metric": "node_filesystem_avail_bytes",
+          "labels": {
+            "device": "/dev/nvme1n1",
+            "fstype": "ext4",
+            "mountpoint": "/data"
+          },
+          "value": 7984136192
+        },
+        {
+          "metric": "pg_stat_database_num_backends",
+          "labels": {},
+          "value": 21
+        },
+        {
+          "metric": "pg_exporter_last_scrape_error",
+          "labels": {},
+          "value": 0
+        },
+        {
+          "metric": "pg_up",
+          "labels": {},
+          "value": 1
+        },
+        {
+          "metric": "pgrst_db_pool_max",
+          "labels": {},
+          "value": 30
+        },
+        {
+          "metric": "pgrst_db_pool_waiting",
+          "labels": {},
+          "value": 0
+        }
+      ],
+      "metricNames": [
+        "node_memory_SReclaimable_bytes",
+        "node_memory_MemTotal_bytes",
+        "node_memory_SwapFree_bytes",
+        "node_vmstat_pswpin",
+        "node_load1",
+        "node_vmstat_oom_kill",
+        "node_vmstat_pswpout",
+        "node_load5",
+        "node_disk_io_time_seconds_total",
+        "node_cpu_seconds_total",
+        "node_filesystem_size_bytes",
+        "node_load15",
+        "node_memory_MemAvailable_bytes",
+        "node_memory_Committed_AS_bytes",
+        "node_memory_SwapTotal_bytes",
+        "node_memory_CommitLimit_bytes",
+        "node_memory_Buffers_bytes",
+        "node_memory_Cached_bytes",
+        "node_memory_MemFree_bytes",
+        "node_filesystem_avail_bytes",
+        "pg_stat_database_num_backends",
+        "pg_exporter_last_scrape_error",
+        "pg_up",
+        "pgrst_db_pool_max",
+        "pgrst_db_pool_waiting"
+      ],
+      "rawExpositionRetained": false
+    },
+    {
+      "name": "backend-logs",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/logs",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:07:42.164Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "querySha256": "7dc99226a076ca6c34a932d29d1a9b6ae6aa191c4afe97435c6fe7cde7f7e460",
+      "window": {
+        "start": "2026-10-30T23:52:00Z",
+        "end": "2026-10-31T00:07:00.000Z"
+      },
+      "aggregateOnly": true,
+      "status": 200,
+      "headersMs": 999,
+      "totalMs": 1000,
+      "bodyBytes": 8434,
+      "bodySha256": "c86e597373333e0b46551ccc6b6ea73c0b54b801aff8a6af4e6170e4e4c5d91b",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:07:43 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e6bc8e988845b-IAH",
+        "content-type": "application/json"
+      },
+      "rows": [
+        {
+          "bucket": "2026-10-30T23:52:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 37,
+          "last_event_at": "2026-10-30T23:52:17.927000",
+          "max_recorded_duration_ms": 64.399,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:53:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 12,
+          "last_event_at": "2026-10-30T23:53:23.000000",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "auth_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:53:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 4,
+          "last_event_at": "2026-10-30T23:53:19.930605",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "pgbouncer_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:53:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 157,
+          "last_event_at": "2026-10-30T23:53:36.168000",
+          "max_recorded_duration_ms": 784.998,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:53:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 8,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 42,
+          "last_event_at": "2026-10-30T23:53:36.170339",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:54:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 31,
+          "last_event_at": "2026-10-30T23:54:00.726000",
+          "max_recorded_duration_ms": 10.556000000000001,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:55:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 33,
+          "last_event_at": "2026-10-30T23:55:00.523000",
+          "max_recorded_duration_ms": 5.811,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:55:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 1,
+          "last_event_at": "2026-10-30T23:55:30.573370",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:56:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 3,
+          "last_event_at": "2026-10-30T23:56:43.000000",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "auth_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:56:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 239,
+          "last_event_at": "2026-10-30T23:56:43.299000",
+          "max_recorded_duration_ms": 48.467,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:57:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 2,
+          "last_event_at": "2026-10-30T23:57:24.000000",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "auth_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:57:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 235,
+          "last_event_at": "2026-10-30T23:57:24.882000",
+          "max_recorded_duration_ms": 17.973,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:57:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 5,
+          "last_event_at": "2026-10-30T23:57:40.261431",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:58:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 43,
+          "last_event_at": "2026-10-30T23:58:30.441000",
+          "max_recorded_duration_ms": 7.423,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:58:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 2,
+          "last_event_at": "2026-10-30T23:58:40.266090",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-30T23:59:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 105,
+          "last_event_at": "2026-10-30T23:59:18.443000",
+          "max_recorded_duration_ms": 13.611,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:00:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 41,
+          "last_event_at": "2026-10-31T00:00:02.663000",
+          "max_recorded_duration_ms": 16.854,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:00:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 1,
+          "last_event_at": "2026-10-31T00:00:42.869635",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:01:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 41,
+          "last_event_at": "2026-10-31T00:01:00.604000",
+          "max_recorded_duration_ms": 7.646,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:02:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 41,
+          "last_event_at": "2026-10-31T00:02:00.507000",
+          "max_recorded_duration_ms": 7.864,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:02:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 1,
+          "last_event_at": "2026-10-31T00:02:00.384425",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:03:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 43,
+          "last_event_at": "2026-10-31T00:03:28.194000",
+          "max_recorded_duration_ms": 8.331,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:03:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 1,
+          "last_event_at": "2026-10-31T00:03:30.389201",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:04:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 41,
+          "last_event_at": "2026-10-31T00:04:00.723000",
+          "max_recorded_duration_ms": 7.681,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:04:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 1,
+          "last_event_at": "2026-10-31T00:04:00.391774",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:05:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 41,
+          "last_event_at": "2026-10-31T00:05:00.793000",
+          "max_recorded_duration_ms": 8.535,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:05:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 1,
+          "last_event_at": "2026-10-31T00:05:00.555767",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:06:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 41,
+          "last_event_at": "2026-10-31T00:06:00.592000",
+          "max_recorded_duration_ms": 7.485,
+          "resource_mentions": 0,
+          "source": "postgres_logs",
+          "timeout_or_deadlock_mentions": 0
+        },
+        {
+          "bucket": "2026-10-31T00:06:00",
+          "capacity_mentions": 0,
+          "connectivity_mentions": 0,
+          "durations_ge_1s": 0,
+          "durations_ge_5s": 0,
+          "events": 1,
+          "last_event_at": "2026-10-31T00:06:30.584764",
+          "max_recorded_duration_ms": 0,
+          "resource_mentions": 0,
+          "source": "postgrest_logs",
+          "timeout_or_deadlock_mentions": 0
+        }
+      ],
+      "atLimit": false
+    },
+    {
+      "name": "gateway-logs",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/logs",
+      "method": "GET",
+      "startedAt": "2026-10-31T00:07:42.165Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "querySha256": "1e438717c41b7849d3827e3969acd58f694aacddc4de26ab6b78bfbf46941ff9",
+      "window": {
+        "start": "2026-10-30T23:52:00Z",
+        "end": "2026-10-31T00:07:00.000Z"
+      },
+      "aggregateOnly": true,
+      "status": 200,
+      "headersMs": 1295,
+      "totalMs": 1296,
+      "bodyBytes": 2764,
+      "bodySha256": "e2e7056e3fbf955ce69650b5429cddc1281ba383df01ebff656e6723540b0b8e",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:07:43 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e6bc8df82c06e-DFW",
+        "content-type": "application/json"
+      },
+      "rows": [
+        {
+          "bucket": "2026-10-30T23:52:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:52:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T23:54:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:54:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T23:55:00",
+          "requests": 1,
+          "route_class": "auth_other",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:55:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:55:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T23:56:00",
+          "requests": 1,
+          "route_class": "auth_other",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:56:00",
+          "requests": 2,
+          "route_class": "auth_token",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:56:00",
+          "requests": 37,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:56:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T23:56:00",
+          "requests": 3,
+          "route_class": "rest",
+          "status": 206
+        },
+        {
+          "bucket": "2026-10-30T23:57:00",
+          "requests": 2,
+          "route_class": "auth_other",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:57:00",
+          "requests": 29,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:57:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T23:58:00",
+          "requests": 1,
+          "route_class": "auth_other",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:58:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:58:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-30T23:59:00",
+          "requests": 8,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-30T23:59:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-31T00:00:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-31T00:00:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-31T00:01:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-31T00:01:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-31T00:02:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-31T00:02:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-31T00:03:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-31T00:03:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-31T00:04:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-31T00:04:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-31T00:05:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-31T00:05:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        },
+        {
+          "bucket": "2026-10-31T00:06:00",
+          "requests": 2,
+          "route_class": "rest",
+          "status": 200
+        },
+        {
+          "bucket": "2026-10-31T00:06:00",
+          "requests": 1,
+          "route_class": "rest",
+          "status": 204
+        }
+      ],
+      "atLimit": false
+    },
+    {
+      "name": "database-diagnostics",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+      "method": "POST",
+      "startedAt": "2026-10-31T00:07:42.165Z",
+      "timeoutMs": 15000,
+      "automaticRetries": 0,
+      "querySha256": "990d16333a54ff63bf4edaf0ba671d4f9688317fe28288c99bc91c71cfa93ff5",
+      "readOnly": true,
+      "status": 201,
+      "headersMs": 219,
+      "totalMs": 220,
+      "bodyBytes": 4499,
+      "bodySha256": "5652f05e5d320b4376e32e3c9945160a402065b23240507a1a1b66ce7793cabf",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Sat, 31 Oct 2026 00:07:42 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e6bc8e8cc753d-IAH",
+        "content-type": "application/json"
+      },
+      "state": {
+        "readOnly": "on",
+        "serverNow": "2026-10-31T00:07:42.333764+00:00",
+        "cronActivity": [
+          {
+            "name": "tenops-messaging-abandoned-drafts",
+            "jobid": 1,
+            "label": "last_30m",
+            "failed": 0,
+            "started": 0,
+            "succeeded": 0,
+            "last_ended": null,
+            "unfinished": 0,
+            "last_started": null,
+            "max_finished_seconds": null,
+            "connection_or_timeout_failures": 0,
+            "max_unfinished_record_age_seconds": null
+          },
+          {
+            "name": "tenops-web-push",
+            "jobid": 2,
+            "label": "last_30m",
+            "failed": 0,
+            "started": 29,
+            "succeeded": 29,
+            "last_ended": "2026-10-31T00:07:00.072854+00:00",
+            "unfinished": 0,
+            "last_started": "2026-10-31T00:07:00.056429+00:00",
+            "max_finished_seconds": 0.392983,
+            "connection_or_timeout_failures": 0,
+            "max_unfinished_record_age_seconds": null
+          },
+          {
+            "name": "tenbot-invoice-original-expiry",
+            "jobid": 3,
+            "label": "last_30m",
+            "failed": 0,
+            "started": 0,
+            "succeeded": 0,
+            "last_ended": null,
+            "unfinished": 0,
+            "last_started": null,
+            "max_finished_seconds": null,
+            "connection_or_timeout_failures": 0,
+            "max_unfinished_record_age_seconds": null
+          },
+          {
+            "name": "tenops-messaging-abandoned-drafts",
+            "jobid": 1,
+            "label": "since_verified_recovery",
+            "failed": 0,
+            "started": 0,
+            "succeeded": 0,
+            "last_ended": null,
+            "unfinished": 0,
+            "last_started": null,
+            "max_finished_seconds": null,
+            "connection_or_timeout_failures": 0,
+            "max_unfinished_record_age_seconds": null
+          },
+          {
+            "name": "tenops-web-push",
+            "jobid": 2,
+            "label": "since_verified_recovery",
+            "failed": 0,
+            "started": 12,
+            "succeeded": 12,
+            "last_ended": "2026-10-31T00:07:00.072854+00:00",
+            "unfinished": 0,
+            "last_started": "2026-10-31T00:07:00.056429+00:00",
+            "max_finished_seconds": 0.026486,
+            "connection_or_timeout_failures": 0,
+            "max_unfinished_record_age_seconds": null
+          },
+          {
+            "name": "tenbot-invoice-original-expiry",
+            "jobid": 3,
+            "label": "since_verified_recovery",
+            "failed": 0,
+            "started": 0,
+            "succeeded": 0,
+            "last_ended": null,
+            "unfinished": 0,
+            "last_started": null,
+            "max_finished_seconds": null,
+            "connection_or_timeout_failures": 0,
+            "max_unfinished_record_age_seconds": null
+          }
+        ],
+        "webPushWakes": [
+          {
+            "label": "last_30m",
+            "wakes": 0,
+            "consumed": 0,
+            "last_wake": null,
+            "environment": "tendev",
+            "last_consumed": null,
+            "expired_unconsumed": 0,
+            "max_consumption_lag_seconds": null
+          },
+          {
+            "label": "last_30m",
+            "wakes": 29,
+            "consumed": 29,
+            "last_wake": "2026-10-31T00:07:00.061756+00:00",
+            "environment": "tenops",
+            "last_consumed": "2026-10-31T00:07:00.498367+00:00",
+            "expired_unconsumed": 0,
+            "max_consumption_lag_seconds": 3.75053
+          },
+          {
+            "label": "since_verified_recovery",
+            "wakes": 0,
+            "consumed": 0,
+            "last_wake": null,
+            "environment": "tendev",
+            "last_consumed": null,
+            "expired_unconsumed": 0,
+            "max_consumption_lag_seconds": null
+          },
+          {
+            "label": "since_verified_recovery",
+            "wakes": 12,
+            "consumed": 12,
+            "last_wake": "2026-10-31T00:07:00.061756+00:00",
+            "environment": "tenops",
+            "last_consumed": "2026-10-31T00:07:00.498367+00:00",
+            "expired_unconsumed": 0,
+            "max_consumption_lag_seconds": 2.318594
+          }
+        ],
+        "backendStates": [
+          {
+            "n": 1,
+            "state": "unknown",
+            "backend_type": "archiver"
+          },
+          {
+            "n": 1,
+            "state": "unknown",
+            "backend_type": "autovacuum launcher"
+          },
+          {
+            "n": 1,
+            "state": "unknown",
+            "backend_type": "background writer"
+          },
+          {
+            "n": 1,
+            "state": "unknown",
+            "backend_type": "checkpointer"
+          },
+          {
+            "n": 17,
+            "state": "idle",
+            "backend_type": "client backend"
+          },
+          {
+            "n": 1,
+            "state": "unknown",
+            "backend_type": "logical replication launcher"
+          },
+          {
+            "n": 1,
+            "state": "unknown",
+            "backend_type": "pg_cron launcher"
+          },
+          {
+            "n": 1,
+            "state": "unknown",
+            "backend_type": "pg_net 0.20.0 worker"
+          },
+          {
+            "n": 1,
+            "state": "active",
+            "backend_type": "walsender"
+          },
+          {
+            "n": 1,
+            "state": "unknown",
+            "backend_type": "walwriter"
+          }
+        ],
+        "scheduledJobs": [
+          {
+            "name": "tenops-messaging-abandoned-drafts",
+            "jobid": 1,
+            "active": true,
+            "schedule": "17 * * * *",
+            "job_exists": true
+          },
+          {
+            "name": "tenops-web-push",
+            "jobid": 2,
+            "active": true,
+            "schedule": "* * * * *",
+            "job_exists": true
+          },
+          {
+            "name": "tenbot-invoice-original-expiry",
+            "jobid": 3,
+            "active": true,
+            "schedule": "23 * * * *",
+            "job_exists": true
+          }
+        ],
+        "writeControls": {
+          "pilot": false,
+          "permits": 0,
+          "execution": false,
+          "enrollment": 0,
+          "activeGrants": 0
+        },
+        "clientBackends": 17,
+        "invoiceCleanup": [
+          {
+            "label": "last_30m",
+            "wakes": 0,
+            "failed": 0,
+            "removed": 0,
+            "cancelled": 0,
+            "last_wake": null,
+            "succeeded": 0,
+            "last_finished": null,
+            "expired_queued": 0,
+            "stale_running_records": 0,
+            "max_finished_worker_seconds": null
+          },
+          {
+            "label": "since_verified_recovery",
+            "wakes": 0,
+            "failed": 0,
+            "removed": 0,
+            "cancelled": 0,
+            "last_wake": null,
+            "succeeded": 0,
+            "last_finished": null,
+            "expired_queued": 0,
+            "stale_running_records": 0,
+            "max_finished_worker_seconds": null
+          }
+        ],
+        "maxConnections": 90,
+        "blockedBackends": 0,
+        "databaseStartedAt": "2026-10-30T23:53:21.428532+00:00",
+        "cronSampleCoverage": {
+          "limit": 200,
+          "sampledRows": 200,
+          "oldestStartedAt": "2026-10-30T20:52:00.254229+00:00"
+        },
+        "statementStatsView": "extensions.pg_stat_statements",
+        "idleInTransactionClients": 0,
+        "longestClientQuerySeconds": 0,
+        "longestClientTransactionSeconds": 0
+      }
+    }
+  ],
+  "hostedMutations": 0,
+  "modelCalls": 0,
+  "credentialsStored": false,
+  "privacy": "Numeric metrics and aggregate diagnostics only; no raw application query/log messages, operational records, tokens, request headers or document contents. Allowlisted response status/timing/diagnostic headers retained."
+}

@@ -1,0 +1,17 @@
+{
+  "attemptedAt": "2026-10-29T23:15:38.603Z",
+  "createCalls": 1,
+  "payload": {
+    "name": "tenbot-readonly-validation-20261029",
+    "organization_slug": "uxxhpnseynojdgabanrv",
+    "region_selection": {
+      "type": "specific",
+      "code": "us-east-1"
+    },
+    "db_pass": "[NEW RANDOM PASSWORD NOT PERSISTED]",
+    "desired_instance_size": "omitted: documented smallest default"
+  },
+  "plan": "free",
+  "noCloneOrTemplate": true,
+  "noPaidAddon": true
+}

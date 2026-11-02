@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "candidate": "523f6471eaf7897c300ede04fe7ea64a837169c4",
+  "exactAcceptedSourcesMatched": true,
+  "reused": true,
+  "messagingHandlerHistoryGroups": 14,
+  "messagingBrowserGroups": 11,
+  "statusContextGroups": 13,
+  "focusedStatusUiScenario": 1,
+  "priorRealPostgreSqlJwtRlsGroups": 10,
+  "sharedSchemaReadback": true,
+  "noNewMigrations": true,
+  "newInferenceCalls": 0,
+  "newBroadQaCampaign": false,
+  "authenticatedHostedUiClaimed": false
+}

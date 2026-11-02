@@ -1,0 +1,30 @@
+{
+  "status": "pass",
+  "reviewed_at_utc": "2026-10-29T23:29:21.955957+00:00",
+  "receipt_sha256": "6f550b24b2fa0027e78f03d3618010c9457e18bd3f99029c9cf3a23b5a0e93fb",
+  "script_sha256": "aff74f54b26d03a4cf731de3193addac82442383a91b4263ba27d3b6177aec3b",
+  "review_scope": "Independent read-only final receipt/code contract assessment; no request replay.",
+  "actual_target": "jltgxcfiprocydhbrahz standalone isolated Free fixture",
+  "actual_results": {
+    "groups": 14,
+    "http_calls": 153,
+    "duration_ms": 125654,
+    "implicit_auth_token_refreshes": 0,
+    "inference_calls": 0,
+    "blocked": []
+  },
+  "assessment": [
+    "Real GoTrue sign-in/getUser and signed JWT PostgREST requests validated. Invalid, forged and genuinely expired signed JWT cases are distinct.",
+    "Published workflow/scope history persisted in actual PostgreSQL and hydrated across fresh SDK clients; owner/admin/raw RPC/table isolation and current-grant filtering exercised.",
+    "Concurrent actual CAS commit has exactly one winner; replay, changed owner/claim/revision, expired lease/history and late commit after Clear reject.",
+    "Synthetic A is_active and source-permission revocation cases restore profile in finally; no operational records or Production requests involved.",
+    "14-group run uses explicit Bearer RPC clients matching hosted Edge transport; receipt records zero implicit Auth token refreshes.",
+    "Earlier two failed sessionful-SDK attempts and focused successful diagnostics remain preserved. The observed 60-second JWT versus 90-second SDK refresh margin is a harness transport incompatibility; original failed RPC code was not captured, so definitive old-failure causation remains unproven."
+  ],
+  "limitations": [
+    "No real OpenAI/Qwen inference or provider availability test in this database validation.",
+    "No canonical Job schema/RLS or actual Production permissions compatibility certified by this minimal released-prerequisite fixture.",
+    "No hosted Edge deployment or Production enablement.",
+    "This review does not independently repeat database queries or prove post-test hosted cleanup; root performs final cleanup verification."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "at": "2026-11-01T21:27:21.400Z",
+  "candidate": "9415adc577e5509c2473001fbd514ab644077e3c",
+  "deploymentId": "f62e8e3f-4c5e-40fb-94c0-f0e02feed638",
+  "url": "https://f62e8e3f.tendev.pages.dev",
+  "tenOpsPagesUnchanged": true,
+  "allWritesOff": true
+}

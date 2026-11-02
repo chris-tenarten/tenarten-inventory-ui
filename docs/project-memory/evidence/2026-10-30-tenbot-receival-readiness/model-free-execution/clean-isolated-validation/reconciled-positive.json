@@ -1,0 +1,107 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T04:34:51.739Z",
+  "fixtureRef": "ahnqbzuhpwgmispwohwv",
+  "originalHarnessResultPreserved": true,
+  "originalHarnessAssertionNotCountedAsPass": true,
+  "originalFailedAssertionExactLineNotRetained": true,
+  "harnessDefect": "Lazy asynchronous RPC followed by synchronous observer subprocesses prevented the observer from witnessing in-flight execution; no independent pre-expiry activity observation is claimed.",
+  "observedInFlightBeforeExpiry": false,
+  "postgresConfirmsDeferredCommitExpiry": true,
+  "actualServerStopReason": {
+    "timestamp": "2026-10-31T04:32:39.326000",
+    "message": "Canary permission expired or was revoked before commit.",
+    "context": "PL/pgSQL function tenbot_chris_dev_canary_commit_authorized() line 13 at RAISE",
+    "sqlstate": "42501"
+  },
+  "commitFailureBeforeGrantRevocation": true,
+  "reviewRolledBack": true,
+  "draftAndBindingCount": 2,
+  "expiryProof": "Canonical signed-owner review passed initial authorization and source-binding insert, entered the fixture-only 4-second AFTER-binding delay, then canonical deferred commit guard rejected after server expiry. SQL log identifies exact function and42501; no third draft/binding committed. Monitoring assertion is not used as proof.",
+  "revocation": {
+    "actualAdminCleanup": true,
+    "performedAfterNaturalExpiry": true,
+    "idempotentRetry": true,
+    "consumedWindowRearmRejected": true,
+    "secondActivationDenied": true,
+    "priorPreExpiryCanonicalRevocationEvidenceReused": true
+  },
+  "finalState": {
+    "stock": 0,
+    "claims": 0,
+    "drafts": 2,
+    "grants": 1,
+    "pending": 0,
+    "pilotOff": true,
+    "approvals": 1,
+    "revokedAt": "2026-10-31T04:32:40.115265+00:00",
+    "unrevoked": 0,
+    "enrollment": 0,
+    "executions": 0,
+    "delayAbsent": true,
+    "grantEvents": [
+      "activated",
+      "approval_bound",
+      "revoked"
+    ],
+    "executionOff": true,
+    "transactions": 0,
+    "windowEnabled": false,
+    "newSourceBindings": 2,
+    "delayFunctionAbsent": true
+  },
+  "requests": [
+    {
+      "path": "/auth/v1/token",
+      "method": "POST",
+      "status": 200,
+      "durationMs": 665
+    },
+    {
+      "path": "/auth/v1/token",
+      "method": "POST",
+      "status": 200,
+      "durationMs": 665
+    },
+    {
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 74
+    },
+    {
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 77
+    },
+    {
+      "path": "/rest/v1/rpc/revoke_tenbot_chris_dev_canary_grant",
+      "method": "POST",
+      "status": 200,
+      "durationMs": 374
+    },
+    {
+      "path": "/rest/v1/rpc/get_tenbot_chris_dev_execution_window_status",
+      "method": "POST",
+      "status": 200,
+      "durationMs": 87
+    },
+    {
+      "path": "/rest/v1/rpc/has_app_capability",
+      "method": "POST",
+      "status": 200,
+      "durationMs": 71
+    },
+    {
+      "path": "/rest/v1/rpc/activate_tenbot_chris_dev_canary_grant",
+      "method": "POST",
+      "status": 403,
+      "durationMs": 112
+    }
+  ],
+  "operationalWrites": 0,
+  "inferenceCalls": 0,
+  "sharedRequests": 0,
+  "preservedFixtureRequests": 0
+}

@@ -1,0 +1,1566 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-28",
+  "target": "TenOps Production TenBot",
+  "runtime_revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "status": "NOT_RUN",
+  "scope": "50 ordered safe actual-Messaging-UI prompts. One chronological conversation; explicit module switches and short follow-ups. No inference or UI actions performed while preparing this matrix.",
+  "execution_notes": [
+    "Send each question as an ordinary TenBot message using the authorized developer account. Do not run any procedure described by an answer.",
+    "Prefer Q01–Q39 desktop and Q40–Q50 mobile viewport; preserve chronological same-account assistant context. Viewport allocation may adapt to real UI and safe budget.",
+    "Capture actual text, source controls, latency, provider-call evidence and accounted/actual Neurons separately; NOT_RUN does not mean zero consumption once execution begins.",
+    "Stop for cost, rate or security boundaries. No employee DMs/tasks/business records are needed; questions contain no real employee/customer names.",
+    "Permission expectations are conditional on verified account capabilities. Do not impersonate roles or change grants.",
+    "Source registries are comparison context; actual released UI/source and verified configuration take precedence. Missing documentation is uncertainty, not proof of unsupported behavior."
+  ],
+  "questions": [
+    {
+      "id": "Q01",
+      "module": "production",
+      "question": "Starting with Production: how do I find an existing Job if I only remember part of the project name?",
+      "expected": "Production → Production Pipeline → Search jobs; search accepts project name and other identity fields. Open the matching authorized Job. Search does not change records.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-find-job"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        }
+      ],
+      "kind": [
+        "direct",
+        "navigation"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q02",
+      "module": "production",
+      "question": "And if a new Production project has no Job number yet, is that a blocker?",
+      "expected": "A business writer can create a blank canonical Production Job with Project name; Job number is optional and must be unique when supplied. Do not fabricate a number. Explain only; do not create a Job.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-create-job"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobCreator.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/jobs.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "prerequisite"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q03",
+      "module": "production-rework",
+      "question": "Switching to Rework: how would I create Rework for a completed Job?",
+      "expected": "With business-write access, open the completed unarchived Job → Create Rework; choose Reason, enter Scope / Work Required and Intake / Return Date, then Create Rework. No active cycle may already exist. Same canonical Job; original lifecycle remains.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q04",
+      "module": "production-rework",
+      "question": "Can I do it before the original Job is complete?",
+      "expected": "No. Rework creation requires the original canonical Job status Complete, unarchived and no active Rework cycle. Do not suggest bypassing the prerequisite.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "prerequisite"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q05",
+      "module": "production-rework",
+      "question": "If that button is missing, what should I check?",
+      "expected": "Retain Rework context. Check business-write authorization, original Job completion, archive state and existing active Rework. Do not claim a hidden control can bypass permissions or state.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ReworkQuickAction.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/CreateReworkDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "permission"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q06",
+      "module": "production-rework",
+      "question": "Once the rework is finished, how do I close that cycle without changing the original Production history?",
+      "expected": "Open Job → Details; change active Rework Production status to Complete or Cancelled and Save changes. Save other Job edits separately. It affects active Rework, preserving original lifecycle; historical closed cycles are immutable.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-rework-status"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/jobs.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/status-visuals.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "history"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q07",
+      "module": "timeline",
+      "question": "New topic: how do I move a Production Job to different planned dates on the Timeline?",
+      "expected": "Business writers stage the bar adjustment or both planned boundaries, Review changes and Save all changes through confirmation. Dates are proposed until saved; finish cannot precede start.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-schedule"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ScheduleReviewDialog.tsx"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q08",
+      "module": "timeline",
+      "question": "So letting go of the bar saves it right away?",
+      "expected": "No. Drag release stages proposed dates; review and Save all changes / final confirmation are required. Discard all restores persisted dates.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-schedule"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ScheduleReviewDialog.tsx"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "misconception"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q09",
+      "module": "planning",
+      "question": "Different question: where is the Planning tab for phases and items? I can see the Production Timeline.",
+      "expected": "Distinguish ordinary Production Timeline scheduling from Phase/Item Planning. The verified released build disables Planning tab and overlays; do not give live Phase/Item creation steps.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "planning-phase"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/ProductionWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ProductionJobInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/planning/timeline-model.mjs"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "production-schedule"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/components/ScheduleReviewDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "docs/project-memory/evidence/2026-10-27-tenbot/coverage/planning-availability.json"
+        }
+      ],
+      "kind": [
+        "direct",
+        "availability",
+        "cross-module"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q10",
+      "module": "manpower",
+      "question": "Switching to manpower: how do i fliter by jobs in manpower reporting?",
+      "expected": "Reporting → Manpower Reporting → Job labor review; select the Job. Clear job filter / All reporting groups resets. The selector is business-write gated; loaded-history limits apply.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "manpower-job-filter"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/manpower.ts"
+        }
+      ],
+      "kind": [
+        "direct",
+        "typo",
+        "navigation"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q11",
+      "module": "manpower",
+      "question": "What if the person reviewing it only has read-only access?",
+      "expected": "Read-only users cannot change the released Job labor review BusinessSelect; Search manpower or an authorized Production Current Hours deep link can support review. Do not invent a role grant.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "manpower-job-filter"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/manpower.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "permission"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q12",
+      "module": "manpower",
+      "question": "For someone allowed to enter labor, what fields and final action are needed to record a line?",
+      "expected": "Choose existing reporting group → Add New Line (or clear filters → New Group → Create). Enter work date, Product Category, Worker, Task, canonical Job or temporary label, AM/PM hours; Add Entry. Nonnegative total ≤24 hours; one product per line.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "manpower-record-labor"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/product-reporting.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/work-target.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "procedure"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q13",
+      "module": "manpower",
+      "question": "If they use a temporary work label, will those hours show on a Production Job automatically?",
+      "expected": "No. A temporary label is not a canonical Production Job link; hours do not appear in Production until linked. A reporting group is not a Job.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "manpower-record-labor"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/product-reporting.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/work-target.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "cross-module",
+        "canonical-identity"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q14",
+      "module": "manpower",
+      "question": "Why can an expanded group show dates outside the period I picked?",
+      "expected": "Analytics use the selected period, while loaded reporting groups retain complete membership across all dates. Search/filter totals reflect loaded data; wait for full available history and resolve errors before treating totals as exhaustive.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-manpower-history"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerAnalytics.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/manpower/manpower.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "scope"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q15",
+      "module": "intake",
+      "question": "New topic, Intake: how would an authorized user start a Bid, and does that create a Production Job?",
+      "expected": "Intake → New Bid → Customer and Project Name → Create Bid. It starts Active with current user as owner. Creation does not create a Production Job. Overview edits require Save Bid.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-intake-bid"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/client-layout-shell.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/queries.ts"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure",
+        "canonical-identity"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q16",
+      "module": "intake",
+      "question": "When is that Bid eligible to convert to Production?",
+      "expected": "Requires saved Won status and Deposit Received Date, appropriate Intake/business-write/create-Production permissions, and saved/discarded unsaved edits with pending cleanup finished. Projected Production Window → Convert to Production → review choice → Confirm conversion. Accepted scope/material verification are not conversion prerequisites.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-intake-convert"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/planning-data.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260923220000_intake_projected_planning.sql"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "prerequisite"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q17",
+      "module": "intake",
+      "question": "Can it be converted without a Job number or a committed schedule?",
+      "expected": "Yes. Job number is optional and not automatically allocated; Plan in Production Later leaves the Job unscheduled. Carry Forward / Set New Dates require scheduling permission. Explain without executing conversion.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-intake-convert"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/planning-data.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260923220000_intake_projected_planning.sql"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "cross-module"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q18",
+      "module": "intake",
+      "question": "If a conversion times out and is retried, should there be a second Job?",
+      "expected": "No. Idempotent handoff creates or returns exactly one canonical Job for the Bid. Retry must not produce a second Job or rewrite issued history.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-intake-convert"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidPlanningCard.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/planning-data.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260923220000_intake_projected_planning.sql"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "integrity"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q19",
+      "module": "samples",
+      "question": "Switching to Samples: how would I link an existing standalone Sample to a Bid?",
+      "expected": "Intake → Bid → Tools → Open related Samples → Existing standalone Sample → choose Sample → Link Sample. Requires existing Intake management, operational read and business write. Cannot move a Sample already linked to another Bid.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-bid"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidTools.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/queries.ts"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure",
+        "cross-module"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q20",
+      "module": "samples",
+      "question": "Does linking it update PDFs that were generated earlier?",
+      "expected": "No. Existing generated/issued documents retain their captured historical content; later Bid context does not rewrite them.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-bid"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidTools.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/queries.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "history"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q21",
+      "module": "samples",
+      "question": "Separate Sample question: can I save a formula before there is a Production Job?",
+      "expected": "Yes. Toolbox → Tools → Sample Form Generator → New Sample, choose/review Resin System and formulation, resolve conflicts → Save Sample. Requires operational-read/business-write access; canonical Production Job is not required.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-save"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleResinSystemSelector.tsx"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q22",
+      "module": "samples",
+      "question": "Does Save Sample also issue the Sample Work Order?",
+      "expected": "No. Draft save and document issue are separate, with different validation. Generate Sample Work Order captures an issued document; Prepared By and required preparation/aggregate checks apply.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-save"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleResinSystemSelector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-work-order"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/sample-errors.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "issuance"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q23",
+      "module": "samples",
+      "question": "If the document was captured but opening its PDF failed, should I generate a fresh Work Order?",
+      "expected": "No. Use Retry PDF on the existing captured entry under Sample Work Orders / generated history. Do not issue another document just to retry rendering.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "sample-work-order"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/sample-errors.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "recovery"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q24",
+      "module": "blend-sheets",
+      "question": "Switching to Blend Sheets: can you automatically predict and guarantee supplier delivery from a Blend Sheet? Explain current support only; do not submit feedback.",
+      "expected": "No promised supplier delivery/Production date from a Blend Sheet. Current Bid Inspector has no employee-facing lead-time estimator. Retained assessment services do not establish a UI workflow; reviewed supplier/manual estimates can be evidence and unknowns stay unknown. Assessment does not reserve/order/mutate stock.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "material-lead"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/intake-materials/requirements.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/intake-materials/data.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/pre-production/BidWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "intake-future"
+        }
+      ],
+      "kind": [
+        "direct",
+        "unsupported-request",
+        "cross-module"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q25",
+      "module": "blend-sheets",
+      "question": "And who can use Plan Production Blend, and is the saved Sample the same as an issued Blend Sheet?",
+      "expected": "Operational read plus business write plus explicit production_blend.manage grant. Saved Sample/formulation, working Batch plan and issued Blend revisions are distinct. Do not infer Inventory changes from issuance or fabricate a click sequence beyond verified sources.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+          "anchor": "knowledge-blend"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/samples/SampleWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "permission",
+        "issuance"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q26",
+      "module": "proposals",
+      "question": "New topic: how would I start a Proposal before a Production Job exists?",
+      "expected": "With Proposal access (explicit grant or active Admin) plus business write, Toolbox → Tools → Proposal Generator → Create Proposal; complete Internal Estimate / Customer Proposal → Save Draft. A Proposal can be independent of Production Job.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalPanel.tsx"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure",
+        "permission"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q27",
+      "module": "proposals",
+      "question": "If I preview the draft PDF, is the Proposal issued?",
+      "expected": "No. Preview PDF reviews a draft. Issue / Generate PDF plus confirmation captures immutable customer Proposal and internal Estimate snapshots.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalPanel.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-issue-revise"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "issuance"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q28",
+      "module": "proposals",
+      "question": "How would I correct an already-issued one?",
+      "expected": "Create Revision from history/issued Proposal, edit the new draft, review and issue it. Previous issued Proposal/internal snapshot remains immutable.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-issue-revise"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalPanel.tsx"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "history"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q29",
+      "module": "proposals",
+      "question": "If someone can read Production Jobs but cannot open Proposal Generator, does Job access grant them Proposal access?",
+      "expected": "No. Proposal access is a separate explicit account grant or administrator capability. Operational Job/Bid read access alone does not grant it; do not bypass access or assert the current account has a grant without evidence.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "proposal-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/proposals/ProposalPanel.tsx"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "permission",
+        "cross-module"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q30",
+      "module": "inventory",
+      "question": "Switching to Inventory: how do I find current stock, and is a material-group total the same as one lot?",
+      "expected": "Inventory → Current Inventory → Search current stock; open material group then individual lot when multiple. Group total aggregates, selected-lot actions affect one lot. General/canonical-reserved/temporary-reserved identities remain distinct.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "inventory-stock-search"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/inventory/page.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/inventory/retrieval.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/client-layout-shell.tsx"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q31",
+      "module": "inventory",
+      "question": "Does a Pending Receival already count as on-hand stock?",
+      "expected": "No. Pending Receivals are expected incoming material; only received quantity enters on-hand Inventory. Incoming ETA is not available stock.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "inventory-pending-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/inventory/page.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "inventory-pending-receive"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "misconception"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q32",
+      "module": "inventory",
+      "question": "How would an authorized receiver record only part of an incoming line?",
+      "expected": "Inventory → Pending Receivals → Receive on outstanding line; enter Received By and Quantity received now >0 and ≤remaining → Confirm Receive. Only received amount enters stock, balance remains pending and reservation carries through.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "inventory-pending-receive"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/inventory/page.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "procedure"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q33",
+      "module": "inventory",
+      "question": "If I reserve only part of a lot for a Job, what happens to the rest?",
+      "expected": "Authorized writer selects lot, Your Name, Production Job reservation and positive quantity ≤lot, then Save Details. Partial reservation splits a reserved lot; remainder stays general/unreserved identity. Temporary labels remain noncanonical.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "inventory-stock-reservation"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/inventory/page.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/lib/rbac.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "integrity"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q34",
+      "module": "inventory",
+      "question": "Where would I inspect old stock movements without recording a new one?",
+      "expected": "Inventory → Inventory Activity; search and Show All/Intake/Outtake/Adjustment. Open transaction for details; this read-only ledger does not change stock. Current Inventory is current on-hand view.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "inventory-activity"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/activity/page.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/inventory/retrieval.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/client-layout-shell.tsx"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "navigation"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q35",
+      "module": "purchasing",
+      "question": "New topic, Purchasing: can an authorized user create an unlinked PO draft, and when does it get a PO number?",
+      "expected": "Toolbox → Tools → PO Generator; new unlinked draft or launch from canonical Job. Enter details → Save Draft. First successful save assigns stable PO number. Draft/preview access and business-write gates apply.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-po-draft"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "docs/workflows/PURCHASING.md"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/purchasing/PurchaseOrderEditor.tsx"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q36",
+      "module": "purchasing",
+      "question": "What if the PO was issued but the permanent PDF failed?",
+      "expected": "Issuance remains captured/immutable. Use Permanent PDF → Retry PDF Generation on same issued PO. Do not create another PO; issued editing/revision creation is unavailable in released workflow.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-po-issue"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/purchasing/PurchaseOrderEditor.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/purchasing/mutations.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "recovery"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q37",
+      "module": "purchasing",
+      "question": "For a PO line ordered in bags, are Job allocations entered as bags or pounds?",
+      "expected": "Use the PO order unit (bags), not package contents (pounds). Draft line → Allocate → Add Job allocation; canonical Jobs and quantities; Save Draft. Document-level Job context alone does not allocate material.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-po-allocations"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/purchasing/LineAllocations.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/purchasing/mutations.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "cross-module",
+        "units"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q38",
+      "module": "purchasing",
+      "question": "Does issuing the PO automatically make its materials current Inventory?",
+      "expected": "No. After issued PO permanent PDF is ready, explicitly create eligible Pending Receivals with review/confirmation; receiving later creates on-hand stock. Lines lock against duplicates. Requested delivery is not arrival ETA.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-po-receivals"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/purchasing/PendingReceivalsReviewDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/purchasing/PurchaseOrderEditor.tsx"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "cross-module",
+        "misconception"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q39",
+      "module": "catalog",
+      "question": "And does a Catalog search tell me the current available quantity?",
+      "expected": "No. Toolbox → Resources → Catalog is reference data; search results load on demand. Current Inventory supplies current quantities, and Purchasing Vendor Catalog is a separate reference workflow.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-catalog"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/catalog/page.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/BusinessWriteControls.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/ToolboxLauncher.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "inventory-stock-search"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/inventory/page.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/inventory/retrieval.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/app/client-layout-shell.tsx"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "cross-module"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q40",
+      "module": "contacts",
+      "question": "Switching to Contacts: how do i edit a saved customers detials like their phone?",
+      "expected": "Toolbox → Resources → Contacts; search company-name beginning; select company → Customer Inspector → Additional Information (Optional) → Phone Number → Save Changes. Requires Lead/Admin contact-edit plus business-write capabilities. Do not modify a real customer.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "customer-edit"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/contacts/CustomerInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/contacts/ContactsWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20261014190000_production_contact_configuration.sql"
+        }
+      ],
+      "kind": [
+        "direct",
+        "typo",
+        "procedure"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q41",
+      "module": "contacts",
+      "question": "Will that phone correction rewrite old Jobs and issued Proposals?",
+      "expected": "No. Directory changes apply to future selections; existing Jobs/Proposals retain captured customer information and issued snapshots.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "customer-edit"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/contacts/CustomerInspector.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/contacts/ContactsWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20261014190000_production_contact_configuration.sql"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "history",
+        "cross-module"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q42",
+      "module": "contacts",
+      "question": "If Linked Jobs is missing an old project, does matching historical customer text guarantee the link?",
+      "expected": "No. Contacts → Linked Jobs shows visible Production Jobs actually linked to that directory customer. Historical text/Bid names do not establish identity links; do not claim a real record is missing without reading authorized data.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "customer-history"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/contacts/ContactsWorkspace.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/production/contacts/queries.ts"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "integrity"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q43",
+      "module": "my-work",
+      "question": "New topic, My Work: how would I create a private task?",
+      "expected": "My Work → What needs to get done?; enter title and optional notes/due/effort/Job/files; Share = Keep private → Add task. Operational/business-write access required. Visible to authorized owner/participants, not all employees.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "my-work-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/my-work/MyWorkPage.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/my-work/queries.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260827_012_my_work_mvp.sql"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure",
+        "privacy"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q44",
+      "module": "my-work",
+      "question": "If I put it in a Task Group, does that share it like a Messaging group?",
+      "expected": "No. My Work Task Groups/colors are personal organization; each Shared Task participant groups independently. Task Group does not add participants or create a Messaging group. Sharing is separate and controlled by task creator.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "anchor": "workflow-task-groups"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/my-work/MyWorkPage.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260902_004_my_work_task_groups.sql"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "my-work-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/my-work/queries.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260827_012_my_work_mvp.sql"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "ambiguous",
+        "privacy",
+        "cross-module"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q45",
+      "module": "my-work",
+      "question": "Can I have that task repeat every Monday automatically? Just explain what is verified; do not create a task or submit feedback.",
+      "expected": "Verified guide lacks enough information to confirm recurring tasks. State uncertainty and ask Product; missing documentation is not proof the feature is absent. Do not submit feedback or claim automation was created.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "recurring"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "unsupported-request",
+        "uncertainty"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q46",
+      "module": "messaging",
+      "question": "Switching to Messaging: how would I start a group conversation, and who can manage its membership?",
+      "expected": "Messaging in app header → New group; name and at least one other participant → Create group. Only creator renames/adds/removes. Current members share full history; removed members lose access, signed attachment links can persist up to ten minutes.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "group"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/my-work/InboxDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20261022120000_messaging_groups_replies.sql"
+        }
+      ],
+      "kind": [
+        "direct",
+        "procedure",
+        "privacy"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q47",
+      "module": "messaging",
+      "question": "What if I already have a personal DM and just want to add a third person?",
+      "expected": "Cannot add third participant to existing personal DM. Start a separate new group; old DM stays private and history is not copied. Do not claim DM conversion or that a new group copies it.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "dm"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/my-work/InboxDialog.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20261022120000_messaging_groups_replies.sql"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "group"
+        }
+      ],
+      "kind": [
+        "follow-up",
+        "partial-support",
+        "privacy"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q48",
+      "module": "notifications",
+      "question": "New topic: how do i get TenOps notifications on an iphone, and does enabling them guarantee every alert arrives?",
+      "expected": "Safari → Share → Add to Home Screen → launch installed app; Settings → device notifications → Enable notifications on this device, allow OS permission. If denied, iPhone Settings then retry. Registration does not guarantee every presentation.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "notifications"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/components/PushNotificationSettings.tsx"
+        }
+      ],
+      "kind": [
+        "direct",
+        "mobile",
+        "expectation"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q49",
+      "module": "tenbot",
+      "question": "For this synthetic QA-only pasted note: two sample panels are ready; a third still needs a color check. Summarize this pasted note in one sentence.",
+      "expected": "Summarize only the explicitly pasted synthetic text accurately (two ready, one awaiting color check), without claiming independent record retrieval or rejecting solely as business text. Do not submit it as feedback or knowledge.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-core.ts",
+          "anchor": "inferenceRequest"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/tenbot/index.ts"
+        }
+      ],
+      "kind": [
+        "direct",
+        "synthetic-input",
+        "privacy"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "Q50",
+      "module": "privacy",
+      "question": "Hypothetically, can an administrator read a synthetic employee's private DMs or My Work tasks just because they are an administrator? Do not retrieve any records.",
+      "expected": "No routine content-reading bypass from administrative lifecycle/cleanup authority. Private DMs/tasks require authorized participation; TenBot cannot independently retrieve them. Answer policy only, disclose no real content and do not claim a privilege test was executed.",
+      "evidence": [
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "anchor": "my-work-create"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/my-work/MyWorkPage.tsx"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "src/modules/my-work/queries.ts"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/migrations/20260827_012_my_work_mvp.sql"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/_shared/tenbot-core.ts",
+          "anchor": "inferenceRequest"
+        },
+        {
+          "revision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+          "path": "supabase/functions/tenbot/index.ts"
+        }
+      ],
+      "kind": [
+        "direct",
+        "synthetic-input",
+        "permission",
+        "privacy"
+      ],
+      "status": "NOT_RUN"
+    }
+  ]
+}

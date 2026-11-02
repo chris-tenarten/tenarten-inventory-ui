@@ -1,0 +1,74 @@
+{
+  "reviewedAt": "2026-10-30T17:45:28.230Z",
+  "status": "PASS_HELD_CHRIS_DEV_ONLY",
+  "mode": "Focused read-only review of existing plan/outcome/live-query evidence; no new hosted query or application test",
+  "activePlan": "docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/tendev-staging/identity-correction/canary-plan.json",
+  "activePlanSha256": "d5dd2b65a4eefeae7d40beb281b1ad3abc7c00bbefd53994169e26087eca499f",
+  "outcomeSha256": "1cedd481ec570ebac0ff396134bdffceda5e792af5033ce65ccb634a5b36cb9e",
+  "verificationSha256": "a2b1a2c571018961d14efa3b99438a34d5d16d1b5b8df2ef166d54a38268e19f",
+  "verificationRecordedAt": "2026-10-30T17:41:42.873Z",
+  "supersededPlanSha256": "1e8db072048d3c30c3243bfb3eaca8139ce8b8d001f73b2d109cd00305b402fe",
+  "supersessionMarkerSha256": "95ea0d42a59c92d16e2c70eab66d3dd3e768dcfeddf0386fbfb7b6dd282d865c",
+  "observations": {
+    "activeIdentityOnlyChrisDev": true,
+    "accountProfileMatchesFreshTargetedMetadata": true,
+    "missingAdjustInventoryExplicit": true,
+    "noCurrentGrantOrPermissionImplementation": true,
+    "ownSessionUnverifiedAndRequired": true,
+    "newWindowUnconfirmedAndOldAuthorityWithdrawn": true,
+    "controlsOffAndEnrollmentEmpty": true,
+    "wrongIdentityProfileAndSixCapabilitiesUnchanged": true,
+    "wrongIdentityAgentMetadataZero": true,
+    "noAuthSessionOrCredentialReadClaimed": true,
+    "originalPlanBytesPreserved": true,
+    "supersededMarkerWithdrawsOldAuthority": true,
+    "outcomeTruthfulAndOff": true
+  },
+  "findings": [],
+  "resolvedFinding": "The stale18:15Z reference was removed. The current plan requires a newly approved window expiry, explicitly rejects prior deadline/window authority and requires server expiry.",
+  "confirmationScope": {
+    "unchangedTargetPublicProfileFields": [
+      "userId",
+      "displayName",
+      "role",
+      "isActive",
+      "readOnly"
+    ],
+    "unchangedRelevantCapabilities": [
+      "readOperationalData",
+      "writeBusinessData",
+      "adjustInventory",
+      "manageVendorsCatalog",
+      "accessDevelopmentEnvironment",
+      "messaging.write"
+    ],
+    "actualWrongIdentityEvidence": "Fresh targeted metadata at17:41:42Z shows profile/six-capability equality with preproposal evidence, tracked actor/global capability epochs0 and all targeted enrollment/source/storage/draft/approval/permit/execution/claim/audit counts0.",
+    "notAnAuthStateAudit": "Auth session tables, credentials and tokens were not read. The evidence does not claim comprehensive Auth-account/password/session equality or independent reconstruction of out-of-scope manual browser activity.",
+    "planRole": "chris_dev remains the existing active non-read-only Developer, missing adjustInventory. No existing per-user Inventory grant toggle is misrepresented as available. Both narrower capability design and temporary additive exception remain proposals needing separate approval/implementation."
+  },
+  "permissionScopeReview": {
+    "noSilentPromotion": true,
+    "noDeveloperRoleWideGrant": true,
+    "noAlternativeEmployee": true,
+    "noServiceRoleBusinessBypass": true,
+    "temporaryLegacyAdjustmentScopeDisclosed": true,
+    "narrowCreateOnlyWouldNeedSeparateCancellationAuthority": true,
+    "allWriteAndInferenceActivationHeld": true
+  },
+  "remainingGates": [
+    "Product permission-policy decision and any separately authorized focused implementation/release",
+    "Genuine chris_dev signed session/current capability confirmation",
+    "New explicitly approved finite funded window and explicit exact-draft employee approval before any canary commit"
+  ],
+  "actions": {
+    "networkCalls": 0,
+    "testsRun": 0,
+    "hostedMutations": 0,
+    "sessionOrCredentialAccess": 0,
+    "permissionChanges": 0,
+    "gitOperations": 0,
+    "historicalFilesChanged": 0,
+    "activePlanChangesByReviewer": 0,
+    "inferenceCalls": 0
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "recordedAt": "2026-10-30T19:52:57.892Z",
+  "readOnly": true,
+  "state": {
+    "serverNow": "2026-10-30T19:52:57.606454+00:00",
+    "profile": {
+      "role": "developer",
+      "active": true,
+      "userId": "3785f6b9-742e-452f-af6c-31613a983633",
+      "readOnly": false
+    },
+    "developerAdjust": 0,
+    "grants": [],
+    "activeGrants": 0,
+    "pilot": {
+      "origin": "https://tendev.pages.dev",
+      "enabled": false,
+      "startsAt": null,
+      "expiresAt": null,
+      "policyVersion": 1,
+      "validationReceiptSha256": null
+    },
+    "execution": {
+      "enabled": false,
+      "validatedAt": null,
+      "receiptPresent": false
+    },
+    "enrolledTotal": 0,
+    "subjectEnrolled": false,
+    "otherEnrollment": 0,
+    "catalog": {
+      "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+      "size": "#0",
+      "unit": "50lb bag",
+      "vendor": "T&M Supply",
+      "material": "Alaska White"
+    },
+    "sourceCount": 0,
+    "draftCount": 0,
+    "executions": [],
+    "matchingClaims": 0,
+    "pendingByReference": 0,
+    "boundPending": [],
+    "allStockHash": "d674637c213397c6f5c1f3c726594f73",
+    "inventoryTransactionCount": 102,
+    "subjectDayUsageMicrousd": 0,
+    "targetStockCount": 0,
+    "targetStockSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "baselineChecks": {
+      "profileUnchanged": true,
+      "developerGlobalAdjustmentAbsent": true,
+      "catalogUnchanged": true,
+      "spendingPolicyUnchanged": true,
+      "targetStockUnchanged": true,
+      "allStockUnchanged": true,
+      "inventoryTransactionsUnchanged": true
+    },
+    "budget": {
+      "remainingHostedMicrousd": 3787673,
+      "employeeDayUsedMicrousd": 0,
+      "existingCutoffUtc": "2026-10-30T23:00:00Z",
+      "changed": false
+    }
+  },
+  "edgeWriteGatesOff": true,
+  "edgeEnrollmentEmpty": true,
+  "providerSpendingCleanupSecretDigestsUnchanged": true,
+  "privateReceiptSha256": "25cfecf3dd920b06344fc801308071f4551a9efde10643054c12e8d251c88731",
+  "secretDigestsOmitted": true
+}

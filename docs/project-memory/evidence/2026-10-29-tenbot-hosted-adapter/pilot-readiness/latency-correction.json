@@ -1,0 +1,56 @@
+{
+  "recordedAtUtc": "2026-10-30T01:48:58.426047+00:00",
+  "status": "implemented-locally-not-deployed",
+  "acceptedHostedRuntime": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "acceptedSourceConfirmedBeforeEdit": true,
+  "change": "Removed duplicate inner successful ordinary-tool after_tool authorization. Common after_tool check remains after synchronous evidence assembly and before model context publication.",
+  "preservedBoundaries": [
+    "Discovery after_tool authorization",
+    "Before/after model checks",
+    "Before tool authorization",
+    "Common after tool authorization",
+    "Final publication authorization",
+    "Post-persistence authorization/freshness",
+    "Current JWT/RBAC/RLS and spending controls"
+  ],
+  "expectedBenefit": "One fewer caller capability RPC per successful ordinary tool. No measured millisecond or hosted speedup claim.",
+  "tests": [
+    {
+      "command": "./node_modules/.bin/tsx scripts/verify-tenbot-agent.mts",
+      "exitCode": 0,
+      "groups": 34,
+      "mode": "offline-only injected transports; zero API inference, credentials or database writes",
+      "newRegression": "successful tool results receive exactly one authorization before entering model context",
+      "existingDenialDiscoveryPublicationCoveragePreserved": true
+    },
+    {
+      "command": "./node_modules/.bin/eslint --no-ignore supabase/functions/_shared/tenbot-agent.ts scripts/verify-tenbot-agent.mts",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check -- supabase/functions/_shared/tenbot-agent.ts scripts/verify-tenbot-agent.mts",
+      "exitCode": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "beforeBlob": "5ce93bcce182097707c3ec60b5cabd44c5f2a62d",
+      "afterBlob": "33cb136490b59834629015d5db80ff756bb79d29",
+      "beforeSha256": "6c3b802f94a4ed8fd605d66eba21ab728570cd3aabcecc5611fe5e338304d4f8",
+      "afterSha256": "365a00731d1d53a944989a406783e8bdd6061ac28930aa0cd4653a89f3659052"
+    },
+    {
+      "path": "scripts/verify-tenbot-agent.mts",
+      "beforeBlob": "807cf39ce96dcd717302c43ea9a76f164aae29f2",
+      "afterBlob": "a4daa509001cbf602fa9247d7b8bb812c445f47a",
+      "beforeSha256": "068bf1ea6a7cd8135244d3d3e42996ef3d1d7d1dbc7e695cd6d87fe83772826f",
+      "afterSha256": "b46e816c54f4b8e5a5aea17d6db93635c6952f2fb86a3034700324f09d7ce8b1"
+    }
+  ],
+  "diffSha256": "91ac0fee31e265be7708dc1499945998d925d500a82b6e779464ba6c35e0290a",
+  "productionOrHostedChanges": false,
+  "inferenceCalls": 0,
+  "committed": false,
+  "deferredKnowledgeTouched": false
+}

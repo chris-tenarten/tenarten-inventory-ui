@@ -1,0 +1,541 @@
+{
+  "artifactType": "independent-tenbot-qa-source-review",
+  "reviewedAtUtc": "2026-10-28T13:34:07Z",
+  "runtimeRevision": "6cb6cf7962ccbaa2f403e9dca3a8b2582af0599c",
+  "status": "read-only source review completed; Product review pending",
+  "scope": {
+    "implementationChanged": false,
+    "inferenceCallsMadeByReviewer": 0,
+    "browserActionsMadeByReviewer": 0,
+    "hostedMutationsMadeByReviewer": 0,
+    "method": "Read repository guidance, then inspect pinned release blobs with git show. Review only the root evaluator's own safe synthetic TenBot conversation captures. Exclude dirty dev runtime files.",
+    "observationEvidence": "/private/tmp/tenops-independent-qa-20261028/turns.private.json",
+    "limits": [
+      "The observation artifact records the evaluator's own synthetic QA conversation, not employee DMs, tasks or unrelated business records.",
+      "No raw provider prompt or dispatch trace was inspected. Retrieval explanations identified as inference are source-supported causal hypotheses.",
+      "Repository role and guidance contracts do not establish actual hosted write enforcement. No business mutation was attempted.",
+      "This JSON is QA evidence only. It does not accept, implement or release any correction."
+    ]
+  },
+  "findings": [
+    {
+      "id": "timeline-immediate-save-contradiction",
+      "questionIds": [
+        8
+      ],
+      "priority": "high",
+      "question": "So letting go of the bar saves it right away?",
+      "observed": {
+        "kind": "actual UI response",
+        "responseExcerpt": "Letting go of the bar in the Timeline saves the changes immediately.",
+        "additionalObservation": "The same answer then describes staged changes and saving upon confirmation. Two Sources were visible, but this turn’s source titles were not expanded or captured. The preceding scheduling answer was accurate."
+      },
+      "expected": "No. Releasing the bar stages a proposal; review and explicitly confirm Save all changes to persist it.",
+      "classification": [
+        "incorrect model reasoning",
+        "self-contradictory answer",
+        "output validation gap"
+      ],
+      "sourceFacts": [
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 527,
+          "endLine": 527,
+          "excerpt": "Editing dates or releasing a Timeline drag stages the proposal without saving it."
+        },
+        {
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "startLine": 423,
+          "endLine": 434,
+          "fact": "stageSchedule updates client staged schedule state."
+        },
+        {
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "startLine": 463,
+          "endLine": 513,
+          "fact": "Persistence occurs through the explicit schedule batch save path."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-core.ts",
+          "startLine": 204,
+          "endLine": 249,
+          "fact": "groundedProse uses lexical and selected special-case checks, not general semantic entailment of scheduling assertions."
+        }
+      ],
+      "rootCauseConfidence": "High for the observed contradiction. The precise released scheduling guide is correct; exact per-turn retrieval and provider dispatch were not captured, so selection-specific causality remains inferred.",
+      "recommendedCorrection": "Preserve staged-versus-persisted semantics in direct answers and reject contradictory immediate-save assertions.",
+      "regressions": [
+        "So letting go of the bar saves it right away?",
+        "Does releasing a Timeline drag write the new dates to the database?",
+        "Can I discard after dragging without changing the saved schedule?"
+      ]
+    },
+    {
+      "id": "manpower-invented-group-date-settings",
+      "questionIds": [
+        14
+      ],
+      "priority": "high",
+      "question": "Why can an expanded group show dates outside the period I picked?",
+      "observed": {
+        "kind": "actual UI response",
+        "responseExcerpt": "To limit dates, adjust the group's work date range in settings.",
+        "additionalObservation": "Root evaluator observed only the broad Manpower source on this answer."
+      },
+      "expected": "Expanded reporting groups retain complete membership across all dates; analytics uses the selected period. Do not invent a group date-range setting.",
+      "classification": [
+        "hallucinated navigation",
+        "incomplete source selection",
+        "overgeneralization from interface labels"
+      ],
+      "sourceFacts": [
+        {
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "startLine": 1181,
+          "endLine": 1183,
+          "excerpt": "Complete group membership, all dates. Analytics use the selected period."
+        },
+        {
+          "path": "src/modules/manpower/ManpowerWorkspace.tsx",
+          "startLine": 1131,
+          "endLine": 1151,
+          "fact": "Manpower Settings contains Workers, Tasks and conditionally Product Categories, not a group work-date-range control."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "startLine": 1240,
+          "endLine": 1240,
+          "fact": "The maintained precise history guide explicitly distinguishes group membership from analytics period."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+          "startLine": 292,
+          "endLine": 292,
+          "fact": "Broad Manpower excerpt contains Settings control vocabulary but omits the precise complete-group-versus-analytics-period explanation; it expressly warns labels do not establish a sequence."
+        }
+      ],
+      "inference": "The model appears to have converted broad Settings vocabulary into unsupported procedural advice. The precise history source was available in the corpus but not the observed selected source.",
+      "recommendedCorrection": "Select the history-and-analytics source for period/group-scope questions and require source support for every proposed control.",
+      "regressions": [
+        "Why can an expanded group show dates outside the period I picked?",
+        "Is there a group work-date-range setting in Manpower Settings?",
+        "Does changing the analytics period remove older members of an expanded reporting group?"
+      ]
+    },
+    {
+      "id": "bid-conversion-prerequisites-and-topic-loss",
+      "questionIds": [
+        17
+      ],
+      "priority": "high",
+      "question": "Can it be converted without a Job number or a committed schedule?",
+      "observed": {
+        "kind": "actual UI response",
+        "responseExcerpt": "A Production Job cannot be converted without a Job number or a committed schedule.",
+        "additionalObservation": "This followed a Bid conversion question. Root evaluator observed Production scheduling/overview sources instead of the Bid conversion guide."
+      },
+      "expected": "Yes for an otherwise eligible Bid and authorized converter: Job number is optional, and Plan in Production Later leaves the canonical Job unscheduled. Saved Won status and Deposit Received Date remain required.",
+      "classification": [
+        "incorrect retrieval",
+        "multi-turn topic loss",
+        "incorrect model reasoning"
+      ],
+      "sourceFacts": [
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1578,
+          "endLine": 1583,
+          "fact": "Follow-up resolver keeps a current exact match with a workflow action before extending the previous topic."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 507,
+          "endLine": 527,
+          "fact": "Job plus schedule wording matches the ordinary Production scheduling guide."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "startLine": 471,
+          "endLine": 487,
+          "fact": "Precise conversion matcher needs a Bid/Intake token and convert/conversion/handoff; guide explicitly states optional Job number, Plan Later and idempotent canonical Job creation."
+        },
+        {
+          "path": "src/modules/pre-production/BidPlanningCard.tsx",
+          "startLine": 65,
+          "endLine": 70,
+          "fact": "UI states saved Won/deposit requirements and exposes Plan in Production Later and optional, non-auto-allocated Job number."
+        }
+      ],
+      "inference": "The current Job/schedule match can override prior Bid context. 'Converted' is not the precise matcher's exact 'convert' or 'conversion' token. This explains the observed source drift; no raw dispatch trace was inspected.",
+      "recommendedCorrection": "Resolve referents before switching workflow based on generic Job/date terminology; validate conversion eligibility only against the conversion contract.",
+      "regressions": [
+        "When is that Bid eligible to convert to Production?",
+        "Can it be converted without a Job number or a committed schedule?",
+        "Can the authorized converter choose Plan in Production Later?"
+      ]
+    },
+    {
+      "id": "conversion-timeout-unrelated-material-denial",
+      "questionIds": [
+        18
+      ],
+      "priority": "medium",
+      "question": "If a conversion times out and is retried, should there be a second Job?",
+      "observed": {
+        "kind": "actual UI response",
+        "responseExcerpt": "Material requirements, supply evidence and lead-time boundaries exists in TenOps, but your account does not have permission to use it."
+      },
+      "expected": "No. Retrying an eligible Bid handoff creates or returns the same canonical Job. Explain relevant converter permission separately if needed.",
+      "classification": [
+        "incorrect retrieval",
+        "irrelevant permission denial",
+        "multi-turn topic loss"
+      ],
+      "sourceFacts": [
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1566,
+          "endLine": 1599,
+          "fact": "Dependency detection is limited to listed pronouns and what-about/what-if forms; this question lacks a recognized dependent token."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1612,
+          "endLine": 1618,
+          "fact": "Generated source scoring awards three points for exact term matches, with a threshold of three."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+          "startLine": 1176,
+          "endLine": 1180,
+          "fact": "Material assessment terms contain 'times' and the source requires proposal.access."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-core.ts",
+          "startLine": 134,
+          "endLine": 140,
+          "fact": "When all retrieved entries are unauthorized, response deterministically denies the first denied workflow."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+          "startLine": 487,
+          "endLine": 487,
+          "excerpt": "The handoff creates or returns exactly one canonical Job; retrying does not create another."
+        }
+      ],
+      "inference": "The incidental 'times' token in 'times out' likely ranked material assessment after conversion context was lost. The resulting permission denial concerns the wrong workflow. This is not evidence of an intended conversion restriction.",
+      "recommendedCorrection": "Require meaningful workflow relevance before a permission denial and retain conversion context through timeout/retry wording.",
+      "regressions": [
+        "If a conversion times out and is retried, should there be a second Job?",
+        "What happens if the Bid handoff request times out?",
+        "Should I create a second Job after an uncertain conversion result?"
+      ]
+    },
+    {
+      "id": "rework-missing-final-confirmation",
+      "questionIds": [
+        3
+      ],
+      "priority": "medium",
+      "question": "Switching to Rework: how would I create Rework for a completed Job?",
+      "observed": {
+        "kind": "actual UI response",
+        "responseExcerpt": "Choose a Reason, describe the Rework Scope, and enter the Intake/Return Date.",
+        "additionalObservation": "Answer stops after filling fields and prerequisites; it omits the final Create Rework submission."
+      },
+      "expected": "After completing Reason, Rework Scope / Work Required and Intake / Return Date, select Create Rework to submit.",
+      "classification": [
+        "incomplete explanation",
+        "model omission"
+      ],
+      "sourceFacts": [
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 567,
+          "endLine": 567,
+          "fact": "Full maintained Rework procedure includes final Create Rework action."
+        },
+        {
+          "path": "src/modules/production/components/CreateReworkDialog.tsx",
+          "startLine": 22,
+          "endLine": 41,
+          "fact": "Submitting the form invokes createProductionRework; field entry alone creates no cycle."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-core.ts",
+          "startLine": 253,
+          "endLine": 253,
+          "fact": "Model instruction explicitly requires final Save/Create confirmation for how-to answers."
+        }
+      ],
+      "recommendedCorrection": "Retain the final persistence action when compressing verified procedures.",
+      "regressions": [
+        "How would I create Rework for a completed Job?",
+        "Does filling Reason, scope and return date create the Rework cycle?"
+      ]
+    },
+    {
+      "id": "rework-followup-false-documentation-gap",
+      "questionIds": [
+        5
+      ],
+      "priority": "medium",
+      "question": "I filled in the Reason, Scope, and Intake/Return Date. Am I done, or is there a final button to press?",
+      "observed": {
+        "kind": "actual UI response",
+        "responseExcerpt": "The TenOps Guide does not have enough verified information to confirm that workflow."
+      },
+      "expected": "Select the final Create Rework button. Filling fields alone does not submit the cycle.",
+      "classification": [
+        "retrieval false negative",
+        "multi-turn context failure",
+        "honest uncertainty rather than hallucination"
+      ],
+      "sourceFacts": [
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1566,
+          "endLine": 1599,
+          "fact": "Question has no recognized dependent pronoun, so previous Rework topic need not be inherited."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1515,
+          "endLine": 1515,
+          "fact": "The word Intake is treated as an explicit Pre-Production module."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1543,
+          "endLine": 1546,
+          "fact": "Every explicit module constrains precise matching; Rework guide does not belong to Intake."
+        },
+        {
+          "path": "src/modules/production/components/CreateReworkDialog.tsx",
+          "startLine": 39,
+          "endLine": 41,
+          "fact": "Intake / Return Date is a Rework field label; final button is Create Rework."
+        }
+      ],
+      "inference": "A normal Rework field label is mistaken for a module switch while narrow dependency detection loses the active workflow.",
+      "recommendedCorrection": "Recognize field-level follow-ups within the active workflow before treating overlapping words as explicit module changes.",
+      "regressions": [
+        "I filled in the Reason, Scope, and Intake/Return Date. Am I done, or is there a final button to press?"
+      ]
+    },
+    {
+      "id": "manpower-filter-typo-false-documentation-gap",
+      "questionIds": [
+        10
+      ],
+      "priority": "medium",
+      "question": "Switching to manpower: how do i fliter by jobs in manpower reporting?",
+      "observed": {
+        "kind": "actual UI response",
+        "responseExcerpt": "The TenOps Guide does not have enough verified information to confirm that workflow."
+      },
+      "expected": "For the account's business-write access, explain Manpower Reporting → Job labor review and reset controls; distinguish the read-only alternatives if asked.",
+      "classification": [
+        "typo robustness failure",
+        "retrieval false negative",
+        "honest uncertainty rather than hallucination"
+      ],
+      "sourceFacts": [
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 773,
+          "endLine": 788,
+          "fact": "Precise Job filter requires an exact action such as filter/filtering/review/show/search and contains the correct workflow."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1546,
+          "endLine": 1546,
+          "fact": "Required-term matching checks exact tokens."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1558,
+          "endLine": 1558,
+          "fact": "Normalization handles selected synonyms but not 'fliter'."
+        }
+      ],
+      "inference": "The typo excludes the precise guide. Broad context could still exist, so the visible uncertainty alone does not establish whether the final answer was authored by the model or produced after fallback/validation.",
+      "recommendedCorrection": "Support common misspellings without allowing generic Job overlap to select unrelated modules.",
+      "regressions": [
+        "how do i fliter by jobs in manpower reporting",
+        "how do i filter by jobs in manpower reporting"
+      ]
+    },
+    {
+      "id": "sample-pdf-followup-false-documentation-gap",
+      "questionIds": [
+        23
+      ],
+      "priority": "medium",
+      "question": "If the document was captured but opening its PDF failed, should I generate a fresh Work Order?",
+      "observed": {
+        "kind": "actual UI response",
+        "responseExcerpt": "The TenOps Guide does not have enough verified information to confirm that workflow."
+      },
+      "expected": "No. Use Retry PDF on the existing captured Sample Work Order, not a new issued document.",
+      "classification": [
+        "multi-turn context failure",
+        "retrieval false negative",
+        "honest uncertainty rather than hallucination"
+      ],
+      "sourceFacts": [
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1566,
+          "endLine": 1566,
+          "fact": "The dependency regex recognizes it but not its, and what-if but not a leading If clause."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1189,
+          "endLine": 1193,
+          "fact": "Sample Work Order precise guide requires Sample/samples token."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 1211,
+          "endLine": 1211,
+          "fact": "Correct Retry PDF recovery is documented."
+        },
+        {
+          "path": "src/modules/samples/SampleWorkspace.tsx",
+          "startLine": 609,
+          "endLine": 609,
+          "excerpt": "Document captured, but its PDF could not be opened. Use Retry PDF in Generated Documents; do not generate another document to retry."
+        }
+      ],
+      "inference": "The semantically dependent follow-up has neither the exact Sample token nor a recognized dependency marker, allowing the prior Sample topic to disappear.",
+      "recommendedCorrection": "Retain the document workflow through ordinary failure/retry follow-ups.",
+      "regressions": [
+        "Does Save Sample also issue the Sample Work Order?",
+        "If the document was captured but opening its PDF failed, should I generate a fresh Work Order?"
+      ]
+    },
+    {
+      "id": "production-create-account-availability-mapping",
+      "questionIds": [
+        1
+      ],
+      "priority": "medium",
+      "question": "How do I create a blank Production Job, and which fields are required?",
+      "observed": {
+        "kind": "actual UI response plus root account inspection",
+        "responseExcerpt": "To create a blank Production Job, go to Production → New Job → Create Blank Job.",
+        "additionalObservation": "Source card marked Create a Production Job Available. Root evaluator's existing authorized developer account displayed no Create Production Job capability in Settings."
+      },
+      "expected": "Distinguish generic workflow description from whether this account can execute it; an Available mutation source must use the existing action-specific capability rather than business-write alone.",
+      "classification": [
+        "permission-awareness failure",
+        "knowledge capability mapping gap",
+        "no demonstrated hosted write bypass"
+      ],
+      "sourceFacts": [
+        {
+          "path": "src/lib/rbac.ts",
+          "startLine": 42,
+          "endLine": 70,
+          "fact": "Developer inherits guest plus accessDevelopmentEnvironment. createProductionJob is introduced for member, not guest/developer."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+          "startLine": 481,
+          "endLine": 485,
+          "fact": "Precise Production Job creation entry requires only writeBusinessData and describes authorized business writers."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-core.ts",
+          "startLine": 38,
+          "endLine": 38,
+          "fact": "Production mutation claim guard requires writeBusinessData, without a createProductionJob-specific rule."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-handler.ts",
+          "startLine": 48,
+          "endLine": 50,
+          "fact": "Resolved guide/claim gates control which authenticated capability checks are made."
+        },
+        {
+          "path": "src/modules/production/ProductionWorkspace.tsx",
+          "startLine": 817,
+          "endLine": 824,
+          "fact": "New Job frontend action uses BusinessButton without an explicit createProductionJob disabled/hidden condition."
+        },
+        {
+          "path": "src/components/BusinessWriteControls.tsx",
+          "startLine": 8,
+          "endLine": 10,
+          "fact": "BusinessButton adds only the generic writeBusinessData restriction."
+        },
+        {
+          "path": "src/modules/production/jobs.ts",
+          "startLine": 372,
+          "endLine": 377,
+          "fact": "Creation invokes save_production_project."
+        },
+        {
+          "path": "supabase/migrations/20261014222000_preserve_archived_project_contact_refresh.sql",
+          "startLine": 3,
+          "endLine": 15,
+          "fact": "The RPC is SECURITY INVOKER and inserts jobs; actual hosted grants/RLS control write enforcement."
+        }
+      ],
+      "limits": [
+        "Generic educational instructions alone are not necessarily an account-authorization assertion. The account-specific Available card and broad gate make the mismatch substantive.",
+        "No creation was attempted. Do not infer an authorization bypass, current hosted RLS policy or mutation success from this finding.",
+        "The superseded 20260818_002 DO_NOT_APPLY migration is not used as proof of hosted enforcement."
+      ],
+      "recommendedCorrection": "Align precise creation guidance, broad claim authorization and Available presentation with existing createProductionJob permission evidence.",
+      "regressions": [
+        "Developer account: How do I create a blank Production Job?",
+        "Developer account: Am I allowed to create Production Jobs?",
+        "Member account with business-write: How do I create a blank Production Job?"
+      ]
+    }
+  ],
+  "intentionalRestrictions": [
+    {
+      "id": "proposal-access-denials",
+      "questionIds": [
+        26,
+        27,
+        28
+      ],
+      "assessment": "Consistent with the existing separate Proposal access contract; do not count as the same defect as Q18's unrelated material denial.",
+      "sourceFacts": [
+        {
+          "path": "src/modules/proposals/ProposalWorkspace.tsx",
+          "startLine": 16,
+          "endLine": 29,
+          "fact": "Workspace requests hasProposalAccess and shows an account denial when false."
+        },
+        {
+          "path": "src/modules/proposals/queries.ts",
+          "startLine": 54,
+          "endLine": 54,
+          "fact": "hasProposalAccess calls has_proposal_access RPC."
+        },
+        {
+          "path": "supabase/functions/_shared/tenbot-handler.ts",
+          "startLine": 49,
+          "endLine": 49,
+          "fact": "TenBot uses the same Proposal RPC rather than inventing a generic app capability."
+        }
+      ],
+      "limit": "This is source consistency plus the observed denial, not a new hosted grant audit."
+    }
+  ],
+  "recommendedRefinementOrder": [
+    "Prevent incorrect persistence and eligibility assertions even when later caveats are correct.",
+    "Preserve active workflow across semantically dependent follow-ups and avoid incidental field words causing module switches.",
+    "Require meaningful source relevance before permission denials and source support before naming controls.",
+    "Retain final Save/Create/Confirm actions in concise procedures.",
+    "Align Available mutation guidance with existing action-specific capabilities.",
+    "Add common typo tolerance with module-scoped regression coverage."
+  ]
+}

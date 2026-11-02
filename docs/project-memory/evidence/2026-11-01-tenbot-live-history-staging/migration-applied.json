@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "at": "2026-11-01T19:32:02.568Z",
+  "candidate": "c45f12a6b10aa01b524922b654ce61b12e7be9f8",
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261101180000_tenbot_reauthorized_operational_history.sql",
+      "version": "20261101180000",
+      "name": "tenbot_reauthorized_operational_history",
+      "sha256": "67ce36cca4e5ecee965182e544ef588c70f18f17125992089a556cf14a0ad342"
+    },
+    {
+      "path": "supabase/migrations/20261101181000_tenbot_operational_history_retention.sql",
+      "version": "20261101181000",
+      "name": "tenbot_operational_history_retention",
+      "sha256": "8dda0d2e7dcb665f4b589f3cd16c15269b66ff41900db2b80ea46a0b7b85a472"
+    }
+  ],
+  "ledger": [
+    {
+      "name": "tenbot_reauthorized_operational_history",
+      "sha256": "67ce36cca4e5ecee965182e544ef588c70f18f17125992089a556cf14a0ad342",
+      "version": "20261101180000"
+    },
+    {
+      "name": "tenbot_operational_history_retention",
+      "sha256": "8dda0d2e7dcb665f4b589f3cd16c15269b66ff41900db2b80ea46a0b7b85a472",
+      "version": "20261101181000"
+    }
+  ],
+  "unchangedHistoryRlsAclClaims": true,
+  "accountingAndControlsUnchanged": true,
+  "allWritesOff": true
+}

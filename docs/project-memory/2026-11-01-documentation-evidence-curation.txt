@@ -1,0 +1,90 @@
+TENOPS DOCUMENTATION & EVIDENCE CURATION — NOVEMBER 1, 2026
+
+Product accepted the safe workspace cleanup and authorized reviewed durable
+local documentation/evidence commits. Tier 3 privacy/provenance review; focused
+documentation and preservation checks only. No application refactor, broad test,
+build, database operation, push, deployment, branch pruning or new worktree.
+
+CLASSIFICATION / APPROVED COMMIT
+Baseline: 642 untracked documentation/evidence files (the prior 640 plus the
+accepted hygiene report/evidence), 14 modified documents, 2 active source/verifier
+modifications and 27 nested repository entries. Zero staged entries.
+
+Commit 654 documentation/evidence paths: 638 previously untracked durable files,
+14 reviewed document updates (Current State partially staged), and these two
+new curation records. Scope includes canonical indexes/handoffs, exact accepted
+release/source/migration/security/usage proofs, dated stopped checkpoints and
+completed implementation/QA reports with representative synthetic screenshots.
+Preserve historical failed/HOLD/local-only statuses and supersession links.
+A later release does not retrospectively turn those checkpoints into deployment.
+
+PRIVACY HOLD — FOUR ORIGINAL FILES AND ONE HUNK
+* docs/project-memory/2026-10-22-web-push-delivery-investigation.md
+* docs/project-memory/evidence/2026-10-22-web-push-delivery-investigation.json
+  These originals contain private employee communication/device event metadata.
+* docs/project-memory/evidence/2026-10-30-tenbot-receival-readiness/
+  supabase-pro-small-recovery/payment-confirmation.json
+* Same directory: manifest.json, paired by exact billing-receipt hash.
+  Preserve both originals; do not publish the billing identifier by this commit.
+* CURRENT_STATE.md: keep its original eight-line WebPush investigation hunk
+  unstaged. Commit all other reviewed status updates; do not edit the worktree.
+
+These holds remain explicitly visible. No redaction overwrote original evidence,
+no historical manifest was rewritten, and no extra policy/publication authority
+was inferred. Current release-proof dependencies do not require these records.
+
+ACTIVE WORK PRESERVED
+scripts/verify-tenbot-agent.mts
+supabase/functions/_shared/tenbot-agent.ts
+Both existing modifications remain unstaged and byte-identical. Accepted TenBot
+and unreleased pending-receival commits, candidate/release/proof refs, private Git
+histories, e71bd981 complete recovery bundle, credentials and environments remain.
+Local main/remote refs do not move. Only dev advances by documentation commits.
+
+CONTENT / PROOF REVIEW
+All selected text/JSON was read or structurally reviewed, parsed where applicable
+and scanned for credential/token/private-content patterns. No raw secrets or Auth
+tokens were found in selected content. Actual request telemetry is bounded method,
+path, status and duration metadata; no raw bodies/authorization headers.
+All six bundles were verified/decoded with object writes isolated to task scratch.
+597 decoded blob payloads (including thin-pack bases) passed credential checks;
+19 embedded PNGs and a single synthetic NOT FOR PAYMENT PDF passed visual review.
+Two guide/QA screenshots were also inspected. No private customer/employee data
+was found in these fixture artifacts. Author identities in archived branch logs
+are ordinary Git provenance, not private employee conversation records.
+
+418 local Markdown dependencies exist with valid changed anchors. 170 recent
+revision/path proof references resolve in existing pinned private Git; additional
+historical proof docs absent from the root also resolve at their exact revisions.
+Do not replace those historical pins with current-working-tree paths/hashes.
+Original release-proof files retain their exact bytes and SHA256 values.
+
+ARCHIVAL / EXCLUSION
+Archived/deleted files: 0. Ignore edits: 0. About 10 MB was reviewed; actual
+release/security/QA outcomes are unique historical evidence, not regenerable logs.
+No bulky disposable baseline artifact warranted exclusion solely because of size.
+Keep future/raw build outputs, source exports and sensitive logs in existing
+private scratch/archive locations; do not add them to Git merely to close a task.
+
+SOURCE CONTROL
+Before: 685 expanded paths / 155 collapsed.
+Expected after the documentation commit: 34 expanded / 8 collapsed:
+  27 nested repository entries, 2 active application/verifier modifications,
+  1 retained Current State hunk, 4 original sensitive/dependency files.
+The reduction comes from reviewed durable commits, not hiding or deleting evidence.
+
+VERIFICATION / STOP
+Use the commit and final Git checks reported with this receipt: docs-only staged
+scope, unchanged original file hashes, reviewed partial blob, valid links/proofs,
+no unrelated staged work and only dev's documentation descendant allowed to move.
+No application build/test, runtime inference, hosted access or database operation.
+
+Product decisions: select redacted derivatives or restricted archival/publication
+for the private investigation and billing originals; return active source work to
+its owner. No implementation or workspace-retirement action is included.
+
+Per-file classification and exact source hashes:
+docs/project-memory/evidence/2026-11-01-documentation-evidence-curation.json
+Raw task-owned review records:
+/private/tmp/tenops-documentation-curation-20261101/
+Stop for Product review after the authorized local documentation commit.

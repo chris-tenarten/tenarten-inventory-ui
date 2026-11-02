@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "at": "2026-11-01T19:39:33.052Z",
+  "tenDevSha": "c45f12a6b10aa01b524922b654ce61b12e7be9f8",
+  "tenDevDeployment": "54960d4f-d92f-4d0f-af2d-7ac82a7a227d",
+  "tenOpsSha": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "tenOpsDeployment": "967ed4d1-0ee8-4488-8db2-ee984cabc953",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 35,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "6641a8278302afc3f38218d2153f0b258c124af326a5c46edc13009eba2e5ff5"
+  },
+  "grants": 0,
+  "enrollment": 0,
+  "activePermits": 0,
+  "ordinarySpendingAuthorized": false,
+  "scheduler": [
+    {
+      "id": 3,
+      "name": "tenbot-invoice-original-expiry",
+      "active": true,
+      "lastRuns": [
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T19:23:00.130193+00:00",
+          "start_time": "2026-11-01T19:23:00.093176+00:00"
+        },
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T18:23:00.085919+00:00",
+          "start_time": "2026-11-01T18:23:00.071968+00:00"
+        }
+      ],
+      "schedule": "23 * * * *",
+      "username": "postgres",
+      "commandHash": "b196b8a7cc744bcb4273b0bda12938de453f2bcbb0bec5d99f4f87543bd97c0b",
+      "privatePurgeOnly": false,
+      "signedDispatcherOnly": true
+    },
+    {
+      "id": 4,
+      "name": "tenbot-operational-history-expiry",
+      "active": true,
+      "lastRuns": [
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T19:39:00.055179+00:00",
+          "start_time": "2026-11-01T19:39:00.042087+00:00"
+        },
+        {
+          "status": "succeeded",
+          "end_time": "2026-11-01T19:38:00.111277+00:00",
+          "start_time": "2026-11-01T19:38:00.09156+00:00"
+        }
+      ],
+      "schedule": "* * * * *",
+      "username": "postgres",
+      "commandHash": "2064f05be6e63d7fc1de82d1f3e67f0e35ea37d19db5f614e7c88886eb646077",
+      "privatePurgeOnly": true,
+      "signedDispatcherOnly": false
+    }
+  ],
+  "candidate": "c45f12a6b10aa01b524922b654ce61b12e7be9f8",
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261101180000_tenbot_reauthorized_operational_history.sql",
+      "version": "20261101180000",
+      "name": "tenbot_reauthorized_operational_history",
+      "sha256": "67ce36cca4e5ecee965182e544ef588c70f18f17125992089a556cf14a0ad342"
+    },
+    {
+      "path": "supabase/migrations/20261101181000_tenbot_operational_history_retention.sql",
+      "version": "20261101181000",
+      "name": "tenbot_operational_history_retention",
+      "sha256": "8dda0d2e7dcb665f4b589f3cd16c15269b66ff41900db2b80ea46a0b7b85a472"
+    }
+  ],
+  "privatePurgeRunning": true,
+  "protectedHistoryRlsAclClaimsUnchanged": true,
+  "ordinaryPolicyAndAccountingUnchanged": true,
+  "secretsUnchanged": true,
+  "tenOpsPagesUnchanged": true,
+  "authenticatedFollowUpsPerformed": false,
+  "inferenceCalls": 0,
+  "operationalWrites": 0
+}

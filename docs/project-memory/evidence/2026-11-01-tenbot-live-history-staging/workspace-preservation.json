@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "rootHead": "a00d62e354f4c5086d2ca5ad9bb9c87d31a40a60",
+  "indexUnchanged": true,
+  "branchesUnchanged": true,
+  "initialDirtyPathsPreserved": 13,
+  "localhostProcessesUnchanged": true,
+  "sourceBundle": {
+    "path": "/private/tmp/tenops-tenbot-live-history-staging-20261101/live-history-tendev-candidate.bundle",
+    "sha256": "753bf76b4e29b32eeddabbe83cfa26e16cd92c58727c30eb06576b183f3eb6e2",
+    "requiresBaseline": "509abf3be39e77d607e458a297abbaa3e592f189"
+  },
+  "compatibilityPatchSha256": "8668ecbb007cc5ac2aee3428e75a83b532bb364319d307b0237b37f6984dfed9"
+}

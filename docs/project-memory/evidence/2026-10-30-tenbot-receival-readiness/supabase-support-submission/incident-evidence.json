@@ -1,0 +1,193 @@
+{
+  "project": {
+    "name": "tenartenDB",
+    "ref": "vxdxjhazkqhpkwdqtobp",
+    "organization": "uxxhpnseynojdgabanrv",
+    "region": "us-east-1"
+  },
+  "incidentDate": "2026-10-30",
+  "timezone": "America/Chicago, CDT UTC-5",
+  "timeline": [
+    {
+      "utc": "2026-10-30T22:16–22:17Z",
+      "event": "Backend logs/resource charts end; earlier memory commitment severe1.37GB/swap."
+    },
+    {
+      "utc": "2026-10-30T22:20Z bucket onward",
+      "event": "Auth/REST504/522/524 gateway log failures with intermittent successes."
+    },
+    {
+      "utc": "2026-10-30T22:39:33.754Z",
+      "event": "Readonly Management database/query544/15.349s Connection terminated due to connection timeout, CF-ray a52deaad8e10b172-IAH."
+    },
+    {
+      "utc": "2026-10-30T23:26:03Z",
+      "event": "Fresh DB/Auth bothUNHEALTHY."
+    },
+    {
+      "utc": "2026-10-30T23:26:05.578Z",
+      "event": "Sole restartPOST200, CF-ray a52e2ed56f847ca9-DFW."
+    },
+    {
+      "utc": "2026-10-30T23:30:44.699965Z",
+      "event": "Actual pg_postmaster_start_time observed in readonlySQL."
+    },
+    {
+      "utc": "2026-10-30T23:31:21Z",
+      "event": "DB/Auth bothACTIVE_HEALTHY, CF-ray a52e3676d9251284-IAH."
+    },
+    {
+      "utc": "2026-10-30T23:31:31Z",
+      "event": "Metrics500 Failed to fetch project metrics, CF-ray a52e368b6b4db55d-IAH."
+    },
+    {
+      "utc": "2026-10-30T23:31:54Z",
+      "event": "ReadonlySQL201;12otherbackends/max60, maxopenxact9.396s; no activecanary."
+    },
+    {
+      "utc": "2026-10-30T23:33:30Z approximate",
+      "event": "Genuine Developer Inventory had loaded, then access verification failed: Could not query the database for the schema cache. Retrying. Actual failingHTTPnotcaptured."
+    }
+  ],
+  "observedResourceWarning": "Last available historical Reports samples around22:12–22:17Z: memory commitment1.37GB/SEVERE with substantial swap visible.",
+  "currentResourceLimitations": "Metrics unavailable (400 during transition,500 after services became healthy). One Dashboard report returned No data to show for memory/commitment/CPU. Memory/swap improvement remains unverified.",
+  "restartReceipt": {
+    "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/restart",
+    "method": "POST",
+    "projectName": "tenartenDB",
+    "projectRef": "vxdxjhazkqhpkwdqtobp",
+    "authorizedAction": "ONE supported project restart, no reset/restore/configuration change",
+    "startedAt": "2026-10-30T23:26:05.578Z",
+    "timeoutMs": 30000,
+    "automaticRetries": 0,
+    "requestBodyPresent": false,
+    "status": 200,
+    "headersMs": 1116,
+    "totalMs": 1120,
+    "bodyBytes": 0,
+    "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "responseHeaders": {
+      "date": "Fri, 30 Oct 2026 23:26:06 GMT",
+      "server": "cloudflare",
+      "cf-ray": "a52e2ed56f847ca9-DFW"
+    },
+    "result": "RESTART_ACKNOWLEDGED_RECOVERY_NOT_YET_VERIFIED"
+  },
+  "serviceRecoveryAndMetrics": [
+    {
+      "name": "project-state",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:31:18.113Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 220,
+      "totalMs": 226,
+      "bodyBytes": 379,
+      "bodySha256": "5f28483dc23255949704d900d98bd382df859d8e19293124724914dec5410593",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:31:18 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e3676ed70b55d-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "project": {
+        "id": "vxdxjhazkqhpkwdqtobp",
+        "ref": "vxdxjhazkqhpkwdqtobp",
+        "name": "tenartenDB",
+        "region": "us-east-1",
+        "status": "ACTIVE_HEALTHY"
+      }
+    },
+    {
+      "name": "final-health",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:31:18.151Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 200,
+      "headersMs": 3341,
+      "totalMs": 3342,
+      "bodyBytes": 228,
+      "bodySha256": "44e9cfbbf7ec2a5173591fd8178f332952fa16a75bffe555c623f40ea150bb2b",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:31:21 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e3676d9251284-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "services": [
+        {
+          "name": "auth",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        },
+        {
+          "name": "db",
+          "healthy": true,
+          "status": "ACTIVE_HEALTHY"
+        }
+      ],
+      "healthy": true
+    },
+    {
+      "name": "final-resource-snapshot",
+      "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/analytics/endpoints/metrics",
+      "method": "GET",
+      "startedAt": "2026-10-30T23:31:21.493Z",
+      "timeoutMs": 15000,
+      "retries": 0,
+      "status": 500,
+      "headersMs": 10198,
+      "totalMs": 10198,
+      "bodyBytes": 97,
+      "bodySha256": "da07cbea9b146da66ee0231ddc30f2c4fd47eaf5828214a8ccaccf424dcbca00",
+      "rawBodyRetained": false,
+      "responseHeaders": {
+        "date": "Fri, 30 Oct 2026 23:31:31 GMT",
+        "server": "cloudflare",
+        "cf-ray": "a52e368b6b4db55d-IAH",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "safeError": "Failed to fetch project's metrics"
+    }
+  ],
+  "postRecoveryReadOnlyCheck": {
+    "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+    "method": "POST",
+    "startedAt": "2026-10-30T23:31:52.858Z",
+    "status": 201,
+    "totalMs": 1412,
+    "querySha256": "4f08131175436ea9d0dc7f71fa5f8dcbc332dd6e2c588b979f83d876691b2cf8",
+    "readOnly": "on",
+    "databaseStartedAt": "2026-10-30T23:30:44.699965+00:00",
+    "maxConnections": 60,
+    "backendStates": [
+      {
+        "count": 1,
+        "state": "active"
+      },
+      {
+        "count": 3,
+        "state": "idle"
+      },
+      {
+        "count": 8,
+        "state": "unknown"
+      }
+    ],
+    "maxOpenTransactionAgeSeconds": 9.396353
+  },
+  "subsequentApplicationError": {
+    "atApprox": "2026-10-30T23:33:30Z",
+    "message": "Could not query the database for the schema cache. Retrying.",
+    "failingHttpEndpointAndStatus": "Not captured",
+    "subsequentServiceHealth": "Not measured; no proof that both services became UNHEALTHY again."
+  },
+  "causeStatus": "Unconfirmed; memory pressure is a hypothesis. No proven OOM or particular query attribution.",
+  "privacy": "Sanitized operational diagnostics only. No credentials, request headers, session tokens, user/customer records, private messages, raw statements or inference accounting identifiers."
+}

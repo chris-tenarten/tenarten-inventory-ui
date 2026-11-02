@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T02:04:14.206Z",
+  "sha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "target": "tenops",
+  "output": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/tenops-pilot-release/source/out",
+  "durationMs": 18485,
+  "builds": 1,
+  "sourceArchiveSha256": "2039c57ea910570f569e19d97c66e44c64b97b3037ea2f5cc431fd4093a0f577",
+  "sourceManifestSha256": "c09d024caee216502ae18257dd88fcd592ffbbafe0ebdb9bbefc527afdac2836",
+  "artifactManifestSha256": "8b24a4a3013b50b22ff84d686651b9c1e377b50a4e97779a0e1d9577edb4f36b",
+  "files": 277,
+  "publicConfigurationOnly": true,
+  "secretEnvironmentFilesExcluded": true,
+  "openAIKeyAvailableToBuild": false,
+  "sourceUnchanged": true,
+  "planning": false,
+  "earlyAccess": false,
+  "devBranding": false
+}

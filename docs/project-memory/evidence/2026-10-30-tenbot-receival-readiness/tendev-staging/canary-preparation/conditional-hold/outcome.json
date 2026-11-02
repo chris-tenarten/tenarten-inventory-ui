@@ -1,0 +1,59 @@
+{
+  "status": "HELD_BY_PRODUCT_ANTHONY_UNAVAILABLE_NOT_EXECUTED",
+  "recordedAt": "2026-10-30T17:32:33.156Z",
+  "authority": "Conditional one-row Product approval requires Anthony genuine authenticated participation and newly confirmed window. Product then explicitly replied: Anthony is unavailable — hold the canary.",
+  "approvedPlanSha256": "1e8db072048d3c30c3243bfb3eaca8139ce8b8d001f73b2d109cd00305b402fe",
+  "runtime": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "identity": {
+    "userId": "92edea19-e431-4493-9a1b-3c3ecf32aeae",
+    "displayName": "Anthony Iorio",
+    "actualAvailableTenDevAccount": "Chris Ngo / Admin",
+    "anthonyAuthenticatedParticipation": false,
+    "anthonyHumanApproval": false
+  },
+  "window": {
+    "newWindowConfirmed": false,
+    "oldProposalNotActivationAuthority": true,
+    "noAutomaticResume": true
+  },
+  "invoice": {
+    "reference": "SYN-TENDEV-RECEIVAL-20261030-01",
+    "sha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "localHashVerified": true,
+    "uploaded": false
+  },
+  "readOnlyPreflight": {
+    "recordedAt": "2026-10-30T17:31:26.897Z",
+    "sqlPilot": false,
+    "sqlExecution": false,
+    "edgeWritesDisabled": true,
+    "enrolledEmployees": 0,
+    "executionPermits": 0,
+    "matchingSources": 0,
+    "matchingDrafts": 0,
+    "matchingDocumentClaims": 0
+  },
+  "outcome": {
+    "executionAttempted": false,
+    "createdRecordId": null,
+    "pendingRowsCreatedByCanary": 0,
+    "cancellation": "Not attempted; no row was created by this canary",
+    "stock": "No experimental stock write attempted; live stock invariance was not tested because the canary did not run",
+    "auditAndProvenance": "No canary execution/approval/source created; result/provenance/idempotency checks remain unexecuted",
+    "inferenceCalls": 0,
+    "inferenceCostUsd": 0,
+    "featureActivation": 0,
+    "permissionChanges": 0,
+    "newMigrations": 0,
+    "push": 0,
+    "deployment": 0,
+    "directHostedMutations": 0
+  },
+  "resumeRequirements": [
+    "Product explicitly resumes the canary",
+    "Anthony genuinely signs in and personally authorizes using his own session; verify exact identity/current capabilities",
+    "New explicit finite execution-window confirmation before activation; no expired-window reuse",
+    "Repeat only necessary fresh caller-authorized duplicate/source/approval/budget/target checks before the sole approved service commit"
+  ],
+  "unrelatedDevPreserved": true
+}

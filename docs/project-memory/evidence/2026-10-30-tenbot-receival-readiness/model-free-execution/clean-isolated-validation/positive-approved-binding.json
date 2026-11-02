@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "fixtureRef": "ahnqbzuhpwgmispwohwv",
+  "state": {
+    "unit": "Bag",
+    "grantId": "d5223365-d34e-4df9-a1bb-0ca9d4e85fea",
+    "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+    "quantity": "1",
+    "sourceId": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+    "approvalId": "48ffc2c3-8644-4f7a-a8f0-ef7ebff2fe9f",
+    "contentHash": "31fbc47adfb15d806cc5207ff29031abab904a70abd30bc017e56c0748b0a5b3",
+    "approvalHash": "31fbc47adfb15d806cc5207ff29031abab904a70abd30bc017e56c0748b0a5b3",
+    "evidenceHash": "534087aeed62e2dd4d7112e22d700b760eb0f436445de16d300fc3ca83ad7c54",
+    "originalHash": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+    "grantApprovedDraft": "ef71bc08-da00-4cd0-b274-2bf4ccf3909b"
+  },
+  "reviewRevision": 2,
+  "modelCalls": 0,
+  "executed": false
+}

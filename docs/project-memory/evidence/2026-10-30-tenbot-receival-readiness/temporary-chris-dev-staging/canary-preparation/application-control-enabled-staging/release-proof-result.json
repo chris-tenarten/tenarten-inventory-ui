@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "candidateRevision": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "status": "candidate-preparation-reviewed",
+  "sourceReviewHolds": [],
+  "unclassifiedSensitivePaths": [],
+  "semanticRecordIds": [],
+  "fullProofSha256": "d7a221ab7e878a550a5d94eee9b9dfda612d2ec17b38364c57a65a869a62fa95",
+  "priorFullProof": "../application-control-staging/candidate-proof.json",
+  "sameAcceptedSource": true,
+  "mandatoryCleanPrebuildRetained": true,
+  "newSourceAcknowledgements": 0
+}

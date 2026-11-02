@@ -1,0 +1,231 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {execFileSync,spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {supabaseToken} from '/Users/chrisngo/source/repos/tenarten-inventory-ui/.tmp-messaging-groups-release/lib.mjs';
+
+const repo='/Users/chrisngo/source/repos/tenarten-inventory-ui';
+const base='/private/tmp/tenops-tenbot-hosted-adapter-20261029';
+const dir=base+'/tenops-pilot-release';
+const sha='9a7c6249851fad76f72454ccd5c045dbee5ad50d';
+const ref='vxdxjhazkqhpkwdqtobp';
+const account='1c3296a9dced221746eb605be66df0f3';
+const cfBin='/Users/chrisngo/.npm/_npx/7f3444e3cc855b0c/node_modules/wrangler/bin/wrangler.js';
+const hash=b=>createHash('sha256').update(b).digest('hex');
+const json=(name)=>JSON.parse(fs.readFileSync(dir+'/'+name));
+const save=(name,value,privateFile=false)=>fs.writeFileSync(dir+'/'+name,JSON.stringify(value,null,2)+'\n',{mode:privateFile?0o600:0o644});
+const git=(args)=>execFileSync('git',args,{cwd:repo,encoding:'utf8',timeout:10000}).trim();
+const apiToken=supabaseToken();
+async function management(p,method='GET',body){
+ const r=await fetch(`https://api.supabase.com/v1/projects/${ref}/${p}`,{method,headers:{Authorization:'Bearer '+apiToken,'Content-Type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(15000)});
+ assert(r.ok,'Supabase '+p.split('/')[0]+' HTTP '+r.status);
+ const raw=await r.text();return raw?JSON.parse(raw):null;
+}
+const query=sql=>management('database/query','POST',{query:sql});
+const safeEnv=()=>{const env={...process.env,CI:'true',WRANGLER_SEND_METRICS:'false',CLOUDFLARE_ACCOUNT_ID:account};for(const k of ['CLOUDFLARE_API_TOKEN','CLOUDFLARE_API_KEY','CLOUDFLARE_EMAIL'])delete env[k];return env;};
+function refreshCloudflare(){
+ const r=spawnSync(process.execPath,[cfBin,'whoami'],{env:safeEnv(),encoding:'utf8',timeout:30000,killSignal:'SIGKILL'});
+ fs.writeFileSync(dir+'/cloudflare-session.private.log',(r.stdout??'')+'\n'+(r.stderr??''),{mode:0o600});
+ assert.equal(r.status,0,'Existing Cloudflare session unavailable; stop');
+}
+const cfToken=()=>{const token=fs.readFileSync('/Users/chrisngo/.wrangler/config/default.toml','utf8').match(/^oauth_token\s*=\s*"([^"]+)"/m)?.[1];assert(token);return token;};
+async function cf(name){const r=await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/${name}`,{headers:{Authorization:'Bearer '+cfToken()},signal:AbortSignal.timeout(15000)});assert(r.ok,'Cloudflare HTTP '+r.status);const j=await r.json();assert(j.success);return j.result;}
+function secretDigests(rows,expected){for(const [name,value] of Object.entries(expected)){const s=rows.find(x=>x.name===name);assert.equal(s?.value??s?.digest,hash(value),'Unexpected configuration: '+name);}return true;}
+const expected={TENBOT_OPENAI_ENABLED:'true',TENBOT_OPENAI_SPEND_AUTHORIZED:'true',TENBOT_OPENAI_ALLOWED_ORIGINS:'https://tendev.pages.dev',TENBOT_OPENAI_KEY_EXPIRES_AT:'2026-11-28T22:46:56Z',TENBOT_AI_ENABLED:'true'};
+const stateSql="begin read only;set local statement_timeout='5s';select jsonb_build_object('meter',public.tenbot_openai_meter_status(),'policy',(select to_jsonb(p) from public.tenbot_openai_policy p where singleton),'usage',(select jsonb_build_object('calls',count(*),'requests',count(distinct request_id),'accountedMicrousd',coalesce(sum(coalesce(actual_microusd,reserved_microusd)),0),'unmeasured',count(*) filter(where state<>'measured')) from public.tenbot_openai_usage),'receivalMigrationPresent',exists(select 1 from supabase_migrations.schema_migrations where version='20261029210000'),'assistantMigrations',(select jsonb_agg(jsonb_build_object('version',version,'statementHash',md5(array_to_string(statements,E'\\n'))) order by version) from supabase_migrations.schema_migrations where version in ('20261029220000','20261029221000'))) as state;commit;";
+
+async function preflight(){
+ assert.equal(git(['rev-parse','refs/tenops/staging/tenbot-readonly-20261029']),sha);
+ assert.equal(git(['rev-parse',sha+'^']),'ae50e0fc55a7a6d9e454016c5d73a58e792aff79');
+ assert.equal(git(['rev-parse',sha+'^{tree}']),'c294d3314f6171a8899b11bfd5e58c9a6c843ccf');
+ assert.equal(git(['branch','--show-current']),'dev');
+ const migrationHashes={};
+ for(const file of ['20261029220000_tenbot_openai_metering.sql','20261029221000_tenbot_agent_history.sql'])migrationHashes[file]=hash(execFileSync('git',['show',sha+':supabase/migrations/'+file],{cwd:repo,timeout:10000}));
+ assert.equal(migrationHashes['20261029220000_tenbot_openai_metering.sql'],'dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454');
+ assert.equal(migrationHashes['20261029221000_tenbot_agent_history.sql'],'47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31');
+ refreshCloudflare();
+ const [dev,prod,secrets,functions,states,bundleResponse]=await Promise.all([cf('tendev'),cf('tenops'),management('secrets'),management('functions'),query(stateSql),fetch(`https://api.supabase.com/v1/projects/${ref}/functions/tenbot/body`,{headers:{Authorization:'Bearer '+apiToken},signal:AbortSignal.timeout(20000)})]);
+ assert(bundleResponse.ok,'Edge bundle read failed');const bundle=Buffer.from(await bundleResponse.arrayBuffer());
+ const edge=JSON.parse(fs.readFileSync(base+'/tendev-staging/final-hosted-state.json')).edge;
+ assert.equal(hash(bundle),edge.bundleSha256,'Hosted Edge drift');
+ const fn=functions.find(x=>x.slug==='tenbot');
+ save('edge-metadata-check.json',{recordedAt:new Date().toISOString(),actual:fn?{id:fn.id,version:fn.version,status:fn.status,verifyJwt:fn.verify_jwt,bundleSha256:hash(bundle)}:null,accepted:edge});
+ assert(fn?.verify_jwt===true&&fn.status==='ACTIVE'&&fn.version===edge.version,'Edge metadata differs; inspect edge-metadata-check.json');
+ assert.equal(dev.canonical_deployment.deployment_trigger.metadata.commit_hash,sha);
+ assert.equal(prod.canonical_deployment.deployment_trigger.metadata.commit_hash,'ae50e0fc55a7a6d9e454016c5d73a58e792aff79');
+ assert.equal(prod.production_branch,'main');assert.equal(dev.production_branch,'dev');
+ secretDigests(secrets,expected);assert(secrets.some(x=>x.name==='TENBOT_OPENAI_API_KEY'));
+ assert(!states[0].state.receivalMigrationPresent);assert.equal(states[0].state.assistantMigrations.length,2);
+ assert.equal(states[0].state.meter.accountedMicrousd,560573,'Usage drift requires reconciliation');
+ assert.equal(states[0].state.usage.unmeasured,0,'Unexpected uncertain usage; retain and reconcile');
+ save('tenops-project-before.private.json',prod,true);save('tendev-project-before.private.json',dev,true);
+ const boundary={recordedAt:new Date().toISOString(),acceptedSha:sha,tree:git(['rev-parse',sha+'^{tree}']),localHead:git(['rev-parse','HEAD']),branch:'dev',source:dir+'/source',latencyCorrectionExcluded:true,deferredKnowledgeExcluded:true,unrelatedWorkExcluded:true,changedPaths:git(['diff-tree','--no-commit-id','--name-only','-r',sha]).split('\n'),migrationHashes};
+ save('boundary.json',boundary);
+ const report={passed:true,recordedAt:new Date().toISOString(),sha,projects:[dev,prod].map(p=>({name:p.name,sha:p.canonical_deployment.deployment_trigger.metadata.commit_hash,deployment:p.canonical_deployment.id,productionBranch:p.production_branch})),edge:{version:fn.version,verifyJwt:true,bundleSha256:hash(bundle),sameAcceptedSource:true},settings:{expectedDigestsMatch:true,hostedKeyPresent:true,keyValueRead:false,keyExpiry:expected.TENBOT_OPENAI_KEY_EXPIRES_AT,terraOrigins:['https://tendev.pages.dev'],qwenAvailable:true},state:states[0].state,paidCalls:0};
+ save('preflight.json',report);console.log(JSON.stringify(report));
+}
+
+function build(){
+ const boundary=json('boundary.json');assert.equal(boundary.acceptedSha,sha);assert(json('preflight.json').passed);
+ assert(!fs.existsSync(dir+'/build-attempt.json'),'Existing build attempt: inspect before rerun');
+ const source=boundary.source;assert(!fs.existsSync(source));fs.mkdirSync(source);
+ execFileSync('git',['archive','--format=tar','--output',dir+'/source.tar',sha],{cwd:repo,timeout:20000});
+ execFileSync('tar',['-xf',dir+'/source.tar','-C',source],{timeout:20000});
+ const walk=d=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(d,e.name)):[path.join(d,e.name)]).sort();
+ const sourceManifest=walk(source).map(file=>({path:path.relative(source,file),sha256:hash(fs.readFileSync(file))}));
+ save('source-manifest.json',sourceManifest);
+ for(const f of ['.env','.env.local','.env.production','.env.production.local','.env.tenbot.local'])assert(!fs.existsSync(source+'/'+f));
+ fs.symlinkSync(repo+'/node_modules',source+'/node_modules','dir');
+ const project=json('tenops-project-before.private.json');assert.equal(project.production_branch,'main');
+ const env={PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:process.env.TMPDIR,NODE_ENV:'production',CI:'true',NEXT_TELEMETRY_DISABLED:'1',CF_PAGES:'1',CF_PAGES_BRANCH:'main',CF_PAGES_URL:'https://tenops.pages.dev',CF_PAGES_COMMIT_SHA:sha,NEXT_PUBLIC_DEV_BRANDING:'false'};
+ const allowed=['NEXT_PUBLIC_ENABLE_PLANNING','NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD','NEXT_PUBLIC_SUPABASE_ANON_KEY','NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_DEV_BRANDING','NEXT_PUBLIC_EARLY_ACCESS','NEXT_PUBLIC_DARK_PROTOTYPE'];
+ for(const [name,entry] of Object.entries(project.deployment_configs.production.env_vars)){
+  assert(allowed.includes(name),'Unreviewed Production build key');
+  if(entry.type==='secret_text'&&!entry.value){assert.equal(name,'NEXT_PUBLIC_ENABLE_PLANNING');env[name]='';continue;}
+  assert.equal(entry.type,'plain_text');env[name]=entry.value;
+ }
+ assert.equal(env.NEXT_PUBLIC_SUPABASE_URL,'https://vxdxjhazkqhpkwdqtobp.supabase.co');
+ assert.equal(env.NEXT_PUBLIC_DEV_BRANDING,'false');assert(!env.NEXT_PUBLIC_ENABLE_PLANNING);assert(!env.NEXT_PUBLIC_EARLY_ACCESS);
+ assert.equal(JSON.parse(Buffer.from(env.NEXT_PUBLIC_SUPABASE_ANON_KEY.split('.')[1],'base64url')).role,'anon');
+ save('build-attempt.json',{startedAt:new Date().toISOString(),sha,target:'tenops',envKeys:Object.keys(env),planning:false,earlyAccess:false,devBranding:false});
+ const log=fs.openSync(dir+'/build.private.log','w',0o600),started=Date.now();let r;
+ try{r=spawnSync(process.execPath,[repo+'/node_modules/next/dist/bin/next','build','--webpack'],{cwd:source,env,stdio:['ignore',log,log],timeout:180000,killSignal:'SIGKILL'});}finally{fs.closeSync(log);}
+ assert.equal(r.status,0,'Production build failed; inspect retained private log');
+ const out=source+'/out',manifest=walk(out).map(file=>{const data=fs.readFileSync(file),txt=data.toString();assert(!/sk-(?:proj-)?[A-Za-z0-9_-]{20,}/.test(txt),'Secret pattern in public artifacts');return {path:path.relative(out,file),sha256:hash(data),bytes:data.length};});
+ for(const file of sourceManifest)assert.equal(hash(fs.readFileSync(source+'/'+file.path)),file.sha256,'Tracked source drift during build');
+ const html=fs.readFileSync(out+'/index.html','utf8'),appManifest=JSON.parse(fs.readFileSync(out+'/manifest.webmanifest'));
+ assert.equal(appManifest.name,'TenOps');assert(html.includes('Operations Control'));assert(!/>TenDev<|data-dev-branding="true"|RESEARCH &amp; DEVELOPMENT/.test(html));
+ save('artifact-manifest.json',manifest);
+ const result={passed:true,recordedAt:new Date().toISOString(),sha,target:'tenops',output:out,durationMs:Date.now()-started,builds:1,sourceArchiveSha256:hash(fs.readFileSync(dir+'/source.tar')),sourceManifestSha256:hash(fs.readFileSync(dir+'/source-manifest.json')),artifactManifestSha256:hash(fs.readFileSync(dir+'/artifact-manifest.json')),files:manifest.length,publicConfigurationOnly:true,secretEnvironmentFilesExcluded:true,openAIKeyAvailableToBuild:false,sourceUnchanged:true,planning:false,earlyAccess:false,devBranding:false};save('build.json',result);console.log(JSON.stringify(result));
+}
+
+async function publish(){
+ assert(json('build.json').passed);assert.equal(json('build.json').sha,sha);
+ assert(!fs.existsSync(dir+'/publish-attempt.json'),'Prior publication attempt must be reconciled');
+ const before=git(['ls-remote','origin','refs/heads/main','refs/heads/dev']).split('\n');
+ assert.equal(before.length,2);assert(before.every(x=>x.startsWith('ae50e0fc55a7a6d9e454016c5d73a58e792aff79\t')),'Remote release boundary drift');
+ assert(git(['show','-s','--format=%B',sha]).includes('[CF-Pages-Skip] [CI Skip]'));
+ const localHead=git(['rev-parse','HEAD']);
+ save('publish-attempt.json',{startedAt:new Date().toISOString(),sha,remoteHeadsBefore:before,localDevPreserved:localHead});
+ const r=spawnSync('git',['push','--atomic','origin',sha+':refs/heads/main',sha+':refs/heads/dev'],{cwd:repo,encoding:'utf8',timeout:60000,killSignal:'SIGKILL'});
+ fs.writeFileSync(dir+'/publish.private.log',(r.stdout??'')+'\n'+(r.stderr??''),{mode:0o600});
+ assert.equal(r.status,0,'Source publication failed/uncertain; reconcile without automatic retry');
+ const after=git(['ls-remote','origin','refs/heads/main','refs/heads/dev']).split('\n');assert(after.length===2&&after.every(x=>x.startsWith(sha+'\t')));
+ assert.equal(git(['rev-parse','HEAD']),localHead);assert.equal(git(['branch','--show-current']),'dev');
+ const result={passed:true,recordedAt:new Date().toISOString(),sha,atomic:true,remoteMain:sha,remoteDev:sha,localDevHeadUnchanged:localHead,wholeDevMerge:false,automaticPagesBuildSkipped:true};save('publication.json',result);console.log(JSON.stringify(result));
+}
+
+async function deploy(){
+ const b=json('build.json');assert(b.passed&&b.sha===sha);assert(json('publication.json').passed);
+ assert(!fs.existsSync(dir+'/pages-deploy-attempt.json'),'Prior deployment must be reconciled');
+ for(const file of json('artifact-manifest.json'))assert.equal(hash(fs.readFileSync(b.output+'/'+file.path)),file.sha256,'Artifact drift');
+ const [prod,dev,secrets]=await Promise.all([cf('tenops'),cf('tendev'),management('secrets')]);
+ assert.equal(prod.canonical_deployment.id,json('tenops-project-before.private.json').canonical_deployment.id);
+ assert.equal(dev.canonical_deployment.id,json('tendev-project-before.private.json').canonical_deployment.id);
+ assert.equal(hash(JSON.stringify(prod.deployment_configs)),hash(JSON.stringify(json('tenops-project-before.private.json').deployment_configs)));
+ secretDigests(secrets,expected);
+ save('pages-deploy-attempt.json',{startedAt:new Date().toISOString(),sha,target:'tenops',terraOriginStillExcluded:true});
+ const r=spawnSync(process.execPath,[cfBin,'pages','deploy',b.output,'--project-name','tenops','--branch','main','--commit-hash',sha,'--commit-message','Approved read-only TenBot Terra pilot','--commit-dirty=false'],{cwd:dir,env:safeEnv(),encoding:'utf8',timeout:180000,killSignal:'SIGKILL'});
+ fs.writeFileSync(dir+'/pages-deploy.private.log',(r.stdout??'')+'\n'+(r.stderr??''),{mode:0o600});assert.equal(r.status,0,'Deployment failed/uncertain; reconcile, do not retry automatically');
+ const [next,nextDev]=await Promise.all([cf('tenops'),cf('tendev')]);
+ assert.equal(next.canonical_deployment.deployment_trigger.metadata.commit_hash,sha);assert.equal(next.canonical_deployment.latest_stage.status,'success');
+ assert.equal(nextDev.canonical_deployment.id,dev.canonical_deployment.id);assert.equal(hash(JSON.stringify(next.deployment_configs)),hash(JSON.stringify(prod.deployment_configs)));
+ const result={passed:true,recordedAt:new Date().toISOString(),sha,target:'tenops',deployment:next.canonical_deployment.id,url:'https://tenops.pages.dev',deploymentUrl:next.canonical_deployment.url,initialRouting:'Qwen; TenOps excluded from Terra origin allowlist',tenDevUnchanged:nextDev.canonical_deployment.id,edgeRedeployed:false,newMigrationsApplied:false};save('pages-deployment.json',result);console.log(JSON.stringify(result));
+}
+
+async function verifyServed(){
+ const b=json('build.json'),d=json('pages-deployment.json');assert(b.passed&&d.passed&&b.sha===sha&&d.sha===sha);
+ const html=fs.readFileSync(b.output+'/index.html','utf8')+fs.readFileSync(b.output+'/my-work.html','utf8');
+ const paths=[...new Set(['index.html','my-work.html','manifest.webmanifest','sw.js',...Array.from(html.matchAll(/(?:src|href)="(\/_next\/[^"?]+)/g),m=>m[1].slice(1))])].filter(p=>fs.existsSync(b.output+'/'+p));
+ const rows=[];
+ for(let i=0;i<paths.length;i+=6)rows.push(...await Promise.all(paths.slice(i,i+6).map(async p=>{const r=await fetch('https://tenops.pages.dev/'+(p==='index.html'?'':p),{headers:{'Cache-Control':'no-cache'},signal:AbortSignal.timeout(15000)});const bytes=Buffer.from(await r.arrayBuffer());return {path:p,status:r.status,matches:r.ok&&hash(bytes)===hash(fs.readFileSync(b.output+'/'+p))};})));
+ assert(rows.every(x=>x.matches),'Served assets differ from accepted Production-target build');
+ const result={passed:true,recordedAt:new Date().toISOString(),sha,deployment:d.deployment,verifiedAssets:rows.length,rows,devBranding:false,planning:false,earlyAccess:false,inferenceCalls:0};save('served.json',result);console.log(JSON.stringify({passed:true,sha,deployment:d.deployment,verifiedAssets:rows.length,inferenceCalls:0}));
+}
+
+async function snapshot(){
+ const label=process.argv[3];assert(/^(?:before-fallback|after-fallback|before-nested-fallback|after-nested-fallback|before-terra|after-terra|after-job|before-history|after-history|final)$/.test(label));
+ const rows=await query("begin read only;set local statement_timeout='5s';select jsonb_build_object('meter',public.tenbot_openai_meter_status(),'openai',(select coalesce(jsonb_agg(jsonb_build_object('id',id,'request',request_id,'model',model,'policyVersion',policy_version,'reservedMicrousd',reserved_microusd,'actualMicrousd',actual_microusd,'state',state,'createdAt',created_at,'settledAt',settled_at) order by created_at),'[]'::jsonb) from public.tenbot_openai_usage),'qwen',(select coalesce(jsonb_agg(jsonb_build_object('createdAt',created_at,'outcome',outcome,'model',model,'inputTokens',input_tokens,'outputTokens',output_tokens,'estimatedNeurons',estimated_neurons) order by created_at),'[]'::jsonb) from public.tenbot_usage where created_at>=timestamptz '2026-10-30T02:00:00Z'),'historyShape',(select jsonb_build_object('rows',count(*),'maxDisplays',max(jsonb_array_length(state->'display')),'maxGuidance',max(jsonb_array_length(state->'guidance')),'allStateValid',coalesce(bool_and(public.tenbot_agent_state_valid(state,conversation_id)),true)) from public.tenbot_agent_history),'receivalMigrationPresent',exists(select 1 from supabase_migrations.schema_migrations where version='20261029210000')) as snapshot;commit;");
+ const result={recordedAt:new Date().toISOString(),label,snapshot:rows[0].snapshot,privateProseRead:false,apiTokenUsageUnavailableInLedger:true};save(label+'-snapshot.json',result);console.log(JSON.stringify({recordedAt:result.recordedAt,label,meter:result.snapshot.meter,openaiCalls:result.snapshot.openai.length,qwen:result.snapshot.qwen,historyShape:result.snapshot.historyShape,receivalMigrationPresent:result.snapshot.receivalMigrationPresent}));
+}
+
+async function policy(){
+ assert(json('served.json').passed);assert(json('qwen-fallback.json').passed);
+ assert(!fs.existsSync(dir+'/policy-attempt.json'),'Prior policy attempt must be reconciled');
+ secretDigests(await management('secrets'),expected);
+ const baseline=json('preflight.json').state.policy;
+ const preservedKeys=['legacy_accounted_microusd','legacy_accounted_day','carryover_evidence','request_step_limit','global_minute_step_limit','user_minute_step_limit','global_day_request_limit','user_day_request_limit','global_open_limit','user_open_limit'];
+ const sql=`begin;set local lock_timeout='2s';set local statement_timeout='5s';
+ select 1 from public.tenbot_openai_policy where singleton for update;
+ do $g$ begin if not exists(select 1 from public.tenbot_openai_policy where singleton and enabled and version=2 and legacy_accounted_microusd=539956 and total_limit_microusd=789956 and month_limit_microusd=789956 and user_day_limit_microusd=250000 and request_limit_microusd=250000 and allowed_models=array['gpt-6.1-terra']::text[]) then raise exception 'Unexpected policy state; stop';end if;end $g$;
+ select jsonb_build_object('policy',(select to_jsonb(p) from public.tenbot_openai_policy p where singleton),'meter',public.tenbot_openai_meter_status(),'usageHash',(select md5(coalesce(string_agg(md5(to_jsonb(u)::text),',' order by id),'')) from public.tenbot_openai_usage u)) as before;
+ update public.tenbot_openai_policy set version=version+1,enabled=true,expires_at=timestamptz '2026-10-30T23:00:00Z',total_limit_microusd=4539956,month_limit_microusd=4539956,day_limit_microusd=4000000,user_day_limit_microusd=250000,request_limit_microusd=250000,allowed_models=array['gpt-6.1-terra']::text[] where singleton;
+ select jsonb_build_object('policy',(select to_jsonb(p) from public.tenbot_openai_policy p where singleton),'meter',public.tenbot_openai_meter_status(),'usageHash',(select md5(coalesce(string_agg(md5(to_jsonb(u)::text),',' order by id),'')) from public.tenbot_openai_usage u)) as after;commit;`;
+ save('policy-attempt.json',{startedAt:new Date().toISOString(),sqlSha256:hash(sql),approvedHostedTotalMicrousd:4000000,inclusiveCeilingMicrousd:4539956,expiresAt:'2026-10-30T23:00:00Z'});
+ const rows=await query(sql);const before=rows.find(x=>x.before)?.before,after=rows.find(x=>x.after)?.after;assert(before&&after);
+ assert.equal(before.usageHash,after.usageHash,'Metering rows changed');
+ for(const key of preservedKeys){assert.deepEqual(after.policy[key],before.policy[key],'Policy limit/carryover changed: '+key);assert.deepEqual(after.policy[key],baseline[key],'Prior baseline drift: '+key);}
+ assert.equal(after.policy.version,3);assert.equal(after.meter.totalLimitMicrousd,4539956);assert.equal(after.meter.accountedMicrousd,before.meter.accountedMicrousd);
+ assert.equal(after.policy.day_limit_microusd,4000000);assert.equal(Date.parse(after.policy.expires_at),Date.parse('2026-10-30T23:00:00Z'));
+ const result={passed:true,recordedAt:new Date().toISOString(),approvedHostedTotalMicrousd:4000000,before,after,usageRowsUnchanged:true,carryoverPreserved:true,allOtherLimitsPreserved:true,terraOriginsStillTenDevOnly:true,noRenewalAssumed:true};save('policy.json',result);console.log(JSON.stringify({passed:true,meter:after.meter,dayLimitMicrousd:after.policy.day_limit_microusd,userDayLimitMicrousd:after.policy.user_day_limit_microusd,requestLimitMicrousd:after.policy.request_limit_microusd,priorUsagePreserved:true}));
+}
+
+async function activate(){
+ assert(json('policy.json').passed);assert(json('served.json').passed);assert(json('qwen-fallback.json').passed);
+ assert(Date.now()<Date.parse('2026-10-30T23:00:00Z'));
+ assert(!fs.existsSync(dir+'/activation-attempt.json'),'Prior activation must be reconciled');
+ const secrets=await management('secrets');secretDigests(secrets,expected);
+ const expiry=secrets.find(x=>x.name==='TENBOT_OPENAI_KEY_EXPIRES_AT');assert(expiry);
+ const origins='https://tendev.pages.dev,https://tenops.pages.dev';
+ save('activation-attempt.json',{startedAt:new Date().toISOString(),settings:['TENBOT_OPENAI_ALLOWED_ORIGINS','TENBOT_OPENAI_SPEND_AUTHORIZED'],newOrigins:origins.split(','),spendingAuthorized:false,policyVersion:3});
+ await management('secrets','POST',[{name:'TENBOT_OPENAI_ALLOWED_ORIGINS',value:origins},{name:'TENBOT_OPENAI_SPEND_AUTHORIZED',value:'false'}]);
+ secretDigests(await management('secrets'),{...expected,TENBOT_OPENAI_ALLOWED_ORIGINS:origins,TENBOT_OPENAI_SPEND_AUTHORIZED:'false'});
+ const result={passed:true,recordedAt:new Date().toISOString(),sha,origins:origins.split(','),spendingAuthorized:false,scope:'Conversational and five caller-authorized read-only Job tools',sharedPolicyVersion:3,operationalWrites:false,hostedKeyValueRead:false,edgeRedeployed:false};save('activation.json',result);console.log(JSON.stringify(result));
+}
+
+async function reconcilePolicy(){
+ assert(fs.existsSync(dir+'/policy-attempt.json'));assert(!fs.existsSync(dir+'/policy.json'));
+ const current=(await query(stateSql))[0].state,prior=json('preflight.json').state;
+ const p=current.policy,b=prior.policy;
+ const changed={version:3,enabled:true,total_limit_microusd:4539956,month_limit_microusd:4539956,day_limit_microusd:4000000,user_day_limit_microusd:250000,request_limit_microusd:250000,allowed_models:['gpt-6.1-terra']};
+ for(const key of Object.keys(b))if(key==='expires_at')assert.equal(Date.parse(p[key]),Date.parse('2026-10-30T23:00:00Z'));else assert.deepEqual(p[key],Object.hasOwn(changed,key)?changed[key]:b[key],'Unexpected policy field '+key);
+ assert.deepEqual(current.usage,prior.usage);assert.equal(current.meter.accountedMicrousd,560573);assert.equal(current.meter.remainingMicrousd,3979383);assert.equal(current.meter.uncertainReservations,0);
+ const rows=await query("begin read only;set local statement_timeout='5s';select coalesce(jsonb_agg(jsonb_build_object('id',id,'request',request_id,'model',model,'policyVersion',policy_version,'reservedMicrousd',reserved_microusd,'actualMicrousd',actual_microusd,'state',state,'createdAt',created_at,'settledAt',settled_at) order by created_at),'[]'::jsonb) as usage from public.tenbot_openai_usage;commit;");
+ assert.deepEqual(rows[0].usage,json('before-fallback-snapshot.json').snapshot.openai,'Prior reservations/settlements changed');
+ const result={passed:true,recordedAt:new Date().toISOString(),approvedHostedTotalMicrousd:4000000,before:{policy:b,meter:prior.meter,usage:prior.usage},after:{policy:p,meter:current.meter,usage:current.usage},priorUsageFieldsUnchanged:true,carryoverPreserved:true,allOtherLimitsPreserved:true,terraOriginsStillTenDevOnly:true,noRenewalAssumed:true,reconciliation:{reason:'Management query returns only final SELECT; initial receipt parser expected two result sets after a successfully committed transaction',policyUpdateRepeated:false,verification:'Exact policy fields and all retained reservation/settlement fields compared with pre-update snapshots'}};
+ save('policy.json',result);console.log(JSON.stringify({passed:true,reconciled:true,policyUpdateRepeated:false,meter:current.meter,priorUsagePreserved:true}));
+}
+
+async function enableSpending(){
+ assert(json('activation.json').passed);assert(json('nested-qwen-fallback.json').passed);assert(Date.now()<Date.parse('2026-10-30T23:00:00Z'));
+ assert(!fs.existsSync(dir+'/spending-enable-attempt.json'),'Prior enable attempt must be reconciled');
+ const origins='https://tendev.pages.dev,https://tenops.pages.dev';
+ secretDigests(await management('secrets'),{...expected,TENBOT_OPENAI_ALLOWED_ORIGINS:origins,TENBOT_OPENAI_SPEND_AUTHORIZED:'false'});
+ const meter=(await query(stateSql))[0].state.meter;assert(meter.enabled&&meter.version===3&&meter.totalLimitMicrousd===4539956&&Date.parse(meter.expiresAt)>Date.now());
+ save('spending-enable-attempt.json',{startedAt:new Date().toISOString(),policyVersion:3,origins:origins.split(','),onlySetting:'TENBOT_OPENAI_SPEND_AUTHORIZED'});
+ await management('secrets','POST',[{name:'TENBOT_OPENAI_SPEND_AUTHORIZED',value:'true'}]);
+ secretDigests(await management('secrets'),{...expected,TENBOT_OPENAI_ALLOWED_ORIGINS:origins});
+ const result={passed:true,recordedAt:new Date().toISOString(),spendingAuthorized:true,origins:origins.split(','),meter,approvedHostedTotalMicrousd:4000000};save('spending-enabled.json',result);console.log(JSON.stringify(result));
+}
+
+async function finalState(){
+ const [prod,dev,secrets,functions,states,bundleR]=await Promise.all([cf('tenops'),cf('tendev'),management('secrets'),management('functions'),query(stateSql),fetch(`https://api.supabase.com/v1/projects/${ref}/functions/tenbot/body`,{headers:{Authorization:'Bearer '+apiToken},signal:AbortSignal.timeout(20000)})]);
+ assert(bundleR.ok);const bundle=Buffer.from(await bundleR.arrayBuffer()),fn=functions.find(x=>x.slug==='tenbot');
+ assert(fn?.verify_jwt===true&&fn.status==='ACTIVE');assert.equal(hash(bundle),json('preflight.json').edge.bundleSha256);
+ secretDigests(secrets,{...expected,TENBOT_OPENAI_ALLOWED_ORIGINS:'https://tendev.pages.dev,https://tenops.pages.dev'});
+ assert(secrets.some(x=>x.name==='TENBOT_OPENAI_API_KEY'));
+ assert.equal(prod.canonical_deployment.deployment_trigger.metadata.commit_hash,sha);assert.equal(prod.canonical_deployment.id,json('pages-deployment.json').deployment);
+ assert.equal(dev.canonical_deployment.id,json('tendev-project-before.private.json').canonical_deployment.id);
+ for(const [name,p] of [['tenops',prod],['tendev',dev]])assert.equal(hash(JSON.stringify(p.deployment_configs)),hash(JSON.stringify(json(name+'-project-before.private.json').deployment_configs)));
+ const state=states[0].state,p=state.policy,baseline=json('policy.json').after.policy;
+ for(const key of Object.keys(baseline))assert.deepEqual(p[key],baseline[key],'Pilot policy drift: '+key);
+ assert(state.meter.enabled&&state.meter.totalLimitMicrousd===4539956&&Date.parse(state.meter.expiresAt)>Date.now());
+ assert(!state.receivalMigrationPresent);assert.equal(state.assistantMigrations.length,2);
+ const remote=git(['ls-remote','origin','refs/heads/main','refs/heads/dev']).split('\n');assert(remote.length===2&&remote.every(x=>x.startsWith(sha+'\t')));
+ assert.equal(git(['rev-parse','HEAD']),json('publication.json').localDevHeadUnchanged);assert.equal(git(['branch','--show-current']),'dev');
+ const result={passed:true,recordedAt:new Date().toISOString(),servedSha:sha,tenopsDeployment:prod.canonical_deployment.id,tenDevUnchanged:dev.canonical_deployment.id,edge:{version:fn.version,verifyJwt:true,status:fn.status,bundleSha256:hash(bundle),sameAcceptedBundle:true,noSourceDeployment:true},settings:{expectedDigestsMatch:true,keyPresent:true,keyValueRead:false,keyExpiresAt:expected.TENBOT_OPENAI_KEY_EXPIRES_AT,terraOrigins:['https://tendev.pages.dev','https://tenops.pages.dev'],spendingAuthorized:true,qwenEnabled:true},state,configurationUnchanged:true,operationalWrites:false,newMigrationsApplied:false,remoteSource:sha,localDevPreserved:true};save('final-hosted-state.json',result);console.log(JSON.stringify(result));
+}
+
+const action=process.argv[2];
+try{assert(['preflight','build','publish','deploy','verify-served','snapshot','policy','reconcile-policy','activate','enable-spending','final-state','refresh-final-state'].includes(action));if(action==='preflight')await preflight();else if(action==='build')build();else if(action==='publish')await publish();else if(action==='deploy')await deploy();else if(action==='snapshot')await snapshot();else if(action==='policy')await policy();else if(action==='reconcile-policy')await reconcilePolicy();else if(action==='activate')await activate();else if(action==='enable-spending')await enableSpending();else if(action==='final-state')await finalState();else if(action==='refresh-final-state'){assert(!fs.existsSync(dir+'/metadata-auth-refresh.json'));save('metadata-auth-refresh.json',{recordedAt:new Date().toISOString(),initialReadStatus:401,cause:'Existing Cloudflare OAuth access token expired at 2026-10-30T02:10:54.937Z',operation:'One normal Wrangler session refresh, then read-only final reconciliation; no deployment retry or permission change'});refreshCloudflare();await finalState();}else await verifyServed();}catch(e){console.error(e instanceof Error?e.message:'Release operation failed');process.exitCode=1;}

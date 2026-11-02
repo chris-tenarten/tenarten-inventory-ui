@@ -1,0 +1,144 @@
+{
+  "recordedAt": "2026-10-30T17:07:30.991Z",
+  "snapshot": {
+    "readOnly": "on",
+    "cleanupJob": {
+      "id": 3,
+      "owner": "postgres",
+      "active": true,
+      "database": "postgres",
+      "schedule": "23 * * * *",
+      "expectedCommand": true
+    },
+    "recentRuns": [
+      {
+        "id": "99b7dd27-1caf-4ef1-9587-8604b3d4586c",
+        "limit": 20,
+        "expiry": 1793379780,
+        "status": "succeeded",
+        "createdAt": "2026-10-30T17:02:00.166069+00:00",
+        "consumedAt": "2026-10-30T17:02:01.162496+00:00",
+        "finishedAt": "2026-10-30T17:02:01.641772+00:00",
+        "removedCount": 0
+      },
+      {
+        "id": "239b353d-a694-432c-8bae-3fa822839e55",
+        "limit": 20,
+        "expiry": 1793379564,
+        "status": "succeeded",
+        "createdAt": "2026-10-30T16:58:24.401652+00:00",
+        "consumedAt": "2026-10-30T16:58:25.010655+00:00",
+        "finishedAt": "2026-10-30T16:58:25.096978+00:00",
+        "removedCount": 0
+      },
+      {
+        "id": "48d66e10-cc5f-42ce-8143-cf8ce10185da",
+        "limit": 20,
+        "expiry": 1793379563,
+        "status": "cancelled",
+        "createdAt": "2026-10-30T16:58:23.241739+00:00",
+        "consumedAt": null,
+        "finishedAt": "2026-10-30T16:58:24.085548+00:00",
+        "removedCount": null
+      },
+      {
+        "id": "b1ea1279-19de-4528-a691-231146e3d175",
+        "limit": 20,
+        "expiry": 1793379561,
+        "status": "cancelled",
+        "createdAt": "2026-10-30T16:58:21.865394+00:00",
+        "consumedAt": null,
+        "finishedAt": "2026-10-30T16:58:21.868214+00:00",
+        "removedCount": null
+      },
+      {
+        "id": "a313b6ca-8ba0-44e7-af9f-9ae108cdea56",
+        "limit": 20,
+        "expiry": 1793379559,
+        "status": "succeeded",
+        "createdAt": "2026-10-30T16:58:19.585388+00:00",
+        "consumedAt": "2026-10-30T16:58:20.147476+00:00",
+        "finishedAt": "2026-10-30T16:58:20.284082+00:00",
+        "removedCount": 0
+      }
+    ],
+    "sourceCount": 0,
+    "cronTimezone": "GMT",
+    "sourceGuards": {
+      "public.guard_invoice_receival_original_object()": "d3fac5c6cd8f39a4b2e6e21e932377f3",
+      "public.claim_expired_invoice_receival_sources(integer)": "c35243c447ca68aa32ad0f1851a7d31e",
+      "public.finish_expired_invoice_receival_source_removal(uuid)": "1f7fa7860ab34dbdfaff5ae0b285eb6f"
+    },
+    "privateBucket": true,
+    "unrelatedJobs": [
+      {
+        "id": 1,
+        "name": "tenops-messaging-abandoned-drafts",
+        "owner": "postgres",
+        "active": true,
+        "database": "postgres",
+        "schedule": "17 * * * *"
+      },
+      {
+        "id": 2,
+        "name": "tenops-web-push",
+        "owner": "postgres",
+        "active": true,
+        "database": "postgres",
+        "schedule": "* * * * *"
+      }
+    ],
+    "cleanupEnabled": true,
+    "cleanupRoutines": [
+      {
+        "owner": "postgres",
+        "definer": true,
+        "anonExec": false,
+        "signature": "cancel_invoice_receival_cleanup_run(uuid)",
+        "sourceMd5": "6a9d2bbde0468f370dd75f8de9357777",
+        "serviceExec": false,
+        "employeeExec": false
+      },
+      {
+        "owner": "postgres",
+        "definer": true,
+        "anonExec": false,
+        "signature": "consume_invoice_receival_cleanup_run(uuid,bigint,integer)",
+        "sourceMd5": "3242bfe93fae783944839839028bdaad",
+        "serviceExec": true,
+        "employeeExec": false
+      },
+      {
+        "owner": "postgres",
+        "definer": true,
+        "anonExec": false,
+        "signature": "dispatch_invoice_source_cleanup()",
+        "sourceMd5": "65aa9adde66e3d31609db04971362fb1",
+        "serviceExec": false,
+        "employeeExec": false
+      },
+      {
+        "owner": "postgres",
+        "definer": true,
+        "anonExec": false,
+        "signature": "finish_invoice_receival_cleanup_run(uuid,text,integer)",
+        "sourceMd5": "87c3e0b93fd1480614c056cb2fff44b7",
+        "serviceExec": true,
+        "employeeExec": false
+      }
+    ],
+    "eligibleSources": 0,
+    "sourceStateHash": "d41d8cd98f00b204e9800998ecf8427e",
+    "enrolledEmployees": 0,
+    "writePilotEnabled": false,
+    "cleanupSecretNames": [
+      "tenbot_receival_cleanup_gateway_jwt",
+      "tenbot_receival_cleanup_wake"
+    ],
+    "dueWithinTenMinutes": 0,
+    "originalObjectCount": 0,
+    "retainedSourceCount": 0,
+    "originalMetadataHash": "d41d8cd98f00b204e9800998ecf8427e",
+    "receivalExecutionEnabled": false
+  }
+}

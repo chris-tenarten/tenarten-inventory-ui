@@ -1,0 +1,51 @@
+{
+  "recordedAt": "2026-10-30T16:58:25.563Z",
+  "passed": true,
+  "scope": "shared-hosted-cleanup-zero-eligible-noop-only",
+  "endpoint": "https://vxdxjhazkqhpkwdqtobp.supabase.co/functions/v1/tenbot-receival-cleanup",
+  "events": [
+    {
+      "step": "bad-signature",
+      "status": 401
+    },
+    {
+      "step": "dispatcher-wake-or-replay",
+      "status": 409
+    },
+    {
+      "step": "replay-after-completion",
+      "status": 409
+    },
+    {
+      "step": "concurrent-dispatch",
+      "requests": 2,
+      "queued": 1
+    },
+    {
+      "step": "cancelled-queued-wake",
+      "status": 409
+    },
+    {
+      "step": "revoked-global-control",
+      "status": 409
+    },
+    {
+      "step": "fresh-retry",
+      "status": 200,
+      "removedCount": 0
+    }
+  ],
+  "sourceAndOriginalWrites": 0,
+  "operationalWrites": 0,
+  "retainedSourceCount": 0,
+  "retainedDeletionValidation": "prior isolated real Storage proof + unchanged guard fingerprints; no hosted destructive test",
+  "unrelatedJobsUnchanged": true,
+  "cronStillInactive": true,
+  "paidInferenceCalls": 0,
+  "wakePayloadsPersisted": false,
+  "vaultValuesRead": false,
+  "limitations": [
+    "Expiry/uncertain-failure behavior reuses accepted offline+real rollback SQL evidence; no forced hosted timeout or expired wake.",
+    "This harness intentionally does not activate Cron; root separately reviews and runs hourly enablement."
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "headIndexBranchesUnchanged": true,
+  "appends": [
+    {
+      "path": "docs/README.md",
+      "originalLength": 10333,
+      "originalSha256": "e58567a0fb92718555f0679605991f5322edccf4247509612d54db6fd6d4fb43",
+      "appendSha256": "c0a2e6888fb6f1b9bc7db310f1bb0cfaffc9c9321ca0d56f035339959a8f0041",
+      "priorBytesPreserved": true
+    },
+    {
+      "path": "docs/project-memory/CURRENT_STATE.md",
+      "originalLength": 161917,
+      "originalSha256": "4d22e38e116ba49ad6d5ff3c5756129cae459533f2456b281b04fb85407d1dd1",
+      "appendSha256": "9a18c7015b19ddafcac6a0ea9026e175cf4ba77618251b972485cfb2af9dac9d",
+      "priorBytesPreserved": true
+    },
+    {
+      "path": "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+      "originalLength": 180886,
+      "originalSha256": "6710d5a03d5e9b39fe4d22ba4c32f3f7f6a7f3964daaea4046bb635dd6c6c478",
+      "appendSha256": "9f16cfc74ed7a46c00e79adc335933472dfcf8971d687bafc438aaa63da44acd",
+      "priorBytesPreserved": true
+    },
+    {
+      "path": "docs/project-memory/2026-11-01-tenbot-persistent-conversations.md",
+      "originalLength": 11725,
+      "originalSha256": "1f580f17880427ab1cb2b93f0c63af186b7dc46e1f15f811fbe67de4871610d8",
+      "appendSha256": "2f64b6d6c0f70f4229d2506a4c019f2d86122d9ad9902b9ca4997df76f503bb6",
+      "priorBytesPreserved": true
+    }
+  ]
+}

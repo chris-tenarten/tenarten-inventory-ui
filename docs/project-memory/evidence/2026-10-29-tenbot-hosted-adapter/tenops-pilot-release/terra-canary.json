@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "actualInference": true,
+  "actualHostedDatabase": true,
+  "model": "gpt-6.1-terra",
+  "question": "Walk me through creating a group conversation in TenOps, one step at a time.",
+  "answer": "First, open Messaging from the app header. Let me know when you\u2019re there.",
+  "correct": true,
+  "providerSteps": 3,
+  "accountedMicrousd": 5472,
+  "reservationToFinalSettlementMs": 7805,
+  "latencyMethod": "Server first reservation through final settlement; excludes entry/publication time",
+  "tokenBreakdown": "Not retained by hosted ledger; no estimate substituted",
+  "apiKeyAuthentication": "Successful actual inference; value never read"
+}

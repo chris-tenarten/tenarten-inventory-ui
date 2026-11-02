@@ -1,0 +1,58 @@
+{
+  "files": [
+    {
+      "name": "preflight-expired-before-submission.json",
+      "sha256": "a5e1d64b1cc88aedc442bfe17d40311e10d8364d438f24dae9ffcee8111a2afd"
+    },
+    {
+      "name": "local-stale-stop.json",
+      "sha256": "1091313ece172702b696f36645ffa76d6286e8b719088514f6b50d6f08b4d581"
+    },
+    {
+      "name": "preflight.json",
+      "sha256": "024de5a4a65c0bdb507a8d6009add1f2eaa389eb8aef9db230e8401fc431784c"
+    },
+    {
+      "name": "restart-intent.json",
+      "sha256": "21adaafa2a5a806408a210c0312267050ab72f42b135f609c24ceb5ce91c1f67"
+    },
+    {
+      "name": "restart-result.json",
+      "sha256": "28302fb3161ca821d7a10de9b5ca11397a73a1ccfb44f225a13298e7b64b2aed"
+    },
+    {
+      "name": "postcheck.json",
+      "sha256": "6f9f1708355c68772f17d9e16f29651a9cf58bb3cf2358bd868fd7e346c7128d"
+    },
+    {
+      "name": "final-health.json",
+      "sha256": "1fb87fe862827fd50c054464c672969b129474cc9b5e3becd7ea7c6b191f0401"
+    },
+    {
+      "name": "five-minute-health.json",
+      "sha256": "13620574a2e211badcbd7ff2b69000bb604322e8297c8e0b2643fabeb9ca67fb"
+    },
+    {
+      "name": "reconciliation.json",
+      "sha256": "17ff502bebe838bfedee22ee4d1a3a81f53256209eba65be9e90ff1408112ad6"
+    },
+    {
+      "name": "open-reservation.json",
+      "sha256": "c6fe1c44bc918d12d09622d4b8299baeb09a7658bd0f6a3e8b3bbfc2e4469f97"
+    },
+    {
+      "name": "browser-observation.json",
+      "sha256": "cd43eb696e766dce27ab7a3799d41ee1123ae1729854339ef6cb7320175ff85d"
+    },
+    {
+      "name": "summary.json",
+      "sha256": "68988e396e4d8c2c58f0aa106ac66eb0ab9888d302de9a4b7eae8934d736cd17"
+    },
+    {
+      "name": "support-escalation.json",
+      "sha256": "5c974b22ec967b5b618ef36e3ba51f5d0228590d5340e33c53c4539fa1084c61"
+    }
+  ],
+  "credentialValuesStored": false,
+  "rawOperationalRecordsStored": false
+}

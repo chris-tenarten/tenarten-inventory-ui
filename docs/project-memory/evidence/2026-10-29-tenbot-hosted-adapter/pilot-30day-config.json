@@ -1,0 +1,71 @@
+{
+  "recordedAt": "2026-10-29T22:31:08.282Z",
+  "source": "Already completed bounded accessibility-only UI attempt; no new UI or network calls while saving receipt",
+  "project": {
+    "name": "TenBot",
+    "id": "proj_e3Qoebc2IckUzl282v3ys6Yl"
+  },
+  "requested": {
+    "projectOnlyMaximumKeyLifetimeDays": 30,
+    "maximumKeyLifetimeSeconds": 2592000,
+    "separateHostedKeyName": "TenBotHostedTerraPilot",
+    "keyPermissions": [
+      "api.responses.write"
+    ],
+    "keyExpirationDays": 30
+  },
+  "observed": {
+    "browserAutomationAvailable": false,
+    "platformAuthenticated": false,
+    "redirectedToPlatformLogin": true,
+    "boundedUiCallsUnderTwoSeconds": true,
+    "secureSecretCaptureCapabilityAvailable": false
+  },
+  "status": "BLOCKED_PLATFORM_LOGIN_AND_SECURE_KEY_HANDOFF",
+  "changes": {
+    "projectKeyPolicy": false,
+    "organizationPolicy": false,
+    "apiKeyCreated": false,
+    "hostedSecrets": false,
+    "hostedSpendEnabled": false,
+    "inference": false,
+    "deployment": false,
+    "migrations": false,
+    "localOpenAiKeyRead": false,
+    "localOpenAiKeyCopied": false,
+    "screenshots": false,
+    "secretValuesViewedOrCaptured": false
+  },
+  "cleanup": {
+    "temporaryTabClosed": true,
+    "originalTenOpsTabRestored": true,
+    "uiBindingsReleased": true
+  },
+  "requiredOwnerActions": [
+    "Sign in to OpenAI Platform and select the existing TenBot API project.",
+    "Set only the TenBot project maximum key lifetime to 30 days (2592000 seconds); if stricter organization policy blocks this, report it without changing organization policy.",
+    "Privately create a separate hosted project key named TenBotHostedTerraPilot with Restricted Responses Write only and 30-day expiration; do not reuse the local experimental key.",
+    "Handle the one-time secret personally through an approved secure entry mechanism. Share only key ID/name, project/owner and exact expires_at in UTC, never the secret.",
+    "Keep hosted inference spending disabled; no hosted deployment, migrations or broader project/billing/data-sharing changes."
+  ],
+  "proposalOnly": {
+    "monthlyUsd": 20,
+    "globalDailyUsd": 1,
+    "userDailyUsd": 0.25,
+    "requestUsd": 0.25,
+    "renewal": "Set cumulative fuse to all accounted cost plus newly approved funded allowance; preserve all usage and uncertain reservations.",
+    "pilotRollover": "One aggregate allowance for the first 30-day pilot, no automatic November 1 allocation.",
+    "funding": "Bound by verified usable credits minus unresolved charge exposure and proposed $1 safety reserve.",
+    "expiry": "Earliest of verified funding expiry, hosted-key expiry and pilot end.",
+    "localExperimentalCapUsd": 5,
+    "localExperimentalCapChanged": false
+  },
+  "releaseGates": {
+    "realJwtRlsHistoryMeteringValidation": "BLOCKED_NO_RESPONSIVE_ISOLATED_SUPABASE",
+    "previousInfrastructureFindingReused": true,
+    "dockerRetried": false,
+    "hostedInferenceEnabled": false,
+    "migrationsApplied": false,
+    "deployed": false
+  }
+}

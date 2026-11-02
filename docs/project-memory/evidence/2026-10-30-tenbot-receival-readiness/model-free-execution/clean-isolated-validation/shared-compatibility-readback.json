@@ -1,0 +1,142 @@
+{
+  "passed": true,
+  "ref": "vxdxjhazkqhpkwdqtobp",
+  "readOnly": true,
+  "httpStatus": 201,
+  "durationMs": 331,
+  "state": {
+    "usage": {
+      "hash": "b542d0376197d4e34a631940ff08e559",
+      "count": 93
+    },
+    "source": {
+      "id": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+      "sha": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+      "unit": "Bag",
+      "bound": false,
+      "jobId": null,
+      "owner": "3785f6b9-742e-452f-af6c-31613a983633",
+      "state": "ready",
+      "version": 2,
+      "byteSize": 2877,
+      "quantity": "1",
+      "retained": false,
+      "rowCount": 1,
+      "catalogId": "standard:ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+      "expiresAt": "2026-11-01T01:24:35.833487+00:00",
+      "previewId": "1423d4e0-1a4a-48bd-af79-28e623102da4",
+      "contentType": "application/pdf",
+      "previewHash": "7b63a8b55d2d496c2e15d0d5f2af81fb8da06f81109c4da1dfeed89e0c8e7594",
+      "evidenceSha256": "534087aeed62e2dd4d7112e22d700b760eb0f436445de16d300fc3ca83ad7c54",
+      "sourceQuantity": {
+        "unit": "Bag",
+        "quantity": "1"
+      },
+      "previewRevision": 1,
+      "privateOriginal": true
+    },
+    "catalog": {
+      "id": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+      "size": "#0",
+      "unit": "50lb bag",
+      "vendor": "T&M Supply",
+      "category": "marble",
+      "item_name": "Alaska White",
+      "material_class": "turkish_aggregate"
+    },
+    "funding": {
+      "hash": "633a793305645a2e4ca78e3b1a2583ad",
+      "enabled": false
+    },
+    "pilotOff": true,
+    "readOnly": "on",
+    "developer": {
+      "role": "developer",
+      "active": true,
+      "readOnly": false
+    },
+    "docClaims": 0,
+    "functions": {
+      "public.has_app_capability(text)": {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "73a05dba3f0241702880f29129c70b1e",
+        "definer": true
+      },
+      "public.tenbot_bind_canary_funding_grant()": {
+        "acl": "{postgres=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "366162ba4b9d723f965758c57bb4ef72",
+        "definer": true
+      },
+      "public.tenbot_openai_settle(uuid,uuid,bigint)": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "9520e66b49b61b98d8a8b4edcc34b886",
+        "definer": true
+      },
+      "public.can_read_invoice_preparation_source(uuid)": {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "e1646c97a5f8ec81d2cbf4ff689c9c85",
+        "definer": true
+      },
+      "public.approve_invoice_receival_draft(uuid,text,text)": {
+        "acl": "{tenbot_invoice_executor=X/tenbot_invoice_executor,authenticated=X/tenbot_invoice_executor}",
+        "owner": "tenbot_invoice_executor",
+        "bodyMd5": "f91279a0fb4a827ffca70b500ca14474",
+        "definer": true
+      },
+      "public.execute_invoice_receival_draft(uuid,text,uuid)": {
+        "acl": "{tenbot_invoice_executor=X/tenbot_invoice_executor,authenticated=X/tenbot_invoice_executor}",
+        "owner": "tenbot_invoice_executor",
+        "bodyMd5": "4329aef56968fa225f30dc3c334cc409",
+        "definer": true
+      },
+      "public.revoke_tenbot_chris_dev_canary_grant(uuid,text)": {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "07f4bc465c8db61d4df67cc0896a8f96",
+        "definer": true
+      },
+      "public.activate_tenbot_chris_dev_canary_grant(timestamptz,text)": {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "c2d6f546fad823a7a4ffdf8dd6cc9b1f",
+        "definer": true
+      },
+      "public.tenbot_receival_mint_execution_permit(uuid,uuid,text,uuid,text)": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "ffa7f58ac78b2d913f3bcb83b8718024",
+        "definer": true
+      },
+      "public.tenbot_openai_canary_reserve(uuid,uuid,uuid,text,bigint,text,uuid,uuid)": {
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "802f9b0f69a90452620cdee9748ed7dc",
+        "definer": true
+      },
+      "public.prepare_invoice_receival_draft_with_source(uuid,jsonb,jsonb,jsonb,jsonb)": {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "owner": "postgres",
+        "bodyMd5": "1caf8d47c71f69e1df3dddbce3cc8feb",
+        "definer": true
+      }
+    },
+    "serverNow": "2026-10-31T04:36:08.387923+00:00",
+    "enrollment": 0,
+    "executionOff": true,
+    "roleCapsHash": "21d8fb476573b12bbb122469794d463a",
+    "executedGrants": 0,
+    "newTableAbsent": true,
+    "ordinaryPolicy": {
+      "hash": "a13079c315cb29a70fe3b7b108099f65",
+      "enabled": false
+    },
+    "unrevokedGrants": 0,
+    "newMigrationCount": 0,
+    "preparationMigration": 1,
+    "globalDeveloperAdjust": 0
+  }
+}

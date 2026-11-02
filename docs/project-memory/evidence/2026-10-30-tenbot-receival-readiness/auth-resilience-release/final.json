@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:25:03.769Z",
+  "projects": {
+    "tendev": {
+      "passed": true,
+      "recordedAt": "2026-10-31T00:19:54.754Z",
+      "project": "tendev",
+      "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+      "baseline": "ce157b99e31c227480c479169e0a480a6d509bf1",
+      "deployment": "23f8a171-5625-42d9-b874-676115cb34f5",
+      "deploymentUrl": "https://23f8a171.tendev.pages.dev",
+      "url": "https://tendev.pages.dev",
+      "authOnly": true,
+      "edgeUnchanged": true,
+      "allWriteGatesOff": true,
+      "allSettingsAndSecretsUnchanged": true,
+      "migrations": 0
+    },
+    "tenops": {
+      "passed": true,
+      "recordedAt": "2026-10-31T00:24:13.502Z",
+      "project": "tenops",
+      "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+      "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+      "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+      "deploymentUrl": "https://d01a02dc.tenops.pages.dev",
+      "url": "https://tenops.pages.dev",
+      "authOnly": true,
+      "edgeUnchanged": true,
+      "allWriteGatesOff": true,
+      "allSettingsAndSecretsUnchanged": true,
+      "migrations": 0
+    }
+  },
+  "health": [
+    {
+      "name": "auth",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY",
+      "info": {
+        "name": "GoTrue",
+        "version": "v2.197.0",
+        "description": "GoTrue is a user registration and authentication API"
+      }
+    },
+    {
+      "name": "db",
+      "healthy": true,
+      "status": "ACTIVE_HEALTHY"
+    }
+  ],
+  "writeControls": {
+    "pilot": false,
+    "execution": false,
+    "activeGrants": 0,
+    "enrollment": 0,
+    "permits": 0
+  },
+  "edgeVersion": 23,
+  "allEdgeFunctionsUnchanged": true,
+  "allSecretDigestsAndBuildConfigUnchanged": true,
+  "spendingPolicyAndOldReservationUnchanged": true,
+  "migrationLedgerUnchanged": true,
+  "operationalWrites": 0,
+  "inferenceCalls": 0
+}

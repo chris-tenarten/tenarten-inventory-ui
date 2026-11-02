@@ -1,0 +1,45 @@
+{
+  "recordedAt": "2026-10-31T00:37:28.146516+00:00",
+  "method": "Actual native Safari/Chrome UI via cua_repl; existing genuine own sessions and read-only Refresh durable status. No console, session/token export or substituted identity.",
+  "currentTenDev": {
+    "name": "tendev",
+    "branch": "dev",
+    "sha": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+    "deployment": "23f8a171-5625-42d9-b874-676115cb34f5",
+    "status": "success",
+    "configSha256": "641888d7ff233d2a46a6311dea61a4c52d38ee4b154707b56776f2b2fcee2161"
+  },
+  "admin": {
+    "browser": "Safari",
+    "identity": "Own Chris Ngo / Admin",
+    "url": "https://tendev.pages.dev/tenbot/canary",
+    "initialState": "Sign-in form. Chris privately signed in after the concise session request.",
+    "currentState": "Admin identity and Admin canary access controls visible; authenticated Refresh durable status succeeded.",
+    "pilot": "off",
+    "execution": "off",
+    "enrollment": 0,
+    "grant": "Revoked",
+    "historicalGrantId": "9c71ec1f-43ca-4a23-a00f-fb855a3e9edd",
+    "historicalExpiryDisplayed": "10/30/2026, 4:35 PM",
+    "newExpiryEntered": false,
+    "activationOrRevocationClicked": false
+  },
+  "owner": {
+    "browser": "Chrome",
+    "identity": "Own chris_dev / Developer",
+    "url": "https://tendev.pages.dev/tenbot/canary",
+    "currentState": "Hard reload and authenticated Refresh durable status succeeded; Developer baseline verified.",
+    "pilot": "off",
+    "execution": "off",
+    "enrollment": 0,
+    "grant": "Revoked",
+    "cancellation": "Owner guarded-cancellation section present; correctly reports no completed one-row canary available.",
+    "cancellationClicked": false
+  },
+  "limitations": "Status/ownership/connectivity proof only; no new positive activation, execution, revocation or cancellation lifecycle test.",
+  "mutationControlsInvoked": 0,
+  "uploads": 0,
+  "approvals": 0,
+  "inferenceCalls": 0,
+  "finalViews": "Existing Safari Admin and Chrome chris_dev canary tabs retained; OpenAI Credit grants remains in its existing separate Chrome window. Native control released."
+}

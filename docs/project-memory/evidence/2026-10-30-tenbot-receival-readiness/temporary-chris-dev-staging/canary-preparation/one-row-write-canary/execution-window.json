@@ -1,0 +1,23 @@
+{
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "origin": "https://tendev.pages.dev",
+  "ownerId": "3785f6b9-742e-452f-af6c-31613a983633",
+  "candidateRuntime": "ffcff23854fa1140dda6053092f7316f10c82dbe",
+  "candidateDeployment": "09c6a4c4-7f66-46ec-a8bd-c5d8b49be410",
+  "catalogId": "ba6a3690-0886-4f72-9f86-581bcc1f3b44",
+  "documentSha256": "c66a0eb7a0512b40df092a7852fbbeaded6664b97b2f2df2153487441124ba2a",
+  "documentReference": "SYN-TENDEV-RECEIVAL-20261030-01",
+  "quantityExpected": 1,
+  "unit": "Bag",
+  "validationReceiptSha256": "836af5bb4414611c2a2e3f8a2df4af222e9d97b9d7fe63030d17999ca1e0445c",
+  "approvalReference": "Chris FINAL AUTHORIZATION ONE-ROW WRITE CANARY, October30 2026; activation additionally awaits Computer Use action-time confirmation",
+  "startsAt": "2026-10-30T21:20:00Z",
+  "expiresAt": "2026-10-30T21:35:00Z",
+  "maximumMinutes": 15,
+  "normalReviewMetadata": {
+    "orderedBy": "chris developer",
+    "orderDate": "2026-10-30",
+    "location": "Denton"
+  },
+  "activationSubmitted": false
+}

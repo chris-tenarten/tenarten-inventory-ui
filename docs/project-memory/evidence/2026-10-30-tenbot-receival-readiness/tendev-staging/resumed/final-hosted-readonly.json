@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T17:06:18.164Z",
+  "sha": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "tenDevDeployment": "b3401edf-3218-45ff-af84-c8dd63e94ca8",
+  "tenOpsDeploymentUnchanged": "966ec1da-e537-4582-a82b-0c7a116daf58",
+  "configurationsUnchanged": true,
+  "edges": [
+    {
+      "slug": "tenbot",
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "versionAtSourceDeployment": 18,
+      "version": 19,
+      "verifyJwt": true,
+      "sourceModules": 30,
+      "exactBundleUnchanged": true,
+      "versionChangeAfterMaintenanceSecretUpdate": true
+    },
+    {
+      "slug": "tenbot-receival-cleanup",
+      "id": "cc6fe361-717a-4c76-958c-c6682eee68ea",
+      "versionAtSourceDeployment": 1,
+      "version": 2,
+      "verifyJwt": true,
+      "sourceModules": 3,
+      "exactBundleUnchanged": true,
+      "versionChangeAfterMaintenanceSecretUpdate": true
+    }
+  ],
+  "allProviderSecretDigestsUnchanged": true,
+  "onlyCleanupMaintenanceFlagEnabled": true,
+  "allOrdinaryWritesDisabled": true,
+  "employeeAllowlistEmpty": true,
+  "unrelatedFunctionCodeAndAuthorizationUnchanged": true,
+  "secretEnvironmentMetadataIncrements": [
+    {
+      "slug": "monday-material-check",
+      "versionBefore": 59,
+      "version": 60,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "generate-purchase-order-pdf",
+      "versionBefore": 64,
+      "version": 65,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "generate-job-transmittal-pdf",
+      "versionBefore": 52,
+      "version": 53,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "admin-manage-users",
+      "versionBefore": 48,
+      "version": 49,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "generate-proposal-pdf",
+      "versionBefore": 52,
+      "version": 53,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "generate-sample-pdf",
+      "versionBefore": 64,
+      "version": 65,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "cleanup-messaging-drafts",
+      "versionBefore": 40,
+      "version": 41,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "admin-delete-messaging-message",
+      "versionBefore": 40,
+      "version": 41,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "send-web-push-tendev",
+      "versionBefore": 41,
+      "version": 42,
+      "exactCodeHashUnchanged": true
+    },
+    {
+      "slug": "send-web-push-tenops",
+      "versionBefore": 30,
+      "version": 31,
+      "exactCodeHashUnchanged": true
+    }
+  ],
+  "paidInferenceCalls": 0,
+  "operationalWrites": 0
+}

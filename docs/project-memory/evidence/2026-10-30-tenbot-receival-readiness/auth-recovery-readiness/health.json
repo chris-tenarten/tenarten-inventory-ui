@@ -1,0 +1,32 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/health?services=auth&services=db",
+  "method": "GET",
+  "startedAt": "2026-10-30T22:55:15.486Z",
+  "status": 200,
+  "headersMs": 10750,
+  "totalMs": 10759,
+  "responseHeaders": {
+    "date": "Fri, 30 Oct 2026 22:55:26 GMT",
+    "server": "cloudflare",
+    "cf-ray": "a52e01aacdc8accd-DFW",
+    "content-type": "application/json; charset=utf-8"
+  },
+  "bodyBytes": 181,
+  "bodySha256": "2213ad320ddfb7bb01a4bfccb2723a6401b6858e4c0eeb1359598d71019ac88b",
+  "services": [
+    {
+      "name": "auth",
+      "healthy": false,
+      "status": "UNHEALTHY"
+    },
+    {
+      "name": "db",
+      "healthy": false,
+      "status": "UNHEALTHY"
+    }
+  ],
+  "rawBodyRetained": false,
+  "automaticRetries": 0,
+  "mutations": 0,
+  "canaryAttempt": false
+}

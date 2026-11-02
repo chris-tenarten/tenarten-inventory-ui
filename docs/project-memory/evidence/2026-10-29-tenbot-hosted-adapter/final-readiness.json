@@ -1,0 +1,171 @@
+{
+  "checkedAt": "2026-10-29T22:19:10.866Z",
+  "candidate": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+  "status": "HOLD_REAL_DATABASE_AND_CREDENTIAL_GATES",
+  "newApplicationChanges": false,
+  "sourceEvidence": [
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "a11b20273b1aad77b542a6729ff7cf3a2bb37cde0e6f2c01938df7bba593314c",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "sha256": "483362833b15de5fe985dcbdc3e1d07e57a2bb7576d8447d3be07530ebd3118b",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "04f1ef3020b3cf250e2e5a523b6832e5d0f9432ce846fb2b0d4755d19a04a947",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "sha256": "88cb319df74eebb8d745904415527f01559dc329de4780c915b7a62ca74e2a20",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "c4987a87fa128ba1b544909190bcc1c0b5159c56e7726b034e2d360163c7191f",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "sha256": "ba11e374ee20e639a60992f32224695c82dc004eaa802224f21630057e6f17b3",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "sha256": "46fc03a60a538c4dc7ce9b1da01d84f5b5709b33fb81abaf9fc36d48e844293d",
+      "acceptedHashMatches": true
+    },
+    {
+      "path": "src/modules/tenbot/conversation-history.ts",
+      "sha256": "ce5ca9f876b3fb4cbfff060fef2575a28b6c3a85c6c123ad2b0b21963d5d6665",
+      "acceptedHashMatches": true
+    }
+  ],
+  "migrations": [
+    {
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+      "acceptedHashMatches": true,
+      "inspection": "completed",
+      "realExecutionAttempted": false,
+      "realValidation": "BLOCKED_NO_ISOLATED_DATABASE"
+    },
+    {
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31",
+      "acceptedHashMatches": true,
+      "inspection": "completed",
+      "realExecutionAttempted": false,
+      "realValidation": "BLOCKED_NO_ISOLATED_DATABASE"
+    }
+  ],
+  "gates": [
+    {
+      "gate": "Terra routing/Qwen fallback/read-only registry",
+      "status": "PASS_LOCAL_EVIDENCE_ONLY",
+      "evidence": "verify-tenbot-hosted.json;edge-entry.json;accepted source hashes"
+    },
+    {
+      "gate": "Five caller-authorized Job tools; no catalog/receival execution tools",
+      "status": "PASS_CONSTRUCTION_AND_ACCEPTED_QA",
+      "limitation": "Fresh signed-JWT/RLS deployed canary still required"
+    },
+    {
+      "gate": "Owner-scoped history/proof filtering/no retained live operational evidence",
+      "status": "PASS_LOCAL_CONTRACT_EVIDENCE_ONLY",
+      "evidence": "verify-tenbot-hosted-history.json;verify-tenbot-agent-session.json;messaging-browser.json"
+    },
+    {
+      "gate": "Real PostgreSQL migration execution/atomic reservations/concurrency/uncertain accounting",
+      "status": "BLOCKED",
+      "reason": "No usable isolated database; no migrations executed"
+    },
+    {
+      "gate": "Real signed-JWT/RLS/employee-vs-admin history/revocation",
+      "status": "BLOCKED",
+      "reason": "No isolated Supabase Auth/PostgREST/database fixture"
+    },
+    {
+      "gate": "Hosted OpenAI key/lifetime/real hosted inference",
+      "status": "BLOCKED",
+      "reason": "No hosted TENBOT_OPENAI_* secret names; exact key expiry unverified; hosted paid inference remains off"
+    }
+  ],
+  "databaseVerifierAssessment": {
+    "meterOnly": true,
+    "usesMinimalApplicationTables": true,
+    "historyMigrationCovered": false,
+    "signedJwtHttpCovered": false,
+    "fullJobRlsCovered": false,
+    "sqlDenialAssertionsNeedExpectedSqlstate": true,
+    "noMockPersistenceAcceptedAsRealValidation": true
+  },
+  "shortestSafeResolution": "Restore the existing isolated tenops-permission-review Supabase fixture or designate a responsive approved isolated Supabase project. Use released schema + synthetic test identities/data and only the two assistant migrations. Native PostgreSQL alone would not close signed-JWT/HTTP gates.",
+  "proposedActivation": {
+    "notExecuted": true,
+    "requiresProductApproval": true,
+    "origins": [
+      "https://tendev.pages.dev"
+    ],
+    "staging": {
+      "hostedEnable": false,
+      "hostedSpendAuthorized": false,
+      "policyEnabled": false
+    },
+    "routedUnpaidPreflight": {
+      "hostedEnable": true,
+      "hostedSpendAuthorized": false,
+      "policyEnabled": false
+    },
+    "afterApprovedTenDevRelease": {
+      "hostedEnable": true,
+      "hostedSpendAuthorized": true,
+      "policyEnabled": true
+    },
+    "totalLifetimeMicrousd": 5000000,
+    "legacyFloorMicrousd": 539956,
+    "dayMicrousd": 1000000,
+    "monthMicrousd": 5000000,
+    "userDayMicrousd": 250000,
+    "requestMicrousd": 250000,
+    "finiteExpiryRequired": true,
+    "qwenPreserved": true,
+    "tenopsOriginAddedOnlyAfterTenDevAcceptance": true
+  },
+  "experimentLedger": {
+    "reservedOrSpentUsd": 0.5399555000000006,
+    "attempts": 367,
+    "settled": 367,
+    "capUsd": 5,
+    "addedInferenceCalls": 0,
+    "addedInferenceCostUsd": 0
+  },
+  "actions": {
+    "databaseConnections": 0,
+    "migrationExecution": false,
+    "hostedMutation": false,
+    "hostedInference": false,
+    "openAiSecretReadOrCopy": false,
+    "secretConfiguration": false,
+    "servicesProvisioned": false,
+    "dockerRetry": false,
+    "sourceChange": false,
+    "push": false,
+    "deployment": false,
+    "commit": false
+  }
+}

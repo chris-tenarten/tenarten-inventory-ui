@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T00:24:13.502Z",
+  "project": "tenops",
+  "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "deployment": "d01a02dc-7c48-49b5-82df-fdc64f2501f4",
+  "deploymentUrl": "https://d01a02dc.tenops.pages.dev",
+  "url": "https://tenops.pages.dev",
+  "authOnly": true,
+  "edgeUnchanged": true,
+  "allWriteGatesOff": true,
+  "allSettingsAndSecretsUnchanged": true,
+  "migrations": 0
+}

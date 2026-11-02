@@ -1,0 +1,28 @@
+{
+  "endpoint": "https://api.supabase.com/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+  "method": "POST",
+  "startedAt": "2026-10-30T23:33:09.025Z",
+  "timeoutMs": 15000,
+  "querySha256": "54a92804f6c1df62b6bebf61465fff5db5864dc2171c53746b0a339b126666b8",
+  "readOnly": true,
+  "automaticRetries": 0,
+  "businessMutations": 0,
+  "status": 201,
+  "headersMs": 3535,
+  "totalMs": 3537,
+  "bodySha256": "8f07b4675507db43f1287337a5d73a1182a1ce35448708953b4fc34cf4fc69a6",
+  "state": {
+    "readOnly": "on",
+    "serverNow": "2026-10-30T23:33:12.503092+00:00",
+    "openReservations": [
+      {
+        "state": "reserved",
+        "created_at": "2026-10-30T13:55:38.451468+00:00",
+        "request_id": "fe2b568a-79e8-4f4d-aea3-dd1c8f792d3c",
+        "settled_at": null,
+        "reservation_id": "84c8e242-4f99-4573-a6c3-6b19a01ef7ee",
+        "reserved_microusd": 61139
+      }
+    ]
+  }
+}

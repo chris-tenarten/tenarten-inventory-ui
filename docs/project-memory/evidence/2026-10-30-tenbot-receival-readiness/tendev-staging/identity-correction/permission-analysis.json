@@ -1,0 +1,285 @@
+{
+  "reviewedAt": "2026-10-30T17:41:47.996029+00:00",
+  "mode": "READ_ONLY_LOCAL_PERMISSION_ANALYSIS_ONLY",
+  "runtime": "35bb064c14c91bdf2c08c1384acea1dbf7acad6a",
+  "selectedIdentity": "chris_dev only; preserve Developer role and exact verified account identity",
+  "decision": "Existing minimum missing capability is adjustInventory for an existing-catalog receival; no current generic per-user grant mechanism exists. Keep the canary OFF until Product chooses an explicit new permission-policy change.",
+  "whyRequired": {
+    "manualInventory": "The existing Add/Edit/Cancel/Clear Pending Receivals UI uses auth.can(adjustInventory). Its mutation controls also require writeBusinessData.",
+    "actualSharedRls": "Pending Receivals RBAC INSERT/UPDATE/DELETE policies require has_app_capability(adjustInventory); separate restrictive business-write policies require writeBusinessData.",
+    "agent": "Hosted authorization, runtime preparation/review/approve, source Storage guards/attestation, private draft policies, immutable approval/core execution and permit minting preserve those same readOperationalData/writeBusinessData/adjustInventory boundaries.",
+    "businessMeaning": "This is the accepted existing canonical authorization contract, not a model limitation or routing heuristic. The capability bundles incoming-material administration together with receipt reversal; pending creation itself does not add on-hand stock.",
+    "minimumForThisFixedExistingMaterialLine": [
+      "readOperationalData",
+      "writeBusinessData",
+      "messaging.write for Messaging",
+      "adjustInventory"
+    ],
+    "notRequiredForExistingCatalogLine": [
+      "manageVendorsCatalog",
+      "receiveInventory",
+      "createPurchaseOrderDraft",
+      "Lead or Admin role"
+    ]
+  },
+  "purchasing": {
+    "draftSource": "savePurchaseOrderDraft calls save_purchase_order_allocated_draft; its canonical source requires createPurchaseOrderDraft.",
+    "pendingSource": "createPendingReceivalsFromPurchaseOrder calls create_pending_receivals_from_purchase_order, which delegates to create_allocated_po_receivals and po_base_create_pending_receivals. Actual cached shared definitions require adjustInventory for normal employees.",
+    "conclusion": "PO draft permission is not pending-receival creation permission. Purchasing cannot legitimately bypass adjustInventory and would add unrelated PO/issuance work to this invoice-only canary.",
+    "actualCachedFunctionMd5": {
+      "create_pending_receivals_from_purchase_order(uuid,jsonb,text)": "92b4401f4c3b343ca6bf5b3dd1bff574",
+      "create_allocated_po_receivals(uuid,jsonb,text)": "c2331341badf33e02fb7b44e3a49ca3c",
+      "po_base_create_pending_receivals(uuid,jsonb,text)": "2b2bb9b7017198b12fee13f4f2025458"
+    }
+  },
+  "existingGrantFacilities": {
+    "developerRoleCapabilities": [
+      "accessDevelopmentEnvironment",
+      "accessIntake",
+      "messaging.write",
+      "previewOperationalDocuments",
+      "readOperationalData",
+      "viewIntake",
+      "writeBusinessData"
+    ],
+    "currentAdjustInventoryGrantIsRoleWide": true,
+    "appRoleCapabilitiesPrimaryKey": [
+      "role",
+      "capability"
+    ],
+    "genericPerUserCapabilityOverride": false,
+    "customRoleFacility": false,
+    "currentPurposeSpecificProfileFlags": [
+      "messaging_write",
+      "production_blend_manage",
+      "sample_labels_generate",
+      "job_updates_post"
+    ],
+    "cannotRepurposeThoseFlagsForInventory": true,
+    "readOnlyIsRestrictionNotGrant": true,
+    "adminUserEditor": "Supports fixed role/profile fields, not an arbitrary user-level adjustInventory grant.",
+    "actualHasCapabilityBodyMd5": "7e83083b79c3ba2a1b1b3e01c690386d",
+    "currentUserAccessProfileColumns": [
+      "user_id",
+      "display_name",
+      "role",
+      "is_active",
+      "created_by_user_id",
+      "updated_by_user_id",
+      "created_at",
+      "updated_at",
+      "read_only",
+      "messaging_write",
+      "production_blend_manage",
+      "sample_labels_generate",
+      "job_updates_post"
+    ],
+    "criticalImplication": "There is no existing safe one-row data edit/toggle that grants only chris_dev adjustInventory while retaining the Developer role. An INSERT into app_role_capabilities(developer,adjustInventory) grants every Developer and is forbidden."
+  },
+  "capabilityScope": {
+    "adjustInventoryAlsoAuthorizes": [
+      "Pending receival creation, edits, cancellation and clearing; table policy also permits deletion subject to other guards.",
+      "Undo latest received/partially received receival; this can reverse Inventory stock and transaction history under its canonical safety checks."
+    ],
+    "doesNotByItselfGrant": [
+      "Catalog management/new material creation",
+      "New physical receiving, which independently requires receiveInventory",
+      "PO drafting/issuance or Production Job management"
+    ],
+    "judgement": "It is broader than create one pending row, but genuinely required by current services/RLS. It is reasonable for Product to separate creation from adjustment; doing so is a new authorization design, not a guardrail to remove casually."
+  },
+  "safeChoices": [
+    {
+      "choice": "No permission change",
+      "availableNow": true,
+      "result": "Keep chris_dev Developer, all write-pilot controls OFF and allowlist empty; report the exact permission blocker. Do not substitute Anthony or another employee."
+    },
+    {
+      "choice": "Propose a time-limited, additive adjustInventory exception for chris_dev only",
+      "availableInExistingInfrastructureWithoutCodeChange": false,
+      "status": "PROPOSAL_ONLY_REQUIRES_PRODUCT_APPROVAL_AND_NEW_FOCUSED_IMPLEMENTATION",
+      "subject": "Exact already verified chris_dev UUID; do not resolve by display name or grant a role bundle.",
+      "capability": "adjustInventory only; retain existing Developer role/capabilities; no catalog-management or receiving grant.",
+      "durationMinutes": 15,
+      "window": "An exact future Product-approved start/expiry; no automatic extension or reuse of a missed canary window.",
+      "scopeDisclosure": "The existing capability applies to its full legacy Inventory operation scope and shared database during the grant, not only one invoice or TenDev. The separate pilot still limits agent caller/origin/window/exact approved draft; that does not restrict normal manual Inventory rights.",
+      "requiredImplementation": [
+        "A new narrow owner-managed, auditable per-user grant/expiry record or equivalent explicit profile exception; this does not exist today. No global Developer role-capability edit.",
+        "Server-enforced expiry/revocation with current active/non-read-only checks; no UI-only or session-only grant.",
+        "Update canonical capability evaluation and safe client access projection consistently. Metadata attestors/permit minting currently read role bundles directly and must consult the same approved effective-permission semantics, without turning service role into a business gateway.",
+        "Issuance, revocation and extension must advance the relevant authorization epoch. Server-clock expiry must make every fresh capability/commit check deny; stale approvals cannot revive through a later regrant. Retain audit evidence; a new background scheduler is not required solely to deny an expired grant.",
+        "Focused real JWT/RLS/expiry/revocation/role-isolation tests and separately approved migration/release before any real canary."
+      ],
+      "reversal": [
+        "Automatically deny after server expiry even if a session/UI is stale.",
+        "Explicitly revoke only that exact grant early when the canary ends; disable pilot/execute gates and remove only its enrollment.",
+        "Preserve original Developer profile/bundle, immutable operation/audit and meter reservations; no whole-profile or role-bundle rollback."
+      ],
+      "risk": "Temporary access to existing adjustment/Undo rights exceeds the proposed one-row action and must be explicitly accepted by Product."
+    },
+    {
+      "choice": "Design a distinct createPendingReceival capability",
+      "availableNow": false,
+      "status": "PROPOSAL_ONLY_DOMAIN_PERMISSION_DECISION",
+      "benefit": "Separate incoming expectations from stock adjustment, receipt reversal, catalog creation and physical receiving.",
+      "requiredDesign": [
+        "Apply one consistent creation permission to canonical manual Add, PO projection and agent/source/draft/approval/execute contracts and pending INSERT RLS, retaining existing read/business-write checks.",
+        "Leave stock adjustment, Undo, unrelated UPDATE/DELETE and receiving under their existing independent permissions.",
+        "A creation-only grant will not authorize the planned cancellation: Product must choose a separately scoped own-unreceived exact-row cancellation contract/capability or an explicitly authorized cleanup actor. Do not silently broaden all updates.",
+        "Grant the new capability only to the exact authorized user through a reviewed per-user mechanism; adding it to every Developer is not an acceptable shortcut. A new capability name alone does not solve absent per-user grant granularity.",
+        "Preserve independent manageVendorsCatalog checks for dependent new catalog material, immutable approval/current-permission epochs, RLS, source retention, idempotency and audit.",
+        "Validate legacy manual/Purchasing clients and focused database permission/concurrency/revocation behavior before release."
+      ],
+      "tradeoff": "Narrower long-term business authority; touches more canonical contracts than a temporary additive exception and is not implementation-authorized by this analysis."
+    }
+  ],
+  "rejectedShortcuts": [
+    "Grant adjustInventory to developer role globally.",
+    "Promote chris_dev to Lead/Admin silently or use a different employee/Admin identity.",
+    "Enable the pilot allowlist while removing adjustInventory checks only in the model/runtime; underlying RLS/source/permit guards would still reject, and bypassing them weakens security.",
+    "Use service-role business writes, Management SQL, altered JWT claims or model SQL to perform the canary.",
+    "Repurpose an unrelated explicit profile flag or pretend a nonexistent per-user Inventory grant toggle already exists."
+  ],
+  "rolePromotionBlastRadius": {
+    "leadAddsComparedWithDeveloper": [
+      "adjustInventory",
+      "archiveProductionJob",
+      "assignJobUpdate",
+      "createProductionJob",
+      "createPurchaseOrderDraft",
+      "deleteSupportingFiles",
+      "editJobUpdate",
+      "editProductionJobDetails",
+      "editProductionJobRoutine",
+      "issuePurchaseOrder",
+      "issueTransmittal",
+      "manageManpowerProductCategories",
+      "managePhaseLibrary",
+      "manageProductionRework",
+      "manageVendorsCatalog",
+      "modifyPlanning",
+      "postJobUpdate",
+      "receiveInventory",
+      "resolveJobUpdate",
+      "scheduleProduction",
+      "uploadSupportingFiles"
+    ],
+    "leadRemovesComparedWithDeveloper": [
+      "accessDevelopmentEnvironment"
+    ],
+    "recommended": false,
+    "reason": "A role change adds21 unrelated capabilities and removes development-environment capability; it is not the minimum single-capability exception."
+  },
+  "evidenceScope": {
+    "cachedActualSharedMetadata": "/private/tmp/tenops-tenbot-receival-tendev-resume-20261030/shared-schema-metadata.json",
+    "cachedAt": "2026-10-30T16:35:57.484Z",
+    "noFreshHostedClaim": true,
+    "actualPendingRlsPolicies": [
+      {
+        "cmd": "DELETE",
+        "qual": "has_app_capability('adjustInventory'::text)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "pending_receivals",
+        "permissive": "PERMISSIVE",
+        "policyname": "Pending Receivals RBAC delete",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "pending_receivals",
+        "permissive": "PERMISSIVE",
+        "policyname": "Pending Receivals RBAC insert",
+        "schemaname": "public",
+        "with_check": "has_app_capability('adjustInventory'::text)"
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "has_app_capability('adjustInventory'::text)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "pending_receivals",
+        "permissive": "PERMISSIVE",
+        "policyname": "Pending Receivals RBAC update",
+        "schemaname": "public",
+        "with_check": "has_app_capability('adjustInventory'::text)"
+      },
+      {
+        "cmd": "DELETE",
+        "qual": "has_app_capability('writeBusinessData'::text)",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "tablename": "pending_receivals",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_delete",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "tablename": "pending_receivals",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_insert",
+        "schemaname": "public",
+        "with_check": "has_app_capability('writeBusinessData'::text)"
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "has_app_capability('writeBusinessData'::text)",
+        "roles": [
+          "anon",
+          "authenticated"
+        ],
+        "tablename": "pending_receivals",
+        "permissive": "RESTRICTIVE",
+        "policyname": "tenops_business_write_update",
+        "schemaname": "public",
+        "with_check": "has_app_capability('writeBusinessData'::text)"
+      }
+    ],
+    "sourceSha256": {
+      "src/app/inventory/page.tsx": "d3017e5037f9e0840097abe8b1a295f379999055e7c5e6066f08be05a0d35dc1",
+      "src/lib/rbac.ts": "dc42f66fccd7e58c56c7481d93bc76fd88c6d7fdab336e02f027647ba12ea2b5",
+      "src/lib/auth.tsx": "d8b42e21255414bd0f17ec1eae13921738c90e7ea35faaa7265fd907b52886ec",
+      "src/components/BusinessWriteControls.tsx": "84579e28ccc88119267b88566bfc6bbe3e0e6c4590caa79d58fd5c2ae45b8bf9",
+      "src/modules/purchasing/mutations.ts": "6a9c6d93c55130f854efd8ca362a647ae9a7eb331a7362e551cbfdf0f8a06f95",
+      "src/modules/purchasing/PurchaseOrderEditor.tsx": "a711c17209c8b81e39b2147e08ef6baeee3cc97b452e07e7c667922d87e12aa1",
+      "supabase/functions/admin-manage-users/index.ts": "35c6c2cd2f46465b7b7ffa76dbb2daadee5785aa9762d06b3f8a67e480aaf7cf",
+      "supabase/functions/_shared/tenbot-receival-runtime.ts": "39f72d7feca6af85264eac7e431aa6e2f86ee3a063612cb5a7a4517e7c36e359",
+      "supabase/functions/_shared/tenbot-receival-hosted.ts": "c8107501bd40f67a5f77131987ad2a29a6717ee258656b99b7b5138a86123ceb",
+      "supabase/migrations/20260818_001_rbac_identity_infrastructure.sql": "98fa3ac8e8dfae48511885e79f196a7e053b31f78395698c3875fa92bc9f80d4",
+      "supabase/migrations/20260824_001_pending_receival_rbac_enforcement.sql": "279f581ba29d1bb1c4282aa0831ccfd44c10fc21a3ba8f1f656001aacc0c59d4",
+      "supabase/migrations/20260923160100_po_reservation_allocations.sql": "c1b9b459d828c4693fc2a15142a6b9b5738cad9eb755994f4cdd992c9edcb5dd",
+      "supabase/migrations/20260923160200_partial_pending_receipts.sql": "ece9c0f4980340c45be5445cafdbb447b4e0a68ecb5bceeb52fbfba6f9a09944",
+      "supabase/migrations/20261030160000_invoice_receival_pilot_permits.sql": "f6a0e65f21a1a77d3ffd26944c408353ece0d778aef3ab68e04f5c534407538d",
+      "supabase/migrations/20261030170000_invoice_original_storage_compatibility.sql": "ab7e97580d5bce680000bca61def1dad0a0cd28f47e4c62d7b42fba8ec76e284",
+      "supabase/migrations/20261030180000_invoice_original_backend_fail_closed.sql": "6ce88cd2d37d230d30bb65b044b17c7e40cefa273d65b269eed2999f673c0b03"
+    },
+    "cachedMetadataSha256": "c7cce5ff1c6d72e2ff00ca24ddc3385f2461e4965d1674c40c8af8e439532993"
+  },
+  "actions": {
+    "networkCalls": 0,
+    "sqlExecuted": 0,
+    "testsRun": 0,
+    "gitOperations": 0,
+    "applicationChanges": 0,
+    "permissionChanges": 0,
+    "hostedMutations": 0,
+    "inferenceCalls": 0
+  },
+  "nextProductDecision": "Choose whether to authorize a narrowly implemented expiring chris_dev-only legacy adjustInventory exception with its disclosed full scope, or a creation-specific permission/cancellation design. Until then the existing write canary remains blocked and OFF."
+}

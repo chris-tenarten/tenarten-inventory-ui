@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-10-31T00:23:25.209Z",
+  "target": "tenops",
+  "sha": "b918152e2a8facbe16c664831f71c186e5bcb7a3",
+  "baseline": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "originalProofSha256": "9f4fc9a7503183ff6956f26bb65f8b20b46d64f62c1d25098dece35d4b6b6325",
+  "originalStopSha256": "076315ddda7bda93f53f4a200bd44188c374ecd70d83ecd91f8cdfee58b6b822",
+  "originalMandatoryProofSucceeded": true,
+  "originalProofReusedWithoutRerun": true,
+  "revalidatedAcceptedPins": true,
+  "revalidatedCleanSourceAndHead": true,
+  "revalidatedTargetPublicSettings": true,
+  "existingFlagProvenanceVerifiedUnchanged": true,
+  "holds": 0,
+  "proofEnvelope": {
+    "variant": "production-2a3-legacy",
+    "acceptedCandidateSources": 0,
+    "technicalCandidateSources": 0,
+    "candidateSourceCountsProvided": false,
+    "authority": null,
+    "verifier": {
+      "path": "scripts/generate-tenbot-knowledge.mjs",
+      "blob": "b3f76af6014524a9fa7abdc351e15058ee13e39f",
+      "sha256": "9c5443c4363d37bb4a650bd9c0ab90031d5ee50cc52d3047e9e019c41478b1b7"
+    }
+  },
+  "verifierChanged": false,
+  "automaticRetry": false
+}

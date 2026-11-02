@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T02:13:25.461Z",
+  "servedSha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "tenopsDeployment": "2019c461-3dab-422f-b750-64a17fcdcc2e",
+  "tenDevUnchanged": "845b86cf-2d17-46a0-bef4-3712e65064c5",
+  "edge": {
+    "version": 15,
+    "verifyJwt": true,
+    "status": "ACTIVE",
+    "bundleSha256": "7517faa181df6008539576b4edd237e0e647ef65fdf80e7491a234d65c19bf9f",
+    "sameAcceptedBundle": true,
+    "noSourceDeployment": true
+  },
+  "settings": {
+    "expectedDigestsMatch": true,
+    "keyPresent": true,
+    "keyValueRead": false,
+    "keyExpiresAt": "2026-11-28T22:46:56Z",
+    "terraOrigins": [
+      "https://tendev.pages.dev",
+      "https://tenops.pages.dev"
+    ],
+    "spendingAuthorized": true,
+    "qwenEnabled": true
+  },
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 572239,
+      "remainingMicrousd": 3967717,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "usage": {
+      "calls": 20,
+      "requests": 5,
+      "unmeasured": 0,
+      "accountedMicrousd": 32283
+    },
+    "policy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "assistantMigrations": [
+      {
+        "version": "20261029220000",
+        "statementHash": "32c650283e576741e0d1d97e9332845b"
+      },
+      {
+        "version": "20261029221000",
+        "statementHash": "be5c3401a75dac351ff14b1d84d33511"
+      }
+    ],
+    "receivalMigrationPresent": false
+  },
+  "configurationUnchanged": true,
+  "operationalWrites": false,
+  "newMigrationsApplied": false,
+  "remoteSource": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "localDevPreserved": true
+}

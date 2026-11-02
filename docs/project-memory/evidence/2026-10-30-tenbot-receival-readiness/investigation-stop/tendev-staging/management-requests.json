@@ -1,0 +1,23 @@
+[
+  {
+    "phase": "before",
+    "endpoint": "database/query",
+    "method": "POST",
+    "status": 502,
+    "durationMs": 120
+  },
+  {
+    "phase": "before",
+    "endpoint": "secrets",
+    "method": "GET",
+    "status": 502,
+    "durationMs": 122
+  },
+  {
+    "phase": "before",
+    "endpoint": "functions",
+    "method": "GET",
+    "status": 200,
+    "durationMs": 193
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "files": [
+    {
+      "path": "browser-validation.json",
+      "bytes": 1045,
+      "sha256": "e724c057dc50191d0dc8f126b0b8b1933a3587a47d07061b17a97b20a5a42214"
+    },
+    {
+      "path": "current.json",
+      "bytes": 37862,
+      "sha256": "3b0fe458279d1bebe823fa27323cafa45068a0302d9a6c86c4e9d57287d3fc81"
+    },
+    {
+      "path": "diagnostics.sql.txt",
+      "bytes": 5640,
+      "sha256": "990d16333a54ff63bf4edaf0ba671d4f9688317fe28288c99bc91c71cfa93ff5"
+    },
+    {
+      "path": "followup.json",
+      "bytes": 9620,
+      "sha256": "7b0449390e53f5da30eda8fc8aab9c120e73d1cd5c69cb3d2322d02b1ef09b25"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 10169,
+      "sha256": "b1568d58288734211c6969d11611da6879ca6ffb946a7e431a8b0cb85d188bc0"
+    }
+  ],
+  "rawSensitiveDataRetained": false
+}

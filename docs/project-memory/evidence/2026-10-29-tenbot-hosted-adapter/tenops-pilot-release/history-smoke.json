@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T02:14:56.245540+00:00",
+  "method": "Actual signed-in owner in normal TenOps Messaging, full page reload and conversation reopening",
+  "staticQuestionAndAnswerRestored": true,
+  "staticAnswer": "First, open Messaging from the app header. Let me know when you\u2019re there.",
+  "liveJobQuestionOrFactsRestored": false,
+  "loadingFinished": true,
+  "historyError": false,
+  "developerControlsVisible": false,
+  "additionalInferenceForFirstRestoration": 0,
+  "additionalInferenceForPostJobRestoration": 0,
+  "postJobGuidanceRows": 0,
+  "privateHistoryProseReadViaManagement": false,
+  "crossUserAndRevocation": "Reused accepted real isolated 28-group DB evidence; no new employee impersonation or role mutation",
+  "uiBindingReleased": true,
+  "screenshotsCopied": 0
+}

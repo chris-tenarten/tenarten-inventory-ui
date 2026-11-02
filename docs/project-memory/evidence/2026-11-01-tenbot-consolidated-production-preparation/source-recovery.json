@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "candidate": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "baselinePrerequisite": "01c0b4576a61329d973ce65ca58437ce26627be1",
+  "acceptedTenDevEvidenceIncluded": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "bundle": "consolidated-production.bundle",
+  "bytes": 2364774,
+  "sha256": "4e5d80f4b5df08678b4c8ca37d57e266d9168971fad637857584dc3118855dfb",
+  "verified": true,
+  "rootRefsUnchanged": true,
+  "privateSource": "/private/tmp/tenops-tenbot-consolidated-production-20261101/candidate",
+  "privateGit": "/private/tmp/tenops-tenbot-consolidated-production-20261101/candidate-git"
+}

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "candidate": "9415adc577e5509c2473001fbd514ab644077e3c",
+  "exactAcceptedSourceMatched": true,
+  "reused": true,
+  "deterministicGroups": 13,
+  "adjacentGroups": 15,
+  "realPostgreSQLJwtRlsGroups": 10,
+  "localMessagingBrowserGroups": 10,
+  "independentMigrationReview": "No blocker; current predecessor and ACL checks required and passed",
+  "newInferenceCalls": 0,
+  "newDatabaseCampaign": false
+}

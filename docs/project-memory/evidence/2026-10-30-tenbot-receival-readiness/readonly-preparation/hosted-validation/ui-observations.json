@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "observedBy": "root via native CUA; no borrowed session or token",
+  "origin": "https://tendev.pages.dev",
+  "caller": "chris_dev",
+  "role": "Developer",
+  "adjustInventory": false,
+  "ordinaryMessaging": true,
+  "paperclipVisibleAfterFreshCapabilityDiscovery": true,
+  "filenameBeforeSubmission": "synthetic-tendev-receival-20261030-01.pdf",
+  "syntheticConfirmationChecked": true,
+  "requestsSubmitted": 1,
+  "realModel": "gpt-6.1-terra",
+  "supplier": "T&M Supply",
+  "invoice": "SYN-TENDEV-RECEIVAL-20261030-01",
+  "material": "Alaska White",
+  "size": "#0",
+  "quantity": "1",
+  "unit": "Bag",
+  "sourceQuantity": "1 Bag",
+  "packageLabel": "50lb bag",
+  "lineState": "Ready",
+  "job": null,
+  "unknownMetadataLeftBlank": [
+    "ordered by",
+    "order date",
+    "destination location"
+  ],
+  "nonexecutingLabelVisible": true,
+  "approveOrSaveControlsPresent": false,
+  "modelSelectedTools": [
+    "read_invoice",
+    "search_catalog",
+    "check_receival_duplicates",
+    "prepare_pending_receivals"
+  ],
+  "originalReused": true,
+  "freshMultimodalExtraction": false,
+  "screenControlReleased": true,
+  "invoiceApprovalClicks": 0,
+  "operationalWrites": 0
+}

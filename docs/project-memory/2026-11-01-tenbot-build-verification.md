@@ -45,3 +45,8 @@ After Product acceptance, the smallest TenDev staging is **9415adc5 plus e61d333
 No hosted mutation, grant, enrollment, approval, invoice upload, operational write, push or deployment occurred. Terra/Qwen, budgets/accounting and all disabled agent writes remain unchanged. Existing localhost servers/output were not replaced; browser verification intercepted only synthetic local TenBot requests with the corrected handler. Task scratch `/private/tmp/tenops-tenbot-build-investigation-20261101`; no branch, worktree, framework or new review port.
 
 [Served builds](evidence/2026-11-01-tenbot-build-verification/served-builds.json), [metadata limitation](evidence/2026-11-01-tenbot-build-verification/deployment-metadata.json), [focused context results](evidence/2026-11-01-tenbot-build-verification/context.json), [browser scenario](evidence/2026-11-01-tenbot-build-verification/browser.json), [build](evidence/2026-11-01-tenbot-build-verification/build.json), [selective predecessors](evidence/2026-11-01-tenbot-build-verification/selective-predecessors.json), [validation](evidence/2026-11-01-tenbot-build-verification/validation.json). Stop for Product acceptance and staging approval.
+
+
+## Superseding approved TenDev staging — November 1, 2026
+
+The prior9415 asset comparison and401 are historical observations. Current Product-approved staging refreshed existing OAuth and deployed exact523f6471/Pages90e51027/Edge37; [executed evidence](2026-11-01-tenbot-messaging-staging.md) records the new Messaging asset and unchanged controls. Local e61UI and2723status corrections are now staged. Specific private placeholder rows and actual signed-in hosted behavior remain unverified without an owner session. TenOps Pages remains unchanged.

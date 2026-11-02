@@ -1,0 +1,259 @@
+{
+  "status": "prepared-not-applied",
+  "created_at_utc": "2026-10-29T23:11:01.886336+00:00",
+  "released_source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+  "line_number_convention": "All source_line_range bounds are 1-based inclusive. source_lines lists explicit 1-based selected lines. Trailing blank lines/whitespace are removed and one LF appended before fragment hashing.",
+  "sql_path": "/private/tmp/tenops-tenbot-hosted-adapter-20261029/empty-fixture-prerequisites.sql",
+  "sql_sha256": "4a0a2fe62054862dde13203c185319e21b63a349613020310570a6d9852eb66e",
+  "selections": [
+    {
+      "label": "Canonical identity tables, fixed role bundle and timestamp trigger",
+      "source": "supabase/migrations/20260818_001_rbac_identity_infrastructure.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "98fa3ac8e8dfae48511885e79f196a7e053b31f78395698c3875fa92bc9f80d4",
+      "source_line_range": {
+        "start_inclusive": 6,
+        "end_inclusive": 71
+      },
+      "fragment_sha256": "a5a7256bbcadcfaea73fdc1b39e47623d82aa9eb5afd15d411141c99f4b84ded",
+      "transformation": "verbatim contiguous selection"
+    },
+    {
+      "label": "Canonical read-only/messaging columns and guest restriction",
+      "source": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "b02fcd9f292d381426a3dbae35f0ccab0076a5f91d846931414e96c0b88a22fc",
+      "source_lines": [
+        5,
+        6,
+        7
+      ],
+      "fragment_sha256": "fd9366222500a95b756a0f5bcb8c20185166272a30f6439d8b12dd893081ad6f",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Canonical business/messaging role capability rows",
+      "source": "supabase/migrations/20261005120000_read_only_messaging_write.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "b02fcd9f292d381426a3dbae35f0ccab0076a5f91d846931414e96c0b88a22fc",
+      "source_line_range": {
+        "start_inclusive": 10,
+        "end_inclusive": 12
+      },
+      "fragment_sha256": "1bcb4c937c870b0921b9cdba07383e3a2f85ee55641afe2b899c6d53bef15f35",
+      "transformation": "verbatim contiguous selection"
+    },
+    {
+      "label": "Per-account blend capability column",
+      "source": "supabase/migrations/20261005170000_production_blend_capability.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "a843c4e2f03d5b9148acdd5ab31b111d046669a54b7819abae0e82ebe7e7bb9f",
+      "source_lines": [
+        3
+      ],
+      "fragment_sha256": "60aee769d5749deadaec5aac5c346b747dc86bbedbf11e80b96ff5797d7ae7a9",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Per-account sample-label capability column",
+      "source": "supabase/migrations/20261013180000_sample_label_capability.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "8baf8d94b880c021ca5a9dae03f5b5cbf7a2f68b54313d21e84422fda273647d",
+      "source_lines": [
+        3
+      ],
+      "fragment_sha256": "9f597f3906658353f9935a649ce9154887fe1468177c56eceeaf6d7dcff84cb4",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Per-account Job posting capability column",
+      "source": "supabase/migrations/20261021090000_account_job_update_posting.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "13626fbd30ba93e469510fedd9f3cf59f90b8c14c67985572b4b909985588d70",
+      "source_lines": [
+        3
+      ],
+      "fragment_sha256": "75578c1c9f06298679a5fd34e83867087dc6749eb5831e043d8c9088738ee811",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Released current caller-scoped capability implementation",
+      "source": "supabase/migrations/20261021090000_account_job_update_posting.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "13626fbd30ba93e469510fedd9f3cf59f90b8c14c67985572b4b909985588d70",
+      "source_line_range": {
+        "start_inclusive": 5,
+        "end_inclusive": 14
+      },
+      "fragment_sha256": "ba1c1b697c182ec41c66a7a8e94d22bc81bd779c9200946d9681185ba5970bc0",
+      "transformation": "verbatim contiguous selection"
+    },
+    {
+      "label": "Canonical capability function owner and execution ACL",
+      "source": "supabase/migrations/20260818_001_rbac_identity_infrastructure.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "98fa3ac8e8dfae48511885e79f196a7e053b31f78395698c3875fa92bc9f80d4",
+      "source_lines": [
+        82,
+        83,
+        84
+      ],
+      "fragment_sha256": "0675d195f7577d28e8eca37680a3a8286b40ca9b445de03b3ecee51e386e160e",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Released current authenticated account access RPC",
+      "source": "supabase/migrations/20261021090000_account_job_update_posting.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "13626fbd30ba93e469510fedd9f3cf59f90b8c14c67985572b4b909985588d70",
+      "source_line_range": {
+        "start_inclusive": 17,
+        "end_inclusive": 22
+      },
+      "fragment_sha256": "5fbbe443ee25d92721f27bc35b946432e96040b328f98f9325ff50f6e82fcc63",
+      "transformation": "verbatim contiguous selection"
+    },
+    {
+      "label": "Canonical account-access execution ACL",
+      "source": "supabase/migrations/20261021090000_account_job_update_posting.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "13626fbd30ba93e469510fedd9f3cf59f90b8c14c67985572b4b909985588d70",
+      "source_lines": [
+        23,
+        24
+      ],
+      "fragment_sha256": "8eebdb5ad9de3c64002d3d4f8842ebb54a68150e0465a4179c63af94fd901bc6",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Canonical identity/capability RLS and table grants",
+      "source": "supabase/migrations/20260818_001_rbac_identity_infrastructure.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "98fa3ac8e8dfae48511885e79f196a7e053b31f78395698c3875fa92bc9f80d4",
+      "source_line_range": {
+        "start_inclusive": 217,
+        "end_inclusive": 225
+      },
+      "fragment_sha256": "e9372f1bef4e1e9b7c71eb55ca87ffc0c7ba8dd0a49a3790905c666945461c84",
+      "transformation": "verbatim contiguous selection"
+    },
+    {
+      "label": "Legacy feedback tables required by private assistant RPCs",
+      "source": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "source_line_range": {
+        "start_inclusive": 3,
+        "end_inclusive": 12
+      },
+      "fragment_sha256": "fcb5303c058286eb8327c9c3f1ac7bb5fbe6a0185e77a6c4f0045fbfa150a36f",
+      "transformation": "verbatim contiguous selection"
+    },
+    {
+      "label": "Feedback tables use RLS",
+      "source": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "source_lines": [
+        20,
+        21
+      ],
+      "fragment_sha256": "1eae881134f1c5f44605ad0ed0e357e7752ee9cb2ad1178a2e749afe9d52484d",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Feedback table ACL projection",
+      "source": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "source_lines": [
+        23
+      ],
+      "fragment_sha256": "ce3e0c4df7aa978e9b8ff05c51a2109f605e91d9888818200eb92da117eed377",
+      "transformation": "Remove unrelated tenbot_usage table identity from mixed-table REVOKE; selected table ACL unchanged."
+    },
+    {
+      "label": "Legacy feedback RPC declarations for original ACL before exact private migration",
+      "source": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "source_line_range": {
+        "start_inclusive": 25,
+        "end_inclusive": 60
+      },
+      "fragment_sha256": "be7db1594ac3f8fb1f48be9bc72dd668516010a6d42eb6dbe4fadb8c093af052",
+      "transformation": "verbatim contiguous selection"
+    },
+    {
+      "label": "Canonical feedback RPC ownership",
+      "source": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "source_lines": [
+        78,
+        79,
+        80
+      ],
+      "fragment_sha256": "7506fc838e6c036c37d1bcf0b9c43e71aa132c8383dbf85d23c4d21b48c91b6c",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Feedback RPC ACL projection",
+      "source": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "source_lines": [
+        83
+      ],
+      "fragment_sha256": "f54cd0681745305fe3be7664d0cd63e2a5a15c71777e70343ee5e67eb042bfd5",
+      "transformation": "Remove unrelated tenbot_reserve_usage/tenbot_finish_usage identities from mixed-function REVOKE; selected feedback ACL unchanged."
+    },
+    {
+      "label": "Canonical feedback RPC grants",
+      "source": "supabase/migrations/20261027120000_tenbot_feedback_usage.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "7efbc40a2203124e39f840a6c531873ff0f7ce8d2c8c69c895f81387b9fcab15",
+      "source_lines": [
+        84
+      ],
+      "fragment_sha256": "347c1a866afaafd36bb598bc2a259393443771b6b7ed6262db02b7ccbe394092",
+      "transformation": "verbatim selected SQL lines"
+    },
+    {
+      "label": "Exact released private conversation and feedback validation lifecycle",
+      "source": "supabase/migrations/20261027150000_tenbot_private_conversations.sql",
+      "source_ref": "ae50e0fc55a7a6d9e454016c5d73a58e792aff79",
+      "source_sha256": "81652bd3e335d2fe29d5b26012727eabaed765dc7950e2979b7fd2891ee53b3b",
+      "source_line_range": {
+        "start_inclusive": 4,
+        "end_inclusive": 135
+      },
+      "fragment_sha256": "b5d97fb18d367a0ec62fb2f31cc5e0ec571285e7cecaaff0405d390579d473ba",
+      "transformation": "verbatim contiguous selection"
+    }
+  ],
+  "assistant_migrations_after_prerequisites": [
+    {
+      "path": "supabase/migrations/20261029220000_tenbot_openai_metering.sql",
+      "candidate_ref": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "sha256": "dccadae6768d418f52702eef82e4b221d7df3ecb46c43cc907b7f20acd450454",
+      "apply_exact_file": true
+    },
+    {
+      "path": "supabase/migrations/20261029221000_tenbot_agent_history.sql",
+      "candidate_ref": "d769ab3146bc8f85f282c3bbe738908223fa2532",
+      "sha256": "47c1aeb8f96ffc33a932e6a1d3ec6f83e714c656671b15b52c892b82925d2a31",
+      "apply_exact_file": true
+    }
+  ],
+  "scope": "Compatibility fixture for genuine Supabase Auth/JWT, released RBAC, assistant owner history and atomic metering. No business records copied.",
+  "exclusions": [
+    "No fake auth.uid or constant capability helper",
+    "No superseded DO_NOT_APPLY migration",
+    "No Inventory/catalog/receival migration or table",
+    "No private Messaging/Task data or tables",
+    "No canonical Job schema/RLS fixture; this bootstrap alone cannot certify Job data access",
+    "No Qwen meter legacy implementation; unused old overloads omitted",
+    "No inference/provider configuration or paid-service enablement"
+  ]
+}

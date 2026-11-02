@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-10-29T22:44:48.711Z",
+  "status": "NAMED_HOSTED_KEY_ABSENT_AT_OBSERVATION_MANUAL_HANDOFF_REQUIRED",
+  "project": {
+    "name": "TenBot",
+    "id": "proj_e3Qoebc2IckUzl282v3ys6Yl"
+  },
+  "metadataObservation": {
+    "authenticated": true,
+    "apiKeyListResultCount": 1,
+    "namedHostedKey": "TenBotHostedTerraPilot",
+    "namedHostedKeyExists": false,
+    "oneTimeSecretViewOpened": false
+  },
+  "attempt": {
+    "reopenNewKeyFormAttempted": true,
+    "toolOutcome": "The user changed Google Chrome; re-query latest state before sending more actions.",
+    "formReopeningConfirmed": false,
+    "furtherUiObservationStopped": true,
+    "reason": "Avoid competing with owner actions or capturing a one-time secret if owner proceeds manually.",
+    "createSecretKeyClicked": false
+  },
+  "priorPolicyEvidence": "Previous resumed receipt verified project-only maximum 30 days after save/reload through creation-form readback; not modified again here.",
+  "manualSteps": [
+    "In the TenBot API Keys list, first check whether TenBotHostedTerraPilot has appeared since the last observation. Do not create a duplicate if it exists.",
+    "If absent, click Create new secret key. Set name TenBotHostedTerraPilot and project TenBot.",
+    "Select Expiration 30 days and Restricted permissions.",
+    "Expand Model capabilities. Set Responses (/v1/responses) to Write. Leave every other capability None.",
+    "Privately click Create secret key and handle its one-time value through the approved secure-entry mechanism.",
+    "Close the one-time secret display before automated metadata verification resumes."
+  ],
+  "privacy": {
+    "screenshots": false,
+    "localKeyRead": false,
+    "localKeyCopied": false,
+    "secretValuesViewed": false,
+    "secretValuesInReceipt": false
+  },
+  "cleanup": {
+    "browserBindingDiscarded": true,
+    "runtimeResetAvoided": true,
+    "backgroundUiReads": false,
+    "popupPersistenceAfterHandoffNotVerified": true
+  },
+  "changes": {
+    "projectPolicy": false,
+    "hostedSecrets": false,
+    "inference": false,
+    "deployment": false,
+    "migrations": false
+  }
+}

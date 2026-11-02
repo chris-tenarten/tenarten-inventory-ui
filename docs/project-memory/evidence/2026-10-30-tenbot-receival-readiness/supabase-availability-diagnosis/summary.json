@@ -1,0 +1,101 @@
+{
+  "status": "READ_ONLY_DIAGNOSIS_COMPLETE_RESTART_NOT_AUTHORIZED",
+  "authority": "Chris: TENOPS — SUPABASE AVAILABILITY DIAGNOSIS, October 30, 2026. Separate Advisory context unavailable.",
+  "risk": "Tier 3, bounded read-only shared-availability diagnostics; no application or database implementation delta.",
+  "project": "vxdxjhazkqhpkwdqtobp",
+  "latestHealth": {
+    "startedAt": "2026-10-30T23:10:03.140Z",
+    "chicago": "October 30, 2026, 6:10 p.m. CDT",
+    "httpStatus": 200,
+    "durationMs": 10671,
+    "database": "UNHEALTHY",
+    "auth": "UNHEALTHY"
+  },
+  "observed": [
+    "Gateway aggregate logs: Auth token and REST 504/522/524 responses appear in the 22:20Z five-minute bucket; token failures continue through 23:05Z. Interspersed HTTP 200s indicate intermittent rather than uniformly failed Auth requests.",
+    "Backend log telemetry ends before the main gateway failure period: postgres 22:16:06.224Z, PostgREST 22:16:44.055204Z, Auth 22:11:43Z. No later backend events were returned for the explicit 22:00–23:11Z window.",
+    "Metrics API returned HTTP 500 after 10.242s: Failed to fetch project's metrics. No repeated metrics or database SQL probe was attempted.",
+    "Genuine authenticated Supabase Database Reports loaded historical memory, commitment, CPU, network, IOPS, throughput and connection charts. Requested window was 22:12–23:12Z; actual chart data ended around 22:17Z.",
+    "Reports: memory commitment 1.37 GB, SEVERE, near full commitment threshold; substantial Swap series visible. Memory usage summary 402.43 MB. These are last available historical values, not current measurements; exact outage onset is unknown.",
+    "Reports: CPU summary 9.47%, with an I/O-wait spike visible; Database Connections summary 18 and line around 18–20; IOPS summary 3; disk throughput 111.7 KB/s. No current connection limit or post-failure samples were obtained.",
+    "Recorded postgres log durations: 2,145 entries; maximum 888.277 ms; none >=1s. No matching lifecycle/lock-timeout/resource/capacity message categories were returned in the available pre-gap events."
+  ],
+  "reportObservation": {
+    "method": "Native Chrome accessibility tree and screenshots, authenticated existing Dashboard session; no SQL editor or secrets opened",
+    "url": "https://supabase.com/dashboard/project/vxdxjhazkqhpkwdqtobp/observability/database",
+    "observedAround": "2026-10-30T23:12:00Z",
+    "requestedWindow": {
+      "start": "2026-10-30T22:12:00Z",
+      "end": "2026-10-30T23:12:00Z"
+    },
+    "actualChartWindow": {
+      "startApprox": "2026-10-30T22:12:00Z",
+      "endApprox": "2026-10-30T22:17:00Z"
+    },
+    "summaryValues": {
+      "memoryUsageMB": 402.43,
+      "memoryCommitmentGB": 1.37,
+      "memoryCommitmentSeverity": "SEVERE",
+      "cpuPercent": 9.47,
+      "databaseConnections": 18,
+      "iops": 3,
+      "diskThroughput": "111.7 KB/s",
+      "networkThroughput": "30.1 KB/s"
+    },
+    "limits": "UI headline values are not asserted to be current, maximum or whole-window averages. Swap/IOwait observations are qualitative; no exact tooltip values retained. Initially unavailable panels loaded later without manual refresh; remaining disk-usage/database-size placeholders are not evidence of zero usage. Only owned report tab closed; native control released."
+  },
+  "assessment": {
+    "mostLikelySupportedClass": "Unresponsive/distressed shared database instance, with last available memory/swap pressure the leading resource hypothesis; Auth failures are consistent with the shared database dependency. Exact outage onset is unknown.",
+    "confidence": "Availability failure confirmed; initiating physical cause remains unproven.",
+    "notEstablished": [
+      "Out-of-memory kill or Postgres crash",
+      "Connection-limit exhaustion or connection storm",
+      "A current long-running query or idle transaction",
+      "CPU or disk-throughput saturation at failure time",
+      "A particular query, scheduled job, employee action, migration or application feature as the cause",
+      "Cloudflare as fault owner solely from headers or gateway codes"
+    ],
+    "limitations": [
+      "Telemetry stops before the failure window; missing error categories cannot exclude an outage-time error.",
+      "Completed statement durations do not expose unfinished statements, transaction age or lock waits.",
+      "No live pg_stat_activity, connection limit, memory state or transaction diagnostics were available.",
+      "Private raw logs, statements, operational records, request headers and credential values were neither returned nor retained; safe response headers and request identifiers were retained."
+    ]
+  },
+  "recovery": {
+    "restartJustified": "One controlled project restart is reasonable as an availability-recovery attempt after explicit Product approval; it is not a verified root-cause repair. No restart has been performed.",
+    "impact": "Shared TenOps and TenDev database-dependent requests, Auth and workers may be interrupted. Active connections would be dropped; incomplete transactions can roll back and in-flight/uncertain outcomes must be reconciled before retrying. No guaranteed recovery duration; pressure can recur.",
+    "smallestNextAction": "Product/owner approves one coordinated restart of this exact shared project, or escalates the attached UTC timeline/request identifiers to Supabase Support first. No compute or credential changes are justified by this evidence.",
+    "afterAuthorizedRecovery": "Make one bounded DB/Auth health check; if healthy, verify genuine caller restoration and one endpoint-tagged read-only preflight. If health remains bad or fails again, stop automatic retries and escalate the saved incident evidence; investigate memory/connection/query pressure only when telemetry is available."
+  },
+  "preserved": {
+    "devHead": "ec62998aba228e615279ae7d6e81f04378e62062",
+    "preparedTenDevAuthCandidate": "da5a9246c8a158c0ed266668a98bf8d54701cebf",
+    "servedTenDev": "ce157b99e31c227480c479169e0a480a6d509bf1",
+    "servedTenOps": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+    "sourceChanged": false,
+    "canaryAttempted": false,
+    "allWriteControls": "Untouched; last complete verified state 22:10:55Z OFF, grants revoked, enrollment empty. Current full database readback blocked; no fresh attestation claimed.",
+    "inference": "No calls; October30 23:00Z spending cutoff has passed and is not extended.",
+    "localhost": "Existing port3000 static review server PID79102 untouched."
+  },
+  "operations": {
+    "healthCalls": 1,
+    "metricsCalls": 1,
+    "aggregateLogCalls": 3,
+    "databaseSqlCalls": 0,
+    "automaticRetries": 0,
+    "hostedMutations": 0,
+    "deployments": 0,
+    "grantsOrEnrollments": 0,
+    "sessionTerminations": 0,
+    "appTestsOrBuilds": 0,
+    "reasonNoBuild": "Diagnostics/documentation only; accepted Auth validation and selective candidate are preserved."
+  },
+  "sources": [
+    "https://supabase.com/docs/guides/observability/reports#memory-commitment",
+    "https://supabase.com/docs/guides/observability/reports#memory-usage",
+    "https://supabase.com/kb/troubleshooting/failed-to-run-sql-query-connection-terminated-due-to-connection-timeout",
+    "https://supabase.com/kb/troubleshooting/project-status-reports-unhealthy-services"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-31T17:43:03.990Z",
+  "candidate": "cd29bd1302887c83dba1f387de17f09ce84724bd",
+  "mode": "Actual local default Deno resolver, exact accepted module; not hosted Supabase bundling",
+  "exitCode": 0,
+  "errorCode": null,
+  "durationMs": 798,
+  "modules": 2,
+  "errors": [],
+  "root": [
+    "file:///private/tmp/tenops-tenbot-consolidated-readiness-20261031/candidate/src/modules/inventory/tenbot-canary-execution.ts"
+  ],
+  "deployment": false,
+  "inferenceCalls": 0,
+  "sourceChanged": false,
+  "privateLog": "/private/tmp/tenops-tenbot-consolidated-readiness-20261031/deno-info-corrected.private.log"
+}
