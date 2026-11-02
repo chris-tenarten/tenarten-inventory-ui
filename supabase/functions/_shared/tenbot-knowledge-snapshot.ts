@@ -73,7 +73,7 @@ export const knowledgeSnapshot = {
     },
     {
       "path": "scripts/tenbot-knowledge/source-reviews.json",
-      "sha256": "869ec9cf218549299cce3f7fd831ef1138e179649d66c5952f51c2447d552db4"
+      "sha256": "831f87203c441f3d172b0b4f63b154ef9d53c492100a98ebf3cc3d6cdd145aa5"
     },
     {
       "path": "supabase/functions/_shared/tenbot-knowledge.ts",
@@ -84,7 +84,7 @@ export const knowledgeSnapshot = {
       "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec"
     }
   ],
-  "artifactDigest": "5a3287bc6ad20d43d1d9f95c5a31c1c188247bcd3928927e363a231d20d9485c"
+  "artifactDigest": "51c4d22cdcc157a41927c02bd7b5ca3c157ace693e9cf84e9c3869d886c6152b"
 } as const;
 export const generatedKnowledge = [
   {
