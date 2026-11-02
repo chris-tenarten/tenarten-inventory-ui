@@ -1,0 +1,155 @@
+{
+  "date": "2026-11-02",
+  "timezone": "America/Chicago",
+  "status": "deployed-to-TenDev; conversational acceptance failed; no Production Pages promotion",
+  "acceptedImplementationCommits": [
+    "b5f7f66bfe924a2876834d0e698decf206eff9bb",
+    "2ed403b"
+  ],
+  "candidate": "278165095eb000b69610f903424e951ce320acdb",
+  "baseline": "9a0c96edd03bf63ebe6e12955d11baf45f90a32d",
+  "tenDevDeployment": "1dde420f-8072-4a5d-b4bd-6ad056ab8441",
+  "canonicalUrl": "https://tendev.pages.dev",
+  "deploymentUrl": "https://1dde420f.tendev.pages.dev",
+  "tenOpsSha": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "tenOpsDeployment": "eb191ab7-6e40-4275-b0a1-c616044b89a5",
+  "edge": {
+    "slug": "tenbot",
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 43,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "sha256": "eb54e9ce51a5b6febe27a141860af02e1db7c4478a479f13ac2f8e98d5006e8c"
+  },
+  "source": {
+    "runtimeFiles": 10,
+    "edgeModules": 44,
+    "frontendChanges": 0,
+    "knowledgeClaimsChanged": false,
+    "proofHolds": 0,
+    "unchangedReleaseVerifier": true,
+    "buildArtifacts": 287,
+    "servedArtifactsVerified": 35,
+    "productionPersistentHistoryIntegrationPreserved": true,
+    "recoveryRef": "refs/tenops-releases/tendev/2026-11-02-conversational"
+  },
+  "migration": {
+    "applied": [],
+    "requiredForDisabledSpendingLaunch": false,
+    "futurePaidAllowanceVersion": "20261102100000",
+    "path": "supabase/migrations/20261102100000_tenbot_monthly_allowance.sql",
+    "sha256": "2336e07e712e0728119d582a05525db45cd180da1707236b516baf62028690c8",
+    "futureMigrationAbsentFromHostedLedger": true,
+    "originalMeterVersion": "20261029220000",
+    "prerequisitesAndCompatibilityVerifiedReadOnly": true,
+    "schemaRlsAndFinancialRpcContractsUnchanged": true,
+    "requiredForEveryBoundedTerraTest": false
+  },
+  "configuration": {
+    "onlyChangedSecret": "TENBOT_MODEL_DIRECTED_READ_ORIGINS",
+    "value": "https://tendev.pages.dev",
+    "ordinaryTerraSpendingAuthorized": false,
+    "existingQwenEnabled": true,
+    "preparationAndAgentWritesEnabled": false,
+    "environmentRefresh": {
+      "nonTenbotFunctions": 11,
+      "versionIncrement": 1,
+      "sourceHashesIdsJwtStatusUnchanged": true,
+      "mutationRetries": 0
+    }
+  },
+  "employeeAcceptance": {
+    "actualSignedInUi": true,
+    "account": "Owner signed in as Admin through existing Chrome work profile",
+    "noSessionExtractionOrImpersonation": true,
+    "noPrivilegedBusinessReadSubstitute": true,
+    "windowChicago": "9:15\u20139:24 AM",
+    "checks": [
+      {
+        "step": 1,
+        "request": "Status of one explicitly named existing Job",
+        "outcome": "pass",
+        "publishedForm": "deterministic operational presenter",
+        "finding": "Correct Job identity and current status; readiness qualification retained"
+      },
+      {
+        "step": 2,
+        "request": "Contextual labor follow-up for the last 90 days",
+        "outcome": "pass",
+        "publishedForm": "deterministic operational presenter",
+        "finding": "Same canonical Job; correct recorded total and work-date period; recorded-only limitations"
+      },
+      {
+        "step": 3,
+        "request": "Combined saved schedule and labor briefing for the same period",
+        "outcome": "fail",
+        "publishedForm": "explicit full-request unavailable fallback",
+        "finding": "Combined briefing not delivered; no misleading partial substitute"
+      },
+      {
+        "step": 4,
+        "request": "Compound Production handoff for the same Job",
+        "outcome": "fail",
+        "publishedForm": "unavailable operational-result placeholder",
+        "finding": "No completed handoff remained visible"
+      },
+      {
+        "step": 5,
+        "request": "Unfamiliar delivery-confidence wording requiring staffing/incoming-material evidence",
+        "outcome": "fail",
+        "publishedForm": "generic stopped investigation",
+        "finding": "Asked to clarify Job; did not explain the specific unavailable evidence; no fabricated forecast"
+      }
+    ],
+    "passed": 2,
+    "failed": 3,
+    "historyReload": {
+      "statusQuestionRestored": true,
+      "laborFollowupRestored": true,
+      "explicitUnavailableTurnRestored": true,
+      "stoppedCompoundQuestionRestored": false,
+      "stoppedMissingEvidenceQuestionRestored": false,
+      "composerAvailable": true
+    },
+    "observedSuccessfulModelBriefing": false
+  },
+  "providerAttribution": {
+    "completedStepIsNotPublishedAnswer": true,
+    "latestMetadataWindow": 20,
+    "exactFirstTurnAttributionAvailable": false,
+    "actualTerraInferenceCalls": 0,
+    "newPaidInferenceUsd": 0,
+    "paidPolicyUnchanged": true,
+    "paidUsageUnchanged": true,
+    "paidUsageHash": "65c3a7ffb3d3bba2a51ee1e39e22408a",
+    "hostedReservedHoldMicrousd": 61139,
+    "localHistoricalHoldMicrousd": 18723,
+    "newQwenUnknownHolds": 0,
+    "sharedQwenLedgerIncreaseDuringReview": {
+      "rows": 23,
+      "completed": 20,
+      "failed": 3,
+      "measuredRows": 23,
+      "inputTokens": 205269,
+      "outputTokens": 3444,
+      "measuredNeurons": 1054.336,
+      "heldNeurons": 0
+    },
+    "exclusiveSessionAttributionEstablished": false,
+    "concurrentEmployeeActivityExcluded": false
+  },
+  "limits": {
+    "readyForLimitedProductionRollout": false,
+    "newQwenTuningOrFrameworks": false,
+    "newOperationalTools": false,
+    "operationalWrites": 0,
+    "newSchemaChanges": 0,
+    "storageBackupDidNotDelayRelease": true,
+    "ordinarySpendingActivation": false
+  },
+  "scratch": {
+    "candidate": "/private/tmp/tenops-tenbot-simplification-tendev-20261102",
+    "release": "/private/tmp/tenops-tenbot-simplification-release-20261102",
+    "employeeOperationalDetails": "private scratch only; omitted from this receipt"
+  }
+}

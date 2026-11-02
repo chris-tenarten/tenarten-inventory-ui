@@ -2,6 +2,8 @@
 
 Project Memory preserves intent, current reality, business workflows and structure. Reuse these existing owners; this index is not another Product Canon or changelog.
 
+The [executed November 2 TenDev conversational release](project-memory/2026-11-02-tenbot-conversational-tendev-release.md) records exact served `27816509`/Edge43, no migration or paid activation, and actual signed-in acceptance: two direct reads pass, three conversational requests fail. Production rollout is not ready; stop for Product review.
+
 The [November 2 infrastructure/TenBot simplification](project-memory/2026-11-02-infrastructure-tenbot-simplification.md) records verified Supabase backups, separate Storage recovery, the disabled $5 monthly allowance, focused conversational Job improvements and deferred global assistant relocation. Local implementation is pending Product acceptance; no migration application, spending activation or deployment.
 
 ## Start here

@@ -4,6 +4,10 @@ Chris's attached **TENOPS — INFRASTRUCTURE & TENBOT SIMPLIFICATION** authorize
 
 Base: `0caad99` on `dev`, initially 78 commits ahead / 14 behind the local `origin/dev` tracking ref (not refreshed by this pass). All four named local TenBot commits are in HEAD ancestry. No extra branch or worktree was created. Initial modified/untracked work and the unresolved evaluation journal are preserved separately from this pass's commit.
 
+## Product acceptance and TenDev release — November 2, 2026
+
+Chris accepts implementation commits `b5f7f66` and `2ed403b` and authorizes focused TenDev release/conversational review. The [executed release and genuine employee review](2026-11-02-tenbot-conversational-tendev-release.md) supersedes this receipt's local-only boundary: served `278165095eb000b69610f903424e951ce320acdb`, Pages `1dde420f-8072-4a5d-b4bd-6ad056ab8441`, shared Edge43. No migration or paid activation was needed/performed. Two deterministic read turns pass; three conversational turns fail, so AI-first acceptance and limited Production readiness are not established. Existing completed history, accounting holds and write controls remain preserved. No Production Pages promotion; stop for Product review.
+
 ## Resulting architecture and employee behavior
 
 The same five authorized Job read executors, capability registry, Terra/Qwen adapters and owner-private session/history services remain. The Edge entrypoint can now opt selected origins into model-directed reads using `TENBOT_MODEL_DIRECTED_READ_ORIGINS`. This defaults to empty and still requires the existing assistant enabled/origin gates; this pass changes no hosted configuration. Terra remains preferred when its key, spending authorization and atomic budget admission permit a dispatch. Qwen remains an optional metered fallback.
