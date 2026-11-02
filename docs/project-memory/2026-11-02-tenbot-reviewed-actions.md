@@ -109,3 +109,78 @@ No Mac screen access was used during this assignment. Reset of a prior computer-
 The accepted prior receipt reports TenDev Pages `278165095eb000b69610f903424e951ce320acdb`, Production Pages `e71bd981a583e0a4e706f9953c6cc1fcc4d576e1`, and shared Edge v49/JWT ON from `da0da6e8599c52e56329b2cb827a3bcd7a5f667a`. These are the unchanged release baseline, **not freshly reverified hosted state**. This pass uses zero provider calls/tokens/cost, makes no funding or accounting changes, and leaves historical holds and existing operational-write settings untouched. Only the new local migration is added; no shared schema is applied.
 
 Recommended next decision: review this local backend contract and its explicit Pending execution gap, then coordinate existing Workspace/host integration after the isolated transaction gate passes. Actual Pending creation still requires the narrowly scoped canonical commit guard and database proof; this is a material requirement, not an optional refinement. No additional framework or broad campaign is needed. A later separately authorized small paid test can exercise one new-capability document→catalog→Proposal/Pending preparation conversation under the existing $0.25 request ceiling; no such inference or spending is authorized here.
+
+## Accepted foundation continuation — canonical execution and host integration
+
+Chris's subsequent **TenDev — Agentic Actions: Canonical Execution, Real Database Proof & Host Integration** accepts local `665cbb3751c136e9872d22a48b68fe26fbeaa3aa`. It authorizes focused local implementation, existing isolated synthetic PostgreSQL/Auth validation and a scoped local commit, then Product review. It does not authorize shared migration application, deployment, activation, Production writes or paid inference. Separate Advisory context is unavailable; the supplied current Product decision governs. Tier 3 / Testing Level 3 continues. The previous section remains the historical foundation receipt; the following changes supersede its local execution/integration gaps only when supported by the evidence below.
+
+### Canonical execution delta
+
+Forward migration `20261102130000_tenbot_action_canonical_receivals.sql` extends the accepted, unchanged `120000` migration. After exact password confirmation it stages the existing source-bound canonical draft/approval, retains the existing finite pilot/enrollment/service-permit checks, and invokes the canonical Pending executor. A new private transaction dispatch and a trigger on canonical `invoice_receival_executions` enforce the action binding at commit. Calling the legacy executor directly cannot manufacture the private dispatch: its entire transaction rolls back. Existing unrelated legacy flows retain their existing gates.
+
+The stage compares canonical material, supplier, quantity, unit and package snapshot with the actual human review before approval. The final transaction rechecks owner, live session, immutable hash/revision, permission/policy versions, expiry and cancellation; it consumes authorization and stores actual committed IDs atomically. Definite domain failures roll back business data/permit/dispatch and retain consumed failed authorization. A surviving review metadata stage is not a created Pending Receival. Uncertain results reconcile through existing status, without automatic execution retries. Default controls remain OFF; no employee role/capability registry is changed.
+
+### Hosted conversation and Workspace delta
+
+`tenbot-hosted-operations.ts` constructs the accepted reusable adapters once per authorized request. `tenbot-hosted.ts`, `tenbot-agent-session.ts` and the existing Edge entry connect them to ordinary discovery/model-selected tool calls. The legacy invoice sequence is not enabled. Host-issued fact sentences preserve the existing grounded publisher; cards are created only from validated host proposals, outside model text. Known reviews are cancelled if publication fails. There is no new agent runtime, request keyword dispatcher, provider or model execution tool.
+
+The opt-in `TENBOT_REVIEWED_OPERATIONS_ENABLED` flag defaults OFF and requires the exact TenDev origin, existing hosted model-directed mode, persistent history and a verified session selector. `TENBOT_REVIEWED_ACTIONS_ENABLED`, database controls and existing Receival pilot controls remain separate. No flag grants paid spending. Existing Job/workflow scope digests remain byte-compatible; their history stays readable. New-operation output can use at most 1,800 tokens after those definitions are discovered; the ordinary Job lane retains 640, six rounds/ten calls/75 seconds and the existing $0.25 request ceiling.
+
+The accepted `tenbot.actions.v1` card/reference/password/preview/status/receipt structures remain unchanged. Backward-compatible additions for Workspace integration are:
+
+```text
+ask request (only under the new gate):
+{action:"ask", question, conversationId?, context?,
+ documentIds?: [<existing private original UUID>], supersedes?: <ActionReference>}
+
+status response (only when gated integration is available):
+{...existingStatus, reviewedActionsAvailable:true}
+
+ask answer / history turn.answer:
+{...existingAnswer, actionStatuses?: [{contract:"tenbot.actions.v1", card, state, receipt}]}
+```
+
+`documentIds` are bounded selectors, not access grants or uploaded bytes. Existing owner-private, integrity-checked originals and their attested text are reused; fresh vision/OCR remains untested and unactivated. Current employee text uses the host-owned `source_ref` `employee`. `supersedes` reaches only trusted publication; it neither approves nor alters the old review in model context. Workspace must render `.card`, use `.state`/`.receipt` for outcomes and retain its existing private password/session handoff. No raw model calls or proposed persistence parameters are required by the frontend.
+
+Forward `20261102140000_tenbot_operation_history.sql` extends the existing private display validator to accept optional action references and minimal source-access references. Cards/parameters/passwords/tokens are not added to model state or transcript payloads. Hydration fetches current owner-authorized action status and rechecks original/Proposal access, including after status retrieval. Source revocation redacts identifying questions, prose and cards. Prior original selectors can support a contextual follow-up only after current reauthorization. Old nine-field display rows and their scope digest remain compatible.
+
+No Workspace-owned source is edited or merged. Its owner is actively changing the separate checkout; those concurrent changes are preserved. The existing PID 83974 on localhost:3000 remains untouched. No screen capture or browser acceptance is performed by this backend continuation.
+
+Final ownership check observes the Workspace owner's independent commit `262c25f714592edfa8834053b8c1f76112bbc37a` with a clean separate checkout. This backend pass neither reviewed/accepted that new frontend boundary nor merged it. All eight original dirty tracked files in root `dev` remain byte-identical and unstaged. No Mac screen access was initiated; release of the earlier capture context remains unverified as recorded above.
+
+### Real isolated PostgreSQL/Auth proof and correction
+
+The existing standalone Free fixture `jltgxcfiprocydhbrahz` was reused with its existing synthetic Auth accounts. Shared `vxdxjhazkqhpkwdqtobp` is explicitly excluded by the verifier. Docker was not retried, no evaluation environment was recreated, and no schema/business-service stubs were substituted. Six exact canonical Attachment/Proposal predecessor migrations and the four action/history/correction migrations were installed only in that isolated fixture; source hashes and actual state are retained in the installation receipt. Synthetic business/audit receipts remain there; controls and transient employee grants were restored OFF/to baseline.
+
+Twelve real groups pass across recorded, bounded checkpoints:
+
+1. Existing-account password sign-in, real Auth sessions, owner/private table/RPC denial.
+2. Actual standalone Proposal draft creation, saved amounts, no Job, private new Auth session handoff and exact receipt replay.
+3. Hash/revision/session binding, cancellation, authorization expiry and supersession.
+4. Concurrent first Proposal execution creates one result; definite save failure consumes proof and rolls creation back.
+5. An actual staged invoice and valid legacy permit cannot bypass the private dispatch guard; attempted direct execution leaves Pending rows, document claims and permit consumption unchanged.
+6. Password → source-bound stage → unchanged permit → canonical Pending creation returns actual IDs, two Bags expected/zero received, retained original, one execution audit and one private dispatch. Replays return the same IDs.
+7. A same-ID catalog description change invalidates the reviewed material and consumes failed stage authorization.
+8. Injected canonical failure rolls Pending rows, claims, executions, dispatch and permit consumption back while retaining failed authorization.
+9. Concurrent first Pending execution returns one creation and one idempotent receipt, with the same IDs and one audit.
+10. Account deactivate/reactivate and Proposal grant revoke/regrant invalidate old proof; the existing read-only account is denied. Original role/capability registry and employee state are restored.
+11. Actual Supabase local logout removes the exact Auth session; the still-signed JWT cannot execute.
+12. Real SQL validator/commit/page accepts linked action/document references and legacy nine-field history, while foreign-owner paging is denied. Task history mutations roll back.
+
+The first actual Pending confirmation returned an uncertain outcome. Read-only reconciliation proved no committed Pending/action/dispatch result; it was not blindly retried. A separate synthetic diagnostic reproduced PostgreSQL `42703`: the existing deferred canary trigger evaluated `NEW.id` on `invoice_receival_executions`, whose key is `draft_id`. Forward `20261102150000_tenbot_canary_deferred_record_boundary.sql` selects the source-table branch before reading its `id`. Exact predecessor/body and unchanged owner/ACL/configuration assertions preserve every other canary guard and deferred trigger. No applied migration was edited or guard disabled. Subsequent actual Pending creation/concurrency/rollback cases pass. Earlier unaffected proofs are reused, not relabeled as a fresh full-suite run.
+
+All observed Inventory stock fingerprints, Inventory transaction counts, original roles/capabilities/profile settings, Proposal allowlist and enrollment baselines are preserved. These are isolated synthetic tests, not Production business writes or employee browser acceptance. Document transcription is explicit deterministic fixture evidence, not live OCR or Terra reasoning. AAL2/passwordless confirmation remains unsupported and fails closed; actual fixture accounts use password/AAL1.
+
+Actual retained synthetic IDs: Proposal drafts `776349da-75c8-4980-8e12-680e2da0bde1` and `d565c68d-77d7-4a05-971d-aae67a1d2976` (each total10.50, no Job); Pending Receivals `8d784984-84f9-48e7-b1ba-17aa9d506682` and `df98e514-c73b-46f0-8f2d-dd6cbf29c3db` (each expected2Bag/received0). Final18:34:22UTC stock fingerprint is unchanged `fd40258c7ba30c10250877be0e68bf93`; Inventory transactions0, execution receipts4, pilot/enrollment/execution/action controlsOFF, temporary fault triggers0. Revoke tests legitimately advance permission epochs/audit timestamps; original role/access settings are restored, not reset.
+
+Evidence: [real isolated checkpoint aggregate](evidence/2026-11-02-tenbot-reviewed-actions/canonical-database-validation.json), [exact installed SQL hashes](evidence/2026-11-02-tenbot-reviewed-actions/canonical-isolated-migrations.json), [offline exact-runtime checks](evidence/2026-11-02-tenbot-reviewed-actions/canonical-offline-validation.json), [shared read-only state](evidence/2026-11-02-tenbot-reviewed-actions/canonical-shared-readonly.json), [Pages observation/401 limitation](evidence/2026-11-02-tenbot-reviewed-actions/canonical-pages-readonly.json). Fixture SQL/object readback establishes application; no new fixture migration ledger was fabricated.
+
+### Continuation validation and release recommendation
+
+New model-free checks pass: eight canonical execution groups, eight hosted-operation groups and six actual session/constructor groups using injected stores/provider transports. Fourteen directly adjacent employee-history groups pass. Exact-candidate execution uses the accepted committed runtime, excluding the preserved unrelated dirty `after_tool` edit. TypeScript, strict Edge-entry TypeScript with local Deno/npm mapping, targeted nonignored ESLint, whitespace/branding checks and the isolated 25-page webpack Production build pass. No paid inference or six-case conversational campaign is repeated.
+
+Fresh shared read-only metadata at **2026-11-02T18:30:36Z** confirms TenBot Edge **49 ACTIVE/JWT ON**, ordinary OpenAI spending and preparation/pilot/execution flags false, new action transport flag absent/default OFF (the new operations gate defaults OFF in undeployed source), and no new reviewed-action objects or `120000`/`130000`/`140000`/`150000` migration ledger entries. No shared business rows are read or written. Deployed source `da0da6e...` remains attributed to the prior accepted module-byte receipt, not a new download.
+
+At **18:32:17Z**, both public Pages origins return HTTP 200 with distinct `TenDev Cloud — Dashboard` and `TenOps Cloud — Dashboard` titles. The existing Cloudflare OAuth credential returned HTTP 401 for fresh deployment metadata; credentials were not refreshed/rotated. Consequently Pages `278165095...` and `e71bd981...` remain the last accepted exact SHA/deployment receipts, not freshly reverified commit metadata. Recheck them through the normal release procedure before staging. No Pages/Edge deployment, shared migration application, provider/funding change or hosted write activation occurred. Additional provider calls/tokens/cost are **0/0/$0**; historical accounting/holds remain untouched.
+
+Recommendation: accept the local backend continuation for coordinated TenDev staging review. Essential remaining acceptance is the Workspace/host combination in a legitimate employee browser, separately authorized shared migration/release/finite write-pilot activation, and a small separately authorized real model preparation test if Product needs new-capability reasoning proof. The local backend database/authentication gap is now closed by isolated evidence; this does not establish live employee readiness or authorize Production. Keep all new controls OFF until approval. No new framework, broad campaign or optional infrastructure work is needed.

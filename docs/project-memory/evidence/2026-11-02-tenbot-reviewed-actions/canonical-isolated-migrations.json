@@ -1,0 +1,56 @@
+[
+  {
+    "name": "20260713_003_job_attachments.sql",
+    "sha256": "81485b894e3aa668a83d2410e326b100e21c02cadf4234452eaae9f3065bcf4c",
+    "status": "applied",
+    "code": null
+  },
+  {
+    "name": "20260827_004_proposal_generator_v1.sql",
+    "sha256": "5976d6f3df4c1ddb95e6d6113e072308e80a355cef6aec4cdc2500b0cfe4c31c",
+    "status": "applied",
+    "code": null
+  },
+  {
+    "name": "20260827_006_proposal_commercial_defaults.sql",
+    "sha256": "5b6b92c2df3fb5dfd28f5f9580931c44cc8423740062a540f35a190f59d75a4b",
+    "status": "applied",
+    "code": null
+  },
+  {
+    "name": "20260827_008_proposal_commercial_clarifications.sql",
+    "sha256": "4912a7fd12180046e23985a45bf6fe80ecf630ac80cc672fb72879192ed82314",
+    "status": "applied",
+    "code": null
+  },
+  {
+    "name": "20260828_014_generic_proposal_creation.sql",
+    "sha256": "d901aaa26f28d765645c337e0663f428ad63785099ba31ba28b7e3b442e3f350",
+    "status": "applied",
+    "code": null
+  },
+  {
+    "name": "20260908_004_proposal_generator_v2.sql",
+    "sha256": "bfc44833cf5a7d26e3efe06d200629041c16495dd988b70d07fe7258cdb43a46",
+    "status": "applied",
+    "code": null
+  },
+  {
+    "name": "20261102120000_tenbot_reviewed_actions.sql",
+    "sha256": "e7cb74fc2f85460576391be2fc7416ccadf38e79989ab0fd4ca70ef03bb8be3c",
+    "status": "applied",
+    "code": null
+  },
+  {
+    "name": "20261102130000_tenbot_action_canonical_receivals.sql",
+    "sha256": "c72332345e87a590e2f44389a3176ea7f105f7f0302cf2eaa35e1c0eef78b92b",
+    "status": "applied",
+    "code": null
+  },
+  {
+    "name": "20261102140000_tenbot_operation_history.sql",
+    "sha256": "02b1f0237c34faf11edcc705f7721032f003f1003157dff6a864cfd15d9c65b1",
+    "status": "applied",
+    "code": null
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-11-02T18:32:17.469Z",
+  "mutations": 0,
+  "metadataAttempt": {
+    "status": 401,
+    "credentialRefresh": false
+  },
+  "rows": [
+    {
+      "project": "tendev",
+      "http": 200,
+      "title": "TenDev Cloud — Dashboard"
+    },
+    {
+      "project": "tenops",
+      "http": 200,
+      "title": "TenOps Cloud — Dashboard"
+    }
+  ],
+  "shaBoundary": "Last accepted deployment receipt only; current Cloudflare commit metadata not reverified."
+}

@@ -13,7 +13,7 @@ import {createProposalOperations,type ProposalOperationDependencies} from './ten
 // @ts-ignore -- explicit Edge extension
 import {createBusinessOperations,type BusinessOperationsDependencies} from './tenbot-business-operations.ts';
 
-export type ReviewedActionPublisher={prepare(input:{conversationId:string;action:PreparedAction;supersedes?:ActionReference}):Promise<ActionCard>};
+export type ReviewedActionPublisher={prepare(input:{conversationId:string;action:PreparedAction;supersedes?:ActionReference}):Promise<ActionCard>;revoke?(reference:ActionReference):Promise<void>};
 
 /** Construct once for a single authorized investigation. Shared document text
  * remains host evidence, scoped to this employee/run; never model-authored or
@@ -61,7 +61,7 @@ export function createReviewedOperationRegistry(groups:readonly (readonly AgentT
   },
   /** Called only after the existing runtime's publication authorization. Raw
    * tool calls/proposals never cross into Workspace. A failed run publishes none. */
-  async publish(result:AgentResult,conversationId:string,publisher:ReviewedActionPublisher,reauthorize:()=>Promise<boolean>) {
+  async publish(result:AgentResult,conversationId:string,publisher:ReviewedActionPublisher,reauthorize:()=>Promise<boolean>,supersedes?:ActionReference) {
    if(result.status!=='completed'||!result.final||!await reauthorize())return [] as ActionCard[];
    const actions=result.proposals.map(item=>{
     if(!tools.some(tool=>tool.kind==='prepare'&&tool.name===item.tool)||!result.evidence.some(e=>e.id===item.evidenceId&&e.tool===item.tool))throw new ReviewedActionError('rejected');
@@ -71,12 +71,19 @@ export function createReviewedOperationRegistry(groups:readonly (readonly AgentT
    // write request. Terra can investigate multiple domains and prepare one next.
    if(actions.length>1)throw new ReviewedActionError('invalid_action');
    const cards:ActionCard[]=[];
-   for(const action of actions){
+   try{
+    for(const action of actions){
+     if(!await reauthorize())throw new ReviewedActionError('rejected');
+     cards.push(await publisher.prepare({conversationId,action,...(supersedes?{supersedes}:{})}));
+    }
     if(!await reauthorize())throw new ReviewedActionError('rejected');
-    cards.push(await publisher.prepare({conversationId,action}));
+    return cards;
+   }catch(error){
+    let uncertain=false;
+    for(const card of cards)try{if(publisher.revoke)await publisher.revoke(card.reference);else uncertain=true;}catch{uncertain=true;}
+    if(uncertain)throw new ReviewedActionError('uncertain');
+    throw error;
    }
-   if(!await reauthorize())throw new ReviewedActionError('rejected');
-   return cards;
   },
  };
 }

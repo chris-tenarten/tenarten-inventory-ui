@@ -1,0 +1,48 @@
+{
+  "runtime": "accepted committed agent.ts baseline; pre-existing dirty after_tool edit excluded",
+  "results": [
+    {
+      "script": "verify-tenbot-canonical-action-receivals.mts",
+      "exitCode": 0,
+      "output": "{\n  \"passed\": true,\n  \"groups\": 8,\n  \"checks\": [\n    \"metadata stage has exact reviewed identity and is never a created-record receipt\",\n    \"password, canonical stage, unchanged trusted permit and exact execution remain separate and ordered\",\n    \"definite stage-failure response cannot reach permit or execute\",\n    \"uncertain stage/permit never retries or reports business success and retains private session\",\n    \"malformed metadata/committed identities cannot become employee success\",\n    \"forward migration changes no old roles/capabilities, funding, original canonical function or activation row\",\n    \"private transaction dispatch guard seals linked legacy execution and leaves unrelated canonical flow intact\",\n    \"canonical stage rechecks source, human-reviewed material and package before approval without business writes\"\n  ],\n  \"mode\": \"Offline injected trusted-auth/RPC and static forward-migration checks only\",\n  \"actualNetworkCalls\": 0,\n  \"actualDatabase\": false,\n  \"businessWrites\": 0,\n  \"inferenceCalls\": 0,\n  \"migration\": {\n    \"path\": \"supabase/migrations/20261102130000_tenbot_action_canonical_receivals.sql\",\n    \"sha256\": \"c72332345e87a590e2f44389a3176ea7f105f7f0302cf2eaa35e1c0eef78b92b\",\n    \"appliedByThisVerifier\": false\n  },\n  \"requiredGate\": \"Separate real isolated canonical PostgreSQL/Auth/RLS/lifecycle/concurrency evidence required.\"\n}"
+    },
+    {
+      "script": "verify-tenbot-hosted-operations.mts",
+      "exitCode": 0,
+      "output": "Hosted operations: 8 focused model-free groups passed."
+    },
+    {
+      "script": "verify-tenbot-hosted-action-session.mts",
+      "exitCode": 0,
+      "output": "Hosted action sessions: 6 focused injected-store/provider groups passed; no actual inference or database."
+    },
+    {
+      "script": "verify-tenbot-employee-history.mts",
+      "exitCode": 0,
+      "output": "{\n  \"passed\": true,\n  \"groups\": 14,\n  \"checks\": [\n    \"Stable owner thread is discovered with no browser locator; completed answer is archived atomically\",\n    \"Legacy unavailable results, revoked access, retryable checks and readable persistent answers remain distinct without inferring permission from prose\",\n    \"Later-session discovery preserves original timestamps and readable historical values despite changed live status, without inference\",\n    \"Count subject survives later sessions while Which Jobs are they rereads current authorized population\",\n    \"Named Job and period persist; changed hours remain historical while new questions report fresh6hours\",\n    \"Record revocation selectively redacts affected aggregate/Job answers and identifying questions; unrelated Job answers remain\",\n    \"Long-running transcript pages retain older answers beyond four/eight/twenty turns without feeding the archive to inference\",\n    \"Unavailable authorization never publishes prose and does not destroy the private historical record\",\n    \"Invalid source/contract evidence redacts both question and answer independently of data freshness\",\n    \"Cross-owner callers, including an otherwise fully capable account, cannot discover or hydrate another employee thread\",\n    \"Durable visible history remains outside bounded model context and raw results\",\n    \"Temporary context-authorization failure fails closed without deleting the privately retained subject\",\n    \"Primary exact-reference labor avoids a redundant lookup and retains the same concise deterministic quantitative presentation as fallback\",\n    \"Account capability revocation denies the entire conversation under current authentication\"\n  ],\n  \"actualDatabase\": false,\n  \"actualInference\": false\n}"
+    }
+  ],
+  "inferenceCalls": 0,
+  "finalHostedSessionRecheck": {
+    "exitCode": 0,
+    "output": "Hosted action sessions: 6 focused injected-store/provider groups passed; no actual inference or database.",
+    "delta": "final scope evidence sentence; accepted committed agent.ts baseline remains in test copy"
+  },
+  "validation": {
+    "projectTypeScript": "pass, final tree",
+    "strictEdgeEntryTypeScript": "pass, local npm mapping/minimal Deno stub; no deployment",
+    "targetedNonignoredEslint": "pass, final changed source/scripts",
+    "diffWhitespace": "pass",
+    "brandingStructural": "pass",
+    "productionBuild": "pass, existing isolated scratch webpack25pages",
+    "sourceAfterBuild": "Only final scope evidence sentence and safe harness assertion changed afterward; final type/lint and session tests pass.",
+    "screen": "No new screen/browser control. Earlier capture reset release remains unverified.",
+    "preservation": "8 preexisting tracked dirty files unchanged; port3000 originalPID83974 untouched; Workspace independent262c25f clean."
+  },
+  "migrationHashes": {
+    "20261102120000_tenbot_reviewed_actions.sql": "e7cb74fc2f85460576391be2fc7416ccadf38e79989ab0fd4ca70ef03bb8be3c",
+    "20261102130000_tenbot_action_canonical_receivals.sql": "c72332345e87a590e2f44389a3176ea7f105f7f0302cf2eaa35e1c0eef78b92b",
+    "20261102140000_tenbot_operation_history.sql": "02b1f0237c34faf11edcc705f7721032f003f1003157dff6a864cfd15d9c65b1",
+    "20261102150000_tenbot_canary_deferred_record_boundary.sql": "0413a8c2cd7babba685d570f2175cbfbf47379af73fab0bbdb273a411fba710f"
+  }
+}

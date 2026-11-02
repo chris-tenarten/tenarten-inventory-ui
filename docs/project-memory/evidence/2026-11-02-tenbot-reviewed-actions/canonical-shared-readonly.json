@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-11-02T18:30:36.596Z",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "scope": "Read-only Edge metadata, boolean-secret digest comparison and migration/control metadata only; no business rows",
+  "edge": {
+    "slug": "tenbot",
+    "version": 49,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "updatedAt": 1793639543157
+  },
+  "flags": {
+    "TENBOT_REVIEWED_ACTIONS_ENABLED": "absent (default OFF)",
+    "TENBOT_RECEIVAL_PILOT_ENABLED": "verified false digest",
+    "TENBOT_RECEIVAL_EXECUTION_ENABLED": "verified false digest",
+    "TENBOT_INVOICE_PREPARATION_ENABLED": "verified false digest",
+    "TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED": "verified false digest",
+    "TENBOT_OPENAI_SPEND_AUTHORIZED": "verified false digest"
+  },
+  "database": [
+    {
+      "checked_at": "2026-11-02 18:30:36.559267+00",
+      "reviewed_actions_present": false,
+      "action_control_present": false,
+      "applied_new_versions": null,
+      "pilot": {
+        "enabled": false,
+        "startsAt": "2026-10-31T01:22:21.723536+00:00",
+        "expiresAt": "2026-10-31T01:37:00+00:00"
+      },
+      "execution": {
+        "enabled": false
+      }
+    }
+  ],
+  "requests": [
+    {
+      "path": "/v1/projects/vxdxjhazkqhpkwdqtobp/functions",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/v1/projects/vxdxjhazkqhpkwdqtobp/secrets",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/v1/projects/vxdxjhazkqhpkwdqtobp/database/query",
+      "method": "POST",
+      "status": 201
+    }
+  ],
+  "sharedWrites": 0,
+  "providerCalls": 0
+}

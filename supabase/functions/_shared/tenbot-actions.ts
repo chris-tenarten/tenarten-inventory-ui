@@ -65,6 +65,10 @@ export function parseActionReceipt(value:unknown,reference:ActionReference):Acti
  if(!object(value)||!keys(value,['contract','kind','reference','operation','status','idempotent','result','completedAt'])||value.contract!=='tenbot.actions.v1'||value.kind!=='action_result'||value.status!=='completed'||!['proposal.save_draft','inventory.create_pending_receivals'].includes(String(value.operation))||typeof value.idempotent!=='boolean'||!object(value.result)||!json(value.result)||!instant(value.completedAt))invalid();
  const found=parseActionReference(value.reference);
  if(found.id!==reference.id||found.revision!==reference.revision||found.hash!==reference.hash||found.expiresAt!==reference.expiresAt)invalid();
+ const result=value.result;
+ if(value.operation==='proposal.save_draft'){
+  if(typeof result.proposalId!=='string'||!uuid.test(result.proposalId)||result.status!=='draft'||result.url!=='/proposals?open='+result.proposalId)invalid();
+ }else if(typeof result.draftId!=='string'||!uuid.test(result.draftId)||typeof result.hash!=='string'||!digest.test(result.hash)||!Array.isArray(result.createdRecordIds)||result.createdRecordIds.length<1||result.createdRecordIds.length>80||result.createdRecordIds.some(id=>typeof id!=='string'||!uuid.test(id))||new Set(result.createdRecordIds).size!==result.createdRecordIds.length||!Array.isArray(result.createdCatalogRecords)||!instant(result.executedAt)||typeof result.idempotent!=='boolean'||result.onHandChangedByCreation!==false||result.url!=='/inventory#pending-receivals')invalid();
  return {...value,reference:found} as ActionReceipt;
 }
 /** Trusted host publication ONLY: pass deterministic domain-adapter output
@@ -100,6 +104,14 @@ export function createReviewedActionService(caller:ActionRpc) {
   },
   async revoke(reference:ActionReference):Promise<void>{const value=await call('revoke_tenbot_reviewed_action',args(reference),true);if(!object(value)||value.revoked!==true||value.id!==reference.id)invalid();},
   async preview(reference:ActionReference):Promise<PreparedAction>{return normalizePreparedAction(await call('preview_tenbot_reviewed_action',args(reference)));},
+  /** Trusted confirmation orchestration only. Stages canonical review metadata;
+   * the returned IDs are not created Pending Receivals or a success receipt. */
+  async stageReceivals(reference:ActionReference):Promise<{draftId:string;hash:string;approvalId:string}>{
+   const value=await call('stage_tenbot_reviewed_receivals',args(reference),true);
+   if(object(value)&&value.kind==='action_failure'&&value.status==='failed'&&value.id===reference.id&&value.hash===reference.hash)throw new ReviewedActionError('rejected');
+   if(!object(value)||!keys(value,['draftId','hash','approvalId'])||typeof value.draftId!=='string'||!uuid.test(value.draftId)||typeof value.hash!=='string'||!digest.test(value.hash)||typeof value.approvalId!=='string'||!uuid.test(value.approvalId))invalid();
+   return {draftId:value.draftId,hash:value.hash,approvalId:value.approvalId};
+  },
   async execute(reference:ActionReference):Promise<ActionReceipt>{const value=await call('execute_tenbot_reviewed_action',args(reference),true);if(object(value)&&value.kind==='action_failure'&&value.status==='failed'&&value.id===reference.id&&value.hash===reference.hash)throw new ReviewedActionError('rejected');return parseActionReceipt(value,reference);},
  };
 }

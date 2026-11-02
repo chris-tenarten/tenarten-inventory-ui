@@ -2,7 +2,7 @@
  * agent tool or include its request/response in conversation/model history. */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Deno requires the extension; both Node and Edge checks inspect this file.
 // @ts-ignore Explicit extension is required by the deployed Deno runtime.
-import {createReviewedActionService,parseActionReference,type ActionReceipt,type ActionReference,type ActionRpc,ReviewedActionError} from './tenbot-actions.ts';
+import {createReviewedActionService,parseActionReference,type ActionOperation,type ActionReceipt,type ActionReference,type ActionRpc,ReviewedActionError} from './tenbot-actions.ts';
 
 type AuthUser={id:string;email?:string};
 export type PrivateActionSession={access_token:string;refresh_token:string;expires_at:number;token_type:'bearer'};
@@ -19,6 +19,9 @@ export type ActionPasswordDependencies={
  callerForToken(token:string):ActionRpc;
  /** Restricted service-role metadata RPC adapter, never a business client. */
  service:ActionRpc;
+ /** After the password stamp, Pending orchestration stages exact canonical
+  * metadata and obtains the unchanged restricted legacy permit. No password. */
+ beforeExecute?(input:{caller:ActionRpc;reference:ActionReference;operation:ActionOperation;ownerId:string}):Promise<void>;
  now?:()=>number;
 };
 export type TrustedActionConfirmation={
@@ -59,7 +62,7 @@ export async function confirmReviewedActionPassword(deps:ActionPasswordDependenc
  if(original.aal!=='aal1')throw new ActionPasswordError('mfa_required');
  let current:Awaited<ReturnType<ReturnType<typeof createReviewedActionService>['get']>>;
  try{current=await createReviewedActionService(actor.caller).get(reference);}catch{throw new ActionPasswordError('unavailable');}
- if(current.card.operation!=='proposal.save_draft'||!current.card.confirmation.available||current.state!=='prepared'||current.card.review.issues.some(x=>x.blocking))throw new ActionPasswordError('unavailable');
+ if(!current.card.confirmation.available||current.state!=='prepared'||current.card.review.issues.some(x=>x.blocking)||current.card.operation==='inventory.create_pending_receivals'&&!deps.beforeExecute)throw new ActionPasswordError('unavailable');
  let auth:PasswordAuthClient,login:Awaited<ReturnType<PasswordAuthClient['auth']['signInWithPassword']>>;
  try{auth=deps.createPasswordClient();login=await auth.auth.signInWithPassword({email:actor.user.email,password:body.password});}catch{throw new ActionPasswordError('password_rejected');}
  if(login.error||!login.data.user||login.data.user.id!==actor.user.id||!login.data.session)throw new ActionPasswordError('password_rejected');
@@ -79,6 +82,7 @@ export async function confirmReviewedActionPassword(deps:ActionPasswordDependenc
   const value=stamped.data as Record<string,unknown>|null;
   if(!value||value.id!==reference.id||value.hash!==reference.hash||value.authorized!==true)return response('uncertain',null);
   const caller=deps.callerForToken(fresh.access_token);
+  if(deps.beforeExecute)await deps.beforeExecute({caller,reference,operation:current.card.operation,ownerId:actor.user.id});
   return response('completed',await createReviewedActionService(caller).execute(reference));
  }catch(error){return response(error instanceof ReviewedActionError&&error.code==='rejected'?'failed':'uncertain',null);}
 }

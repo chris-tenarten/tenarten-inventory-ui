@@ -8,7 +8,8 @@ import {terraAcceptanceSpendingAuthorized} from '../_shared/tenbot-terra-accepta
 import {safeInvestigationDiagnostic} from '../_shared/tenbot-investigation-diagnostics.ts';
 import {safeOpenAIResponseMetadata} from '../_shared/tenbot-openai.ts';
 import {createReviewedActionTransport,TENBOT_ACTION_WORKSPACE} from '../_shared/tenbot-action-transport.ts';
-import {createReviewedActionService} from '../_shared/tenbot-actions.ts';
+import {createReviewedActionService,ReviewedActionError} from '../_shared/tenbot-actions.ts';
+import {mintHostedReceivalExecutionPermit} from '../_shared/tenbot-receival-hosted.ts';
 import {buildProposalPreview} from '../_shared/tenbot-proposal-operations.ts';
 Deno.serve(async(request:Request)=>{
  const origin=request.headers.get('origin')||'';
@@ -33,10 +34,22 @@ Deno.serve(async(request:Request)=>{
  if(body.workspace===TENBOT_ACTION_WORKSPACE){
   const actionService=createClient(url,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{global:{fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
   const callerForToken=(token:string)=>createClient(url,anon,{global:{headers:{Authorization:`Bearer ${token}`},fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
-  const metadata={rpc:(name:string,args:Record<string,unknown>)=>name==='stamp_tenbot_action_password'?actionService.rpc(name,args):Promise.resolve({data:null,error:{code:'42501'}})};
+  const metadata={rpc:(name:string,args:Record<string,unknown>)=>['stamp_tenbot_action_password','tenbot_receival_mint_execution_permit'].includes(name)?actionService.rpc(name,args):Promise.resolve({data:null,error:{code:'42501'}})};
   const trusted=createReviewedActionTransport({enabled:Deno.env.get('TENBOT_REVIEWED_ACTIONS_ENABLED')==='true',origin,caller,
    password:{authenticate:async()=>({user:data.user,token:authorization.replace(/^Bearer\s+/i,''),caller}),
-    createPasswordClient:()=>createClient(url,anon,{global:{fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}),callerForToken,service:metadata},
+    createPasswordClient:()=>createClient(url,anon,{global:{fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}),callerForToken,service:metadata,
+    async beforeExecute(input){
+     if(input.operation!=='inventory.create_pending_receivals')return;
+     const actions=createReviewedActionService(input.caller);
+     const config={enabled:Deno.env.get('TENBOT_RECEIVAL_PILOT_ENABLED')==='true',executionEnabled:Deno.env.get('TENBOT_RECEIVAL_EXECUTION_ENABLED')==='true',origins:(Deno.env.get('TENBOT_RECEIVAL_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean),employeeIds:(Deno.env.get('TENBOT_RECEIVAL_EMPLOYEE_IDS')||'').split(',').map(s=>s.trim()).filter(Boolean),expiresAt:Deno.env.get('TENBOT_RECEIVAL_PILOT_EXPIRES_AT')||''};
+     if(!config.executionEnabled||!hostedReceivalPilotEnabled(config,input.ownerId,origin)){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
+     const staged=await actions.stageReceivals(input.reference);
+     await mintHostedReceivalExecutionPermit({owner:input.ownerId,draftId:staged.draftId,hash:staged.hash,approvalId:staged.approvalId,origin,async service(name,args){
+      const permit=await metadata.rpc(name,args);
+      if(permit.error&&['42501','22023','P0002','23505'].includes(permit.error.code??'')){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
+      return permit;
+     }});
+    }},
    async preview(reference){
     const saved=await createReviewedActionService(caller).preview(reference);
     const response=await boundedFetch(`${url}/functions/v1/generate-proposal-pdf`,{method:'POST',headers:{Authorization:authorization,apikey:anon,'Content-Type':'application/json'},body:JSON.stringify({action:'preview',snapshot:buildProposalPreview(saved.parameters)})});
@@ -74,8 +87,12 @@ Deno.serve(async(request:Request)=>{
  const acceptanceScope={owner:data.user.id,origin,hostedEnabled:openAI.enabled&&openAI.origins.includes(origin),modelDirectedReads};
  const acceptanceAuthorized=()=>terraAcceptanceSpendingAuthorized(acceptance,acceptanceScope);
  const requestId=acceptanceAuthorized()?crypto.randomUUID():undefined;
+ let actionSessionId='';
+ // The bearer has already passed Auth.getUser. This claim is only a selector;
+ // SQL independently checks the live same-owner Auth session at every boundary.
+ try{actionSessionId=JSON.parse(atob(authorization.replace(/^Bearer\s+/i,'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).session_id??'';}catch{/* New operational integration stays unavailable. */}
  const hosted=createHostedTenbot({owner:data.user.id,origin,
-  config:{...openAI,modelDirectedReads},acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
+  config:{...openAI,modelDirectedReads,reviewedOperationsEnabled:Deno.env.get('TENBOT_REVIEWED_OPERATIONS_ENABLED')==='true'},reviewedCaller:caller,actionSessionId,acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
   onDiagnostic:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_acceptance',{requestId,...safeInvestigationDiagnostic(event)});}:undefined,
   onResponseMetadata:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_provider',{requestId,...safeOpenAIResponseMetadata(event)});}:undefined,
   caller:async(n,a)=>await caller.rpc(n,a),service:async(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?await service.rpc(n,a):{data:null,error:{message:'Metering action unavailable'}},qwen:provider,jobTools:createTenbotJobTools(caller)});

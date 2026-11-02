@@ -1,0 +1,237 @@
+{
+  "status": "12 groups passed across bounded resumed checkpoints; no single whole-run success claimed",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "groupsPassed": 12,
+  "checks": [
+    {
+      "group": 1,
+      "name": "genuine existing password/Auth sessions and owner/private table/RPC denial",
+      "passed": true,
+      "provenance": "4853ce35 observed successful verifier stdout; stopped later on group6. New150000 only alters deferred invoice trigger, unrelated to groups1-5."
+    },
+    {
+      "group": 2,
+      "name": "real trusted password confirmation commits one canonical standalone Proposal draft and hands off session privately",
+      "passed": true,
+      "provenance": "4853ce35 observed successful verifier stdout; stopped later on group6. New150000 only alters deferred invoice trigger, unrelated to groups1-5."
+    },
+    {
+      "group": 3,
+      "name": "wrong hash/revision/session, cancellation, expiry and supersession never reuse reviewed authorization",
+      "passed": true,
+      "provenance": "4853ce35 observed successful verifier stdout; stopped later on group6. New150000 only alters deferred invoice trigger, unrelated to groups1-5."
+    },
+    {
+      "group": 4,
+      "name": "concurrent Proposal executions create one actual result; definite canonical failure consumes proof and rolls creation back",
+      "passed": true,
+      "provenance": "4853ce35 observed successful verifier stdout; stopped later on group6. New150000 only alters deferred invoice trigger, unrelated to groups1-5."
+    },
+    {
+      "group": 5,
+      "name": "canonical Pending staging preserves real original evidence and direct legacy call cannot bypass action dispatch",
+      "passed": true,
+      "provenance": "4853ce35 observed successful verifier stdout; stopped later on group6. New150000 only alters deferred invoice trigger, unrelated to groups1-5."
+    },
+    {
+      "group": 6,
+      "name": "real password-to-stage/permit/canonical Pending creation returns actual IDs, exact quantities and durable audit; concurrent retries are idempotent",
+      "durationMs": 4806,
+      "passed": true,
+      "provenance": "progress-be494d55.json after150000"
+    },
+    {
+      "group": 7,
+      "name": "changed same-ID catalog details invalidate immutable employee review and consume failed stage proof",
+      "durationMs": 3652,
+      "passed": true,
+      "provenance": "progress-be494d55.json after150000"
+    },
+    {
+      "group": 8,
+      "name": "canonical Pending partial failure rolls dispatch, claim, audit and permit back while retaining a consumed failed action proof",
+      "durationMs": 4085,
+      "passed": true,
+      "provenance": "progress-be494d55.json after150000"
+    },
+    {
+      "group": 9,
+      "name": "concurrent FIRST Pending executions commit one canonical receipt and one pending row",
+      "durationMs": 3640,
+      "passed": true,
+      "provenance": "progress-be494d55.json after150000"
+    },
+    {
+      "group": 10,
+      "name": "actual account revoke/regrant, read-only account denial and Proposal allowlist revoke/regrant cannot resurrect proofs",
+      "durationMs": 6086,
+      "passed": true,
+      "provenance": "results-fbe2e7b0.json after150000"
+    },
+    {
+      "group": 11,
+      "name": "real Supabase local logout revokes the exact execution session despite an otherwise valid signed JWT",
+      "durationMs": 3379,
+      "passed": true,
+      "provenance": "results-fbe2e7b0.json after150000"
+    },
+    {
+      "group": 12,
+      "name": "real PostgreSQL history validator commits/pages new action/document references and preserves legacy rows in rollback-only fixture",
+      "durationMs": 483,
+      "passed": true,
+      "provenance": "results-fbe2e7b0.json after150000"
+    }
+  ],
+  "installedMigrations": [
+    {
+      "name": "20260713_003_job_attachments.sql",
+      "sha256": "81485b894e3aa668a83d2410e326b100e21c02cadf4234452eaae9f3065bcf4c",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20260827_004_proposal_generator_v1.sql",
+      "sha256": "5976d6f3df4c1ddb95e6d6113e072308e80a355cef6aec4cdc2500b0cfe4c31c",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20260827_006_proposal_commercial_defaults.sql",
+      "sha256": "5b6b92c2df3fb5dfd28f5f9580931c44cc8423740062a540f35a190f59d75a4b",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20260827_008_proposal_commercial_clarifications.sql",
+      "sha256": "4912a7fd12180046e23985a45bf6fe80ecf630ac80cc672fb72879192ed82314",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20260828_014_generic_proposal_creation.sql",
+      "sha256": "d901aaa26f28d765645c337e0663f428ad63785099ba31ba28b7e3b442e3f350",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20260908_004_proposal_generator_v2.sql",
+      "sha256": "bfc44833cf5a7d26e3efe06d200629041c16495dd988b70d07fe7258cdb43a46",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20261102120000_tenbot_reviewed_actions.sql",
+      "sha256": "e7cb74fc2f85460576391be2fc7416ccadf38e79989ab0fd4ca70ef03bb8be3c",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20261102130000_tenbot_action_canonical_receivals.sql",
+      "sha256": "c72332345e87a590e2f44389a3176ea7f105f7f0302cf2eaa35e1c0eef78b92b",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20261102140000_tenbot_operation_history.sql",
+      "sha256": "02b1f0237c34faf11edcc705f7721032f003f1003157dff6a864cfd15d9c65b1",
+      "status": "applied",
+      "code": null
+    },
+    {
+      "name": "20261102150000_tenbot_canary_deferred_record_boundary.sql",
+      "sha256": "0413a8c2cd7babba685d570f2175cbfbf47379af73fab0bbdb273a411fba710f",
+      "fixtureRef": "jltgxcfiprocydhbrahz",
+      "status": "applied",
+      "code": null
+    }
+  ],
+  "migrationEvidence": "Exact sources/hashes applied in isolated fixture, object/function readback; no new migration ledger was written in fixture.",
+  "finalFixtureState": {
+    "stock": "fd40258c7ba30c10250877be0e68bf93",
+    "pending": [
+      {
+        "id": "8d784984-84f9-48e7-b1ba-17aa9d506682",
+        "unit": "Bag",
+        "status": "pending",
+        "expected": 2,
+        "material": "Action Material be494d55 actual",
+        "received": 0
+      },
+      {
+        "id": "df98e514-c73b-46f0-8f2d-dd6cbf29c3db",
+        "unit": "Bag",
+        "status": "pending",
+        "expected": 2,
+        "material": "Action Material be494d55 first-race",
+        "received": 0
+      }
+    ],
+    "checkedAt": "2026-11-02T18:34:22.341941+00:00",
+    "proposals": [
+      {
+        "id": "776349da-75c8-4980-8e12-680e2da0bde1",
+        "jobId": null,
+        "total": 10.5,
+        "status": "draft",
+        "project": "SYN-ACTION-4853ce35-actual"
+      },
+      {
+        "id": "d565c68d-77d7-4a05-971d-aae67a1d2976",
+        "jobId": null,
+        "total": 10.5,
+        "status": "draft",
+        "project": "SYN-ACTION-4853ce35-concurrent"
+      }
+    ],
+    "enrollment": 0,
+    "failedCount": 3,
+    "pilotEnabled": false,
+    "receiptCount": 4,
+    "transactions": 0,
+    "actionControl": {
+      "proposal": false,
+      "receivals": false
+    },
+    "faultTriggers": 0,
+    "canonicalGuard": 1,
+    "executionEnabled": false
+  },
+  "stockBaseline": "fd40258c7ba30c10250877be0e68bf93",
+  "stockFinal": "fd40258c7ba30c10250877be0e68bf93",
+  "inventoryTransactionBaseline": 0,
+  "inventoryTransactionFinal": 0,
+  "stockDelta": 0,
+  "allWriteControlsOff": true,
+  "rolesCapabilitiesProfileSettingsAndGrantBaselineRestored": true,
+  "profileTimestampNote": "Reversible access tests advance audit timestamps and permission epochs; original role/access settings restored.",
+  "failureEvidence": [
+    {
+      "code": "42703",
+      "type": "canonical predecessor bug",
+      "resolution": "Existing deferred canary trigger referenced NEW.id on execution row without id. Auth owner added exact forward150000. Two distinct uncertain synthetic attempts reconciled read-only as uncommitted, dispatch0; neither original operation was blindly retried. Stamp/stage retained, proofs expired, controls OFF."
+    },
+    {
+      "code": "23514",
+      "type": "harness setup",
+      "resolution": "Lead read_only=true violates canonical guest-only constraint; no business mutation or source weakening. Replaced with legal account inactive/reactive revoke test plus existing read-only-account denial."
+    },
+    {
+      "type": "other harness setup",
+      "resolution": "Incorrect import, helper-label underscore and duplicate persistent conversation corrected; later task conversations use canonical nonpersistent mode."
+    }
+  ],
+  "artifactDisposition": "Two synthetic Proposal drafts and two Pending Receivals plus four immutable committed receipts and successful originals retained as fixture evidence. Unexecuted synthetic previews retained; no existing rows purged. Fault triggers removed. History experiment fully rolled back. No servers or capture started.",
+  "sharedReadOnlyReceipt": "shared-readonly.json",
+  "providerCalls": 0,
+  "sharedProjectWrites": 0,
+  "realAuthAndPrivateStorage": true,
+  "deterministicTranscriptionOnly": true,
+  "verifier": {
+    "path": "scripts/verify-tenbot-reviewed-actions-database.mts",
+    "sha256": "555361a25f75ae5a798028cb76f09c1d292befef789b80e5b7cebedbd6dfd851",
+    "strictTargetedTypeScript": "passed",
+    "targetedEslint": "passed",
+    "whitespace": "passed"
+  }
+}
