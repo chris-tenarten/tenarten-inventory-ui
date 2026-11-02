@@ -2,8 +2,8 @@
  * No model inference, credentials, network, uploads or business persistence. */
 import assert from 'node:assert/strict';
 import {createHostedOperations,authorizeHostedOperationHistory,type HostedOperationsDependencies} from '../supabase/functions/_shared/tenbot-hosted-operations';
-import {runTenbotAgent,emptyUsage,type AgentProvider,type AgentStep,type JsonValue} from '../supabase/functions/_shared/tenbot-agent';
-import {publishModelReadAnswer} from '../supabase/functions/_shared/tenbot-read-investigation';
+import {runTenbotAgent,emptyUsage,type AgentProvider,type AgentStep,type AgentResult,type JsonValue} from '../supabase/functions/_shared/tenbot-agent';
+import {publishModelReadAnswer,publishPreparedReview,reviewedOperationRecovery} from '../supabase/functions/_shared/tenbot-read-investigation';
 import type {InvoiceReceivalSource} from '../src/modules/inventory/invoice-receival-attachments';
 import type {ActionCard,ActionReference} from '../supabase/functions/_shared/tenbot-actions';
 
@@ -77,6 +77,19 @@ await check('Pending preparation facts preserve held issues and zero received st
  const f=fixture();await read(f);
  const result=await execute(f,'prepare_pending_receivals',{source_id:sourceId,supplier_source_ref:`${sourceId}:L1`,document_reference_source_ref:`${sourceId}:L2`,ordered_by:'Synthetic Employee',order_date:'2026-11-02',location:'',lines:[{source_ref:`${sourceId}:L3`,catalog_source:'standard',catalog_id:catalogId,source_quantity:'100',source_unit:'LB',quantity_expected:'2',unit:'Bag',production_job_id:null}]});
  const facts=(result.data as Record<string,JsonValue>).answer_facts;assert(JSON.stringify(facts).includes('Nothing has been created yet'));assert(JSON.stringify(facts).includes('destination location'));assert(JSON.stringify(facts).includes('does not increase Inventory quantities'));assert.equal(f.state.publications.length,0);assert.equal(await f.operations.fresh(),true);
+ assert(result.proposal);
+ const completed:AgentResult={status:'completed',final:{answer:'Untrusted model wording',observations:[],inferences:[],recommendations:[],questions:['Before I continue, is that okay?'],completed_actions:[]},evidence:[{id:'e1',tool:'prepare_pending_receivals',data:result.data}],proposals:[{evidenceId:'e1',tool:'prepare_pending_receivals',proposal:result.proposal}],trace:[],usage:emptyUsage()};
+ const rejections:string[]=[];assert.equal(publishModelReadAnswer(completed,question,undefined,undefined,reason=>rejections.push(reason)),null);assert.deepEqual(rejections,['read-final-question']);
+ const cards=await f.operations.publish(completed,conversation),message=publishPreparedReview(cards);assert.equal(cards.length,1);assert(cards[0].review.issues.some(issue=>issue.blocking&&issue.code==='missing_location'));assert.equal(cards[0].confirmation.available,false);assert(message?.includes(cards[0].review.summary));assert(message?.includes('Some details need attention before confirmation.'));assert(message?.includes('Nothing has been added to Pending Receivals or Inventory.'));assert(!message?.includes('Untrusted model'));assert(!message?.includes('Before I continue'));
+});
+await check('recovery names an objective only after its actual prepare attempt; informational customer reads stay neutral',()=>{
+ const f=fixture(),base:AgentResult={status:'provider-unavailable',reason:'provider-error',final:null,evidence:[],proposals:[],trace:[],usage:emptyUsage()};
+ for(const name of ['search_customers','get_customer','search_contacts','get_contact']){
+  const message=reviewedOperationRecovery({...base,trace:[{event:'tool',round:1,name,outcome:'ok',durationMs:0}]},f.operations.tools);
+  assert(!message.includes('Proposal'));assert(!message.includes('Pending Receivals'));assert(message.includes('checking the information')||message.includes('finish this request'));
+ }
+ const pending=reviewedOperationRecovery({...base,trace:[{event:'tool',round:1,name:'prepare_pending_receivals',outcome:'error',durationMs:0}]},f.operations.tools);assert(pending.includes('preparing the receiving entries'));assert(!pending.includes('I read the supplied document'));
+ const failedRead=reviewedOperationRecovery({...base,trace:[{event:'tool',round:1,name:'read_supplied_document',outcome:'error',durationMs:0}]},f.operations.tools);assert(!failedRead.includes('I read the supplied document'));assert(failedRead.includes('checking the information'));
 });
 await check('freshness catches current permissions, changed catalog evidence and original lifecycle/integrity',async()=>{
  for(const change of ['permission','catalog','deleted','bytes','owner'] as const){const f=fixture();await read(f);await execute(f,'search_material_catalog',{query:'White aggregate'});

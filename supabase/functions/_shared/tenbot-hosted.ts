@@ -44,6 +44,14 @@ import type {InvoiceReceivalStorageCaller} from '../../../src/modules/inventory/
 
 export type HostedRpc=(name:string,args?:Record<string,unknown>)=>Promise<{data:unknown;error:unknown}>;
 export type HostedTenbotConfig={persistentHistory?:boolean;modelDirectedReads?:boolean;reviewedOperationsEnabled?:boolean;enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
+/** Administrator rollout authority, independent of inference funding and action
+ * expiry. Auth.getUser verifies the caller; every operation still checks current
+ * capabilities and SQL independently verifies the live session before a write.
+ * This local mode remains confined to the already supported TenDev surface. */
+export function normalEmployeeModeAuthorized(config:{enabled:boolean;owner:string;origin:string;hostedEnabled:boolean;modelDirectedReads:boolean;sessionId:string}):boolean{
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ return config.enabled===true&&config.origin==='https://tendev.pages.dev'&&config.hostedEnabled===true&&config.modelDirectedReads===true&&uuid.test(config.owner)&&uuid.test(config.sessionId);
+}
 export const TENBOT_HOSTED_SERVICE_RPCS=new Set([
  'tenbot_reserve_usage','tenbot_finish_usage','tenbot_append_conversation_turn',
  'tenbot_openai_reserve','tenbot_openai_settle','tenbot_openai_meter_status',

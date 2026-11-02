@@ -2,7 +2,7 @@ import {createClient} from 'npm:@supabase/supabase-js@2.101.1';
 import {cloudflareProvider,TenbotError,MODEL} from '../_shared/tenbot-core.ts';
 import {isAllowedModel} from '../_shared/tenbot-models.ts';
 import {createTenbotJobTools} from '../_shared/tenbot-job-tools.ts';
-import {createHostedTenbot,TENBOT_HOSTED_SERVICE_RPCS} from '../_shared/tenbot-hosted.ts';
+import {createHostedTenbot,normalEmployeeModeAuthorized,TENBOT_HOSTED_SERVICE_RPCS} from '../_shared/tenbot-hosted.ts';
 import {createHostedReceivalContract,createHostedReceivalRuntime,hostedReceivalPilotEnabled,hostedInvoicePreparationEnabled,ordinaryTenbotSpendingAuthorized,TENBOT_RECEIVAL_SERVICE_RPCS,TENBOT_RECEIVAL_WORKSPACE} from '../_shared/tenbot-receival-hosted.ts';
 import {terraAcceptanceSpendingAuthorized} from '../_shared/tenbot-terra-acceptance.ts';
 import {safeInvestigationDiagnostic} from '../_shared/tenbot-investigation-diagnostics.ts';
@@ -29,25 +29,30 @@ Deno.serve(async(request:Request)=>{
  const reader=request.body?.getReader();let raw='';let bytes=0;if(!reader)throw new TenbotError('Request required.');const decoder=new TextDecoder();
  while(true){const {value,done}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>16000){await reader.cancel();throw new TenbotError('Request too large.',413);}raw+=decoder.decode(value,{stream:true});}raw+=decoder.decode();
  const body=JSON.parse(raw);if(!body||typeof body!=='object'||Array.isArray(body))throw new TenbotError('Invalid request.');
- // The existing finite acceptance owner/window also bounds the new reviewed
- // capabilities. Paid accounting remains separate; Qwen fallback cannot make
- // this temporary operational pilot available to other TenDev employees.
+ // Normal rollout and finite acceptance are separate authorities. Neither
+ // grants inference funding or waives current operation/write permissions.
  const modelDirectedReads=(Deno.env.get('TENBOT_MODEL_DIRECTED_READ_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean).includes(origin);
  const acceptance={enabled:Deno.env.get('TENBOT_TERRA_ACCEPTANCE_ENABLED')==='true',ownerIds:(Deno.env.get('TENBOT_TERRA_ACCEPTANCE_OWNER_IDS')||'').split(',').map(s=>s.trim()).filter(Boolean),startsAt:Deno.env.get('TENBOT_TERRA_ACCEPTANCE_STARTS_AT')||'',expiresAt:Deno.env.get('TENBOT_TERRA_ACCEPTANCE_EXPIRES_AT')||''};
  const acceptanceScope={owner:data.user.id,origin,hostedEnabled:Deno.env.get('TENBOT_OPENAI_ENABLED')==='true'&&(Deno.env.get('TENBOT_OPENAI_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean).includes(origin),modelDirectedReads};
  const acceptanceAuthorized=()=>terraAcceptanceSpendingAuthorized(acceptance,acceptanceScope);
+ let actionSessionId='';
+ // Auth.getUser verified the bearer above. This claim is only a selector; SQL
+ // independently checks the live same-owner session at every write boundary.
+ try{actionSessionId=JSON.parse(atob(authorization.replace(/^Bearer\s+/i,'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).session_id??'';}catch{/* Reviewed operations remain unavailable without a valid session. */}
+ const employeeModeAuthorized=normalEmployeeModeAuthorized({enabled:Deno.env.get('TENBOT_EMPLOYEE_MODE_ENABLED')==='true',...acceptanceScope,sessionId:actionSessionId});
+ const reviewedAuthorized=()=>employeeModeAuthorized||acceptanceAuthorized();
  // Password input is confined to this trusted branch before any provider is
- // constructed. An unapplied local migration and default-OFF gate are required.
+ // constructed. Existing database controls and the transport gate default OFF.
  if(body.workspace===TENBOT_ACTION_WORKSPACE){
   const actionService=createClient(url,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{global:{fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
   const callerForToken=(token:string)=>createClient(url,anon,{global:{headers:{Authorization:`Bearer ${token}`},fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
   const metadata={rpc:(name:string,args:Record<string,unknown>)=>['stamp_tenbot_action_password','tenbot_receival_mint_execution_permit'].includes(name)?actionService.rpc(name,args):Promise.resolve({data:null,error:{code:'42501'}})};
-  const trusted=createReviewedActionTransport({enabled:Deno.env.get('TENBOT_REVIEWED_ACTIONS_ENABLED')==='true'&&acceptanceAuthorized(),origin,caller,
+  const trusted=createReviewedActionTransport({enabled:Deno.env.get('TENBOT_REVIEWED_ACTIONS_ENABLED')==='true'&&reviewedAuthorized(),origin,caller,
    password:{authenticate:async()=>({user:data.user,token:authorization.replace(/^Bearer\s+/i,''),caller}),
     createPasswordClient:()=>createClient(url,anon,{global:{fetch:boundedFetch},auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}),callerForToken,service:metadata,
     async beforeExecute(input){
      const actions=createReviewedActionService(input.caller);
-     if(!acceptanceAuthorized()){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
+     if(!reviewedAuthorized()){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
      if(input.operation!=='inventory.create_pending_receivals')return;
      const config={enabled:Deno.env.get('TENBOT_RECEIVAL_PILOT_ENABLED')==='true',executionEnabled:Deno.env.get('TENBOT_RECEIVAL_EXECUTION_ENABLED')==='true',origins:(Deno.env.get('TENBOT_RECEIVAL_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean),employeeIds:(Deno.env.get('TENBOT_RECEIVAL_EMPLOYEE_IDS')||'').split(',').map(s=>s.trim()).filter(Boolean),expiresAt:Deno.env.get('TENBOT_RECEIVAL_PILOT_EXPIRES_AT')||''};
      if(!config.executionEnabled||!hostedReceivalPilotEnabled(config,input.ownerId,origin)){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}
@@ -91,12 +96,8 @@ Deno.serve(async(request:Request)=>{
  // The separate, expiring Product allowance cannot fund the legacy receival
  // runtime above, an employee-selected provider, or a Production-origin call.
  const requestId=acceptanceAuthorized()?crypto.randomUUID():undefined;
- let actionSessionId='';
- // The bearer has already passed Auth.getUser. This claim is only a selector;
- // SQL independently checks the live same-owner Auth session at every boundary.
- try{actionSessionId=JSON.parse(atob(authorization.replace(/^Bearer\s+/i,'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).session_id??'';}catch{/* New operational integration stays unavailable. */}
  const hosted=createHostedTenbot({owner:data.user.id,origin,
-  config:{...openAI,modelDirectedReads,reviewedOperationsEnabled:Deno.env.get('TENBOT_REVIEWED_OPERATIONS_ENABLED')==='true'&&acceptanceAuthorized()},reviewedCaller:caller,actionSessionId,acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
+  config:{...openAI,modelDirectedReads,reviewedOperationsEnabled:Deno.env.get('TENBOT_REVIEWED_OPERATIONS_ENABLED')==='true'&&reviewedAuthorized()},reviewedCaller:caller,actionSessionId,acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
   onDiagnostic:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_acceptance',{requestId,...safeInvestigationDiagnostic(event)});}:undefined,
   onResponseMetadata:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_provider',{requestId,...safeOpenAIResponseMetadata(event)});}:undefined,
   caller:async(n,a)=>await caller.rpc(n,a),service:async(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?await service.rpc(n,a):{data:null,error:{message:'Metering action unavailable'}},qwen:provider,jobTools:createTenbotJobTools(caller)});

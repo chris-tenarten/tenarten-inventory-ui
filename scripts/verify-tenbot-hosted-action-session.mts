@@ -8,7 +8,7 @@ import {createHostedTenbot,type HostedRpc} from '../supabase/functions/_shared/t
 import {createHostedOperations,authorizeHostedOperationHistory,type HostedOperationsDependencies} from '../supabase/functions/_shared/tenbot-hosted-operations';
 import {createReviewedActionService,type ActionCard,type ActionReference,type ActionStatus} from '../supabase/functions/_shared/tenbot-actions';
 import {employeeDisplayValid,type EmployeeDisplay} from '../supabase/functions/_shared/tenbot-employee-history';
-import {emptyUsage,type AgentProvider,type AgentStep,type AgentStepRequest,type JsonValue} from '../supabase/functions/_shared/tenbot-agent';
+import {AgentStepError,emptyUsage,type AgentProvider,type AgentStep,type AgentStepRequest,type JsonValue} from '../supabase/functions/_shared/tenbot-agent';
 import type {InvoiceReceivalSource} from '../src/modules/inventory/invoice-receival-attachments';
 
 const id=(n:number)=>`20000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
@@ -18,6 +18,7 @@ const field=(path:string,value:string,source_ref='employee')=>({path,value,sourc
 const proposal=(document=false):Record<string,JsonValue>=>({customer_company_id:null,customer_contact_id:null,fields:[field('customer_name','Sample Customer'),field('project_name','Atrium')],lines:[{line_type:'product',fields:[field('description','white tread',document?`${sourceId}:L1`:'employee'),field('quantity','2'),field('unit','ea'),field('rate','10')]}]});
 const blob=new Blob(['%PDF-local session source'],{type:'application/pdf'}),sha=[...new Uint8Array(await crypto.subtle.digest('SHA-256',await blob.arrayBuffer()))].map(value=>value.toString(16).padStart(2,'0')).join('');
 type Reply=Record<string,unknown>&{conversationId:string;message:string;actionStatuses?:ActionStatus[];historyTurns?:Array<{question:string;answer:Reply}>;turns?:Array<{question:string;answer:Reply}>};
+type PlanOptions={finalQuestion?:string;failBeforeTools?:boolean;scopeReads?:number};
 function fixture(){
  const f=createContextFixture();f.state.now=Date.now();
  const source:InvoiceReceivalSource={id:sourceId,ownerId:f.owner,filename:'private-specification.pdf',mediaType:'application/pdf',byteSize:blob.size,sha256:sha,storageBucket:'invoice-receival-originals',storagePath:`${f.owner}/${sourceId}/original`,state:'ready',createdAt:'2026-11-02T00:00:00Z',expiresAt:'2099-11-03T00:00:00Z',version:2,verifiedAt:'2026-11-02T00:01:00Z',retainedAt:null,retainedDraftId:null,evidenceSha256:'b'.repeat(64),agentState:{version:'invoice-receival-state.v1',originalSha256:sha,visionSha256:sha,rawLines:['white tread: private supplied specifications'],sourceRows:[],draft:null,traceHash:null}};
@@ -46,18 +47,19 @@ function fixture(){
  const actionCaller={async rpc(name:string,args:Record<string,unknown>){const result=await caller(name,args);return {data:result.data,error:result.error?{code:'unavailable'}:null};}};
  const operationHistory={authorizeAccess:(refs:Parameters<typeof authorizeHostedOperationHistory>[1])=>authorizeHostedOperationHistory({owner:f.owner,caller:reviewedCaller,can},refs),getAction:(reference:ActionReference)=>createReviewedActionService(actionCaller).get(reference)};
  const operations=(input:{question:string;documentIds:string[]})=>createHostedOperations({owner:f.owner,...input,caller:reviewedCaller,service:{async rpc(name,args){const result=await service(name,args);return {data:result.data,error:result.error?{code:'unavailable'}:null};}},sessionId,can});
- function plan(document=false,clarify=false,scopeReads=0,scopeOnly=false){
+ function plan(document=false,clarify=false,scopeReads=0,scopeOnly=false,options:PlanOptions={}){
   const calls=clarify?[]:[...Array.from({length:scopeReads},()=>({name:'describe_assistant_scope',arguments:{}})),...(!scopeOnly?[...(document?[{name:'read_supplied_document',arguments:{source_id:sourceId}}]:[]),{name:'prepare_proposal_draft',arguments:proposal(document)}]:[])];let index=0;
   return (request?:AgentStepRequest):AgentStep=>{
    if(request)requests.push(structuredClone({instructions:request.instructions,history:request.history,tools:request.tools}));
+   if(options.failBeforeTools)throw new AgentStepError('budget-exhausted');
    index++;if(!clarify&&index===1)return {calls:[{id:'discover',name:'discover_capabilities',arguments:{names:[...new Set(calls.map(call=>call.name))]}}],continuation:[],usage:emptyUsage()};
    if(!clarify&&index<=calls.length+1){const call=calls[index-2];return {calls:[{id:'operation'+index,...call,arguments:call.arguments as Record<string,JsonValue>}],continuation:[],usage:emptyUsage()};}
    const text=clarify?'Which Proposal details should I use?':summary;
-   return {calls:[],continuation:[],usage:emptyUsage(),final:{answer:text,observations:clarify?[]:[{text,evidence_ids:['e'+calls.length]}],inferences:[],recommendations:[],questions:clarify?[text]:[],completed_actions:[]}};
+   return {calls:[],continuation:[],usage:emptyUsage(),final:{answer:options.finalQuestion?'Untrusted model completion wording.':text,observations:clarify?[]:[{text,evidence_ids:['e'+calls.length]}],inferences:[],recommendations:[],questions:options.finalQuestion?[options.finalQuestion]:clarify?[text]:[],completed_actions:[]}};
   };
  }
- function session(document=false,clarify=false){
-  const step=plan(document,clarify),provider:AgentProvider={name:'local injected session provider',model:'offline-scripted',async step(request){return step(request);}};
+ function session(document=false,clarify=false,options:PlanOptions={}){
+  const step=plan(document,clarify,options.scopeReads,undefined,options),provider:AgentProvider={name:'local injected session provider',model:'offline-scripted',async step(request){return step(request);}};
   return createTenbotAgentSessions({readOnlyHosted:true,modelDirectedReads:true,mode:'openai',sessionStore:createTenbotAgentHistoryStore(caller,service,{persistent:true}),can:async()=>f.state.allowed,jobTools:()=>f.state.jobTools!,provider:()=>provider,now:()=>f.state.now,reviewedOperations:operations,operationHistory});
  }
  function hosted(options:{enabled?:boolean;origin?:string;document?:boolean;clarify?:boolean;scopeReads?:number;scopeOnly?:boolean}={}){
@@ -72,7 +74,7 @@ function fixture(){
 const checks:string[]=[];
 async function check(name:string,run:()=>unknown|Promise<unknown>){await run();checks.push(name);}
 await check('ordinary persistent session publishes trusted statuses and hydrates exact references in current answer/history',async()=>{
- const f=fixture(),reply=await f.session()({action:'ask',question},f.owner) as Reply;assert.equal(reply.message,summary);assert.equal(reply.actionStatuses?.length,1);assert.equal(reply.actionStatuses?.[0].card.contract,'tenbot.actions.v1');
+ const f=fixture(),reply=await f.session()({action:'ask',question},f.owner) as Reply;assert(reply.message.startsWith(summary));assert(reply.message.includes('existing TenOps password'));assert.equal(reply.actionStatuses?.length,1);assert.equal(reply.actionStatuses?.[0].card.contract,'tenbot.actions.v1');
  assert.equal(reply.historyTurns?.at(-1)?.answer.actionStatuses?.length,1);const before=f.requests.length;
  const history=await f.session()({action:'history',conversationId:reply.conversationId},f.owner) as Reply;assert.equal(history.turns?.at(-1)?.answer.actionStatuses?.length,1);assert.equal(f.requests.length,before);
  const stored=f.archives.get(reply.conversationId)!.at(-1)!.turn as unknown as EmployeeDisplay;assert(employeeDisplayValid(stored));assert.equal(stored.actionReferences?.length,1);assert.deepEqual(stored.operationAccess,{documentIds:[],proposalAccess:true});
@@ -89,7 +91,7 @@ await check('hosted operations can finish after six sequential tool rounds while
  // Reproduce the six successful tool-round shape, using the existing actual
  // scope/document/Proposal adapters and a free scripted provider transport.
  const f=fixture(),reply=await f.hosted({document:true,scopeReads:3})({action:'ask',question,documentIds:[sourceId]}) as Reply;
- assert.equal(f.state.providerCalls,7);assert.equal(reply.actionStatuses?.length,1);assert.equal(reply.message,summary);assert.equal(f.published.length,1);
+ assert.equal(f.state.providerCalls,7);assert.equal(reply.actionStatuses?.length,1);assert(reply.message.startsWith(summary));assert.equal(f.published.length,1);
  const requests=f.requests as Array<{max_output_tokens:number}>;
  assert.equal(requests[0].max_output_tokens,640);assert(requests.slice(1).every(request=>request.max_output_tokens===1800));
  for(const enabled of [true,false]){
@@ -97,6 +99,26 @@ await check('hosted operations can finish after six sequential tool rounds while
   assert.equal(bounded.state.providerCalls,enabled?8:6);assert.equal(bounded.published.length,0);assert.equal(stopped.actionStatuses,undefined);
   assert((bounded.requests as Array<{max_output_tokens:number}>).every(request=>request.max_output_tokens===640));
  }
+});
+await check('prepared review uses only trusted card facts even when model clarification wording fails read publication',async()=>{
+ const f=fixture(),modelQuestion='Before I continue, is that okay?',reply=await f.session(false,false,{finalQuestion:modelQuestion})({action:'ask',question},f.owner) as Reply;
+ assert.equal(reply.actionStatuses?.length,1);assert.equal(f.published.length,1);assert(reply.message.startsWith(reply.actionStatuses![0].card.review.summary));assert(reply.message.includes('Nothing has been saved or issued.'));assert(reply.message.includes('existing TenOps password'));assert(!reply.message.includes(modelQuestion));assert(!reply.message.includes('Untrusted model'));
+ const stored=f.archives.get(reply.conversationId)!.at(-1)!.turn as unknown as EmployeeDisplay;assert.equal(stored.actionReferences?.[0].id,reply.actionStatuses![0].card.reference.id);
+});
+await check('clarification without preparation remains a question and unsafe clarification cannot fabricate a card',async()=>{
+ const f=fixture(),reply=await f.session(false,true)({action:'ask',question:'Help me prepare a Proposal'},f.owner) as Reply;
+ assert.equal(reply.message,'Which Proposal details should I use?');assert.equal(reply.actionStatuses,undefined);assert.equal(f.published.length,0);
+ const unsafe=fixture(),stopped=await unsafe.session(false,true,{finalQuestion:'Before I continue, is that okay?'})({action:'ask',question:'Help me prepare a Proposal'},unsafe.owner) as Reply;
+ assert.equal(stopped.message,'I couldn\u2019t finish this request. Nothing has been saved. Please try again.');assert.equal(stopped.actionStatuses,undefined);assert.equal(unsafe.published.length,0);
+});
+await check('partial preparation and allowance exhaustion recover truthfully, publish no card and keep private retry history',async()=>{
+ const f=fixture(),reply=await f.session(true,false,{scopeReads:5})({action:'ask',question,documentIds:[sourceId]},f.owner) as Reply;
+ assert.equal(f.requests.length,8);assert(reply.message.includes('I read the supplied document'));assert(reply.message.includes('preparing that Proposal'));assert(reply.message.includes('Nothing has been saved or issued.'));assert(!reply.message.includes('Job'));assert.equal(reply.actionStatuses,undefined);assert.equal(f.published.length,0);
+ const stored=f.archives.get(reply.conversationId)!.at(-1)!.turn as unknown as EmployeeDisplay;assert(employeeDisplayValid(stored));assert.equal(stored.question,question);assert.equal(stored.actionReferences,undefined);assert.deepEqual(stored.operationAccess,{documentIds:[sourceId],proposalAccess:true});
+ const before=f.requests.length,history=await f.session()({action:'history',conversationId:reply.conversationId},f.owner) as Reply;assert.equal(history.turns?.at(-1)?.answer.message,reply.message);assert.equal(f.requests.length,before);
+ f.source.state='deleted';const redacted=await f.session()({action:'history',conversationId:reply.conversationId},f.owner) as Reply;assert.equal(redacted.turns?.at(-1)?.question,'Previous private request');assert.equal(redacted.turns?.at(-1)?.answer.message,'');
+ const noAttempt=fixture(),exhausted=await noAttempt.session(false,false,{failBeforeTools:true})({action:'ask',question},noAttempt.owner) as Reply;
+ assert.equal(exhausted.message,'I couldn\u2019t finish this request. Nothing has been saved. Please try again.');assert.equal(exhausted.actionStatuses,undefined);assert.equal(noAttempt.published.length,0);assert.equal(noAttempt.requests.length,1);assert.equal(noAttempt.archives.get(exhausted.conversationId)!.at(-1)!.turn.question,question);
 });
 await check('private original revocation redacts the saved action and question, blocks later retransmission and needs no inference for history',async()=>{
  const f=fixture(),reply=await f.session(true)({action:'ask',question,documentIds:[sourceId]},f.owner) as Reply;assert.equal(reply.actionStatuses?.length,1);f.source.state='deleted';const before=f.requests.length;

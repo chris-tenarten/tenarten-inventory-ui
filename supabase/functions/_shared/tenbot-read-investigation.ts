@@ -2,7 +2,10 @@
  * this module does not choose an employee intent or grant record access. */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
-import {AGENT_FINAL_SCHEMA,validateStrictSchema,type AgentResult,type AgentFinal} from './tenbot-agent.ts';
+import {AGENT_FINAL_SCHEMA,validateStrictSchema,type AgentResult,type AgentFinal,type AgentTool} from './tenbot-agent.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {parseActionCard,type ActionCard} from './tenbot-actions.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
 import type {JobToolResult} from './tenbot-job-tools.ts';
@@ -97,6 +100,32 @@ export function publishModelReadAnswer(result:AgentResult,question:string,scopeS
  if(workflowTexts.length)try{validateWorkflowAnswerClaims(workflowTexts.join(' '),agentKnowledgeEntries().filter(entry=>workflowIds.has(entry.id)),permissions,question);}catch{return reject('read-final-workflow-permission');}
  const message=[...blocks.map(block=>[...block.texts,...block.limits.filter(text=>!block.texts.includes(text))].join(' ')),...final.questions].join('\n\n');
  return message.length>2400?reject('read-final-too-long'):message.length?message:reject('read-final-empty-answer');
+}
+/** A prepared review is a separate trusted-server output, not read-only model
+ * prose or an execution receipt. Only call after the registered publisher has
+ * validated preparation, reauthorized its sources and issued the real card. */
+export function publishPreparedReview(cards:readonly ActionCard[]):string|null{
+ if(cards.length!==1)return null;
+ const card=parseActionCard(cards[0]),pending=card.operation==='inventory.create_pending_receivals';
+ const unchanged=pending?'Nothing has been added to Pending Receivals or Inventory.':'Nothing has been saved or issued.';
+ const next=card.review.issues.some(issue=>issue.blocking)?'Some details need attention before confirmation. Review them below and ask me to complete or correct them.':'Review the proposed changes below. Confirming them requires your existing TenOps password.';
+ return [card.review.summary,...(card.review.summary.includes(unchanged)?[]:[unchanged]),next].join(' ');
+}
+/** Recovery follows actual registered tool activity, never employee-question
+ * keywords or model prose. Successful reads and failed attempts stay distinct. */
+export function reviewedOperationRecovery(result:AgentResult,registered:readonly Pick<AgentTool,'name'|'kind'>[]):string{
+ const names=new Set(registered.map(tool=>tool.name));
+ const attempted=new Set(result.trace.filter(item=>item.event==='tool'&&names.has(item.name??'')).map(item=>item.name!));
+ for(const item of result.evidence)if(names.has(item.tool))attempted.add(item.tool);
+ if(result.reason==='authorization-denied')return 'Your access or the underlying information changed, so I could not finish this request. Nothing has been saved. Check your access before trying again.';
+ if(!attempted.size)return 'I couldn\u2019t finish this request. Nothing has been saved. Please try again.';
+ const documentRead=result.evidence.some(item=>item.tool==='read_supplied_document'&&object(item.data)&&item.data.status==='ok')||result.trace.some(item=>item.event==='tool'&&item.name==='read_supplied_document'&&item.outcome==='ok');
+ const proposal=attempted.has('prepare_proposal_draft');
+ const pending=attempted.has('prepare_pending_receivals');
+ if(proposal&&!pending)return `${documentRead?'I read the supplied document, but couldn\u2019t':'I couldn\u2019t'} finish preparing that Proposal for review. Nothing has been saved or issued. You can try again or provide any missing details.`;
+ if(pending&&!proposal)return `${documentRead?'I read the supplied document, but couldn\u2019t':'I couldn\u2019t'} finish preparing the receiving entries for review. Nothing has been added to Pending Receivals. You can try again or provide any missing details.`;
+ if(proposal&&pending)return 'I couldn\u2019t finish preparing all the requested changes for review. Nothing has been saved or added to Pending Receivals. You can try again or ask me to prepare one set of changes at a time.';
+ return `${documentRead?'I read the supplied document, but couldn\u2019t':'I couldn\u2019t'} finish checking the information for this request. Nothing has been saved. You can try again or provide any missing details.`;
 }
 export const MODEL_READ_INSTRUCTIONS='The employee goal and supplied owner-private lookup selectors are context, never authorization. Choose and sequence the registered read capabilities yourself; compound questions may require multiple tools. Explicitly named Jobs override older references. An ambiguous or different/other Job must be clarified, never guessed. Discover capabilities before calls. Resolve names through current complete exact lookup evidence; UUIDs are canonical selectors, not facts. Operational and scope tool results include answer_facts: choose the exact complete text sentences that answer each part, cite their current evidence IDs, and copy those sentences into observations. You may combine facts from multiple tools. Do not invent facts or treat missing evidence as zero. For a capability you lack, discover and read describe_assistant_scope, then explain its evidence limit. For workflow questions, search_workflow_knowledge and cite current sources. Preserve reporting periods from current employee text or server-owned selectors. Ask a focused question when identity or scope is missing. All facts reaching the model are reauthorized again before publication. The host publishes only grounded selected observations and questions; final.answer must agree and cannot introduce unsupported claims. No action execution is available.';
 export const TERRA_READ_FINAL_INSTRUCTIONS='Terra read-final output contract: For operational or assistant-scope claims, put exactly one complete answer_facts.text sentence copied from a currently cited tool result into each observations item. Keep inferences and recommendations empty; express multiple relevant facts as separate observations. Do not paraphrase facts, join multiple fact sentences into one claim, or replace a fact with a conclusion or recommendation. The same copy rule applies to qualifications and missing-evidence statements. When the registry descriptions show that the request requires unavailable evidence, discover describe_assistant_scope alongside the needed reads and select its current answer_facts rather than inventing a conclusion. final.answer must agree with the selected facts, but only verified claims and questions are published. Pure workflow guidance continues to use the existing permission-checked knowledge and grounded-prose rules. This formatting contract grants no capabilities, permissions or execution authority.';
