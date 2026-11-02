@@ -994,22 +994,6 @@
     "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-openai.ts",
-    "blob": "9eee1e6256f5e88168eeafea1be1f93e7f50f53d",
-    "sha256": "15beeaa80b55725f6984616d58fbc9253834ecc12939991250d20934327f846a",
-    "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
-    "scope": "tendev-preparation",
-    "receipt": {
-      "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
-      "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
-      "heading": "## Accepted candidate source review — restricted TenDev preparation"
-    },
-    "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-receival-cleanup.ts",
     "blob": "703247d7ef77bba67a96c71f65491dde99ceb0ad",
     "sha256": "ddfb957d32f1be4f3b2f89e730d6f0333542d6c736d099d99db6d281f1a10187",
@@ -2226,21 +2210,6 @@
     "classification": "candidate-source",
     "authority": "technical-review",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-hosted.ts",
-    "blob": "26250d5f139843af6f415f945b91258d22e1bc69",
-    "sha256": "73b3b8934d5d14862af19be785c182cc3198d7b7294859ca289286e20287cb09",
-    "reviewedCandidate": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
-    "scope": "tendev-preparation",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-terra-acceptance-source-proof.md",
-      "revision": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
-      "heading": "## Candidate technical source review — closed TenDev Terra acceptance gate"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "technical-review",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-terra-acceptance.ts",
     "blob": "66537cbccc1ecb0713ab4f22e3327f413402004d",
     "sha256": "d531331f7c6e1422aed0698aeb1cb0f233a19d6821b5724bb75d9d2ab3ef1c02",
@@ -2256,15 +2225,45 @@
     "classification": "candidate-source",
     "authority": "technical-review",
     "kind": "runtime",
-    "path": "supabase/functions/tenbot/index.ts",
-    "blob": "7c6d9f227858abb4e2aba9b437b53884200dde25",
-    "sha256": "f34df657c51226bdc2f675c187bc4b2787d6dbb7de914706dead6aef6294cdb1",
-    "reviewedCandidate": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+    "path": "supabase/functions/_shared/tenbot-hosted.ts",
+    "blob": "86fa2c7461ad9d0122e2b9d3f5a77458438d7233",
+    "sha256": "c0e002558291bbd21a53bc31a99d039b104cae48bcd60492f51e4585923c7683",
+    "reviewedCandidate": "239ac4c2903db4884b74a044d37af53379da8194",
     "scope": "tendev-preparation",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-terra-acceptance-source-proof.md",
-      "revision": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
-      "heading": "## Candidate technical source review — closed TenDev Terra acceptance gate"
+      "path": "docs/project-memory/2026-11-02-tenbot-terra-provider-metadata-source-proof.md",
+      "revision": "239ac4c2903db4884b74a044d37af53379da8194",
+      "heading": "## Candidate technical source review — bounded Terra provider metadata"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-openai.ts",
+    "blob": "4782daac3e0c38176a46f3bc0c4fede5a03c9d64",
+    "sha256": "c626dc4f65868eb0ae2807f7d6bdc16c6c6ecf27c03e82e2209da07abafb745f",
+    "reviewedCandidate": "239ac4c2903db4884b74a044d37af53379da8194",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-terra-provider-metadata-source-proof.md",
+      "revision": "239ac4c2903db4884b74a044d37af53379da8194",
+      "heading": "## Candidate technical source review — bounded Terra provider metadata"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/tenbot/index.ts",
+    "blob": "de695667ca741b00e3a36f028363f9ae1892fbf8",
+    "sha256": "eb7d8b7080cc0b43d5b73d0732480f429ee7caad25582e589a0324faf291fc78",
+    "reviewedCandidate": "239ac4c2903db4884b74a044d37af53379da8194",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-terra-provider-metadata-source-proof.md",
+      "revision": "239ac4c2903db4884b74a044d37af53379da8194",
+      "heading": "## Candidate technical source review — bounded Terra provider metadata"
     }
   }
 ]
