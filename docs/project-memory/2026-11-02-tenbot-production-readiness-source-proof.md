@@ -67,7 +67,9 @@ Applied filenames: 20261102120000_tenbot_reviewed_actions.sql, 20261102130000_te
 
 ## Accepted record source review — preserved Messaging and Inventory contracts
 
-Chris accepts the integrated Workspace, Messaging continuity, Proposal completion and Pending completion represented by deployed afb549d157453b767e726313bcea87dc4e43f2ed, including existing evidence limits. Business meaning, permission policy, lifecycle and effects are unchanged from the underlying Messaging and Inventory contracts. The selected changes share one assistant conversation/composer, render trusted reviewed action cards and refresh the canonical Pending queue after its existing completion event. Employee/group participation, private content authorization, business capabilities, stock/receive/undo/cancel behavior and existing canonical services remain unchanged.
+Chris accepts the integrated Workspace, Messaging continuity, Proposal completion and Pending completion represented by deployed afb549d157453b767e726313bcea87dc4e43f2ed, including existing evidence limits.
+
+Business meaning, permission policy, lifecycle and effects are unchanged from the underlying Messaging and Inventory contracts. The selected changes share one assistant conversation/composer, render trusted reviewed action cards and refresh the canonical Pending queue after its existing completion event. Employee/group participation, private content authorization, business capabilities, stock/receive/undo/cancel behavior and existing canonical services remain unchanged.
 
 | Record | Path | Original semantic blob | Selected blob | Record digest |
 |---|---|---|---|---|
