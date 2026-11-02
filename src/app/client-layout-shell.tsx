@@ -29,6 +29,8 @@ import { useAccountPreferences } from '@/lib/account-preferences';
 import AccountAccessPanel from '@/components/AccountAccessPanel';
 import AccountNotifications, { type WelcomeNotificationStatus } from '@/components/AccountNotifications';
 import GlobalMessaging from '@/components/GlobalMessaging';
+import GlobalTenbot from '@/components/GlobalTenbot';
+import {TenbotConversationProvider} from '@/modules/tenbot/TenbotWorkspace';
 import WelcomeHero from '@/components/WelcomeHero';
 import PushNotificationEntry from '@/components/PushNotificationEntry';
 import { toolboxMenuSections } from '@/components/ToolboxLauncher';
@@ -486,7 +488,10 @@ export default function ClientLayoutShell({
                 <div className="flex shrink-0 items-center">
                   <span aria-hidden="true" className="mx-1 h-5 border-l border-slate-300 sm:mx-2" />
                   <span className="desktop-domain-nav"><MyWorkNav pathname={pathname} /></span>
-                  <GlobalMessaging key={auth.profile?.userId??'signed-out'} />
+                  <TenbotConversationProvider>
+                    <GlobalTenbot />
+                    <GlobalMessaging key={auth.profile?.userId??'signed-out'} />
+                  </TenbotConversationProvider>
                   <AccountNotifications key={`notifications:${auth.profile?.userId ?? "signed-out"}`} onWelcomeChange={setWelcomeStatus} onOpen={(notification) => openProductionJob(notification.job_id, `job-updates:${notification.update_id}`)} />
                   {auth.isAuthenticated && auth.profile?.isActive ? <div ref={accountMenuRef} data-account-identity className="relative">
                     <button

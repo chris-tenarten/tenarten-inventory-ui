@@ -1,0 +1,78 @@
+{
+  "passed": true,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "readOnly": true,
+  "protectedStockTransactionsProfilesRolesAndProposalAccessPreserved": true,
+  "rolesChanged": false,
+  "migrationsApplied": 0,
+  "providerCalls": 0,
+  "paidCostUsd": 0,
+  "sharedProjectWrites": 0,
+  "state": {
+    "caps": "6f077d632fd64655c4523c14cfe5fd05",
+    "stock": "fd40258c7ba30c10250877be0e68bf93",
+    "pending": [
+      {
+        "id": "733564a4-b4e0-48f7-96c0-b1ff578ed8c0",
+        "unit": "Bag",
+        "status": "pending",
+        "orderedBy": "Synthetic Integration Employee",
+        "quantityExpected": 2,
+        "quantityReceived": 0
+      }
+    ],
+    "profiles": "24b420e90829bffe05ee0b8980fe96cf",
+    "checkedAt": "2026-11-02T19:23:41.520569+00:00",
+    "proposals": [
+      {
+        "id": "523b2402-59f5-4b0c-a012-07486bb5ef41",
+        "jobId": null,
+        "total": 25,
+        "status": "draft",
+        "project": "Synthetic Integration Lobby"
+      },
+      {
+        "id": "672adc49-7976-46a6-92b3-d88124307c31",
+        "jobId": null,
+        "total": 25,
+        "status": "draft",
+        "project": "Synthetic Integration Lobby"
+      }
+    ],
+    "transactions": 0,
+    "faultTriggers": 0,
+    "isolatedPilot": {
+      "enabled": true,
+      "expiresAt": "2026-11-02T20:11:18.427+00:00"
+    },
+    "pendingAction": {
+      "id": "7dbb272d-d6f5-4192-9574-3d8dc51457ee",
+      "failed": false,
+      "actualIds": [
+        "733564a4-b4e0-48f7-96c0-b1ff578ed8c0"
+      ],
+      "completed": true,
+      "dispatchCount": 1,
+      "sessionsDiffer": true,
+      "originalRetained": true,
+      "documentClaimCount": 1,
+      "executionAuditCount": 1,
+      "executionSessionLive": true
+    },
+    "proposalAccess": [],
+    "failedTaxAction": {
+      "id": "012e2eaa-0a0e-4ad6-bdf3-08318b44ed83",
+      "failed": true,
+      "completed": false,
+      "hasResult": false,
+      "failureCode": "business_rejected"
+    },
+    "isolatedActionControl": {
+      "proposal": true,
+      "receivals": true
+    },
+    "isolatedEnrollmentCount": 1,
+    "isolatedExecutionEnabled": true
+  },
+  "manualReviewControls": "Existing isolated controls remain finite ON until the recorded expiry, and startup baseline is restored on shutdown/expiry; shared controls are untouched."
+}

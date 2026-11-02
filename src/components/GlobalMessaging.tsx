@@ -12,7 +12,7 @@ import { MessagingAwareness } from "@/modules/my-work/messaging/awareness";
 import { InvalidatedRead } from "@/lib/coalesced-read";
 import type { WorkCollaborator } from "@/modules/my-work/types";
 import { TenbotAvatar } from "@/modules/tenbot/TenbotAvatar";
-import { OPEN_TENBOT_EVENT } from "@/modules/tenbot/events";
+import { OPEN_TENBOT_EVENT, OPEN_TENBOT_WORKSPACE_EVENT, MESSAGING_OPENED_EVENT } from "@/modules/tenbot/events";
 import "@/modules/tenbot/tenbot.css";
 
 const InboxDialog = dynamic(() => import("@/modules/my-work/InboxDialog"), { ssr: false });
@@ -76,9 +76,9 @@ export default function GlobalMessaging(){
       setCollaborators(people.filter(user=>user.userId!==currentUserId));setWorkspaceOwner(currentUserId);onReady();
     }).catch(caught=>{if(generation===ownerGeneration.current&&!(caught instanceof InvalidatedRead))setError(caught instanceof Error?caught.message:"Unable to load Messaging.");});
   },[awareness,currentUserId]);
-  const openModal=useCallback((userId="")=>{setInitialUserId(userId);setSidebarExpanded(false);setModalOpen(true);setMenuOpen(false);prepareWorkspace(()=>{});},[prepareWorkspace]);
+  const openModal=useCallback((userId="")=>{window.dispatchEvent(new Event(MESSAGING_OPENED_EVENT));setInitialUserId(userId);setSidebarExpanded(false);setModalOpen(true);setMenuOpen(false);prepareWorkspace(()=>{});},[prepareWorkspace]);
   const openAssistant=useCallback(()=>{if(canAskTenbot)openModal(TENOPS_SYSTEM_INBOX_USER_ID);},[canAskTenbot,openModal]);
-  const expandSidebar=()=>{setInitialUserId("");setModalOpen(false);setMenuOpen(false);setSidebarExpanded(true);prepareWorkspace(()=>{});};
+  const expandSidebar=()=>{window.dispatchEvent(new Event(MESSAGING_OPENED_EVENT));setInitialUserId("");setModalOpen(false);setMenuOpen(false);setSidebarExpanded(true);prepareWorkspace(()=>{});};
 
   const conversations=useMemo(()=>tenbotConversations(recentMessages,canAskTenbot).filter(item=>!canAskTenbot||!isTenOpsSystemInboxUser(item.userId)).map(item=>({...item,isSystem:isTenOpsSystemInboxUser(item.userId)})),[recentMessages,canAskTenbot]);
 
@@ -99,6 +99,7 @@ export default function GlobalMessaging(){
   useEffect(()=>{if(currentUserId&&(modalOpen||sidebarExpanded)&&!modalReady)prepareWorkspace(()=>{});},[currentUserId,modalOpen,sidebarExpanded,modalReady,prepareWorkspace]);
   useEffect(()=>{if(!currentUserId)return;let joined=false;let timer:ReturnType<typeof setTimeout>|undefined;const flush=()=>{awareness.invalidateOverview();window.dispatchEvent(new Event("tenops:messaging-changed"));if(inboxVisibleRef.current)return;if(awarenessVisibleRef.current)loadRecent(true);else refreshUnread();};const refresh=()=>{clearTimeout(timer);timer=setTimeout(flush,100);};const channel=supabase.channel(`global-messaging-badge:${currentUserId}`).on("postgres_changes",{event:"INSERT",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${currentUserId}`},refresh).on("postgres_changes",{event:"UPDATE",schema:"public",table:"my_work_messages",filter:`recipient_user_id=eq.${currentUserId}`},refresh).subscribe(status=>{if(status==="SUBSCRIBED"){if(joined)refresh();joined=true;}});return()=>{clearTimeout(timer);void supabase.removeChannel(channel);};},[awareness,currentUserId,loadRecent,refreshUnread]);
   useEffect(()=>{const handleOpen=(event:Event)=>openModal((event as CustomEvent<{userId?:string}>).detail?.userId??"");window.addEventListener("tenops:open-inbox",handleOpen);return()=>window.removeEventListener("tenops:open-inbox",handleOpen);},[openModal]);
+  useEffect(()=>{const close=()=>{setModalOpen(false);setSidebarExpanded(false);setMenuOpen(false);};window.addEventListener(OPEN_TENBOT_WORKSPACE_EVENT,close);return()=>window.removeEventListener(OPEN_TENBOT_WORKSPACE_EVENT,close);},[]);
   useEffect(()=>{window.addEventListener(OPEN_TENBOT_EVENT,openAssistant);return()=>window.removeEventListener(OPEN_TENBOT_EVENT,openAssistant);},[openAssistant]);
   useEffect(()=>{if(!menuOpen)return;const pointer=(event:PointerEvent)=>{if(!menuRef.current?.contains(event.target as Node))setMenuOpen(false);};const key=(event:KeyboardEvent)=>{if(event.key==="Escape")setMenuOpen(false);};document.addEventListener("pointerdown",pointer);document.addEventListener("keydown",key);return()=>{document.removeEventListener("pointerdown",pointer);document.removeEventListener("keydown",key);};},[menuOpen]);
   useEffect(()=>{if(!auth.profile?.isActive)return;const params=new URLSearchParams(window.location.search);if(params.get("inbox")!=="1"&&!params.get("inboxUserId"))return;const target=params.get("inboxUserId")??"";const timer=window.setTimeout(()=>openModal(target),0);params.delete("inbox");params.delete("inboxUserId");const query=params.toString();window.history.replaceState({},"",`${window.location.pathname}${query?`?${query}`:""}${window.location.hash}`);return()=>window.clearTimeout(timer);},[auth.profile?.isActive,openModal,pathname]);

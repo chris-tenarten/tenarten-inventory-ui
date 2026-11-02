@@ -188,7 +188,7 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
     proposal_date:currentDate((deps.now??(()=>new Date()))()),customer_name:'',customer_address:'',customer_contact:'',
     customer_street:'',customer_city:'',customer_state:'',customer_postal_code:'',customer_contact_name:'',customer_office_phone:'',customer_mobile_phone:'',customer_email:'',
     project_name:'',project_number:'',project_location:'',side_mark:'',sales_rep:'House',terms:'50% Dep / Net 30',valid_days:30,
-    requested_delivery:'',fob:'Carrollton, TX',destination_zip:'',tax_county:'',tax_enabled:false,tax_rate:null,
+    requested_delivery:'',fob:'Carrollton, TX',destination_zip:'',tax_county:'',tax_enabled:false,tax_rate:'0',
     submitted_by_name:'Anthony Iorio',submitted_by_phone:'469-491-7002',submitted_by_email:'sales@tenartenterrazzo.com',
     notes:'',disclaimer_snapshot:PROPOSAL_DISCLAIMER,formula_snapshot:'',proposal_field_sources:{},freight_estimate:null,
     preliminary_drawings_attached:false,crating_included:false,cut_tickets_included:false,field_dimensioning_excluded:false,

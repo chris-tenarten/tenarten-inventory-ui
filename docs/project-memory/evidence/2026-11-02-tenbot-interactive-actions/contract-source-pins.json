@@ -1,0 +1,38 @@
+{
+  "inspectedAt": "2026-11-02T18:27:42.486214+00:00",
+  "workspaceBase": "5cb71fb52ffe784715b9ae5d8bb95a14ac6df395",
+  "backendAcceptedCommit": "665cbb3751c136e9872d22a48b68fe26fbeaa3aa",
+  "backendObservedHead": "665cbb3751c136e9872d22a48b68fe26fbeaa3aa",
+  "concurrentChangesAccepted": false,
+  "scope": "read-only source inspection; no backend edits/hosted calls",
+  "pins": [
+    {
+      "path": "supabase/functions/_shared/tenbot-actions.ts",
+      "acceptedCommit": "665cbb3751c136e9872d22a48b68fe26fbeaa3aa",
+      "acceptedSha256": "8d2ac31a0a5d6e704dbaf1c6c4acf569056cf9f76153bc04398db385d7614a8f",
+      "observedConcurrentSha256": "bd90cc2f060c9b03aae9b306dc56b5d33fd01440b3ff56480c120deeaae3129e",
+      "changedFromAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-action-auth.ts",
+      "acceptedCommit": "665cbb3751c136e9872d22a48b68fe26fbeaa3aa",
+      "acceptedSha256": "9597743e25e08d05ae148ff4870b2006d48cee0d699327692bb548d013e027eb",
+      "observedConcurrentSha256": "49d073e3e41968c76c3d89ec805298178ec563388afa97057a99b9198b98c3e3",
+      "changedFromAccepted": true
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-action-transport.ts",
+      "acceptedCommit": "665cbb3751c136e9872d22a48b68fe26fbeaa3aa",
+      "acceptedSha256": "8a85c17ccf7886c3bca0a7e267f876501d5629a57ec3d18d9bf5cd0964629edf",
+      "observedConcurrentSha256": "8a85c17ccf7886c3bca0a7e267f876501d5629a57ec3d18d9bf5cd0964629edf",
+      "changedFromAccepted": false
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-employee-history.ts",
+      "acceptedCommit": "665cbb3751c136e9872d22a48b68fe26fbeaa3aa",
+      "acceptedSha256": "f4d4661292b2f2e3c6dfc17eb29cbef9e120d3142538b3e09b5233101c7c5981",
+      "observedConcurrentSha256": "6441f4cd2a8c573b3e1db8c552adca9626f002ce9c2e386294cf275bdb588baf",
+      "changedFromAccepted": true
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "checkedAt": "2026-11-02T19:24:44.882555+00:00",
+  "status": "local integration validation; Product review pending",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "backendInput": "afa4bfa47319f5a74101e202a1b675ecf471a1b3",
+  "workspaceInput": "262c25f714592edfa8834053b8c1f76112bbc37a",
+  "focusedChecks": {
+    "actionAdapter": {
+      "passed": true,
+      "groups": 16
+    },
+    "installedSdkAuthStorage": {
+      "passed": true,
+      "groups": 6,
+      "authHttp": "in-process doubles",
+      "safeInternalRefreshDeferredRejectionsObserved": 1
+    },
+    "proposalOperations": {
+      "passed": true,
+      "groups": 19
+    }
+  },
+  "projectTypeScript": {
+    "passed": true,
+    "command": "npx tsc --noEmit --incremental false"
+  },
+  "targetedEslint": {
+    "passed": true,
+    "backendExplicitNoIgnore": true
+  },
+  "diffWhitespace": {
+    "passed": true
+  },
+  "brandingStructural": {
+    "passed": true
+  },
+  "productionWebpackBuild": {
+    "passed": true,
+    "receipt": "build.json",
+    "pages": 25,
+    "credentialFreeLoopbackConfiguration": true
+  },
+  "reuse": {
+    "backendContinuationOfflineGroups": 36,
+    "realIsolatedDatabaseGroups": 12,
+    "workspaceActionBrowserGroups": 12,
+    "workspaceAdjacentBrowserGroups": 10,
+    "repeated": false
+  },
+  "independentSourceSecurityReview": {
+    "passed": true,
+    "focus": "trusted publication, committed receipt parsing, current account/access and atomic SDK storage handoff; no duplicate tests"
+  },
+  "providerCalls": 0,
+  "actualModelTokens": 0,
+  "paidCostUsd": 0,
+  "paidReservationsUsd": 0,
+  "sharedProjectWrites": 0,
+  "newMigrationsApplied": 0,
+  "push": false,
+  "deployment": false,
+  "preexistingDirtyPreserved": true,
+  "preexistingDirtyPathsExcluded": [
+    "docs/README.md",
+    "docs/project-memory/2026-11-02-tenbot-limited-terra-evaluation.md",
+    "docs/project-memory/CURRENT_STATE.md",
+    "docs/project/ENGINEERING_EXECUTION_STANDARD.md",
+    "scripts/support/tenbot-scoped-evaluation-budget.mts",
+    "scripts/verify-tenbot-agent.mts",
+    "scripts/verify-tenbot-scoped-evaluation-budget.mts",
+    "supabase/functions/_shared/tenbot-agent.ts"
+  ],
+  "taskPathsBeforeFinalEvidence": [
+    "docs/project-memory/2026-11-02-tenbot-global-workspace.md",
+    "docs/project-memory/2026-11-02-tenbot-reviewed-actions.md",
+    "docs/project-memory/2026-11-02-tenbot-workspace-actions.md",
+    "docs/project-memory/2026-11-02-tenbot-workspace-integration.md",
+    "docs/project-memory/evidence/2026-11-02-tenbot-global-workspace/browser.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-global-workspace/desktop.png",
+    "docs/project-memory/evidence/2026-11-02-tenbot-global-workspace/expanded.png",
+    "docs/project-memory/evidence/2026-11-02-tenbot-global-workspace/inline-preview.png",
+    "docs/project-memory/evidence/2026-11-02-tenbot-global-workspace/mobile.png",
+    "docs/project-memory/evidence/2026-11-02-tenbot-global-workspace/superseded-browser-checkpoint.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-interactive-actions/actions-history-receipt.png",
+    "docs/project-memory/evidence/2026-11-02-tenbot-interactive-actions/actions-mobile.png",
+    "docs/project-memory/evidence/2026-11-02-tenbot-interactive-actions/actions-pending.png",
+    "docs/project-memory/evidence/2026-11-02-tenbot-interactive-actions/browser.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-interactive-actions/contract-source-pins.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-interactive-actions/superseded-browser-checkpoint.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-interactive-actions/validation.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-interactive-actions/workspace-regression.json",
+    "docs/schemas/README.md",
+    "scripts/start-tenbot-integrated-review.mts",
+    "scripts/support/tenbot-actions-browser.mjs",
+    "scripts/support/tenbot-actions-isolated-review.mts",
+    "scripts/verify-tenbot-action-adapter.mts",
+    "scripts/verify-tenbot-action-auth-storage.mts",
+    "scripts/verify-tenbot-capability-requests.mts",
+    "scripts/verify-tenbot-global-workspace-browser.mjs",
+    "scripts/verify-tenbot-integrated-actions-browser.mts",
+    "scripts/verify-tenbot-proposal-operations.mts",
+    "src/app/client-layout-shell.tsx",
+    "src/app/layout.tsx",
+    "src/components/GlobalMessaging.tsx",
+    "src/components/GlobalTenbot.tsx",
+    "src/lib/auth-action-session.ts",
+    "src/lib/auth.tsx",
+    "src/lib/supabase.ts",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/tenbot/GlobalTenbotWorkspace.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/actions/ActionReviewCard.tsx",
+    "src/modules/tenbot/actions/ActionWorkspaceBridge.tsx",
+    "src/modules/tenbot/actions/README.md",
+    "src/modules/tenbot/actions/adapter.ts",
+    "src/modules/tenbot/actions/contract.ts",
+    "src/modules/tenbot/actions/presentation-fixture.ts",
+    "src/modules/tenbot/capability-requests/CapabilityRequestCard.tsx",
+    "src/modules/tenbot/capability-requests/CapabilityRequestSlot.tsx",
+    "src/modules/tenbot/capability-requests/README.md",
+    "src/modules/tenbot/capability-requests/model.ts",
+    "src/modules/tenbot/capability-requests/presentation-fixture.ts",
+    "src/modules/tenbot/events.ts",
+    "src/modules/tenbot/global-workspace.css",
+    "supabase/functions/_shared/tenbot-proposal-operations.ts"
+  ],
+  "buildSourceManifestSha256": "3603388647218e5f1c718fba239626bbd6cfed34293796ab6108ac74af38f71e",
+  "unverified": [
+    "Live Terra selection and conversational quality for new preparation capabilities",
+    "Shared deployment/schema activation",
+    "New document OCR/extraction",
+    "Headless native PDF plugin visual fidelity",
+    "Full My Work attachments and live Messaging Realtime in current fixture",
+    "Earlier workstream screen-capture teardown"
+  ]
+}

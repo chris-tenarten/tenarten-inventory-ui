@@ -1,0 +1,55 @@
+{
+  "riskTier": 3,
+  "scope": "Focused frontend credential/session/contract boundary; card presentation Tier2. Not database or live Auth certification.",
+  "checks": [
+    {
+      "command": "tsx scripts/verify-tenbot-action-adapter.mts",
+      "result": "PASS",
+      "groups": 15,
+      "executedBy": "implementation worker; root/independent reviewer inspected evidence without duplicate execution"
+    },
+    {
+      "command": "tsc --noEmit --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "eslint changed runtime/verifier paths",
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/verify-tenbot-global-workspace-browser.mjs --actions-only",
+      "result": "PASS",
+      "groups": 12,
+      "origin": "http://localhost:3100",
+      "synthetic": true
+    },
+    {
+      "command": "node scripts/verify-tenbot-global-workspace-browser.mjs",
+      "result": "PASS",
+      "groups": 10,
+      "origin": "http://localhost:3100",
+      "synthetic": true
+    },
+    {
+      "command": "npm run build -- --webpack",
+      "result": "PASS",
+      "pages": 25,
+      "buildConfig": "synthetic loopback variables; Production mode only, not hosted deployment configuration"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "independent focused Tier3 source/security review",
+      "result": "PASS",
+      "testsRepeated": false
+    }
+  ],
+  "hostedCalls": 0,
+  "providerCalls": 0,
+  "businessWrites": 0,
+  "authWrites": 0,
+  "migrationsApplied": 0,
+  "adapterConnected": false
+}

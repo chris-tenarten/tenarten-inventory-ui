@@ -1,0 +1,52 @@
+{
+  "startedAt": "2026-11-02T19:18:45.939414+00:00",
+  "finishedAt": "2026-11-02T19:19:05.707557+00:00",
+  "command": "npm run build -- --webpack",
+  "workingDirectory": "/private/tmp/tenops-agentic-actions-20261102/build",
+  "environment": {
+    "PATH": "/opt/homebrew/opt/node@24/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "LANG": "en_US.UTF-8",
+    "NODE_ENV": "production",
+    "CI": "1",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NEXT_PUBLIC_SUPABASE_URL": "http://127.0.0.1:55598",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "synthetic-local-build-only",
+    "NEXT_PUBLIC_TENBOT_REVIEW_URL": "http://127.0.0.1:55598/functions/v1/tenbot",
+    "NEXT_PUBLIC_TENBOT_ACTIONS_ENABLED": "true",
+    "NEXT_PUBLIC_DEV_BRANDING": "true",
+    "NEXT_PUBLIC_RBAC_MODE": "enforced",
+    "CF_PAGES_URL": "https://tendev.pages.dev"
+  },
+  "inheritedEnvironment": false,
+  "copiedCredentials": false,
+  "exitCode": 0,
+  "knowledgeSnapshotBeforeSha256": "18f2fe94caa69c85292ea91290a3a26ddb085a9757aed65730c437e8d01946b9",
+  "knowledgeSnapshotAfterSha256": "18f2fe94caa69c85292ea91290a3a26ddb085a9757aed65730c437e8d01946b9",
+  "knowledgeSnapshotUnchanged": true,
+  "sourceManifest": "/private/tmp/tenops-agentic-actions-20261102/integrated-build-source-manifest.json",
+  "log": "/private/tmp/tenops-agentic-actions-20261102/integrated-build.log",
+  "rootBuildDirectoriesTouched": false,
+  "hostedCalls": 0,
+  "deployment": false,
+  "postBuildSourceCheck": {
+    "runtimeConfigUnchangedSinceFreeze": true,
+    "documentationChanges": [
+      "src/modules/tenbot/actions/README.md",
+      "docs/project-memory/2026-11-02-tenbot-reviewed-actions.md",
+      "docs/project-memory/2026-11-02-tenbot-workspace-actions.md",
+      "docs/schemas/README.md"
+    ]
+  },
+  "exportedBranding": {
+    "dashboardTitle": "TenDev Cloud \u2014 Dashboard",
+    "manifestName": "TenDev",
+    "manifestShortName": "TenDev"
+  },
+  "knowledgePrebuild": {
+    "outcome": "Packaged artifact integrity verified; no source rewrite, fresh Git, hosted or release-candidate attestation",
+    "moduleSources": 16,
+    "patches": 16
+  },
+  "pagesGenerated": 25,
+  "acceptedRuntimePin": "afa4bfa47319f5a74101e202a1b675ecf471a1b3:supabase/functions/_shared/tenbot-agent.ts"
+}

@@ -16,6 +16,19 @@ Real PostgreSQL/Auth/Storage tests in the existing isolated Free fixture prove a
 
 ## Schema sources and freshness
 
+**Local Workspace integration — November 2:** [integration receipt](../project-memory/2026-11-02-tenbot-workspace-integration.md)
+records the selective combination of accepted backend `afa4bfa` and Workspace
+`262c25f`. The [frontend action module](../../src/modules/tenbot/actions/README.md)
+connects verified ordinary ask/history statuses to the existing trusted action
+transport. `src/lib/auth-action-session.ts` guards the existing Auth storage
+handoff; no second session store or RBAC change is introduced. Ordinary document
+selection reuses the existing owner-private original upload service; new OCR is
+not provided. A canonical disabled-tax default correction uses rate zero, while
+unknown line prices remain unknown. Actual local-app verification uses the
+existing isolated fixture, real Auth/history/business records and a scripted
+provider transport. It does not establish Terra reasoning or shared activation.
+No migration or hosted configuration is changed in this integration pass.
+
 | Need | Reuse | Verification boundary |
 | --- | --- | --- |
 | Tables, columns, types, defaults, constraints, foreign keys, enums, indexes and RPC definitions in source | [Append-only migrations](../../supabase/migrations/) and affected application callers | Repository contracts at the inspected revision; includes superseded/unapplied work and cannot reconstruct every older hosted object. Never apply the directory as an inventory refresh. |

@@ -1,0 +1,196 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3000",
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "authEntry": "Genuine synthetic Auth session seeded through existing standard SDK storage; UI sign-in itself was not exercised",
+  "scriptedProviderTransport": true,
+  "modelInference": false,
+  "providerCalls": 0,
+  "paidCostUsd": 0,
+  "sharedProjectWrites": 0,
+  "checkpoints": {
+    "proposal": {
+      "passedChecks": [
+        "Actual TenDev UI initializes genuine synthetic Auth, current account access and persistent private history at http://localhost:3000",
+        "Ordinary composer reaches real hosted discovery/preparation/publication; exact saved-reference PDF uses the unchanged renderer",
+        "Wrong password fails closed; explicit status recovers; genuine existing-account confirmation installs a fresh same-owner session and saves one actual standalone $25 Proposal draft"
+      ],
+      "created": {
+        "proposal": "672adc49-7976-46a6-92b3-d88124307c31"
+      },
+      "references": [
+        {
+          "id": "85ae4481-8554-4c93-9a0d-6dc912c00b29",
+          "revision": 1,
+          "hash": "b0e348084cfbd07933a3d51f149ee505301984879c79281f4b1f4d5c60886973",
+          "expiresAt": "2026-11-02T19:32:17.457934+00:00"
+        }
+      ],
+      "confirmationOutcomes": [
+        {
+          "status": "rejected",
+          "operation": null,
+          "result": null
+        },
+        {
+          "status": "completed",
+          "operation": "proposal.save_draft",
+          "result": {
+            "url": "/proposals?open=672adc49-7976-46a6-92b3-d88124307c31",
+            "status": "draft",
+            "proposalId": "672adc49-7976-46a6-92b3-d88124307c31"
+          }
+        }
+      ]
+    },
+    "continuation": {
+      "passedChecks": [
+        "Actual TenDev UI initializes genuine synthetic Auth, current account access and persistent private history at http://localhost:3000",
+        "Reused prior same-candidate real browser Proposal checkpoint: exact preview, wrong-password denial, status recovery, genuine fresh-session handoff and canonical $25 draft; current host reauthorizes the durable receipt without another write",
+        "Created-record link loads the actual Proposal library/draft; reload restores the committed read-only receipt through real private history",
+        "Expanded Workspace and transitional Messaging preserve the same real owner conversation and ordinary unsent draft; no Realtime delivery claim",
+        "Cancellation reaches durable revoked status; ordinary correction publishes a new server revision and immutable reference rather than editing the old review"
+      ],
+      "additionalExecutedChecks": [
+        "Created-record link loads the actual Proposal library/draft; reload restores the committed read-only receipt through real private history",
+        "Expanded Workspace and transitional Messaging preserve the same real owner conversation and ordinary unsent draft; no Realtime delivery claim",
+        "Cancellation reaches durable revoked status; ordinary correction publishes a new server revision and immutable reference rather than editing the old review"
+      ],
+      "references": [
+        {
+          "id": "85ae4481-8554-4c93-9a0d-6dc912c00b29",
+          "revision": 1,
+          "hash": "b0e348084cfbd07933a3d51f149ee505301984879c79281f4b1f4d5c60886973",
+          "expiresAt": "2026-11-02T19:32:17.457934+00:00"
+        },
+        {
+          "id": "0af18f33-6670-43f8-bd6b-65206ec0d5ba",
+          "revision": 1,
+          "hash": "e434fa6a77e6a707c84c66d4ad3e86e58c52af15e10ed99b7ae3fc0e6c0a468b",
+          "expiresAt": "2026-11-02T19:33:54.206685+00:00"
+        },
+        {
+          "id": "5e29152e-0d64-4179-9c1a-a3919f0d2607",
+          "revision": 1,
+          "hash": "e434fa6a77e6a707c84c66d4ad3e86e58c52af15e10ed99b7ae3fc0e6c0a468b",
+          "expiresAt": "2026-11-02T19:34:14.65663+00:00"
+        },
+        {
+          "id": "fe3019f0-7650-4baf-8ba0-97f5c9d93625",
+          "revision": 2,
+          "hash": "c70c965257bc0e60026675f431c3b318403e96b3974fd405d0f0cbbf86e50b0a",
+          "expiresAt": "2026-11-02T19:34:35.464621+00:00"
+        }
+      ]
+    },
+    "pending": {
+      "confirmationOutcomes": [
+        {
+          "status": "completed",
+          "operation": "inventory.create_pending_receivals",
+          "result": {
+            "url": "/inventory#pending-receivals",
+            "hash": "60bcefe32acde7cc9b782c91359cea9a6f0a1b2df10f04852950318db34d2397",
+            "draftId": "ea111947-3651-4f88-9e19-4c459246a6a6",
+            "executedAt": "2026-11-02T19:22:26.82909+00:00",
+            "idempotent": false,
+            "createdRecordIds": [
+              "733564a4-b4e0-48f7-96c0-b1ff578ed8c0"
+            ],
+            "createdCatalogRecords": [],
+            "onHandChangedByCreation": false
+          }
+        }
+      ],
+      "references": [
+        {
+          "id": "85ae4481-8554-4c93-9a0d-6dc912c00b29",
+          "revision": 1,
+          "hash": "b0e348084cfbd07933a3d51f149ee505301984879c79281f4b1f4d5c60886973",
+          "expiresAt": "2026-11-02T19:32:17.457934+00:00"
+        },
+        {
+          "id": "7dbb272d-d6f5-4192-9574-3d8dc51457ee",
+          "revision": 1,
+          "hash": "2d296108c5052e06afac44db9c363bbcdbb6d5ade0036376c94f67fd444252f6",
+          "expiresAt": "2026-11-02T19:37:12.919609+00:00"
+        }
+      ],
+      "mobileCompletedReceiptScreenshot": "pending-mobile-confirmation-checkpoint.png"
+    },
+    "finalReadOnly": {
+      "passedChecks": [
+        "Reauthorized the exact previously committed Pending receipt in the actual mobile UI without an ask, password resubmission or execution",
+        "Reload restores the real private durable Pending receipt with zero confirmation calls",
+        "Actual committed-record queue link expands Inventory and visibly loads the canonical Pending row with the separate Receive action: expected 2 Bag, received 0"
+      ],
+      "confirmationCalls": 0,
+      "errors": [],
+      "blockedOrigins": []
+    }
+  },
+  "created": {
+    "proposalDrafts": [
+      {
+        "actionId": "5c971009-c94b-4f24-8f27-3404968c86fb",
+        "proposalId": "523b2402-59f5-4b0c-a012-07486bb5ef41"
+      },
+      {
+        "actionId": "85ae4481-8554-4c93-9a0d-6dc912c00b29",
+        "proposalId": "672adc49-7976-46a6-92b3-d88124307c31"
+      }
+    ],
+    "pending": [
+      {
+        "actionId": "7dbb272d-d6f5-4192-9574-3d8dc51457ee",
+        "pendingId": "733564a4-b4e0-48f7-96c0-b1ff578ed8c0"
+      }
+    ]
+  },
+  "boundedRerun": "Two distinct reviewed synthetic Proposal drafts were committed. The second was the single bounded fresh-review harness rerun after the first result was read-only reconciled; no uncertain action was resubmitted. Pending was executed once; every later resume was read-only.",
+  "retainedFailures": [
+    {
+      "kind": "canonical-adapter",
+      "reference": "012e2eaa-0a0e-4ad6-bdf3-08318b44ed83",
+      "outcome": "Definite consumed failed action, no committed result",
+      "sqlState": "23502",
+      "cause": "Disabled-tax Proposal parameter was null; canonical tax_rate is non-null",
+      "correction": "Canonical disabled-tax value0; no schema change"
+    },
+    {
+      "kind": "global-panel-layering",
+      "cause": "Existing Proposal panel120 covered assistant115",
+      "correction": "Assistant overlay136, below full PDF140"
+    },
+    {
+      "kind": "fixture-data",
+      "cause": "Existing persistent synthetic Admin conversation lacked its empty agent-history row",
+      "correction": "One missing empty row bootstrapped, preserving all existing turns",
+      "dataOnly": true,
+      "conversationId": "7fa23534-e3e7-48e5-8c84-a1a96f58db85"
+    },
+    {
+      "kind": "verifier",
+      "cause": "Transient auth reopen toggle, expected plain project text on InternalEstimate tab, and expected upload filename instead of canonical deduplicated filename",
+      "correction": "Wait for stage, inspect CustomerProposal Project input, honor canonical filename, and reuse known committed receipts for read-only tail",
+      "rawEvidenceRetainedOutsideRepository": true
+    }
+  ],
+  "manualReview": {
+    "application": "http://localhost:3000",
+    "guide": "http://localhost:55598/review",
+    "apiPort": 55598,
+    "pid": 83869,
+    "isolatedControlsExpireAt": "2026-11-02T20:11:18.427Z",
+    "shutdownRestoresStartupControls": true,
+    "agentRuntimeBaseline": "afa4bfa47319f5a74101e202a1b675ecf471a1b3"
+  },
+  "limitations": [
+    "Existing renderer and embedded valid exact-reference bytes verified; native PDF plugin visual fidelity is not certified",
+    "Genuine synthetic Auth was seeded through standard SDK storage; UI sign-in itself was not exercised.",
+    "Document text is deterministic, explicitly attested fixture evidence; no new OCR or model reasoning was exercised.",
+    "Accepted backend concurrency/replay/rollback/expiry/privacy proofs and prior Workspace account-isolation/DM-group checks were reused.",
+    "No macOS screen capture was initiated. Headless browser screenshots only."
+  ],
+  "invariants": "invariants.json"
+}

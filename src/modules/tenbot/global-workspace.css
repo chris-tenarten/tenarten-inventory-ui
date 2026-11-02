@@ -1,0 +1,44 @@
+.tenbot-global-overlay {
+ position: fixed;
+ inset: calc(var(--tenops-shell-header-height, 72px) + 12px) 12px 12px;
+ z-index: 136;
+ display: flex;
+ justify-content: flex-end;
+ pointer-events: none;
+}
+.tenbot-global-overlay[hidden] { display: none; }
+.tenbot-global-panel {
+ display: flex;
+ flex-direction: column;
+ width: min(460px, calc(100vw - 24px));
+ min-width: 0;
+ min-height: 0;
+ max-height: 100%;
+ overflow: hidden;
+ border: 1px solid var(--border-default, #cbd5e1);
+ border-radius: 10px;
+ background: var(--surface-primary, #fff);
+ box-shadow: 0 16px 48px rgb(15 23 42 / 18%), 0 3px 12px rgb(15 23 42 / 8%);
+ pointer-events: auto;
+}
+.tenbot-global-header { display: flex; flex-shrink: 0; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-default, #e2e8f0); padding: 12px; background: var(--surface-secondary, #f8fafc); }
+.tenbot-global-icon { display: inline-flex; height: 40px; width: 40px; flex-shrink: 0; align-items: center; justify-content: center; border-radius: 6px; color: var(--text-muted, #64748b); }
+.tenbot-global-icon:hover { background: var(--interactive-hover, #e2e8f0); color: var(--text-primary, #0f172a); }
+.tenbot-global-icon:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+.tenbot-global-history { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; padding: 16px 12px; background: var(--surface-secondary, #fafbfd); }
+.tenbot-global-empty { padding: 32px 12px 40px; }
+.tenbot-global-composer { flex-shrink: 0; border-top: 1px solid var(--border-default, #e2e8f0); padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); background: var(--surface-primary, #fff); }
+.tenbot-global-overlay[data-expanded] { inset: 0; z-index: 136; align-items: center; justify-content: center; padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left)); background: rgb(15 23 42 / 36%); pointer-events: auto; }
+.tenbot-global-overlay[data-expanded] .tenbot-global-panel { width: min(1120px, 100%); height: 100%; }
+.tenbot-global-overlay[data-expanded] .tenbot-global-history { padding: 24px max(24px, calc((100% - 840px) / 2)); }
+.tenbot-global-overlay[data-expanded] .tenbot-global-composer { padding-right: max(24px, calc((100% - 840px) / 2)); padding-left: max(24px, calc((100% - 840px) / 2)); }
+
+@media (max-width: 767px), (max-width: 1023px) and (pointer: coarse) {
+ .tenbot-global-overlay, .tenbot-global-overlay[data-expanded] { top: var(--tenbot-visible-top, 0px); right: 0; bottom: auto; left: 0; height: var(--tenbot-visible-height, 100dvh); padding: 0; z-index: 136; }
+ .tenbot-global-panel, .tenbot-global-overlay[data-expanded] .tenbot-global-panel { width: 100%; height: 100%; max-width: none; border: 0; border-radius: 0; padding-top: env(safe-area-inset-top); }
+ .tenbot-global-header { padding: 8px max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left)); }
+ .tenbot-global-expand { display: none; }
+ .tenbot-global-history, .tenbot-global-overlay[data-expanded] .tenbot-global-history { padding: 12px max(12px, env(safe-area-inset-right)) 12px max(12px, env(safe-area-inset-left)); }
+ .tenbot-global-composer, .tenbot-global-overlay[data-expanded] .tenbot-global-composer { padding: 12px max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+ .tenbot-global-empty { padding: 24px 8px 32px; }
+}

@@ -1,5 +1,11 @@
 # TenBot reusable reviewed operations — local implementation
 
+**Later integration boundary:** accepted backend `afa4bfa` is an input to the
+[focused Workspace integration](2026-11-02-tenbot-workspace-integration.md).
+That receipt records the frontend/Auth connection and actual isolated local-app
+outcomes, plus one canonical Proposal preparation correction. It does not alter
+this receipt's historical database or hosted observations or authorize release.
+
 ## Authority and boundary
 
 Chris's November 2 **TenDev — Reusable Agentic Actions & Workspace Integration Contract** accepts the prior Terra conversational milestone and authorizes local backend implementation, isolated validation and a scoped local commit. The separate Advisory conversation is unavailable; the supplied Product contract is the authority. Tier 3 / Testing Level 3 applies to authorization and persistence. This record supplements the existing engineering handoff; its dirty concurrent Current State, execution-standard and index changes are preserved without staging them.

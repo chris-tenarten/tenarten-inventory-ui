@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "origin": "http://localhost:3100",
+  "checks": [
+    "Header opens right-side assistant without navigation; existing owner history hydrates with no ask",
+    "Close/reopen preserves draft, mid-history scroll and focus return",
+    "Expanded workspace traps background; collapse and in-app navigation preserve assistant state",
+    "Legacy Messaging remains accessible and shares the exact conversation controller and unsent draft",
+    "IME Enter does not send; failed send retains draft; retry uses same conversation; ordinary answer has no capability prompt",
+    "Mobile fullscreen follows keyboard visualViewport; composer remains accessible; safe-area/body lock releases and draft survives",
+    "Mobile browser Back closes fullscreen assistant on the same underlying route",
+    "Explicit local synthetic capability preview supports optional context, Yes preview and No with zero submission calls",
+    "Authenticated owner switch remounts assistant and exposes no previous draft or history",
+    "Access revocation removes launcher/panel and releases modal background lock"
+  ],
+  "actions": [
+    "status",
+    "history",
+    "ask",
+    "ask",
+    "status",
+    "history",
+    "status",
+    "history"
+  ],
+  "errors": [],
+  "blockedOutbound": [],
+  "actualApplicationUi": true,
+  "syntheticAuthAndHistory": true,
+  "hostedCalls": 0,
+  "inferenceCalls": 0,
+  "persistenceClaims": false
+}

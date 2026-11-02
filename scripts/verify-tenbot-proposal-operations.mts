@@ -93,6 +93,8 @@ await check('customer/contact identities are fetched, validated, projected and c
 await check('nonpersistent preparation maps exact canonical save contract without allocating a number or Job',async()=>{
  const f=fixture(),{action}=await proposed(f);
  assert.deepEqual(Object.keys(action.parameters),['p_proposal','p_lines','p_estimate_inputs','p_estimate_overrides']);assert.equal(action.operation,'proposal.save_draft');
+ assert.equal(header(action).tax_enabled,false);assert.equal(header(action).tax_rate,'0','Disabled tax must use the existing non-null canonical rate, without substituting a customer line price.');
+ assert(action.review.fields.some(field=>field.path==='p_proposal.tax_rate'&&field.value==='0'));
  for(const key of ['id','job_id','bid_id','estimate_number','status','issued_snapshot'])assert(!Object.hasOwn(header(action),key));
  assert.equal(header(action).proposal_date,'2026-11-01','default date must follow Chicago, not UTC');assert.equal(lines(action)[0].rate,'125.50');
  assert.equal((action.parameters.p_estimate_inputs as Record<string,JsonValue>).customerQuantity,null);
