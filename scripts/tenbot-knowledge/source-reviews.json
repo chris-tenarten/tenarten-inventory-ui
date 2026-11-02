@@ -2237,5 +2237,20 @@
       "revision": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
       "heading": "## Accepted candidate source review — TenDev read simplification, November 2, 2026"
     }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-hosted.ts",
+    "blob": "f9958952617c1fee086ac4d3ccfb3962c257ecc4",
+    "sha256": "1b63cdd33529e1b9d44c1bdc5647e9ce7987a74206af864a7c7201ac14fadfe2",
+    "reviewedCandidate": "e6aea980898a17ae74476d067039d0ceabab6727",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-simplification-tendev-source-proof.md",
+      "revision": "e6aea980898a17ae74476d067039d0ceabab6727",
+      "heading": "## Candidate technical source review — exact combined hosted integration"
+    }
   }
 ]
