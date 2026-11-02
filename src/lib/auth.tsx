@@ -2,7 +2,8 @@
 
 import type { Session, User } from "@supabase/supabase-js";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase,actionSessionStorage } from "@/lib/supabase";
+import type {ActionSessionSnapshot} from './auth-action-session';
 import { releasePushDevice, setPushAccount, suspendPushAccount } from "@/lib/web-push";
 import { BRANDING } from "@/lib/dev-branding.mjs";
 import {
@@ -46,6 +47,8 @@ type AuthContextValue = {
   requestPasswordReset(email: string): Promise<void>;
   updatePassword(password: string): Promise<void>;
   refreshProfile(): Promise<void>;
+  actionSessionSnapshot():ActionSessionSnapshot|null;
+  installActionSession(session:{access_token:string;refresh_token:string},expected:ActionSessionSnapshot):Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -99,6 +102,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifiedSession = useRef<Session | null>(null);
   const generation = useRef(0);
   const mounted = useRef(false);
+  const actionAccess=useRef({profile,accessStatus,requiresPasswordSetup});
+  actionAccess.current={profile,accessStatus,requiresPasswordSetup};
   const profileRequest = useRef<{ request: number; controller: AbortController; timer: number } | null>(null);
 
   const cancelProfileRequest = useCallback(() => {
@@ -273,6 +278,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return accountHasCapability(profile.role, capability, profile.readOnly, profile.messagingWrite, profile.productionBlendManage, profile.sampleLabelsGenerate, profile.jobUpdatesPost);
   }, [accessStatus, profile, session]);
 
+  const actionSessionSnapshot=useCallback(()=>{
+    const current=currentSession.current,access=actionAccess.current;
+    if(!mounted.current||!current||verifiedSession.current?.access_token!==current.access_token||access.accessStatus!=='allowed'||access.requiresPasswordSetup||!access.profile?.isActive||access.profile.userId!==current.user.id)return null;
+    return {ownerId:current.user.id,accessToken:current.access_token,contextKey:JSON.stringify({generation:generation.current,profile:access.profile})};
+  },[]);
+  const installActionSession=useCallback(async(next:{access_token:string;refresh_token:string},expected:ActionSessionSnapshot)=>{
+    const guard=actionSessionStorage.guard(next.access_token,expected,actionSessionSnapshot);
+    try{
+      const {data,error}=await supabase.auth.setSession(next);
+      if(error||!guard.saved()||data.session?.user.id!==expected.ownerId||data.session.access_token!==next.access_token)throw Error('Your sign-in changed. Reopen TenBot to check the saved result.');
+      // Normal SIGNED_IN handling invalidates access and rechecks the profile.
+      // This method never carries the old permission decision to the new login.
+    }finally{guard.release();}
+  },[actionSessionSnapshot]);
+
   const value = useMemo<AuthContextValue>(() => ({
     ready,
     accessStatus,
@@ -290,8 +310,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     async signOut() {
       await releasePushDevice();
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      const current=await supabase.auth.getSession();
+      const finish=actionSessionStorage.allowSignOut(current.data.session?.access_token??'');
+      try{const { error } = await supabase.auth.signOut();if(error)throw error;}finally{finish();}
     },
     async requestAccountSetup(email) {
       const emailRedirectTo = `${window.location.origin}/?account=setup`;
@@ -311,13 +332,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
       await releasePushDevice();
-      const { error: signOutError } = await supabase.auth.signOut({ scope: "local" });
-      if (signOutError) throw signOutError;
+      const current=await supabase.auth.getSession();
+      const finish=actionSessionStorage.allowSignOut(current.data.session?.access_token??'');
+      try{const {error:signOutError}=await supabase.auth.signOut({scope:"local"});if(signOutError)throw signOutError;}finally{finish();}
       setRequiresPasswordSetup(false);
       window.history.replaceState({}, "", window.location.pathname);
     },
     refreshProfile,
-  }), [accessStatus, can, profile, profileError, ready, refreshProfile, requiresPasswordSetup, session]);
+    actionSessionSnapshot,installActionSession,
+  }), [accessStatus, can, profile, profileError, ready, refreshProfile, requiresPasswordSetup, session,actionSessionSnapshot,installActionSession]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

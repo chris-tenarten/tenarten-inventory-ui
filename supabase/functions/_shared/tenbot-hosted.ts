@@ -10,7 +10,7 @@ import {createTenbotAgentHistoryStore} from './tenbot-agent-history-store.ts';
 import {createHostedOpenAIMetering} from './tenbot-openai-metering.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge imports require explicit extensions.
-import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING} from './tenbot-openai.ts';
+import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING,type OpenAIResponseMetadata} from './tenbot-openai.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge imports require explicit extensions.
 import {AgentStepError} from './tenbot-agent.ts';
@@ -23,38 +23,86 @@ import {TenbotError,type InferenceProvider} from './tenbot-core.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge imports require explicit extensions.
 import type {JobTools} from './tenbot-job-session.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {createQwenAgentProvider} from './tenbot-qwen-agent.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
+// @ts-ignore -- Edge imports require explicit extensions.
+import type {InvestigationDiagnosticSink} from './tenbot-investigation-diagnostics.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Edge/Node source
+// @ts-ignore -- explicit Edge extension
+import {createHostedOperations,authorizeHostedOperationHistory} from './tenbot-hosted-operations.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Edge/Node source
+// @ts-ignore -- explicit Edge extension
+import {createReviewedActionService} from './tenbot-actions.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Edge/Node source
+// @ts-ignore -- explicit Edge extension
+import type {JobToolCaller} from './tenbot-job-tools.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Edge/Node source
+// @ts-ignore -- reuse caller-only private Storage adapter
+import type {InvoiceReceivalStorageCaller} from '../../../src/modules/inventory/invoice-receival-attachments.ts';
 
 export type HostedRpc=(name:string,args?:Record<string,unknown>)=>Promise<{data:unknown;error:unknown}>;
-export type HostedTenbotConfig={persistentHistory?:boolean;enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
+export type HostedTenbotConfig={persistentHistory?:boolean;modelDirectedReads?:boolean;reviewedOperationsEnabled?:boolean;normalEmployeeAuthorized?:boolean;enabled:boolean;origins:string[];apiKey:string;keyExpiresAt:string;spendingAuthorized:boolean};
+/** Administrator rollout authority, independent of inference funding and action
+ * expiry. Auth.getUser verifies the caller; every operation still checks current
+ * capabilities and SQL independently verifies the live session before a write.
+ * Membership is persistent administrator configuration, never a role grant or
+ * an expiring acceptance enrollment. Empty/default-OFF denies normal Terra. */
+export function normalEmployeeModeAuthorized(config:{enabled:boolean;employeeIds?:readonly string[];owner:string;origin:string;hostedEnabled:boolean;modelDirectedReads:boolean;sessionId:string}):boolean{
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ return config.enabled===true&&['https://tendev.pages.dev','https://tenops.pages.dev'].includes(config.origin)&&config.hostedEnabled===true&&config.modelDirectedReads===true&&uuid.test(config.owner)&&uuid.test(config.sessionId)&&config.employeeIds?.includes(config.owner)===true;
+}
 export const TENBOT_HOSTED_SERVICE_RPCS=new Set([
  'tenbot_reserve_usage','tenbot_finish_usage','tenbot_append_conversation_turn',
  'tenbot_openai_reserve','tenbot_openai_settle','tenbot_openai_meter_status',
  'tenbot_agent_load','tenbot_agent_commit','tenbot_employee_commit','tenbot_employee_page',
+ 'prepare_tenbot_reviewed_action',
 ]);
-export function createHostedTenbot(options:{owner:string;origin:string;config:HostedTenbotConfig;caller:HostedRpc;service:HostedRpc;jobTools:JobTools;qwen:InferenceProvider|null;fetcher?:typeof fetch;now?:()=>number}){
+export function createHostedTenbot(options:{owner:string;origin:string;config:HostedTenbotConfig;caller:HostedRpc;service:HostedRpc;jobTools:JobTools;qwen:InferenceProvider|null;reviewedCaller?:JobToolCaller&InvoiceReceivalStorageCaller;actionSessionId?:string;fetcher?:typeof fetch;now?:()=>number;acceptanceSpendingAuthorized?:()=>boolean;requestId?:string;onDiagnostic?:InvestigationDiagnosticSink;onResponseMetadata?:(metadata:OpenAIResponseMetadata)=>void|Promise<void>}){
  const {owner,caller,service,jobTools,qwen,config}=options,now=options.now??Date.now;
+ const terraAuthorized=()=>config.normalEmployeeAuthorized===true||options.acceptanceSpendingAuthorized?.()===true;
+ const canSpend=()=>terraAuthorized()&&(config.spendingAuthorized||options.acceptanceSpendingAuthorized?.()===true);
  const enabled=config.enabled&&Boolean(options.origin)&&config.origins.includes(options.origin);
  const can=async(capability:string)=>{
   const result=capability==='proposal.access'?await caller('has_proposal_access'):await caller('has_app_capability',{p_capability:capability});
   return !result.error&&result.data===true;
  };
+ const actionRpc=(rpc:HostedRpc)=>({async rpc(name:string,args:Record<string,unknown>){const result=await rpc(name,args);return {data:result.data,error:result.error?{code:typeof result.error==='object'&&'code' in result.error&&typeof result.error.code==='string'?result.error.code:'unavailable'}:null};}});
  const defaultHandler=(body:Record<string,unknown>)=>handleTenbot(body,owner,caller,service,qwen,undefined,jobTools);
  const expires=Date.parse(config.keyExpiresAt);
  const historyStore=createTenbotAgentHistoryStore(caller,service,{persistent:config.persistentHistory??(options.origin==='https://tenops.pages.dev'||options.origin==='https://tendev.pages.dev'||options.origin==='http://localhost:3000')});
+ const operationsEnabled=enabled&&terraAuthorized()&&config.reviewedOperationsEnabled===true&&config.modelDirectedReads===true&&['https://tendev.pages.dev','https://tenops.pages.dev'].includes(options.origin)&&historyStore.persistent===true&&Boolean(options.reviewedCaller)&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(options.actionSessionId??'');
  const sessions=enabled?createTenbotAgentSessions({
   can:(_owner,capability)=>_owner===owner?can(capability):Promise.resolve(false),
-  jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,now,
+  jobTools:()=>jobTools,mode:'openai',readOnlyHosted:true,modelDirectedReads:config.modelDirectedReads===true,now,
   // Only the staged TenDev UI understands bounded, reauthorized live history.
   operationalHistory:options.origin==='https://tendev.pages.dev',
   sessionStore:historyStore,
-  fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,qwen,undefined,tools,undefined,{context,history}),
+  ...(operationsEnabled?{
+   reviewedOperations:async({question,documentIds}:{question:string;documentIds:string[]})=>{
+    const operations=createHostedOperations({owner,question,documentIds,caller:options.reviewedCaller!,service:actionRpc(service),sessionId:options.actionSessionId!,can});
+    return {...operations,tools:await operations.authorizedTools()};
+   },
+   operationHistory:{authorizeAccess:(access:Parameters<typeof authorizeHostedOperationHistory>[1])=>authorizeHostedOperationHistory({owner,caller:options.reviewedCaller!,can},access),getAction:(reference:Parameters<ReturnType<typeof createReviewedActionService>['get']>[0])=>createReviewedActionService(actionRpc(caller)).get(reference)},
+  }:{}),
+  onDiagnostic:options.onDiagnostic,
+  // A Qwen orchestration failure must never dispatch a second inference through
+  // the legacy explanation path. Direct guidance remains available without it.
+  fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,config.modelDirectedReads?null:qwen,undefined,tools,undefined,{context,history,completeRequestsOnly:config.modelDirectedReads===true}),
   provider(){
    // Check on every turn and again before every network dispatch. An operator's
    // verified expiry is a hard upper bound, never evidence of key validity.
-   if(!config.spendingAuthorized||config.apiKey.length<16||!Number.isFinite(expires)||expires<=now())return {name:'OpenAI Responses',model:'gpt-6.1-terra',async step(){throw new AgentStepError('provider-not-configured');}};
-   const meter=createHostedOpenAIMetering({owner,model:'gpt-6.1-terra',requestId:crypto.randomUUID(),rpc:service});
-   return createOpenAIProvider({model:'gpt-6.1-terra',apiKey:config.apiKey,spendingAuthorized:true,pricing:OPENAI_EXPERIMENT_PRICING['gpt-6.1-terra'],reserveBudget:meter.reserveBudget,requireResponseMetadata:true,
+   if(!canSpend()||config.apiKey.length<16||!Number.isFinite(expires)||expires<=now())return config.modelDirectedReads&&qwen?createQwenAgentProvider({provider:qwen,owner,rpc:service,can:()=>can('readOperationalData')}):{name:'OpenAI Responses',model:'gpt-6.1-terra',async step(){throw new AgentStepError('provider-not-configured');}};
+   const meter=createHostedOpenAIMetering({owner,model:'gpt-6.1-terra',requestId:options.requestId??crypto.randomUUID(),rpc:service});
+   return createOpenAIProvider({model:'gpt-6.1-terra',apiKey:config.apiKey,spendingAuthorized:true,pricing:OPENAI_EXPERIMENT_PRICING['gpt-6.1-terra'],requireResponseMetadata:true,
+    onResponseMetadata:options.onResponseMetadata,
+    async reserveBudget(usd){
+     if(!canSpend())throw new AgentStepError('spending-not-authorized');
+     return meter.reserveBudget(usd);
+    },
     async fetcher(url,init){
+     if(!canSpend())throw new AgentStepError('spending-not-authorized');
      if(expires<=now())throw new AgentStepError('provider-key-expired');
      return (options.fetcher??fetch)(url,init);
     },
@@ -65,13 +113,13 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
   if(body.action==='status'){
    if(Object.keys(body).some(key=>key!=='action'))throw new TenbotError('Invalid status request.');
    if(!await can('readOperationalData'))throw new TenbotError('Your account is not authorized.',403);
-   return {mode:enabled?'assistant':'qwen',historyAvailable:enabled,persistentHistoryAvailable:enabled&&historyStore.persistent===true,readOnly:true};
+   return {mode:enabled?'assistant':'qwen',historyAvailable:enabled,persistentHistoryAvailable:enabled&&historyStore.persistent===true,readOnly:true,...(operationsEnabled?{reviewedActionsAvailable:true}:{})};
   }
   if(!sessions)return defaultHandler(body);
   // Hosted read-only routes cannot receive document/prepare/approve/execute
   // fields. Existing explicit Product feedback remains on its normal path.
   if(['ask','history','clear'].includes(String(body.action))){
-   const allowed=body.action==='ask'?['action','question','context','conversationId']:['action','conversationId','before'];
+   const allowed=body.action==='ask'?['action','question','context','conversationId',...(operationsEnabled?['documentIds','supersedes']:[])]:['action','conversationId','before'];
    if(Object.keys(body).some(key=>!allowed.includes(key)))throw new TenbotError('Invalid read-only TenBot request.');
    return sessions(body,owner);
   }

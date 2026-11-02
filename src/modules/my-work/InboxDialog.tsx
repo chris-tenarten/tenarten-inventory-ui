@@ -20,6 +20,8 @@ import { InvalidatedRead } from "@/lib/coalesced-read";
 import { useTextDraft } from "@/lib/drafts/useTextDraft";
 import { TenbotAvatar } from "@/modules/tenbot/TenbotAvatar";
 import { useTenbotConversation } from "@/modules/tenbot/TenbotWorkspace";
+import { ActionInteractionProvider } from "@/modules/tenbot/actions/ActionReviewCard";
+import { ActionWorkspaceSlot } from "@/modules/tenbot/actions/ActionWorkspaceBridge";
 
 const subscribeNoTransfer=()=>()=>{};
 const noTransferState=()=>null;
@@ -46,7 +48,8 @@ export default function InboxDialog({awareness,open:communicationOpen,onClose,cu
   const[summaries,setSummaries]=useState<ConversationSummary[]>([]);const[selectedUserId,setSelectedUserId]=useState("");const[newMessage,setNewMessage]=useState(false);const[recipientId,setRecipientId]=useState("");
   const assistantActive=assistantAvailable&&tenbot.available&&!newMessage&&isTenOpsSystemInboxUser(selectedUserId);
   const draftOwner=auth.user?.id===currentUserId?currentUserId:"";
-  const {text:body,setText:setBody,captureSend}=useTextDraft(draftOwner,"messaging",selectedUserId||recipientId||"new",open);
+  const messageDraft=useTextDraft(draftOwner,"messaging",assistantActive?"":selectedUserId||recipientId||"new",open);
+  const {text:body,setText:setBody,captureSend}=assistantActive?tenbot.composer:messageDraft;
   const [replyTo,setReplyTo]=useState<InboxMessage|null>(null);
   const [groupEditor,setGroupEditor]=useState(false);const[groupName,setGroupName]=useState("");const[groupMembers,setGroupMembers]=useState<string[]>([]);const[groupBusy,setGroupBusy]=useState(false);const[groupEditId,setGroupEditId]=useState<string|null>(null);
   const sendLock=useRef(false);
@@ -226,7 +229,7 @@ export default function InboxDialog({awareness,open:communicationOpen,onClose,cu
                 {!editing&&message.jobId?<button type="button" onClick={()=>openProductionJob(message.jobId)} className="mt-2 inline-flex max-w-full items-center gap-1 text-xs font-medium text-blue-800 hover:underline"><BriefcaseBusiness className="h-3.5 w-3.5 shrink-0" /><span className="truncate">{[message.jobNumber,message.jobName].filter(Boolean).join(" · ")||"Open Job"}</span></button>:null}
                 {!editing?<div className="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400"><time>{timeLabel(message.createdAt)}</time>{message.editedAt?<span>· Edited</span>:null}</div>:null}
               </article></div>};
-            })??[]),...(assistantActive?tenbot.entries:[])].sort((a,b)=>Date.parse(a.createdAt)-Date.parse(b.createdAt)).map((item,index,items)=><Fragment key={item.id}>{index===0||dayKey(items[index-1].createdAt)!==dayKey(item.createdAt)?<div className="my-3 flex items-center gap-3"><span className="h-px flex-1 bg-slate-200" /><span className="text-[10px] font-medium uppercase tracking-wide text-slate-400">{dayLabel(item.createdAt)}</span><span className="h-px flex-1 bg-slate-200" /></div>:null}{item.content}</Fragment>)}</div>{assistantActive?tenbot.controls(body):null}</div>
+            })??[]),...(assistantActive?tenbot.entries:[])].sort((a,b)=>Date.parse(a.createdAt)-Date.parse(b.createdAt)).map((item,index,items)=><Fragment key={item.id}>{index===0||dayKey(items[index-1].createdAt)!==dayKey(item.createdAt)?<div className="my-3 flex items-center gap-3"><span className="h-px flex-1 bg-slate-200" /><span className="text-[10px] font-medium uppercase tracking-wide text-slate-400">{dayLabel(item.createdAt)}</span><span className="h-px flex-1 bg-slate-200" /></div>:null}{assistantActive?<ActionInteractionProvider active={open}>{item.content}</ActionInteractionProvider>:item.content}</Fragment>)}</div>{assistantActive?<><ActionInteractionProvider active={open&&assistantActive}><ActionWorkspaceSlot onRequestCorrection={()=>composeRef.current?.focus()}/></ActionInteractionProvider>{tenbot.controls(body)}</>:null}</div>
             {selected?.isSystem&&!assistantActive?<div className="shrink-0 border-t border-slate-200 bg-slate-50 px-4 py-3 text-center text-xs font-medium text-slate-500">TenOps system messages are read-only.</div>:<div {...(assistantActive?{}:attachmentQueue.events)} data-messaging-composer className={`shrink-0 border-t border-slate-200 px-3 pt-3 pb-[max(.75rem,env(safe-area-inset-bottom))] ${attachmentQueue.dragging?"bg-blue-50 ring-2 ring-inset ring-blue-500":"bg-white"}`}>
               {replyTo&&!assistantActive?<div className="mb-2 flex items-center gap-2 rounded border-l-2 border-blue-500 bg-slate-100 p-2 text-xs"><span className="min-w-0 flex-1"><strong className="block">Replying to {replyTo.senderName}</strong><span className="block truncate">{replyTo.body||"Attachment"}</span></span><button type="button" aria-label="Cancel reply" onClick={()=>setReplyTo(null)} className="h-10 w-10">×</button></div>:null}
               {attachmentQueue.dragging&&!assistantActive?<p role="status" className="text-xs text-blue-800">Drop files to attach</p>:null}

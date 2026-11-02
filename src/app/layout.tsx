@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import ClientLayoutShell from './client-layout-shell';
+import {ActionWorkspaceBridge} from '@/modules/tenbot/actions/ActionWorkspaceBridge';
 import { LanguageProvider } from '@/lib/language';
 import { ThemeProvider } from '@/lib/appearance';
 import { APPEARANCE_STORAGE_KEY, TENDEV_APPEARANCE_STORAGE_KEY } from '@/lib/appearance-storage';
@@ -78,7 +79,7 @@ export default function RootLayout({
               defaultAppearance={defaultAppearance}
             >
             <LanguageProvider>
-              <ClientLayoutShell>{children}</ClientLayoutShell>
+              <ActionWorkspaceBridge><ClientLayoutShell>{children}</ClientLayoutShell></ActionWorkspaceBridge>
             </LanguageProvider>
             </ThemeProvider>
           </AccountPreferencesProvider>

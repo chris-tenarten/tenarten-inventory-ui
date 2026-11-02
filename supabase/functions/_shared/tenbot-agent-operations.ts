@@ -48,12 +48,27 @@ function argsFor(name:TenbotJobToolName,args:Record<string,JsonValue>){
 import {prepareJobRequest,type PreparedJobRequest} from './tenbot-job-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension for Deno.
-import {resolveExactJobReference,completeJobLookup,type JobIntent} from './tenbot-job-routing.ts';
+import {resolveExactJobReference,completeJobLookup,ambiguousJobReference,type JobIntent} from './tenbot-job-routing.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import type {ConversationContext} from './tenbot-conversation-context.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {modelReadFacts} from './tenbot-read-investigation.ts';
 function comparable(result:JobToolResult){return JSON.stringify({data:result.data,status:result.status,complete:result.complete,truncated:result.truncated,unknowns:result.unknowns,filters:result.filters});}
+export type ModelJobSelection={question:string;context:ConversationContext|null;references:string[]};
+const canonicalUuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const resourceKey=(value:string)=>value.trim().replace(/\s+/g,' ').toLocaleLowerCase('en-US');
 
 /** Reuses the five real authorized executors; freshness is a caller check, never model policy. */
-export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:JobIntent;question:string}){
+export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:JobIntent;question:string},selection?:ModelJobSelection){
  const reads=new Map<string,{name:TenbotJobToolName;args:Record<string,unknown>;result:JobToolResult}>();
+ const explicit=selection?.references??[],seeds=selection?.context?.references??[];
+ const ambiguous=Boolean(selection&&(ambiguousJobReference(selection.question)||!explicit.length&&seeds.length>1&&/\b(?:it|its|that|this)\b/i.test(selection.question)&&!/\b(?:those|these|their|them|both)\b/i.test(selection.question)));
+ const boundIds=new Set<string>((explicit.length?explicit.filter(id=>canonicalUuid.test(id)):ambiguous?[]:seeds).map(id=>id.toLowerCase()));
+ const selectedIds=new Set<string>();
+ let namedLookupStarted=false;
+ let requested:{name:TenbotJobToolName;args:Record<string,unknown>}|null=null;
  let inconsistent=false,scoped:PreparedJobRequest|undefined;
  const execute:JobTools['execute']=async(name,canonical)=>{
   const result=await jobTools.execute(name,canonical);
@@ -66,6 +81,31 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
   // The model still chooses tools and pages. Only the employee's compiled
   // population selectors override model guesses, for count and list alike.
   let result:JobToolResult;const canonical=argsFor(spec.name,args);
+  if(selection){
+   if(spec.name==='find_jobs'){
+    const query=String(canonical.query??'');
+    if(explicit.length&&!explicit.some(ref=>resourceKey(ref)===resourceKey(query)))throw new AgentToolError('invalid-arguments');
+    // A new named investigation supersedes prior-only context even when the
+    // resource extractor could not recognize that employee wording. A failed
+    // or ambiguous new lookup must not silently reopen the previous Job.
+    if(query&&!namedLookupStarted){if(!explicit.length)boundIds.clear();namedLookupStarted=true;}
+    result=await execute(spec.name,canonical);
+    if(completeJobLookup(result)&&result.data&&'jobs' in result.data&&!ambiguous){
+     if(query){const resolved=resolveExactJobReference(query,result.data.jobs);if(resolved.kind==='selected')boundIds.add(resolved.jobId);}
+     else if(!explicit.length&&result.data.jobs.length<=4)for(const job of result.data.jobs)boundIds.add(job.job_id);
+    }
+   }else if(spec.name==='get_production_overview'){
+    if(explicit.length)throw new AgentToolError('invalid-arguments');
+    result=await execute(spec.name,canonical);
+   }else{
+    requested={name:spec.name,args:canonical};
+    const id=String(canonical.job_id).toLowerCase();canonical.job_id=id;
+    if(ambiguous||!boundIds.has(id)||!selectedIds.has(id)&&selectedIds.size>=4)throw new AgentToolError('invalid-arguments');
+    selectedIds.add(id);result=await execute(spec.name,canonical);
+   }
+   const {accessRefs:_refs,...published}=result;void _refs;
+   return {data:json({...published,answer_facts:modelReadFacts(result)})};
+  }
   const intent=followup?.intent;
   let references=intent?.kind==='job'&&'jobId' in intent.reference?[intent.reference.jobId]:intent?.kind==='jobs'?intent.references:[];
   if(intent?.kind==='clarify'||intent?.kind==='blocked')throw new AgentToolError('invalid-arguments');
@@ -103,7 +143,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
   }else result=await execute(spec.name,canonical);
   const {accessRefs:_references,...modelResult}=result;void _references;return {data:json(modelResult)};
  }}));
- return {tools,execute,scoped:()=>scoped,reads:()=>structuredClone([...reads.values()]),async fresh(){
+ return {tools,execute,scoped:()=>scoped,requested:()=>requested?structuredClone(requested):null,reads:()=>structuredClone([...reads.values()]),async fresh(){
   if(inconsistent)return false;
   for(const read of reads.values()){
    const current=await jobTools.execute(read.name,read.args);
