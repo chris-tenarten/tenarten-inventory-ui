@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-02T18:07:43.322315+00:00",
+  "sourceBase": "156a6eaad2f7a9f73791ca570c26a0458f046827",
+  "runtime": "HEAD tenbot-agent.ts; excludes preserved unrelated dirty after_tool removal",
+  "environment": "isolated /private/tmp source copy; injected data/Auth/provider doubles",
+  "results": [
+    {
+      "script": "verify-tenbot-proposal-operations.mts",
+      "exitCode": 0,
+      "output": "Proposal operations: 19 focused model-free groups passed."
+    },
+    {
+      "script": "verify-tenbot-business-operations.mts",
+      "exitCode": 0,
+      "output": "{\n  \"mode\": \"model-free injected reads; no database transaction or live inference claim\",\n  \"groupsPassed\": 16,\n  \"checks\": [\n    \"catalog search is independent of document reading and has no creation side effect\",\n    \"comparison objective composes document, catalog, order and receival reads without preparing an action\",\n    \"creation objective uses the same operations and direct independent preparation returns exact canonical parameters\",\n    \"missing-information objective reuses source and catalog without inferred metadata\",\n    \"unready source stays read-only and cannot become an executable proposal through model extraction\",\n    \"source quantities and units cannot silently become package totals or another measure\",\n    \"missing catalog IDs produce held records without fabricated catalog identity\",\n    \"possible duplicates remain held without inventing canonical acknowledgement\",\n    \"unverified Job associations and conflicting supplier evidence block execution\",\n    \"foreign source references, repeated lines and arbitrary arguments are rejected\",\n    \"every read rechecks employee identity and permission before and after I/O\",\n    \"trusted document handoff occurs once after final authorization with cloned original evidence only\",\n    \"revoked final permission, foreign caller and foreign original never reach trusted document handoff\",\n    \"incomplete catalog or receival reads cannot certify absence or readiness\",\n    \"lookup adapter exposes only bounded fixed SELECTs and source factory has no write or execution tool\",\n    \"existing agent runtime discovers and composes the same operations for comparison, creation and missing-information objectives\"\n  ],\n  \"inferenceCalls\": 0,\n  \"operationalWrites\": 0\n}"
+    },
+    {
+      "script": "verify-tenbot-reviewed-actions.mts",
+      "exitCode": 0,
+      "output": "{\n  \"passed\": true,\n  \"groups\": 13,\n  \"checks\": [\n    \"strict preparation is JSON-only and credential-free; unknown fields and deep/nonfinite values fail\",\n    \"trusted-only publication and employee preview/status/cancel bind exact identity without execution\",\n    \"changed reference expiration and wrong receipt identities fail closed\",\n    \"trusted auth derives email from verified caller; exact proof precedes execution and only private handoff has tokens\",\n    \"invalid password/body rejects without raw auth exceptions, grant or execution\",\n    \"original MFA, missing session and expired identity stop before password login\",\n    \"fresh identity/AAL/session validation cannot mint proof for another or reused session\",\n    \"pending capability is nonexecuting even with a forged available projection\",\n    \"blocked, failed, revoked, expired and already-authorized operations never reprompt or reuse proof\",\n    \"stamp rejection and uncertainty retain private session and never start business execution\",\n    \"definite business rollback is failed; transport and malformed response are uncertain with status recovery only\",\n    \"static migration safety: default OFF, private metadata, existing permissions and immutable exact intent\",\n    \"static transaction boundary: canonical Proposal save, failure consumes proof, completed retry returns actual receipt\"\n  ],\n  \"mode\": \"Offline injected Auth/RPC contract tests and static SQL review only\",\n  \"actualNetworkCalls\": 0,\n  \"actualDatabase\": false,\n  \"realPasswords\": 0,\n  \"businessWrites\": 0,\n  \"inferenceCalls\": 0,\n  \"migration\": {\n    \"path\": \"supabase/migrations/20261102120000_tenbot_reviewed_actions.sql\",\n    \"sha256\": \"e7cb74fc2f85460576391be2fc7416ccadf38e79989ab0fd4ca70ef03bb8be3c\",\n    \"applied\": false\n  },\n  \"requiredGate\": \"Actual isolated PostgreSQL role/RLS/lifecycle/concurrency/rollback validation remains required. Docker daemon unavailable in this pass.\"\n}"
+    },
+    {
+      "script": "verify-tenbot-action-integration.mts",
+      "exitCode": 0,
+      "output": "{\n  \"mode\": \"offline-scripted\",\n  \"paidInference\": false,\n  \"database\": false,\n  \"checks\": [\n    \"existing runtime composition: Compare this invoice with the order.\",\n    \"existing runtime composition: Which material details are missing?\",\n    \"existing runtime composition: Prepare a Proposal from these specifications.\",\n    \"duplicate registry rejected; no execute or password tool exposed\",\n    \"revision uses existing strict prepare schema; read tool and extra credentials rejected\",\n    \"default OFF and Production/absent origin denied before RPC or Auth\",\n    \"password only accepted in trusted confirm shape; status preserves owner-scoped contract\",\n    \"raw exceptions never reach employee payloads\"\n  ]\n}"
+    }
+  ],
+  "actualDatabase": false,
+  "databaseGate": "docker-unresponsive at daemon-info, 5s; no repair or hosted substitute",
+  "inferenceCalls": 0,
+  "tokenUsage": 0,
+  "costUsd": 0,
+  "businessWrites": 0,
+  "migrationApplied": false,
+  "migrationSha256": "e7cb74fc2f85460576391be2fc7416ccadf38e79989ab0fd4ca70ef03bb8be3c",
+  "harnessAttempts": [
+    "Initial tsx CLI invocation blocked by sandbox IPC EPERM before verifier execution; rerun with node --import tsx avoids IPC.",
+    "Initial isolated Auth verifier lacked copied migration; copied this task-owned migration and reran Auth verifier."
+  ],
+  "checks": {
+    "projectTypeScript": "pass",
+    "strictSharedTypeScript": "pass",
+    "edgeEntryTypeScript": "pass using local npm mapping/minimal Deno stub; no Deno deploy",
+    "targetedEslint": "pass, nonignored",
+    "diffCheck": "pass",
+    "brandingStructure": "pass",
+    "productionBuild": "pass, isolated webpack export, 25 pages",
+    "browser": "not run; no UI changes",
+    "realAuth": "not run"
+  },
+  "preservation": {
+    "preexistingTrackedDirtyFiles": 8,
+    "changed": [],
+    "workspaceHead": "5cb71fb52ffe784715b9ae5d8bb95a14ac6df395",
+    "workspaceClean": true,
+    "port3000": "preexisting process unchanged; no server started",
+    "screen": "no new Mac access; previous reset aborted before dispatch, prior capture release unverified"
+  }
+}

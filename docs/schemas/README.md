@@ -4,6 +4,12 @@ This is the lookup entry point for existing technical contracts, not a second sc
 
 > Before proposing new database structures, services, or agent tools, first consult the existing technical inventory. If its freshness or completeness is uncertain, ask Codex to inspect the current source and deployed schema, then recommend the smallest change that reuses existing functionality.
 
+## November 2 reviewed-operation candidate (local, unapplied)
+
+The [focused implementation and Workspace contract](../project-memory/2026-11-02-tenbot-reviewed-actions.md) extends the existing agent registry with independently reusable document/catalog/Purchasing and customer/contact reads and nonpersistent Proposal/Pending Receival preparation. Source: `tenbot-proposal-operations.ts`, `tenbot-business-operations.ts`, `tenbot-reviewed-operations.ts` under `supabase/functions/_shared/`.
+
+The trusted `tenbot-actions.ts`, `tenbot-action-auth.ts`, `tenbot-action-transport.ts` and existing TenBot Edge entry define exact review, password confirmation, preview, status and receipt contracts outside the model. New migration `20261102120000_tenbot_reviewed_actions.sql` is **unapplied** and defaults off; it reuses canonical Proposal create/save and existing Auth/permission epochs. Pending creation is explicitly blocked: the legacy permit commit path needs action-bound enforcement before this password contract can safely enable it. No existing roles/capabilities or canonical business RPCs are changed. Local PostgreSQL was unresponsive, so transaction/concurrency certification is incomplete. Hosted ask/history and all releases/configuration remain untouched. This addendum is source evidence, not a hosted-state assertion.
+
 ## Schema sources and freshness
 
 | Need | Reuse | Verification boundary |
