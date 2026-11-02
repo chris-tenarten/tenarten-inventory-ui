@@ -8,6 +8,7 @@ import {ordinaryTenbotSpendingAuthorized,hostedInvoicePreparationEnabled,hostedR
 import {createHostedTenbotFixture} from './support/tenbot-hosted-fixture.mjs';
 import {safeOpenAIResponseMetadata,type OpenAIResponseMetadata} from '../supabase/functions/_shared/tenbot-openai';
 import {MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from '../supabase/functions/_shared/tenbot-read-investigation';
+import {createReviewedActionTransport} from '../supabase/functions/_shared/tenbot-action-transport';
 const owner='11111111-1111-4111-8111-111111111111',other='33333333-3333-4333-8333-333333333333';
 const requestId='22222222-2222-4222-8222-222222222222',origin='https://tendev.pages.dev';
 const starts=Date.parse('2026-11-02T16:00:00Z'),expires=starts+3_600_000;
@@ -54,6 +55,29 @@ await check('Temporary acceptance leaves ordinary spending, invoice preparation 
  assert.equal(hostedInvoicePreparationEnabled(preparation,owner,origin,starts),false);
  assert.equal(hostedReceivalPilotEnabled({enabled:false,executionEnabled:false,origins:[origin],employeeIds:[owner],expiresAt:config.expiresAt},owner,origin,starts),false);
 });
+await check('Reviewed discovery and trusted actions require the designated owner and exact live TenDev acceptance window while ordinary history remains available',async()=>{
+ const archived=JSON.parse(readFileSync(new URL('./fixtures/tenbot-capability-history.synthetic.json',import.meta.url),'utf8'));
+ const cases=[{scope,config,now:starts+1000,expected:true},{scope:{...scope,owner:other},config,now:starts+1000,expected:false},{scope:{...scope,origin:'https://tenops.pages.dev'},config,now:starts+1000,expected:false},{scope,config,now:expires,expected:false},{scope,config:{...config,enabled:false},now:starts+1000,expected:false}];
+ for(const candidate of cases){
+  const allowed=terraAcceptanceSpendingAuthorized(candidate.config,candidate.scope,candidate.now),f=createHostedTenbotFixture(candidate.scope.owner,archived);
+  const handler=createHostedTenbot({owner:candidate.scope.owner,origin:candidate.scope.origin,config:{enabled:true,origins:[origin,'https://tenops.pages.dev'],apiKey:'',keyExpiresAt:'',spendingAuthorized:false,persistentHistory:true,modelDirectedReads:true,reviewedOperationsEnabled:allowed},caller:f.caller,service:f.service,qwen:null,jobTools:{async execute(){throw Error('Unexpected operational read');}},reviewedCaller:{async rpc(){throw Error('Unexpected reviewed operation');},from(){throw Error('Unexpected business reader');},storage:{from(){throw Error('Unexpected Storage operation');}}},actionSessionId:requestId,now:()=>candidate.now});
+  const status=await handler({action:'status'}) as {reviewedActionsAvailable?:boolean;historyAvailable:boolean;persistentHistoryAvailable:boolean;readOnly:boolean};
+  assert.equal(status.reviewedActionsAvailable===true,candidate.expected);assert(status.historyAvailable&&status.persistentHistoryAvailable&&status.readOnly);assert.equal(f.state.providerCalls,0);
+  let rpcCalls=0;
+  const caller={async rpc(){rpcCalls++;return {data:null,error:{code:'42501'}};}};
+  const transport=createReviewedActionTransport({enabled:allowed,origin:candidate.scope.origin,caller,password:{async authenticate(){throw Error('Unexpected password authentication');},createPasswordClient(){throw Error('Unexpected password client');},callerForToken(){throw Error('Unexpected execution caller');},service:caller}});
+  const response=await transport({workspace:'tenbot.actions.v1',action:'status',reference:{id:requestId,revision:1,hash:'a'.repeat(64),expiresAt:new Date(expires).toISOString()}});
+  assert.equal(rpcCalls,candidate.expected?1:0);assert.equal(response.status,409);
+  if(!candidate.expected)assert.equal((response.body as {error:{code:string}}).error.code,'not_available');
+ }
+ const edge=readFileSync(new URL('../supabase/functions/tenbot/index.ts',import.meta.url),'utf8');
+ assert(edge.includes("enabled:Deno.env.get('TENBOT_REVIEWED_ACTIONS_ENABLED')==='true'&&acceptanceAuthorized()"));
+ assert(edge.includes("reviewedOperationsEnabled:Deno.env.get('TENBOT_REVIEWED_OPERATIONS_ENABLED')==='true'&&acceptanceAuthorized()"));
+ assert(edge.indexOf('const acceptanceAuthorized=')<edge.indexOf('if(body.workspace===TENBOT_ACTION_WORKSPACE)'));
+ const beforeExecute=edge.slice(edge.indexOf('async beforeExecute(input){'),edge.indexOf('const staged=await actions.stageReceivals'));
+ assert(beforeExecute.includes("if(!acceptanceAuthorized()){await actions.revoke(input.reference);throw new ReviewedActionError('rejected');}"));
+ assert(beforeExecute.indexOf('if(!acceptanceAuthorized())')<beforeExecute.indexOf("if(input.operation!=='inventory.create_pending_receivals')return;"));
+});
 await check('Accepted server gate reuses the existing atomic reserve/settle meter and server correlation UUID for model/tool diagnostics',async()=>{
  const f=fixture();await f.handler()({action:'ask',question:f.archived.question});
  assert.equal(f.state.providerCalls,3);assert.equal(f.reservations.size,3);assert(f.reserveRequests.every(id=>id===requestId));
@@ -89,7 +113,7 @@ await check('Deployed Production persistent-history integration is preserved and
  const hosted=readFileSync(new URL('../supabase/functions/_shared/tenbot-hosted.ts',import.meta.url),'utf8');
  assert(hosted.includes("options.origin==='https://tenops.pages.dev'||options.origin==='https://tendev.pages.dev'"));
  const edge=readFileSync(new URL('../supabase/functions/tenbot/index.ts',import.meta.url),'utf8');
- assert(edge.indexOf('return reply(await receivals(body));')<edge.indexOf('const acceptance='));
+ assert(edge.indexOf('return reply(await receivals(body));')<edge.indexOf('const requestId=acceptanceAuthorized()'));
  assert(edge.includes("ordinaryTenbotSpendingAuthorized(Deno.env.get('TENBOT_OPENAI_SPEND_AUTHORIZED')==='true',preparation)"));
  assert(!edge.includes('body.acceptance')&&!edge.includes('body.requestId'));
 });

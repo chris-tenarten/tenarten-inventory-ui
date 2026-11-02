@@ -1,11 +1,15 @@
 'use client';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
-import {useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
+import {createContext,useContext,useCallback,useEffect,useRef,useState,type ReactNode} from 'react';
+import {useTextDraft} from '@/lib/drafts/useTextDraft';
+import {TENOPS_SYSTEM_INBOX_USER_ID} from '@/modules/my-work/inbox';
 import {Info,MoreHorizontal,Paperclip,X} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {ReceivalDraftReview} from './ReceivalDraftReview';
+import {ConversationActionReviews,ACTION_CORRECTION_EVENT,configuredActionEndpoint} from './actions/ActionWorkspaceBridge';
+import {parseActionReference,type ActionReference} from './actions/contract';
 import {previousAnswerNotice} from './history-presentation';
 import {createInvoiceReceivalAttachmentService,invoiceOriginalSha256} from '../inventory/invoice-receival-attachments';
 import {parseTenbotCanaryAccess,tenbotCanaryRemainingMs} from '../inventory/tenbot-canary-access';
@@ -20,7 +24,7 @@ type Feedback={id:string;submitter_name:string;status:string;created_at:string;d
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
 type AgentClaim={text:string;evidence_ids:string[]};
 type AgentView={mode:'offline-scripted'|'openai';provider:string;model:string;status:string;durationMs:number;executionAvailable:false;final:{observations:AgentClaim[];inferences:AgentClaim[];recommendations:AgentClaim[];questions:string[];completed_actions:[]}|null;proposals:{evidenceId:string;tool:string;proposal:Record<string,unknown>}[];evidence:{id:string;tool:string;data:unknown}[];trace:{event:string;name?:string;outcome:string;durationMs:number}[];usage:{inputTokens:number;outputTokens:number;costUsd:number;reservedUsd:number}};
-type ExperimentalAnswer=Answer&{persistentHistory?:boolean;nextCursor?:string|null;contentScope?:'workflow'|'scope'|'volatile'|'operational-history';history?:{state:'verified'|'redacted';persistent?:boolean;reason?:'expired'|'access-or-evidence-changed'|'temporarily-unavailable';historical:boolean;observedAt:string;checkedAt:string;expiresAt?:string};historyTurns?:Turn[];historyTurnId?:string;createdAt?:string;answeredAt?:string;agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
+type ExperimentalAnswer=Answer&{actionStatuses?:unknown;persistentHistory?:boolean;nextCursor?:string|null;contentScope?:'workflow'|'scope'|'volatile'|'operational-history';history?:{state:'verified'|'redacted';persistent?:boolean;reason?:'expired'|'access-or-evidence-changed'|'temporarily-unavailable';historical:boolean;observedAt:string;checkedAt:string;expiresAt?:string};historyTurns?:Turn[];historyTurnId?:string;createdAt?:string;answeredAt?:string;agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
 // Only the server classifies proven guidance or reauthorized operational display.
 // Missing classification remains volatile for compatibility with older servers.
 const volatileAnswer=(answer:ExperimentalAnswer|null|undefined)=>Boolean(!answer?.history&&(answer?.contentScope==='volatile'||answer?.operational||answer?.agent&&!['workflow','scope'].includes(answer.contentScope??'')));
@@ -102,18 +106,33 @@ function hideOperationalTurn(t:Turn,retryable=true):Turn{
 }
 type ExperimentalHistory={persistentHistory?:boolean;nextCursor?:string|null;conversationId:string;mode:'agent-experiment'|'assistant';turns:{id:string;question:string;createdAt:string;answeredAt:string;answer:ExperimentalAnswer}[]};
 type AssistantEntry={id:string;createdAt:string;content:ReactNode};
-export type TenbotConversation={available:boolean;busy:boolean;restoring:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;menu:(question:string)=>ReactNode;disclosure:ReactNode;attachmentControl:ReactNode;attachmentStatus:ReactNode;activityKey:string};
+export type TenbotConversation={composer:ReturnType<typeof useTextDraft>;available:boolean;busy:boolean;restoring:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;menu:(question:string)=>ReactNode;disclosure:ReactNode;attachmentControl:ReactNode;attachmentStatus:ReactNode;activityKey:string};
 const messageTime=(value:string)=>new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(value));
 const guideText=(source:Source)=>source.guidance.replace('in the deployed TenOps capability snapshot','in the TenOps Guide');
 const sourceStatus=(source:Source)=>source.availability==='unavailable'?'Not enabled':source.availability==='partial'?'Partly available':source.status==='deployed'?'Available':source.status==='local'?'Unreleased':source.status==='planned'?'Planned / deferred':'Unable to verify';
-// InboxDialog owns this hook for one authenticated account. It accepts only an
-// explicitly submitted question, never Messaging history, recipients or records.
+// One account-scoped controller serves Messaging and the global assistant.
+// It accepts explicitly submitted questions, never employee Messaging history.
+const TenbotConversationContext=createContext<TenbotConversation|null>(null);
+export function TenbotConversationProvider({children}:{children:ReactNode}){
+ const auth=useAuth();
+ return <TenbotAccountProvider key={auth.user?.id??'signed-out'}>{children}</TenbotAccountProvider>;
+}
+function TenbotAccountProvider({children}:{children:ReactNode}){
+ const conversation=useTenbotConversationController();
+ return <TenbotConversationContext.Provider value={conversation}>{children}</TenbotConversationContext.Provider>;
+}
 export function useTenbotConversation():TenbotConversation{
+ const conversation=useContext(TenbotConversationContext);
+ if(!conversation)throw new Error('TenBot requires the account-scoped conversation provider.');
+ return conversation;
+}
+function useTenbotConversationController():TenbotConversation{
  const auth=useAuth(),pathname=usePathname();
- const available=auth.ready&&auth.accessStatus!=='pending'&&auth.isAuthenticated&&auth.accessAllowed&&Boolean(auth.user?.id)&&auth.user?.id===auth.profile?.userId&&auth.can('readOperationalData');
+ const available=auth.ready&&auth.accessStatus!=='pending'&&auth.isAuthenticated&&auth.accessAllowed&&!auth.requiresPasswordSetup&&Boolean(auth.user?.id)&&auth.user?.id===auth.profile?.userId&&auth.can('readOperationalData');
  const reviewAllowed=available&&auth.can('manageUsers');
  const identity=auth.profile?.displayName||'Your account';
  const owner=auth.user?.id||'';
+ const composer=useTextDraft(available?owner:'','messaging',TENOPS_SYSTEM_INBOX_USER_ID);
  const currentModule=moduleContext(pathname);
  const [messages,setMessages]=useState<Turn[]>([]);
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
@@ -124,6 +143,9 @@ export function useTenbotConversation():TenbotConversation{
  const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
  const [usage,setUsage]=useState<Usage|null>(null),[usageError,setUsageError]=useState('');
  const [hostedReceivals,setHostedReceivals]=useState(false);
+ const [reviewedActions,setReviewedActions]=useState(false);
+ const [reviewDocument,setReviewDocument]=useState<{id:string;filename:string}|null>(null);
+ const [correction,setCorrection]=useState<ActionReference|null>(null);
  const [experiment,setExperiment]=useState(false),[authenticatedExperiment,setAuthenticatedExperiment]=useState(false),[developerDiagnostics,setDeveloperDiagnostics]=useState(false);
  const [orderDetails,setOrderDetails]=useState({orderedBy:'',orderDate:'',location:''});
  const [experimentStatus,setExperimentStatus]=useState<LocalDemoStatus|null>(null),[syntheticConfirmed,setSyntheticConfirmed]=useState(false);
@@ -162,6 +184,10 @@ export function useTenbotConversation():TenbotConversation{
   // Keeping an expired attachment selected would prevent ordinary text help.
   setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setSyntheticConfirmed(false);
  },[]);
+ useEffect(()=>{
+  const select=(event:Event)=>{if(!available||!reviewedActions)return;try{setCorrection(parseActionReference((event as CustomEvent).detail));requestAnimationFrame(()=>Array.from(document.querySelectorAll<HTMLTextAreaElement>('[data-messaging-composer] textarea')).find(input=>input.getClientRects().length)?.focus());}catch{setError('Refresh the review before requesting a correction.');}};
+  window.addEventListener(ACTION_CORRECTION_EVENT,select);return()=>window.removeEventListener(ACTION_CORRECTION_EVENT,select);
+ },[available,reviewedActions]);
  const receiveExperimentStatus=useCallback((status:LocalDemoStatus)=>{
   if(status.canaryAccess){const access=parseTenbotCanaryAccess(status.canaryAccess,owner);if(!access)throw Error('Temporary canary access is unavailable.');setCanaryDeadline(Date.now()+tenbotCanaryRemainingMs(access));}
   else setCanaryDeadline(null);
@@ -195,7 +221,7 @@ export function useTenbotConversation():TenbotConversation{
   let current=true;const generation=++lifecycle.current;
   const active=()=>current&&generation===lifecycle.current&&currentOwner.current===owner&&currentAccess.current===accessFingerprint;
   historyBinding.current=null;conversation.current={owner};pageBefore.current=undefined;setHistoryCursor(null);
-  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setHostedReceivals(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setCanaryDeadline(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
+  setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setHostedReceivals(false);setReviewedActions(false);setReviewDocument(null);setCorrection(null);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setCanaryDeadline(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
   setHistoryLoading(available);
   if(!available){
    // Pending Auth is not a sign-out. Do not destroy the opaque locator while the
@@ -216,8 +242,9 @@ export function useTenbotConversation():TenbotConversation{
     }else{
      // An older/Qwen-only backend can reject status; normal conversation remains
      // available. Never send experimental flags or enable document controls.
-     const status=await invoke<{mode:string;historyAvailable:boolean;persistentHistoryAvailable?:boolean;receivalPilotAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
+     const status=await invoke<{mode:string;historyAvailable:boolean;persistentHistoryAvailable?:boolean;receivalPilotAvailable?:boolean;reviewedActionsAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
      if(!active()||status?.mode!=='assistant'||status.historyAvailable!==true)return;
+     setReviewedActions(status.reviewedActionsAvailable===true&&configuredActionEndpoint()!==null);
      persistentAvailable=status.persistentHistoryAvailable===true;
      if(status.receivalPilotAvailable===true){
       try{
@@ -354,12 +381,13 @@ export function useTenbotConversation():TenbotConversation{
   const turn:Turn={id:retry?.id??++sequence.current,question:current,createdAt:retry?.createdAt??new Date().toISOString(),answer:null};
   setMessages(m=>[...m.filter(item=>item.id!==turn.id).map(item=>item.answer?.history?{...item,answer:{...item.answer,history:{...item.answer.history,historical:true}}}:volatileAnswer(item.answer)?{...item,answer:null,error:'Previous operational answer requires fresh access verification.'}:item),turn]);
   try{
-   const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(invoiceTurn?{...(turnAttachment?{attachmentId:turnAttachment.attachmentId}:{}),orderDetails}:experiment&&experimentStatus?.executionOnly!==true?{demoScenario:'job-investigation',orderDetails}:{})});
+   const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(reviewedActions?{...(reviewDocument?{documentIds:[reviewDocument.id]}:{}),...(correction?{supersedes:correction}:{})}:{}),...(invoiceTurn?{...(turnAttachment?{attachmentId:turnAttachment.attachmentId}:{}),orderDetails}:experiment&&experimentStatus?.executionOnly!==true?{demoScenario:'job-investigation',orderDetails}:{})});
    if(generation!==lifecycle.current||currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
    if(volatileAnswer(response)&&(!foreground.current||document.visibilityState!=='visible')){
     setMessages(m=>m.map(item=>item.id===turn.id?{...item,error:inactiveResponse}:item));
     return true;
    }
+   setCorrection(null);
    if(invoiceTurn){const received=response.localDemo?.draft??null;setReceivalDraft(received);setLocalApproval(null);if(received&&!received.simulation&&turnAttachment?.sourceId&&received.attachmentId===turnAttachment.sourceId)savePreparedDraftLocator(owner,turnAttachment.sourceId);}
    if(response.persistentHistory&&response.historyTurns){pageBefore.current=undefined;setHistoryCursor(response.nextCursor??null);setMessages(response.historyTurns);return true;}
    setMessages(m=>m.map(item=>{if(item.id===turn.id)return {...item,id:response.historyTurnId??item.id,createdAt:response.createdAt??item.createdAt,answer:response,answeredAt:response.answeredAt??new Date().toISOString()};const restored=response.historyTurns?.find(t=>t.id===String(item.id));return restored??(operationalTurn(item)?hideOperationalTurn(item,!Array.isArray(response.historyTurns)):item);}));
@@ -394,7 +422,7 @@ export function useTenbotConversation():TenbotConversation{
    if(experimentStatus?.executionOnly===true){if(conversation.current.id)await request({action:'clear',conversationId:conversation.current.id});}
    else if(!inactiveCanary&&(conversation.current.id||attachment))await request({action:'clear',...(conversation.current.id?{conversationId:conversation.current.id}:{}),...(attachment?{attachmentId:attachment.attachmentId}:{})});
    if(attachment)clearPreparedDraftLocator(owner);
-   conversation.current={owner};clearHistoryLocator();setMessages([]);setDraft(null);setError('');setNotice('');setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
+   conversation.current={owner};clearHistoryLocator();setMessages([]);setReviewDocument(null);setCorrection(null);setDraft(null);setError('');setNotice('');setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setSyntheticConfirmed(false);
   }catch{setError('TenBot could not clear this conversation. Retry.');}finally{finish();}
  }
  async function refreshFeedback(status:string,module:string){
@@ -467,7 +495,7 @@ export function useTenbotConversation():TenbotConversation{
   catch{setMessages(turns=>turns.map(t=>operationalTurn(t)?hideOperationalTurn(t):t));setError('Private history could not be verified. Please retry.');}finally{finish();}
  }
  const visibleMessages=messages.filter((m,i)=>!unavailableHistory(m)||!messages.slice(i+1).some(unavailableHistory));
- const focusComposer=()=>{document.querySelector<HTMLTextAreaElement>('[data-messaging-composer] textarea')?.focus();};
+ const focusComposer=()=>{Array.from(document.querySelectorAll<HTMLTextAreaElement>('[data-messaging-composer] textarea')).find(element=>element.getClientRects().length>0)?.focus();};
  const entries:AssistantEntry[]=available?[...(historyCursor||pageBefore.current?[{id:'tenbot-history-page',createdAt:messages[0]?.createdAt??new Date().toISOString(),content:<div className="flex items-center gap-3 px-3 py-1 text-xs text-slate-500">{historyCursor?<button type="button" disabled={busy} onClick={()=>void loadHistoryPage(historyCursor)} className="min-h-9 text-blue-800 underline">Earlier messages</button>:null}{pageBefore.current?<button type="button" disabled={busy} onClick={()=>void loadHistoryPage()} className="min-h-9 text-blue-800 underline">Latest messages</button>:null}</div>}]:[]),...visibleMessages.flatMap(m=>previousAnswerNotice(m)?[{id:`assistant-answer-${m.id}`,createdAt:m.answeredAt??m.createdAt,content:<article aria-label="TenBot previous result" data-tenbot-history-kind={previousAnswerNotice(m)!.kind} className="mb-3 flex flex-wrap items-center gap-2 px-3 py-2 text-xs text-slate-500"><span>{previousAnswerNotice(m)!.message}</span><time dateTime={m.answeredAt??m.createdAt}>{new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(m.answeredAt??m.createdAt))}</time><button type="button" disabled={busy} onClick={()=>previousAnswerNotice(m)!.retry?requestHistoryRefresh.current():focusComposer()} className="min-h-9 rounded px-2 font-medium text-blue-800 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500">{previousAnswerNotice(m)!.retry?'Retry access check':'Ask for an update'}</button></article>}]:[{id:`assistant-question-${m.id}`,createdAt:m.createdAt,content:<article className="relative mb-3 ml-auto max-w-[88%] rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
     <div className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-800">{m.question}</div>
     <time className="mt-1 block text-[10px] text-slate-400">{messageTime(m.createdAt)}</time>
@@ -496,6 +524,7 @@ export function useTenbotConversation():TenbotConversation{
       <div className="space-y-1 border-t border-slate-100 pt-2">{m.answer.operational.facts.map(fact=><p key={fact.id}>{fact.text}</p>)}</div>
       {m.answer.operational.truncated?<p>Some records could not be included. Incomplete totals are not presented as exact.</p>:null}
      </details>:null}
+     {m.answer.history?.state==='verified'&&m.answer.history.persistent&&m.answer.actionStatuses!==undefined?<ConversationActionReviews statuses={m.answer.actionStatuses}/>:null}
     </>:m.error===inactiveResponse?<p role="status" className="text-slate-600">{m.error}</p>:m.error?.startsWith('Previous operational')?<p role="status" className="text-xs text-slate-500">{m.error}</p>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">{busy?'Working…':'No answer was displayed. Ask again to retry.'}</p>}
     {m.answeredAt?<time className="block text-[10px] text-slate-400">{messageTime(m.answeredAt)}</time>:null}
    </article>}])]:[];
@@ -521,7 +550,19 @@ export function useTenbotConversation():TenbotConversation{
    <details className="mt-2"><summary className="min-h-9 cursor-pointer py-2 text-slate-500">More privacy details</summary><p>{authenticatedReceivals?<>This restricted candidate sends only the approved original test document, submitted questions and narrowly authorized catalog/Job tool results to OpenAI. Documents are untrusted input and cannot grant permissions or approve actions. Original invoices are stored privately as batch evidence. Previews may be rendered locally; the server processes verified original bytes. Reads use your authenticated TenOps access. {experimentStatus?.executionEnabled===true?'Explicit approval submits the exact server-reviewed operations through authenticated TenOps services. Catalog and receival permissions are checked independently.':'Review and explicit approval are separate from model reasoning; execution is currently disabled by the server.'} No personal ChatGPT context is connected.</>:liveDemo?'This local demo sends the approved synthetic attachment image and questions you submit to OpenAI for actual inference. A one-page PDF is rendered locally into an image without offline OCR or text extraction. Operational records, catalog matches and approved pending entries are simulated locally. No Production records are read or written, and real database authorization/RLS is not validated by this demonstration.':'When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live facts are refreshed for each request. Your private TenBot questions and completed answers remain in this conversation. Historical answers show their original timestamps and are checked against your current permissions and source requirements when opened. Restricted content is redacted; changed live values do not make a past answer current. Displayed history is separate from the bounded context used by AI. TenBot does not independently read private messages, personal tasks or financial information. New operational questions always use current authorized records. Clearing the conversation explicitly removes your saved TenBot history.'}</p></details>
   </div>
  </details>;
- const attachmentControl=available&&liveDemo&&experimentStatus?.executionOnly!==true?<>
+ async function uploadReviewDocument(file:File){
+  if(!available||!reviewedActions||!begin())return;
+  const expectedOwner=owner,generation=lifecycle.current,expectedAccess=currentAccess.current;
+  try{
+   const source=await createInvoiceReceivalAttachmentService(supabase).upload(file,file.name);
+   if(currentOwner.current!==expectedOwner||lifecycle.current!==generation||currentAccess.current!==expectedAccess)return;
+   setReviewDocument({id:source.id,filename:source.filename});
+  }catch{setError('The document could not be attached. Check your access and try again.');}finally{finish();}
+ }
+ const attachmentControl=available&&reviewedActions?<>
+  <input ref={attachmentInput} aria-label="TenBot attachment file" tabIndex={-1} type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" disabled={busy} className="hidden" onChange={event=>{const file=event.currentTarget.files?.[0];event.currentTarget.value='';if(file)void uploadReviewDocument(file);}}/>
+  <button type="button" aria-label="Attach PDF or image" title="Attach PDF, JPG or PNG" disabled={busy} onClick={()=>attachmentInput.current?.click()} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-slate-700 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40"><Paperclip className="h-4 w-4" aria-hidden="true"/></button>
+ </>:available&&liveDemo&&experimentStatus?.executionOnly!==true?<>
   <input ref={attachmentInput} aria-label="TenBot attachment file" tabIndex={-1} type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" disabled={busy||!experimentStatus||experimentStatus.canPrepare===false} className="hidden" onChange={event=>{
    const file=event.currentTarget.files?.[0];event.currentTarget.value='';if(!file||experimentStatus?.executionOnly===true)return;
    setError('');
@@ -532,7 +573,7 @@ export function useTenbotConversation():TenbotConversation{
   <button type="button" aria-label="Attach PDF or image" title="Attach PDF, JPG or PNG" disabled={busy||!experimentStatus||experimentStatus.canPrepare===false} onClick={()=>attachmentInput.current?.click()} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-slate-700 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40"><Paperclip className="h-4 w-4" aria-hidden="true"/></button>
  </>:null;
  const attachmentName=selectedAttachment?.name||attachmentOrigin?.originalFilename||attachment?.filename;
- const attachmentStatus=available&&liveDemo&&attachmentName?<div className="mb-2 space-y-1" aria-label="TenBot attachment">
+ const attachmentStatus=available&&reviewedActions&&(reviewDocument||correction)?<div className="mb-2 space-y-1">{reviewDocument?<div className="flex items-center gap-2 rounded border border-slate-200 bg-slate-50 p-2 text-xs"><span className="min-w-0 flex-1 truncate">{reviewDocument.filename}</span><button type="button" disabled={busy} aria-label="Remove document" onClick={()=>setReviewDocument(null)} className="min-h-9 min-w-9"><X className="mx-auto h-4 w-4"/></button></div>:null}{correction?<p className="text-xs text-slate-600">Your next message will request a replacement review. <button type="button" onClick={()=>setCorrection(null)} className="underline">Cancel correction</button></p>:null}</div>:available&&liveDemo&&attachmentName?<div className="mb-2 space-y-1" aria-label="TenBot attachment">
   <div className="flex min-w-0 items-center gap-2 rounded border border-slate-200 bg-slate-50 px-2 py-1.5"><Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden="true"/><bdi title={attachmentName} className="min-w-0 flex-1 truncate text-xs">{attachmentName}</bdi><span className="shrink-0 text-[10px] text-slate-500">{selectedAttachment?'Ready to send':'Attached'}</span><button type="button" disabled={busy} aria-label={`Remove ${attachmentName}`} title={selectedAttachment?'Remove attachment':'Remove attachment and clear its conversation'} onClick={()=>{if(selectedAttachment){setSelectedAttachment(null);setSyntheticConfirmed(false);}else void clear();}} className="flex h-9 w-9 shrink-0 items-center justify-center rounded text-slate-600 hover:bg-slate-200 disabled:opacity-40"><X className="h-4 w-4" aria-hidden="true"/></button></div>
   {selectedAttachment?<><label className="flex min-h-11 items-center gap-2 text-xs"><input type="checkbox" disabled={busy} checked={syntheticConfirmed} onChange={event=>setSyntheticConfirmed(event.target.checked)}/>I confirm this attachment contains approved synthetic test data.</label><p className="text-[10px] text-slate-500">Add a message, then Send to process this attachment. One-page PDF, JPG or PNG · up to 12 MB.</p></>:null}
  </div>:null;
@@ -582,5 +623,5 @@ export function useTenbotConversation():TenbotConversation{
    </section>:null}
   </div>;
  };
- return {available,busy:busy||historyLoading,restoring:historyLoading,send,history,entries,controls,menu,disclosure,attachmentControl,attachmentStatus,activityKey:`${messages.length}:${messages.at(-1)?.id??0}:${busy||historyLoading}:${drafting}:${showFeedback}:${error}:${notice}:${attachment?.attachmentId??''}:${receivalDraft?.id??''}:${receivalDraft?.revision??''}:${receivalDraft?.status??''}`};
+ return {composer,available,busy:busy||historyLoading,restoring:historyLoading,send,history,entries,controls,menu,disclosure,attachmentControl,attachmentStatus,activityKey:`${messages.length}:${messages.at(-1)?.id??0}:${busy||historyLoading}:${drafting}:${showFeedback}:${error}:${notice}:${attachment?.attachmentId??''}:${receivalDraft?.id??''}:${receivalDraft?.revision??''}:${receivalDraft?.status??''}`};
 }
