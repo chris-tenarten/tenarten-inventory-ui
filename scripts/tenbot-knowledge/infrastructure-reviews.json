@@ -152,11 +152,11 @@
   {
     "classification": "infrastructure-only",
     "path": "supabase/functions/tenbot/index.ts",
-    "blob": "0d9c3e5a7c0dcb6bda4a788a5609b401df13d2c5",
+    "blob": "47a56d3f26719148edb77f381546387dd29e82d0",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
-      "revision": "3fb80972adeb762946c894a165adba1f6d4a1607",
-      "heading": "## Accepted infrastructure review — explicit employee cohort and Production transport"
+      "path": "docs/project-memory/2026-11-02-tenbot-final-pending-source-proof.md",
+      "revision": "4a67385680240c9139074043fbf8ce5d0e77f39d",
+      "heading": "## Accepted infrastructure review — normal reviewed Pending transport"
     }
   }
 ]
