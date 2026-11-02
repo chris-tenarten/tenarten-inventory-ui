@@ -38,7 +38,7 @@ These claims can coexist for different parts of a feature. Retain deferred/rejec
 
 ## Latest known release and employee behavior
 
-The [November 2 TenDev release receipt](2026-11-02-tenbot-conversational-tendev-release.md) and [sanitized JSON](evidence/2026-11-02-tenbot-conversational-tendev-release.json) supersede earlier local-only infrastructure summaries for this exact boundary. Both files were **untracked and owned by the release workstream** when inspected; they were not staged or changed by this pass. Identities below are retained receipt observations, not a new hosted check.
+The [November 2 TenDev release receipt](2026-11-02-tenbot-conversational-tendev-release.md) and [sanitized JSON](evidence/2026-11-02-tenbot-conversational-tendev-release.json) supersede earlier local-only infrastructure summaries for this exact boundary. Initially untracked, both were retained by their release owner in **`f9ec952` during this handoff pass**. They were not staged or changed by this pass. Identities below are retained receipt observations, not a new hosted check.
 
 | Boundary | Latest recorded identity/state |
 | --- | --- |
@@ -68,7 +68,7 @@ Workspace source is in the existing `/private/tmp/tenops-tenbot-global-workspace
 
 The workspace implements the global header launcher, desktop right panel, expanded workspace, mobile fullscreen and shared existing conversation/history/draft state. Legacy Messaging entry remains during transition. Its receipt reports type/lint/component/build/EM checks and ten synthetic browser workflow groups passing at `localhost:3100`; this is not Chris's manual `localhost:3000` or hosted acceptance. Feature-request UI/adapter contract exists, but the genuine gap signal, submission/persistence backend and daily reporting are **not connected**. The unavailable default adapter cannot claim saved success. The branch also changes Current State/execution-standard paragraphs, so integrate its owned delta selectively and reconcile shared documentation.
 
-Root was `dev` at `b5f7f66`, ahead 80/behind 14 cached `origin/dev`. No fetch was performed; cached refs do not establish live remote state. Preserve unrelated dirty backend/evaluation/docs and existing worktrees/processes. A branch's presence alone does not establish an active workstream.
+Root source was inspected on `dev` at `b5f7f66`, ahead 80/behind 14 cached `origin/dev`. The release owner then added documentation-only `f9ec952`; this handoff's own documentation commits also advance `dev` without changing runtime source. No fetch was performed; cached refs do not establish live remote state. Preserve unrelated dirty backend/evaluation/docs and existing worktrees/processes. A branch's presence alone does not establish an active workstream.
 
 ## Current Product direction supplied for this handoff
 
@@ -98,7 +98,7 @@ ChatGPT provides Product/development advice and complete, copy-ready implementat
 - **Current State opening:** replace the apparent current October 21 front matter with a dated workstream/release summary. Explicitly preserve and label the October observations and receipts as historical. Reconcile local `b5f7f66`, deployed TenDev `27816509`, Production Pages `e71bd981`, shared Edge43 and separate workspace `5cb71fb`.
 - **Execution standard:** clarify the six status claims above and keep the compact active handoffs focused. Retain old receipts and supersession links; do not duplicate release history.
 - **Manifest/index:** reconcile supplied Product direction and link the [technical inventory](../schemas/README.md). The July-only migration list, older anonymous/shared-password descriptions in [Forms and Documents](../architecture/FORMS_AND_DOCUMENTS.md), and old local-only TenBot summaries need narrow owner-reviewed supersession.
-- **Evidence durability:** the release owner must selectively retain the new untracked TenDev receipt/JSON; the workspace owner must retain its branch-only receipt with its candidate. This pass does not commit another writer's evidence. After releases, refresh identities, real Terra results, funding/migration/write settings, workspace integration and request-reporting state; retain the exact original evidence limits.
+- **Evidence durability:** November 2 TenDev receipt/JSON retention is complete in the release owner's `f9ec952`; the workspace receipt remains branch-only with its candidate. This pass does not commit another writer's evidence. After releases, refresh identities, real Terra results, funding/migration/write settings, workspace integration and request-reporting state; retain the exact original evidence limits.
 
 For future maintenance, update the owning scoped receipt first, then Current State's concise status/pointer, and the manifest only for enduring decisions. No new documentation tree, framework or evidence directory is needed.
 
