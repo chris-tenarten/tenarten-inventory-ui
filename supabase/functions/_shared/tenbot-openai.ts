@@ -18,6 +18,8 @@ export type OpenAIResponseMetadata = {
   completionStatus: string; incompleteReason: string;
   usagePresent: boolean; inputTokensPresent: boolean; outputTokensPresent: boolean;
   cachedTokensPresent: boolean; cacheWriteTokensPresent: boolean;
+  inputTokens: number | null; outputTokens: number | null;
+  cachedInputTokens: number | null; cacheWriteTokens: number | null;
   modelMatches: boolean; serviceTierMatches: boolean;
 };
 export type OpenAIProviderOptions = {
@@ -45,6 +47,7 @@ const errorParameters = new Set(['model', 'store', 'service_tier', 'instructions
 const completionStatuses = new Set(['queued', 'in_progress', 'completed', 'incomplete', 'failed', 'cancelled']);
 const incompleteReasons = new Set(['max_output_tokens', 'content_filter']);
 const enumValue = (value: unknown, allowed: Set<string>) => value === undefined || value === null || value === 'none' ? 'none' : typeof value === 'string' && allowed.has(value) ? value : 'other';
+const tokenCount = (value: unknown, maximum: number): number | null => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 && value <= maximum ? value : null;
 /** Fresh projection at both producer and hosted sink. Unknown strings, extra
  * fields, raw provider errors, response IDs and content can never cross it. */
 export function safeOpenAIResponseMetadata(value: unknown): OpenAIResponseMetadata {
@@ -55,6 +58,8 @@ export function safeOpenAIResponseMetadata(value: unknown): OpenAIResponseMetada
     completionStatus: enumValue(item.completionStatus, completionStatuses), incompleteReason: enumValue(item.incompleteReason, incompleteReasons),
     usagePresent: item.usagePresent === true, inputTokensPresent: item.inputTokensPresent === true, outputTokensPresent: item.outputTokensPresent === true,
     cachedTokensPresent: item.cachedTokensPresent === true, cacheWriteTokensPresent: item.cacheWriteTokensPresent === true,
+    inputTokens: tokenCount(item.inputTokens, 500000), outputTokens: tokenCount(item.outputTokens, 100000),
+    cachedInputTokens: tokenCount(item.cachedInputTokens, 500000), cacheWriteTokens: tokenCount(item.cacheWriteTokens, 500000),
     modelMatches: item.modelMatches === true, serviceTierMatches: item.serviceTierMatches === true,
   };
 }
@@ -64,6 +69,7 @@ function responseMetadata(httpStatus: number, payload: unknown, model: OpenAIMod
   return safeOpenAIResponseMetadata({ httpStatus, errorCode: error.code, errorType: error.type, errorParameter: error.param, completionStatus: value.status, incompleteReason: incomplete.reason,
     usagePresent: object(value.usage), inputTokensPresent: Object.hasOwn(usage, 'input_tokens'), outputTokensPresent: Object.hasOwn(usage, 'output_tokens'),
     cachedTokensPresent: Object.hasOwn(details, 'cached_tokens'), cacheWriteTokensPresent: Object.hasOwn(details, 'cache_write_tokens'),
+    inputTokens: usage.input_tokens, outputTokens: usage.output_tokens, cachedInputTokens: details.cached_tokens, cacheWriteTokens: details.cache_write_tokens,
     modelMatches: value.model === model, serviceTierMatches: value.service_tier === 'default' });
 }
 function originalContent(original:NonNullable<OpenAIProviderOptions['originalAttachment']>):JsonValue {
