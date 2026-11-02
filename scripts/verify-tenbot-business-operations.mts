@@ -25,12 +25,82 @@ function action(result:{proposal?:JsonValue}){assert(result.proposal);return res
 
 await test('catalog search is independent of document reading and has no creation side effect',async()=>{const f=fixture(),r=await call(f.tools(),'search_material_catalog',{query:'AW-1'});assert(JSON.stringify(r.data).includes('Alaska White'));assert(!r.proposal);assert(!f.calls.includes('download'));assert(!f.calls.includes('receivals'));});
 await test('comparison objective composes document, catalog, order and receival reads without preparing an action',async()=>{const f=fixture(),tools=f.tools();const results=[];results.push(await call(tools,'read_supplied_document',{source_id:sourceId}));results.push(await call(tools,'get_order',{order_id:orderId}));results.push(await call(tools,'search_material_catalog',{query:'AW-1'}));results.push(await call(tools,'find_receivals',{supplier:'T&M Supply',material:'Alaska White'}));assert(results.every(r=>!r.proposal));assert(JSON.stringify(results).includes('100 LB'));assert(!f.calls.includes('readCatalog'));});
+await test('document reads expose only the exact line-bound attested quantity and keep blank preparation held',async()=>{
+ const f=fixture(),tools=f.tools(),read=await call(tools,'read_supplied_document',{source_id:sourceId});
+ const data=read.data as {sources:Array<{source_ref:string;text:string;source_quantity:unknown}>};
+ assert.deepEqual(data.sources,raw.map((text,index)=>({source_ref:`${sourceId}:L${index+1}`,text,source_quantity:index===2?{quantity:'100',unit:'LB'}:null})));
+ const quantity=data.sources[2].source_quantity as {quantity:string;unit:string};quantity.quantity='50';
+ assert.equal(f.mutable.source.agentState!.sourceRows[0].sourceQuantity!.quantity,'100','Model-visible evidence is a fresh projection.');
+ const input=clone(request);Object.assign((input.lines as Record<string,JsonValue>[])[0],{source_quantity:'',source_unit:'',quantity_expected:'',unit:''});
+ const prepared=action(await call(tools,'prepare_pending_receivals',input));
+ assert(prepared.review.issues.some(issue=>issue.code==='source_evidence_unverified'&&issue.blocking));
+ assert.deepEqual((prepared.parameters.lines as Record<string,JsonValue>[])[0].sourceQuantity,{quantity:'',unit:''});
+ assert.equal((prepared.parameters.lines as Record<string,JsonValue>[])[0].quantityExpected,'','Reading does not auto-fill preparation.');
+});
+await test('mismatched, stale, absent, duplicate and malformed source quantity evidence stays unavailable on every fresh read',async()=>{
+ for(const scenario of ['line_text','line_id','original_hash','no_evidence','no_quantity','no_row','duplicate','zero','exponent','unknown_unit','padded_unit','non_string_quantity'] as const){
+  const f=fixture(),tools=f.tools();await call(tools,'read_supplied_document',{source_id:sourceId});
+  const state=f.mutable.source.agentState!,row=state.sourceRows[0];
+  if(scenario==='line_text')row.sourceText='Different original line';
+  if(scenario==='line_id')row.lineId=`${sourceId}:L4`;
+  if(scenario==='original_hash')state.originalSha256='c'.repeat(64);
+  if(scenario==='no_evidence')f.mutable.source.evidenceSha256=null;
+  if(scenario==='no_quantity')row.sourceQuantity=null;
+  if(scenario==='no_row')state.sourceRows=[];
+  if(scenario==='duplicate')state.sourceRows.push(clone(row));
+  if(scenario==='zero')row.sourceQuantity={quantity:'0',unit:'LB'};
+  if(scenario==='exponent')row.sourceQuantity={quantity:'1e2',unit:'LB'};
+  if(scenario==='unknown_unit')row.sourceQuantity={quantity:'100',unit:'unknown'};
+  if(scenario==='padded_unit')row.sourceQuantity={quantity:'100',unit:' LB '};
+  if(scenario==='non_string_quantity')Object.assign(row,{sourceQuantity:{quantity:100,unit:'LB'}});
+  const result=await call(tools,'read_supplied_document',{source_id:sourceId}),data=result.data as {sources:Array<{source_quantity:unknown}>};
+  assert(data.sources.every(line=>line.source_quantity===null),scenario);
+  assert.equal(f.calls.filter(call=>call==='download').length,2,'Evidence must be fetched again, not cached from the earlier read.');
+ }
+});
+await test('separate attested total equal to its package size prepares one Bag without filling missing evidence',async()=>{
+ const f=fixture(),state=f.mutable.source.agentState!,line='AW-1 | Alaska White | #1 | 50 LB (50 LB Bag)';
+ state.rawLines[2]=line;state.sourceRows[0]={lineId:`${sourceId}:L3`,sourceText:line,sourceQuantity:{quantity:'50',unit:'LB'}};
+ const tools=f.tools(),read=await call(tools,'read_supplied_document',{source_id:sourceId});
+ assert.deepEqual((read.data as {sources:Array<{source_quantity:unknown}>}).sources[2].source_quantity,{quantity:'50',unit:'LB'});
+ const input=clone(request);Object.assign((input.lines as Record<string,JsonValue>[])[0],{source_quantity:'50',quantity_expected:'1'});
+ const prepared=action(await call(tools,'prepare_pending_receivals',input));
+ assert(!prepared.review.issues.some(issue=>issue.code==='source_evidence_unverified'));
+ assert.deepEqual(prepared.review.issues,[]);
+ assert.equal((prepared.parameters.lines as Record<string,JsonValue>[])[0].quantityExpected,'1');
+ assert.equal((prepared.parameters.lines as Record<string,JsonValue>[])[0].unit,'Bag');
+});
 await test('creation objective uses the same operations and direct independent preparation returns exact canonical parameters',async()=>{const f=fixture(),result=await call(f.tools(),'prepare_pending_receivals',clone(request)),p=action(result);assert.equal(p.operation,'inventory.create_pending_receivals');assert.deepEqual(p.review.issues,[]);assert.equal(p.parameters.sourceId,sourceId);const lines=p.parameters.lines as Record<string,JsonValue>[];assert.equal(lines[0].quantityExpected,'2');assert.equal(lines[0].unit,'Bag');assert.deepEqual(lines[0].sourceQuantity,{quantity:'100',unit:'LB'});assert.equal(lines[0].newMaterial,null);assert(p.review.fields.every(field=>field.editable===false));assert(!f.calls.includes('search'));assert(!JSON.stringify(result.data).includes('toolTraceSha256'));assert(!JSON.stringify(result.data).includes('parameters'));assert(JSON.stringify(result.data).includes('Received Inventory quantities will not change'));});
 await test('missing-information objective reuses source and catalog without inferred metadata',async()=>{const f=fixture(),tools=f.tools();await call(tools,'read_supplied_document',{source_id:sourceId});await call(tools,'search_material_catalog',{query:'Alaska White'});const p=action(await call(tools,'prepare_pending_receivals',{...request,ordered_by:'',order_date:'',location:''}));assert.deepEqual(p.review.issues.map(i=>i.code),['missing_orderedBy','missing_orderDate','missing_location']);assert.deepEqual(p.parameters.metadata,{orderedBy:'',orderDate:'',location:''});});
 await test('unready source stays read-only and cannot become an executable proposal through model extraction',async()=>{const f=fixture();f.mutable.source.state='uploading';f.mutable.source.evidenceSha256=null;f.mutable.source.agentState=null;let extractions=0;f.deps.extractDocument=async()=>{extractions++;return {id:sourceId,filename:'specification.pdf',mediaType:'text/plain',synthetic:true,text:raw.join('\n')};};const tools=f.tools();const read=await call(tools,'read_supplied_document',{source_id:sourceId});assert(JSON.stringify(read.data).includes('content_is_untrusted_data'));const p=action(await call(tools,'prepare_pending_receivals',clone(request)));assert(p.review.issues.some(i=>i.code==='source_not_ready'&&i.blocking));assert(p.review.issues.some(i=>i.code==='source_evidence_unverified'));assert.equal(f.mutable.source.agentState,null);assert.equal(extractions,2);});
 await test('source quantities and units cannot silently become package totals or another measure',async()=>{for(const edit of [{quantity_expected:'100'},{unit:'KG'},{source_quantity:'50'}]){const f=fixture(),input=clone(request),lines=input.lines as Record<string,JsonValue>[];Object.assign(lines[0],edit);const p=action(await call(f.tools(),'prepare_pending_receivals',input));assert(p.review.issues.length);assert(p.review.issues.every(i=>i.blocking));}});
 await test('missing catalog IDs produce held records without fabricated catalog identity',async()=>{const f=fixture(),input=clone(request),lines=input.lines as Record<string,JsonValue>[];lines[0].catalog_id=null;lines[0].catalog_source=null;const p=action(await call(f.tools(),'prepare_pending_receivals',input));assert(p.review.issues.some(i=>i.code==='catalog_match_missing'));assert.equal((p.parameters.lines as Record<string,JsonValue>[])[0].catalogId,null);});
 await test('possible duplicates remain held without inventing canonical acknowledgement',async()=>{const f=fixture();f.mutable.receivals.push({id:orderId,vendor:'T&M Supply',material_name:'Alaska White',size:'#1',quantity_expected:'2',quantity_received:'0',unit:'Bag',status:'pending'});const p=action(await call(f.tools(),'prepare_pending_receivals',clone(request)));assert(p.review.issues.some(i=>i.code==='potential_duplicate'));assert.equal((p.parameters.lines as Record<string,JsonValue>[])[0].duplicateAcknowledgement,null);});
+await test('complete duplicate findings reach the existing trusted summary and fields without creation claims',async()=>{
+ const f=fixture(),empty=action(await call(f.tools(),'prepare_pending_receivals',clone(request)));
+ assert(empty.review.summary.includes('did not find a matching outstanding entry'));
+ assert(empty.review.fields.some(field=>field.label==='Duplicate check'&&String(field.value).includes('did not find a matching outstanding entry')));
+ for(const status of ['pending','partially_received','received']){
+  f.mutable.receivals=[{id:orderId,vendor:'T&M Supply',material_name:'Alaska White',size:'#1',quantity_expected:'2',quantity_received:status==='received'?'2':'0',unit:'Bag',status}];
+  const p=action(await call(f.tools(),'prepare_pending_receivals',clone(request)));
+  assert(p.review.summary.includes('possible existing receiving entries'));
+  const text=String(p.review.fields.find(field=>field.label==='Duplicate check')?.value);
+  assert(text.includes(status==='received'?'previously received entry':'possible matching outstanding entry'));
+  assert(p.review.issues.some(issue=>issue.code==='potential_duplicate'&&issue.blocking));
+  assert.equal((p.parameters.lines as Record<string,JsonValue>[])[0].duplicateAcknowledgement,null);
+ }
+});
+await test('incomplete, malformed or unidentified duplicate evidence cannot certify absence',async()=>{
+ for(const scenario of ['incomplete','status','identity','catalog','supplier'] as const){
+  const f=fixture(),input=clone(request);
+  if(scenario==='incomplete')f.mutable.complete=false;
+  if(scenario==='status'||scenario==='identity')f.mutable.receivals=[{id:orderId,vendor:'T&M Supply',material_name:scenario==='identity'?'':'Alaska White',size:'#1',status:scenario==='status'?'unknown':'pending'}];
+  if(scenario==='catalog')(input.lines as Record<string,JsonValue>[])[0].catalog_id=null;
+  if(scenario==='supplier')f.mutable.source.agentState!.rawLines[0]='Supplier: Other Supply';
+  if(['incomplete','status','identity'].includes(scenario))await assert.rejects(call(f.tools(),'prepare_pending_receivals',input),/invoice_read_incomplete/);
+  else{const p=action(await call(f.tools(),'prepare_pending_receivals',input));assert(!p.review.summary.includes('did not find a matching outstanding entry'));assert(p.review.summary.includes('before I can complete the duplicate check'));assert(p.review.issues.some(issue=>issue.blocking));}
+ }
+});
 await test('unverified Job associations and conflicting supplier evidence block execution',async()=>{const f=fixture(),input=clone(request);(input.lines as Record<string,JsonValue>[])[0].production_job_id=orderId;f.mutable.source.agentState!.rawLines[0]='Supplier: Other Supply';const p=action(await call(f.tools(),'prepare_pending_receivals',input));assert(p.review.issues.some(i=>i.code==='job_review_required'));assert(p.review.issues.some(i=>i.code==='supplier_conflict'));});
 await test('foreign source references, repeated lines and arbitrary arguments are rejected',async()=>{for(const edit of [{source_id:owner},{lines:[...(request.lines as JsonValue[]),...(request.lines as JsonValue[])]},{sql:'select 1'}] as Record<string,JsonValue>[]){const f=fixture();await assert.rejects(call(f.tools(),'prepare_pending_receivals',{...clone(request),...edit}),/invalid-arguments|AssertionError/);}});
 await test('every read rechecks employee identity and permission before and after I/O',async()=>{const f=fixture();await assert.rejects(call(f.tools(),'search_material_catalog',{query:'AW-1'},{...context,callerId:orderId}),/invoice_session_not_authorized/);assert.equal(f.calls.length,0);const download=f.deps.originals.download;f.deps.originals.download=async id=>{const result=await download(id);f.revoke();return result;};await assert.rejects(call(f.tools(),'read_supplied_document',{source_id:sourceId}),/invoice_session_not_authorized/);});

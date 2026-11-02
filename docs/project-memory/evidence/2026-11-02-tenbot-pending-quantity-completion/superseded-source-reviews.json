@@ -1,0 +1,24 @@
+{
+  "parentCandidate": "a1831baf145f2be320cbb5d9160781231ffd826a",
+  "reviewedCorrection": "ec34f539d052b2e88a15df0aa53300f3fca39ce4",
+  "migrationSha256": "9ff784a80eeef6d403250ce0afba114e88ab4b10088ba7162967631a8be40e79",
+  "reason": "Exact Product-authorized Pending quantity/evidence/duplicate correction only; retain prior runtime, frontend, Proposal, auth, provider, financial and migration evidence.",
+  "replaced": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-business-operations.ts",
+      "blob": "9197db1cc627de03c4f68f36dac3a703c8a7b800",
+      "sha256": "aa293d61ad4d980629184ebf17f608faecfe62012d3b41f42ef967fbe5c11259",
+      "acceptedAuthorityRevision": "28005dc70d086a2a68830165c4f299ba51bc63ba",
+      "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
+        "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+        "heading": "## Accepted candidate source review \u2014 integrated TenBot actions"
+      }
+    }
+  ]
+}

@@ -44,12 +44,19 @@ export function deriveInvoiceQuantity(source:InvoiceSourceQuantity|null|undefine
   // model's choice of one visible number. This parser only rejects conflicts;
   // it does not invent extraction fields or overwrite the immutable source.
   const mentions=[...sourceText.matchAll(/(?:^|[^a-zA-Z0-9.#-])(\d+(?:\.\d+)?)\s*(?:-\s*)?(?:\|\s*)?([a-zA-Z.]+)\b/g)].map(match=>({quantity:match[1],unit:invoiceQuantityUnit(match[2]),index:(match.index??0)+match[0].indexOf(match[1]),end:(match.index??0)+match[0].length})).filter(item=>item.unit);
-  for(const mention of mentions){
+  const assertions=mentions.map(mention=>{
     const after=sourceText.slice(mention.end),before=sourceText.slice(0,mention.index),following=after.match(/^\s*\.?\s*(?:[\/-]\s*|per\s+)?(bag|bags|pail|pails|box|boxes|bucket|buckets|drum|drums|case|cases|tote|totes|kit|kits)\b/i),factor=/[@×]\s*$|\bx\s*$|\b(?:at|each)\s*$/i.test(before);
     const perContainer=measured.has(mention.unit)&&Boolean(following||factor&&mentions.some(item=>!measured.has(item.unit)&&item.index<mention.index));
-    if(perContainer){
-      if(!basis.perPackage||mention.unit!==measure||!equivalent(mention.quantity,offer.packageQuantity??'')||following&&invoiceQuantityUnit(following[1])!==container)basis.reasons.push('invoice_catalog_package_conflict');
-      if(sourceUnit===mention.unit&&equivalent(source.quantity,mention.quantity))basis.reasons.push('source_quantity_is_package_size');
+    let parenthesisDepth=0;for(const character of before){if(character==='(')parenthesisDepth++;else if(character===')'&&parenthesisDepth>0)parenthesisDepth--;}
+    return {...mention,perContainer,parenthesisDepth,followingContainer:following?invoiceQuantityUnit(following[1]):null,lineStart:Math.max(sourceText.lastIndexOf('\n',mention.index),sourceText.lastIndexOf('\r',mention.index))};
+  });
+  // A separately stated material total may legitimately equal one package.
+  // Package-only evidence or parenthesized repeats cannot establish that total.
+  const independentTotals=new Set(assertions.filter(mention=>!count&&!mention.perContainer&&mention.parenthesisDepth===0&&mention.unit===sourceUnit&&equivalent(mention.quantity,source.quantity)).map(mention=>mention.lineStart));
+  for(const mention of assertions){
+    if(mention.perContainer){
+      if(!basis.perPackage||mention.unit!==measure||!equivalent(mention.quantity,offer.packageQuantity??'')||mention.followingContainer!==null&&mention.followingContainer!==container)basis.reasons.push('invoice_catalog_package_conflict');
+      if(sourceUnit===mention.unit&&equivalent(source.quantity,mention.quantity)&&!independentTotals.has(mention.lineStart))basis.reasons.push('source_quantity_is_package_size');
       continue;
     }
     if(basis.totalMaterial&&mention.unit===basis.totalMaterial.unit&&!equivalent(mention.quantity,basis.totalMaterial.quantity))basis.reasons.push('conflicting_source_quantity');
