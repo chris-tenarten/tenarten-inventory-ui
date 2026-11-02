@@ -50,3 +50,9 @@ The [model-free prepared-draft correction](project-memory/2026-10-30-tenbot-mode
 
 
 - [TenBot canonical resource references and tool orchestration, November1](project-memory/2026-11-01-tenbot-resource-orchestration.md): local list-to-record continuity, bounded plural reads and model/fallback operation binding; focused real JWT/RLS validation, no migration or deployment.
+
+
+- [Direct TenBot count-answer regression, November1](project-memory/2026-11-01-tenbot-direct-answer-regression.md): local explicit-population scope correction, missing-total guard and focused count/list/schedule evidence; no deployment or commit.
+
+
+- [Accepted direct-answer finalization](project-memory/2026-11-01-tenbot-direct-answer-regression.md#product-acceptance-and-local-finalization--november-1-2026): focused local commit and consolidated TenDev candidate preparation authorized; deployment remains separate.

@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "turns": 5,
+  "checks": [
+    "Prior named search -> direct count begins with actual authorized fixture quantity",
+    "Count -> list -> On Deck refinement -> schedule retains canonical reference"
+  ],
+  "answers": [
+    {
+      "question": "List Jobs for Context",
+      "message": "10 matching Jobs:\n• CTX-1 — Context Alpha — In Production\n• CTX-2 — Context Job 2 — On Deck\n• CTX-3 — Context Job 3 — In Production\n• CTX-4 — Context Job 4 — In Production\n• CTX-5 — Context Job 5 — In Production\n• CTX-6 — Context Job 6 — In Production\n• CTX-7 — Context Job 7 — In Production\n• CTX-8 — Context Job 8 — In Production\n• CTX-9 — Context Job 9 — Complete\n• CTX-10 — Context Job 10 — Complete",
+      "status": 200
+    },
+    {
+      "question": "How many Jobs are currently In Production?",
+      "message": "There are 7 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "status": 200
+    },
+    {
+      "question": "Which ones?",
+      "message": "7 matching Jobs:\n• CTX-1 — Context Alpha — In Production\n• CTX-3 — Context Job 3 — In Production\n• CTX-4 — Context Job 4 — In Production\n• CTX-5 — Context Job 5 — In Production\n• CTX-6 — Context Job 6 — In Production\n• CTX-7 — Context Job 7 — In Production\n• CTX-8 — Context Job 8 — In Production",
+      "status": 200
+    },
+    {
+      "question": "What about On Deck?",
+      "message": "1 matching Job:\n• CTX-2 — Context Job 2 — On Deck",
+      "status": 200
+    },
+    {
+      "question": "What are the scheduled dates for that Job?",
+      "message": "CTX-2 — Context Job 2 is On Deck.\nPlanned: Oct 1, 2026–Nov 15, 2026.\nPhase/Item progress and a complete remaining-work list are unavailable. Unsaved schedule proposals are excluded.",
+      "status": 200
+    }
+  ],
+  "actualUi": true,
+  "syntheticAuthAndData": true,
+  "actualInference": false,
+  "realDatabase": false,
+  "hostedRequests": 0,
+  "errors": []
+}
