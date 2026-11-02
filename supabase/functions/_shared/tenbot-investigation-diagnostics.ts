@@ -6,6 +6,8 @@ const tools = new Set([
   'discover_capabilities', 'describe_assistant_scope', 'search_workflow_knowledge',
   'find_jobs', 'get_job_summary', 'get_job_planning', 'get_job_labor_summary', 'get_production_overview',
   'read_invoice', 'search_catalog', 'check_receival_duplicates', 'prepare_pending_receivals',
+  'read_supplied_document', 'search_material_catalog', 'find_receivals', 'find_suppliers', 'get_order',
+  'search_customers', 'get_customer', 'search_contacts', 'get_contact', 'prepare_proposal_draft',
 ]);
 const toolReasons = new Set([
   'tool-failed', 'invalid-arguments', 'unknown-capability', 'capability-not-discovered', 'invalid-tool-result',
@@ -14,6 +16,8 @@ const toolReasons = new Set([
   'unsupported_invoice_extraction', 'non_material_invoice_line', 'unsupported_invoice_quantity_unit',
   'invoice_metadata_or_materials_missing', 'unsupported_invoice_metadata', 'current_duplicate_check_required',
   'all_extracted_lines_must_be_reviewed', 'invalid_invoice_selection', 'catalog_candidate_not_in_session', 'invalid_invoice_exclusion',
+  'proposal_invalid_schema', 'proposal_invalid_identity', 'proposal_source_ref_unavailable',
+  'proposal_value_not_literal_source', 'proposal_invalid_decimal', 'proposal_quote_rate_unproven',
 ]);
 const reasons = new Set([
   ...toolReasons, 'ok', 'received', 'completed', 'runtime-error', 'authorization-denied', 'invalid-usage', 'cost-limit',

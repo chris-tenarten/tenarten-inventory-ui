@@ -31,6 +31,15 @@ await check('strict fresh projection removes unknown fields, names, stages, reas
  assert.equal(new AgentToolError(sensitive).code,'tool-failed');assert.equal(new AgentToolError(sensitive).message,'tool-failed');
  assert.equal(new AgentToolError('unsupported_invoice_metadata').message,'unsupported_invoice_metadata');
 });
+await check('Proposal categories are a closed content-free vocabulary; appended values and identifiers are discarded',()=>{
+ for(const reasonCode of ['proposal_invalid_schema','proposal_invalid_identity','proposal_source_ref_unavailable','proposal_value_not_literal_source','proposal_invalid_decimal','proposal_quote_rate_unproven']){
+  const event={stage:'tool',tool:'prepare_proposal_draft',outcome:'error',durationMs:1,reasonCode} as const;
+  assert.equal(new AgentToolError(reasonCode).code,reasonCode);
+  assert.deepEqual(safeInvestigationDiagnostic({...event,arguments:{password:sensitive},path:sensitive,source_ref:sensitive} as InvestigationDiagnostic),event);
+  assert.equal(new AgentToolError(reasonCode+':'+sensitive).code,'tool-failed');
+  assert.equal(safeInvestigationDiagnostic({...event,reasonCode:reasonCode+':'+sensitive}).reasonCode,'runtime-error');
+ }
+});
 await check('normal model and tool events contain no invoice, response, result, context or owner values',async()=>{
  const start=captured.length;
  const result=await run(provider([step([call('discover','discover_capabilities',{names:['read_invoice']})]),step([call('read','read_invoice')]),step([],done)]));

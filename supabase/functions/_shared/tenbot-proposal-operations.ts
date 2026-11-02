@@ -39,7 +39,8 @@ type Customer={company:{id:string;name:string;phone:string;email:string;mailing_
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const object=(value:unknown):value is Row=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const json=(value:unknown)=>JSON.parse(JSON.stringify(value)) as JsonValue;
-function fail(code:'invalid-arguments'|'tool-failed'|'unknown-capability'='invalid-arguments'):never{throw new AgentToolError(code);}
+type ProposalFailureCode='proposal_invalid_schema'|'proposal_invalid_identity'|'proposal_source_ref_unavailable'|'proposal_value_not_literal_source'|'proposal_invalid_decimal'|'proposal_quote_rate_unproven';
+function fail(code:ProposalFailureCode|'tool-failed'|'unknown-capability'='proposal_invalid_schema'):never{throw new AgentToolError(code);}
 const text=(maxLength:number,minLength=0):StrictSchema=>({type:'string',minLength,maxLength});
 const schema=(properties:Record<string,StrictSchema>):StrictSchema=>({type:'object',properties,required:Object.keys(properties),additionalProperties:false});
 const nullable=(value:StrictSchema):StrictSchema=>({anyOf:[value,{type:'null'}]});
@@ -69,7 +70,7 @@ function exactEvidence(source:string,value:string){
  return false;
 }
 function decimal(value:string,places:number,integerDigits:number){
- if(!new RegExp(`^\\d{1,${integerDigits}}(?:\\.\\d{1,${places}})?$`).test(value)||!Number.isFinite(Number(value)))fail();
+ if(!new RegExp(`^\\d{1,${integerDigits}}(?:\\.\\d{1,${places}})?$`).test(value)||!Number.isFinite(Number(value)))fail('proposal_invalid_decimal');
  return value;
 }
 function quoteRateEvidence(source:string,value:string){
@@ -154,7 +155,7 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
  const get=(name:string,contact:boolean)=>operation(name,
   `Retrieve one caller-authorized saved customer${contact?' and the explicitly selected contact':''} by canonical IDs. Read only; validates the contact belongs to this company and omits private directory notes.`,
   schema({company_id:identity,...(contact?{contact_id:nullable(identity)}:{})}),'read',async(args,context)=>{
-   if(typeof args.company_id!=='string'||!uuid.test(args.company_id)||contact&&args.contact_id!==null&&(typeof args.contact_id!=='string'||!uuid.test(args.contact_id)))fail();
+   if(typeof args.company_id!=='string'||!uuid.test(args.company_id)||contact&&args.contact_id!==null&&(typeof args.contact_id!=='string'||!uuid.test(args.contact_id)))fail('proposal_invalid_identity');
    const value=await rpc(contact?'get_production_contact':'get_production_customer',contact?{p_company_id:args.company_id,p_contact_id:args.contact_id}:{p_company_id:args.company_id},context.signal);
    const item=customer(value,args.company_id,contact?args.contact_id as string|null:undefined);
    return {data:json({status:'ok',customer:item,answer_facts:[{id:name+'.identity',kind:'observed',text:`The saved customer is ${item.company.name}${item.contact?`, with contact ${item.contact.name}`:''}.`}],limitations:['These are current directory details. Copying them into a draft does not link future directory edits to the document.']})};
@@ -163,21 +164,22 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
   'Prepare a new standalone customer Proposal for review without saving or issuing it. Supply header/line values only when copied from the host-provided employee/document source_ref. Saved customer/contact details are fetched through existing authorized RPCs. Never use catalog purchase costs as customer quote rates: a rate requires explicit employee quote/price evidence. Missing quantity/rate/specifications stay unknown. No Job, Bid, document number, revision or persistence identity is accepted. Returns a separate host-owned proposed action and preview descriptor; password-confirmed persistence is handled outside the model.',
   prepareSchema,'prepare',async(args,context)=>{
    const companyId=args.customer_company_id as string|null,contactId=args.customer_contact_id as string|null;
-   if(companyId!==null&&!uuid.test(companyId)||contactId!==null&&(!uuid.test(contactId)||companyId===null))fail();
+   if(companyId!==null&&!uuid.test(companyId)||contactId!==null&&(!uuid.test(contactId)||companyId===null))fail('proposal_invalid_identity');
    const usedSources=new Set<string>(),fieldEvidence:Record<string,JsonValue>={},resolvedSources=new Map(sources);
    const sourceText=async(ref:string)=>{
     if(context.signal.aborted)fail('tool-failed');
     if(resolvedSources.has(ref))return resolvedSources.get(ref)!;
     let resolved:string|null=null;
     try{resolved=await deps.resolveSource?.(ref,context.signal)??null;}catch{fail('tool-failed');}
-    if(context.signal.aborted||resolved===null||!validText(resolved,120000))fail();
+    if(context.signal.aborted||resolved===null||!validText(resolved,120000))fail('proposal_source_ref_unavailable');
     resolvedSources.set(ref,resolved);return resolved;
    };
    const fields=async(input:JsonValue,limits:Record<string,number>,prefix:string)=>{
     const values:Record<string,Evidence>={};
     for(const item of input as Array<Record<string,JsonValue>>){
      const path=String(item.path),value=String(item.value),sourceRef=String(item.source_ref),source=await sourceText(sourceRef);
-     if(Object.hasOwn(values,path)||!validText(value,limits[path])||!value.trim()||!exactEvidence(source,value))fail();
+     if(Object.hasOwn(values,path)||!validText(value,limits[path])||!value.trim())fail();
+     if(!exactEvidence(source,value))fail('proposal_value_not_literal_source');
      values[path]={value,source_ref:sourceRef};usedSources.add(sourceRef);
      fieldEvidence[prefix+path]={value,source_ref:sourceRef};
     }
@@ -199,11 +201,11 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
     Object.assign(proposal,{customer_name:saved.company.name,customer_street:saved.company.mailing_address,customer_contact_name:saved.contact?.name??'',customer_office_phone:saved.contact?.phone||saved.company.phone,customer_email:saved.contact?.email||saved.company.email});
     references.push({kind:'customer',id:saved.company.id});if(saved.contact)references.push({kind:'contact',id:saved.contact.id});
     // A selected identity and an inconsistent source-authored name is unresolved identity, not an overwrite.
-    if(header.customer_name&&normalize(header.customer_name.value)!==normalize(saved.company.name))fail();
+    if(header.customer_name&&normalize(header.customer_name.value)!==normalize(saved.company.name))fail('proposal_invalid_identity');
    }
    for(const [path,evidence]of Object.entries(header)){
     if(path==='tax_rate'){
-     decimal(evidence.value,5,3);if(Number(evidence.value)>100)fail();proposal.tax_enabled=true;
+     decimal(evidence.value,5,3);if(Number(evidence.value)>100)fail('proposal_invalid_decimal');proposal.tax_enabled=true;
     }
     if(path==='proposal_date'&&(!/^\d{4}-\d{2}-\d{2}$/.test(evidence.value)||!Number.isFinite(Date.parse(evidence.value+'T12:00:00Z'))||new Date(evidence.value+'T12:00:00Z').toISOString().slice(0,10)!==evidence.value))fail();
     proposal[path]=evidence.value;
@@ -222,7 +224,7 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
       decimal(evidence.value,2,12);
       const source=resolvedSources.get(evidence.source_ref)!;
       // Purchase/catalog costs never authorize a customer-facing quoted rate.
-      if(!quoteRateEvidence(source,evidence.value))fail();
+      if(!quoteRateEvidence(source,evidence.value))fail('proposal_quote_rate_unproven');
      }
      line[path]=evidence.value;
     }
@@ -231,7 +233,7 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
     const chargeable=lineType==='product'||lineType==='charge';
     const unknownAmount=chargeable&&(line.quantity===null||line.rate===null);
     const amount=unknownAmount?null:lineTotal({lineType:lineType as 'product'|'charge'|'informational'|'included',quantity:String(line.quantity??''),rate:String(line.rate??'')});
-    if(amount!==null&&amount>999999999999.99)fail();
+    if(amount!==null&&amount>999999999999.99)fail('proposal_invalid_decimal');
     if(!line.description)issues.push({code:'missing_description',message:`Line ${index+1} needs a description before issuance.`,blocking:false});
     if(chargeable&&line.quantity===null)issues.push({code:'missing_quantity',message:`Line ${index+1} quantity is unknown and remains blank.`,blocking:false});
     if(chargeable&&line.rate===null)issues.push({code:'missing_quote_rate',message:`Line ${index+1} customer quote rate is unknown and remains blank; no catalog cost was substituted.`,blocking:false});
@@ -243,7 +245,7 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
    }
    proposal.proposal_field_sources=fieldEvidence;
    const subtotal=lines.reduce((sum,line)=>sum+lineTotal({lineType:line.line_type as 'product'|'charge'|'informational'|'included',quantity:String(line.quantity??''),rate:String(line.rate??'')}),0);
-   if(Math.round(subtotal*(1+(proposal.tax_enabled?Number(proposal.tax_rate)/100:0))*100)/100>999999999999.99)fail();
+   if(Math.round(subtotal*(1+(proposal.tax_enabled?Number(proposal.tax_rate)/100:0))*100)/100>999999999999.99)fail('proposal_invalid_decimal');
    for(const id of usedSources)references.push({kind:'submitted_source',id});
    const incomplete=issues.length>0;
    const summary=`I've prepared ${lines.length} Proposal ${lines.length===1?'line':'lines'}${proposal.customer_name?' for '+proposal.customer_name:''} for review${incomplete?'; some details remain unknown':''}. Nothing has been saved or issued.`;
