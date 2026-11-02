@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "candidate": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "baseline": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "productionTarget": "https://tenops.pages.dev",
+  "branch": "main",
+  "artifactCount": 278,
+  "artifactManifestSha256": "28a46275e712846b1258104c48acbc395348c154c4425742c65c09fd00552f62",
+  "durationMs": 32553,
+  "edgeModules": 55,
+  "mandatoryUnchangedPrebuild": true,
+  "cleanFullHistoryCandidate": true,
+  "holds": 0,
+  "committedArtifactUnchanged": true,
+  "canaryRouteAbsent": true,
+  "canaryControlsOff": true,
+  "actionsBuildAdapterEnabled": true,
+  "branding": {
+    "title": "TenOps Cloud — Dashboard",
+    "manifestName": "TenOps",
+    "manifestShortName": "TenOps",
+    "productionGoldIcons": true,
+    "pwaManifestsExactBaseBytes": true
+  },
+  "secretPatternScanPassed": true,
+  "knowledgeEntriesPatchesAndAuthorityUnchanged": true,
+  "environmentSource": "/private/tmp/tenops-final-pending-authorization-20261102/fresh-tenops-1793658440469.private.json",
+  "existingOpaquePlanningSettingReusedFromVerifiedE71Build": true,
+  "existingPublicSettingsPreserved": true,
+  "ordinarySpendingAndBackendControlsUnchanged": true,
+  "requiredUnappliedCompanionMigrations": [
+    {
+      "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "artifact": "/private/tmp/tenops-final-pending-authorization-20261102/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "sourceRevision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+      "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+      "appliedToShared": false,
+      "requiredBeforePendingActivation": true,
+      "realIsolatedValidationPassed": true,
+      "coveredByFrontendReleaseProof": false
+    }
+  ],
+  "runtimeProofDoesNotApproveSql": true,
+  "fullPendingRolloutBlocked": true,
+  "deployments": 0,
+  "hostedMutations": 0,
+  "inferenceCalls": 0
+}

@@ -1,0 +1,680 @@
+{
+  "passed": true,
+  "sha": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "candidate": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "tree": "5f996554a9e7a88251996da746fa423891574d06",
+  "parent": "4a67385680240c9139074043fbf8ce5d0e77f39d",
+  "baseline": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "acceptedTenDev": "afb549d157453b767e726313bcea87dc4e43f2ed",
+  "accessRevision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "source": "/private/tmp/tenops-final-pending-authorization-20261102/candidate",
+  "privateGit": "/private/tmp/tenops-final-pending-authorization-20261102/candidate-git",
+  "output": "/private/tmp/tenops-final-pending-authorization-20261102/candidate/out",
+  "selectedApplicationPaths": [
+    "src/app/client-layout-shell.tsx",
+    "src/app/inventory/page.tsx",
+    "src/app/layout.tsx",
+    "src/components/GlobalMessaging.tsx",
+    "src/components/GlobalTenbot.tsx",
+    "src/lib/auth-action-session.ts",
+    "src/lib/auth.tsx",
+    "src/lib/supabase.ts",
+    "src/modules/inventory/invoice-quantity.ts",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/tenbot/GlobalTenbotWorkspace.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/actions/ActionReviewCard.tsx",
+    "src/modules/tenbot/actions/ActionWorkspaceBridge.tsx",
+    "src/modules/tenbot/actions/adapter.ts",
+    "src/modules/tenbot/actions/contract.ts",
+    "src/modules/tenbot/actions/presentation-fixture.ts",
+    "src/modules/tenbot/capability-requests/CapabilityRequestCard.tsx",
+    "src/modules/tenbot/capability-requests/CapabilityRequestSlot.tsx",
+    "src/modules/tenbot/capability-requests/model.ts",
+    "src/modules/tenbot/capability-requests/presentation-fixture.ts",
+    "src/modules/tenbot/events.ts",
+    "src/modules/tenbot/global-workspace.css",
+    "supabase/functions/_shared/tenbot-action-auth.ts",
+    "supabase/functions/_shared/tenbot-action-transport.ts",
+    "supabase/functions/_shared/tenbot-actions.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-business-operations.ts",
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-employee-history.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-hosted-operations.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/_shared/tenbot-proposal-operations.ts",
+    "supabase/functions/_shared/tenbot-qwen-agent.ts",
+    "supabase/functions/_shared/tenbot-read-investigation.ts",
+    "supabase/functions/_shared/tenbot-read-routing.ts",
+    "supabase/functions/_shared/tenbot-reviewed-operations.ts",
+    "supabase/functions/_shared/tenbot-terra-acceptance.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "sourceHashes": [
+    {
+      "path": "src/app/client-layout-shell.tsx",
+      "blob": "2172930e869b301f5a1ee41d0bc3ef38a71ec4c6",
+      "sha256": "cd4884e32a238630bc0d657fcb89ea3531ddd9d75353fcf6f6ea581489eb4fe5",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "2172930e869b301f5a1ee41d0bc3ef38a71ec4c6"
+    },
+    {
+      "path": "src/app/inventory/page.tsx",
+      "blob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8",
+      "sha256": "d3017e5037f9e0840097abe8b1a295f379999055e7c5e6066f08be05a0d35dc1",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "dd5ee510821dd9bd39c52916f19c90a0bfaa61a8"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "blob": "feb939c1712ba34dadd4f9bc1d444c2fde2a718f",
+      "sha256": "475434483118555ed9dc4386cc8fa566832a88ea34ab4c319ac3201001ebc4ae",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "feb939c1712ba34dadd4f9bc1d444c2fde2a718f"
+    },
+    {
+      "path": "src/components/GlobalMessaging.tsx",
+      "blob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd",
+      "sha256": "12d582bcab3f92893b8cf3c05bdf3a5adcf9ff8c3e0b7585a51bb31dd7b61b4f",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "a433f1d16afa622bec747b1fee4d0ed00cd6eccd"
+    },
+    {
+      "path": "src/components/GlobalTenbot.tsx",
+      "blob": "53c1de2110ea482618206a976d56828351bc62c8",
+      "sha256": "2194c050352afe4acca19e805bfd24e01ca828239ae4a9e6884e2cc5afdceae6",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "53c1de2110ea482618206a976d56828351bc62c8"
+    },
+    {
+      "path": "src/lib/auth-action-session.ts",
+      "blob": "83b635e6bca24be7c2265ab920913f4561680e88",
+      "sha256": "318b4c2754472788bc17a3e34a4975e9b859379bc5604e3148878b804c740b2c",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "83b635e6bca24be7c2265ab920913f4561680e88"
+    },
+    {
+      "path": "src/lib/auth.tsx",
+      "blob": "a0eeb8228cf4d8a0369787918996c4953dbe5a5c",
+      "sha256": "3ccacd2d9ca4efd3dd96bc3b478185da8cb0eaad7fbd68d2697eef3db6529bb7",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "a0eeb8228cf4d8a0369787918996c4953dbe5a5c"
+    },
+    {
+      "path": "src/lib/supabase.ts",
+      "blob": "5b46996baf0506ff699d5b8fdc916173ecab1255",
+      "sha256": "fe8cdf3872a19879404999946e2177da797c43094fa8f490394b69ff01e26597",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "5b46996baf0506ff699d5b8fdc916173ecab1255"
+    },
+    {
+      "path": "src/modules/inventory/invoice-quantity.ts",
+      "blob": "3c3d95c93f791480170893f6787a1adeadd98c84",
+      "sha256": "131c894139009436f19f53219ed4b52c96d18686a2ed6015129bd19acc69e70c",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "3c3d95c93f791480170893f6787a1adeadd98c84"
+    },
+    {
+      "path": "src/modules/my-work/InboxDialog.tsx",
+      "blob": "edfda5849a7349e5544ba4031651639bbcb35576",
+      "sha256": "320f2b4183f860fd318f8331b0feffa4fbd34f1107df3cd1003447e18d199274",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "edfda5849a7349e5544ba4031651639bbcb35576"
+    },
+    {
+      "path": "src/modules/tenbot/GlobalTenbotWorkspace.tsx",
+      "blob": "20b0a70d690a434894494a3abf320265bc9d3e6d",
+      "sha256": "db637193401e18ef608bad2dc6bbc6527cd44ee00ede354f4ce1db47138391d3",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "20b0a70d690a434894494a3abf320265bc9d3e6d"
+    },
+    {
+      "path": "src/modules/tenbot/TenbotWorkspace.tsx",
+      "blob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72",
+      "sha256": "0bda7304757283c2c5d962e467b0084c70e64ebe05224def2cfbcbe2b9abebda",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "a9cbc8b8f6033f4483e551bac655a922ac1b0e72"
+    },
+    {
+      "path": "src/modules/tenbot/actions/ActionReviewCard.tsx",
+      "blob": "ac841aa146f5313da91dbca5d4ffad6e2cf6037c",
+      "sha256": "2da479823b58019e7eccb21000c2b81866562085ce8cd76dd4cd518ff5a7cd81",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "ac841aa146f5313da91dbca5d4ffad6e2cf6037c"
+    },
+    {
+      "path": "src/modules/tenbot/actions/ActionWorkspaceBridge.tsx",
+      "blob": "05d2754bc8e4b2598a3318662b3ac7f2a67f5c53",
+      "sha256": "91dff90762cd32f9bf99c97bb345daa6b3a252d47e8c986d55ef4d2988dcb0d1",
+      "sourceRevision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+      "sourceClassification": "new local eligibility/origin integration; not deployed",
+      "acceptedTenDevBlob": "aad27a7865f09756bb66170c0553737e1c114d9e"
+    },
+    {
+      "path": "src/modules/tenbot/actions/README.md",
+      "blob": "9ecc44a3a6fbcb998c267a7c6d9b6cc84af8de7a",
+      "sha256": "abec8834b5707c42af9df6978871ffeaf5affce219164b9abf037d79da71a82c",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "9ecc44a3a6fbcb998c267a7c6d9b6cc84af8de7a"
+    },
+    {
+      "path": "src/modules/tenbot/actions/adapter.ts",
+      "blob": "3063a9776269f5454a60b6530f2dbae82b567313",
+      "sha256": "9f60127dc63536589333e9afd79a19c5b63f111e243f78441817f372437200b9",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "3063a9776269f5454a60b6530f2dbae82b567313"
+    },
+    {
+      "path": "src/modules/tenbot/actions/contract.ts",
+      "blob": "0ea1c6775d56067ce7f045f927053544050b1222",
+      "sha256": "7ce64685fef4af7b9284cfdb63d2f56a7a45c522b995b79106a77c467cce86c6",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "0ea1c6775d56067ce7f045f927053544050b1222"
+    },
+    {
+      "path": "src/modules/tenbot/actions/presentation-fixture.ts",
+      "blob": "c8b294c2ae862c5db128c34ad2ab875fe8186cac",
+      "sha256": "f6f44852f397b807200d7830baedd6afbbc6d778018dbed301e6c0830396acaa",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "c8b294c2ae862c5db128c34ad2ab875fe8186cac"
+    },
+    {
+      "path": "src/modules/tenbot/capability-requests/CapabilityRequestCard.tsx",
+      "blob": "ba0cbc527c5fc567339b56914cf218c703e9ff8c",
+      "sha256": "3841e7dfde5a22a32854fe6bc23ad1dc92392ebc32d63c94dd1085c0f3b6f61a",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "ba0cbc527c5fc567339b56914cf218c703e9ff8c"
+    },
+    {
+      "path": "src/modules/tenbot/capability-requests/CapabilityRequestSlot.tsx",
+      "blob": "4ba9e5676f4e3986fb450b5d954b487072ced4a4",
+      "sha256": "7a699eb42a4bb3eb538ae474055e35cd543172f9f7d210f270dc6c8c4bf50211",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "4ba9e5676f4e3986fb450b5d954b487072ced4a4"
+    },
+    {
+      "path": "src/modules/tenbot/capability-requests/README.md",
+      "blob": "c19f59ea3e5887173d55a5088831d79eaa59c734",
+      "sha256": "24f3a53a40dfb1945dce1f951e932a18502fdca539c5da57ecf18472069208c5",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "c19f59ea3e5887173d55a5088831d79eaa59c734"
+    },
+    {
+      "path": "src/modules/tenbot/capability-requests/model.ts",
+      "blob": "b3d3eef1c5d6ca769b912829bd5610881141c30c",
+      "sha256": "945a75de7bf991e3e434229b8d4aebc78be81ccb76fbe5841bdde84b0441ef46",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "b3d3eef1c5d6ca769b912829bd5610881141c30c"
+    },
+    {
+      "path": "src/modules/tenbot/capability-requests/presentation-fixture.ts",
+      "blob": "ac282ea20144de0affca7fc8e270952939f155f7",
+      "sha256": "adf0b7f6acbfdab60abc464061943cf2596d67186fcaeed0014db8ddc3dbfed6",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "ac282ea20144de0affca7fc8e270952939f155f7"
+    },
+    {
+      "path": "src/modules/tenbot/events.ts",
+      "blob": "5bdf6f27455d8ec827d638a81216d9dd4bba1d59",
+      "sha256": "856b6105734b3c264641536e10561333aeb323f1ddd9468597bed42ba831b351",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "5bdf6f27455d8ec827d638a81216d9dd4bba1d59"
+    },
+    {
+      "path": "src/modules/tenbot/global-workspace.css",
+      "blob": "04da22a531487dc4250f839684e6efc2cc258445",
+      "sha256": "445ac189c8ed24a595d60a02058c03f2fd45347a55f376ae8ccd6f0f01324917",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "04da22a531487dc4250f839684e6efc2cc258445"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-action-auth.ts",
+      "blob": "4a6dd2ed278449ac0983a21f31c57bf8d45c9a63",
+      "sha256": "49d073e3e41968c76c3d89ec805298178ec563388afa97057a99b9198b98c3e3",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "4a6dd2ed278449ac0983a21f31c57bf8d45c9a63"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-action-transport.ts",
+      "blob": "6878469b18643d8ccd5d87d44422646105ab310b",
+      "sha256": "b1e184f627ab1dc6061e5a0fad93d3a3a5845042a40bdc138ef0f565334d7f73",
+      "sourceRevision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+      "sourceClassification": "new local eligibility/origin integration; not deployed",
+      "acceptedTenDevBlob": "64cf1c13a5bc907b45769629e536954935d8538d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-actions.ts",
+      "blob": "2d1c7202a4235d16d35cfb28c004e472c6bf5fff",
+      "sha256": "bd90cc2f060c9b03aae9b306dc56b5d33fd01440b3ff56480c120deeaae3129e",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "2d1c7202a4235d16d35cfb28c004e472c6bf5fff"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "blob": "71cedbef2d7e4fade0924ee63cfa6e9fe2882d44",
+      "sha256": "6c2b95c2e47a8cd7b3c7ff65947a30ed3bc2c4bb766dd220e442db9ad78f22c8",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "71cedbef2d7e4fade0924ee63cfa6e9fe2882d44"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "1a7e4e36702ca90a038590689065462aa2622e32",
+      "sha256": "cfbf0ef71e3b0811b1dc4a379f954aefdc06d75fbabd5c6883fb2472e0c169c6",
+      "sourceRevision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+      "sourceClassification": "new local eligibility/origin integration; not deployed",
+      "acceptedTenDevBlob": "35ef6f1879182c0fcd7216881a8fbb6bc22b8a63"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-business-operations.ts",
+      "blob": "3dc5a9fb8dfd76f6cc596f072febb3e3b4f1739d",
+      "sha256": "2e28eb92278df20d3845805ba59bc03a1882c6c96e064e98d686f8c6e3f2610e",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "3dc5a9fb8dfd76f6cc596f072febb3e3b4f1739d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "blob": "2a9ccfc3c45f94ddb0a59cf5235f4cba4d4d5f0d",
+      "sha256": "a29c355acb7705a244a96e2d7da4fcff2836d7aa12e7976b3de6986849b026ea",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "2a9ccfc3c45f94ddb0a59cf5235f4cba4d4d5f0d"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-employee-history.ts",
+      "blob": "b77f8fcacbbe6d89cae36e11aae50c7ab3160207",
+      "sha256": "6441f4cd2a8c573b3e1db8c552adca9626f002ce9c2e386294cf275bdb588baf",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "b77f8fcacbbe6d89cae36e11aae50c7ab3160207"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "blob": "1b357ea25eeb2600ab33e825f53792b00c733926",
+      "sha256": "354470f58a351b8f4967d4c0a1baa0a679b2247bf9503bf5b78d22eb3e0172d7",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "1b357ea25eeb2600ab33e825f53792b00c733926"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted-operations.ts",
+      "blob": "16a7b0508d3965a310f253051a68062f06161d12",
+      "sha256": "4c48cd577b9029f24018bef0955bd19a949c6a8e9c17dd88fd166320f7524b5b",
+      "sourceRevision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+      "sourceClassification": "new local eligibility/origin integration; not deployed",
+      "acceptedTenDevBlob": "714887d5e06e3f112fdeab8db2bf6e644b0d9a40"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "blob": "e5a59d2af63e593c80612916129320550a0c5c8b",
+      "sha256": "159c721738553ae4d2c9777677f8a35f96f159fc5c33659e665afeb36bd443a4",
+      "sourceRevision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+      "sourceClassification": "new local eligibility/origin integration; not deployed",
+      "acceptedTenDevBlob": "2c17dff8535e3feea4d83a05d60e114de48683ee"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+      "blob": "2cf630931ae8e84bf626e75d63d31c094a131cb4",
+      "sha256": "8e3d5370571cba3a75dfc9af277ac6028a375e38f8de44da4b5a9c8739c8e0dc",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "2cf630931ae8e84bf626e75d63d31c094a131cb4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "blob": "3d7b92594a990f6de57d7c39c9edec9362d74cb5",
+      "sha256": "98d4d02ea068cfd4e829beabc04361dcdee3c7d4af6837513ba59f2ff956a384",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "3d7b92594a990f6de57d7c39c9edec9362d74cb5"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "blob": "5fefd1bdbab029b121bb32b00c0839e507b9d7c0",
+      "sha256": "5d804e670dc72eda3ed9614c72a9c7e31d5802b1396d053f54ce89d5eba7c0b5",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "5fefd1bdbab029b121bb32b00c0839e507b9d7c0"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-proposal-operations.ts",
+      "blob": "a8cc7b4e6dd8bc86b50be1bf2a7fac81ce1f2f68",
+      "sha256": "21540d045e301fae28aaa85b8a3e8e120a2b1a74553b8b9f0d5a3a1a9675b6bb",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "a8cc7b4e6dd8bc86b50be1bf2a7fac81ce1f2f68"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-qwen-agent.ts",
+      "blob": "37e331899d72414863d0a9730a3b9060fd64f229",
+      "sha256": "413c7467e4f803f1c2b354f846bf42be2d8d624b1f781cb4f993ff817e4be979",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "37e331899d72414863d0a9730a3b9060fd64f229"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-read-investigation.ts",
+      "blob": "221c9d9f59a6f1359d4b57dc2563fd6544ddce77",
+      "sha256": "a5354a799f6a8e963fb8c0c7f5766551d597521fb05c7fb794eda886f2a722cd",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "221c9d9f59a6f1359d4b57dc2563fd6544ddce77"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-read-routing.ts",
+      "blob": "8485f4c0d2cb384fcba7abb8d61e239666cc807e",
+      "sha256": "715191b76189b86900ffd0d0707f112dbc2e2c1a6607fe91be4ab6dc415f0dd8",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "8485f4c0d2cb384fcba7abb8d61e239666cc807e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-reviewed-operations.ts",
+      "blob": "0423aeaa4e1f6d667b24e0249d7e1e22007540ff",
+      "sha256": "ba08f0a01df663b468d0b13425d718d466862e539568e24ecfd64043a7c56b66",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "0423aeaa4e1f6d667b24e0249d7e1e22007540ff"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-terra-acceptance.ts",
+      "blob": "66537cbccc1ecb0713ab4f22e3327f413402004d",
+      "sha256": "d531331f7c6e1422aed0698aeb1cb0f233a19d6821b5724bb75d9d2ab3ef1c02",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "accepted exact TenDev source",
+      "acceptedTenDevBlob": "66537cbccc1ecb0713ab4f22e3327f413402004d"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "blob": "47a56d3f26719148edb77f381546387dd29e82d0",
+      "sha256": "518a8c04f728eb1403f375bfd26c1e4e353711a54b1fb54f1863f06d69a50b91",
+      "sourceRevision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+      "sourceClassification": "new local normal reviewed Pending correction; not deployed",
+      "acceptedTenDevBlob": "58d2f323ada0a6fcdfebd9ded8f1fdda5c235df1"
+    },
+    {
+      "path": "supabase/migrations/20261102120000_tenbot_reviewed_actions.sql",
+      "blob": "f22369ca3e5be5ccd40e3ab58d98af87ed1c1a81",
+      "sha256": "e7cb74fc2f85460576391be2fc7416ccadf38e79989ab0fd4ca70ef03bb8be3c",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "f22369ca3e5be5ccd40e3ab58d98af87ed1c1a81"
+    },
+    {
+      "path": "supabase/migrations/20261102130000_tenbot_action_canonical_receivals.sql",
+      "blob": "6fdfebe49e068ca06efcfa797cc0c5005d77a1e3",
+      "sha256": "c72332345e87a590e2f44389a3176ea7f105f7f0302cf2eaa35e1c0eef78b92b",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "6fdfebe49e068ca06efcfa797cc0c5005d77a1e3"
+    },
+    {
+      "path": "supabase/migrations/20261102140000_tenbot_operation_history.sql",
+      "blob": "367451c9bed464d5eee866184a8dd77cfe73c35c",
+      "sha256": "02b1f0237c34faf11edcc705f7721032f003f1003157dff6a864cfd15d9c65b1",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "367451c9bed464d5eee866184a8dd77cfe73c35c"
+    },
+    {
+      "path": "supabase/migrations/20261102150000_tenbot_canary_deferred_record_boundary.sql",
+      "blob": "e20462654be96c37895be552797380eb8d38daec",
+      "sha256": "0413a8c2cd7babba685d570f2175cbfbf47379af73fab0bbdb273a411fba710f",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "e20462654be96c37895be552797380eb8d38daec"
+    },
+    {
+      "path": "supabase/migrations/20261102160000_tenbot_invoice_quantity_total_evidence.sql",
+      "blob": "d331f7a28cd3b4907613f6cfbae80d5dae91fd62",
+      "sha256": "9ff784a80eeef6d403250ce0afba114e88ab4b10088ba7162967631a8be40e79",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "d331f7a28cd3b4907613f6cfbae80d5dae91fd62"
+    },
+    {
+      "path": "supabase/migrations/20261102100000_tenbot_monthly_allowance.sql",
+      "blob": "f6f5a8d85482e78028f73e50b140c604c9fcd765",
+      "sha256": "2336e07e712e0728119d582a05525db45cd180da1707236b516baf62028690c8",
+      "sourceRevision": "7a0243e1f33840c29ebe0a7f836f95c301181291",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "f6f5a8d85482e78028f73e50b140c604c9fcd765"
+    }
+  ],
+  "alreadyAppliedMigrations": [
+    {
+      "path": "supabase/migrations/20261102120000_tenbot_reviewed_actions.sql",
+      "blob": "f22369ca3e5be5ccd40e3ab58d98af87ed1c1a81",
+      "sha256": "e7cb74fc2f85460576391be2fc7416ccadf38e79989ab0fd4ca70ef03bb8be3c",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "f22369ca3e5be5ccd40e3ab58d98af87ed1c1a81"
+    },
+    {
+      "path": "supabase/migrations/20261102130000_tenbot_action_canonical_receivals.sql",
+      "blob": "6fdfebe49e068ca06efcfa797cc0c5005d77a1e3",
+      "sha256": "c72332345e87a590e2f44389a3176ea7f105f7f0302cf2eaa35e1c0eef78b92b",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "6fdfebe49e068ca06efcfa797cc0c5005d77a1e3"
+    },
+    {
+      "path": "supabase/migrations/20261102140000_tenbot_operation_history.sql",
+      "blob": "367451c9bed464d5eee866184a8dd77cfe73c35c",
+      "sha256": "02b1f0237c34faf11edcc705f7721032f003f1003157dff6a864cfd15d9c65b1",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "367451c9bed464d5eee866184a8dd77cfe73c35c"
+    },
+    {
+      "path": "supabase/migrations/20261102150000_tenbot_canary_deferred_record_boundary.sql",
+      "blob": "e20462654be96c37895be552797380eb8d38daec",
+      "sha256": "0413a8c2cd7babba685d570f2175cbfbf47379af73fab0bbdb273a411fba710f",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "e20462654be96c37895be552797380eb8d38daec"
+    },
+    {
+      "path": "supabase/migrations/20261102160000_tenbot_invoice_quantity_total_evidence.sql",
+      "blob": "d331f7a28cd3b4907613f6cfbae80d5dae91fd62",
+      "sha256": "9ff784a80eeef6d403250ce0afba114e88ab4b10088ba7162967631a8be40e79",
+      "sourceRevision": "afb549d157453b767e726313bcea87dc4e43f2ed",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "d331f7a28cd3b4907613f6cfbae80d5dae91fd62"
+    },
+    {
+      "path": "supabase/migrations/20261102100000_tenbot_monthly_allowance.sql",
+      "blob": "f6f5a8d85482e78028f73e50b140c604c9fcd765",
+      "sha256": "2336e07e712e0728119d582a05525db45cd180da1707236b516baf62028690c8",
+      "sourceRevision": "7a0243e1f33840c29ebe0a7f836f95c301181291",
+      "sourceClassification": "already-applied immutable history; not to apply",
+      "acceptedTenDevBlob": "f6f5a8d85482e78028f73e50b140c604c9fcd765"
+    }
+  ],
+  "migrationsToApply": [],
+  "protectedPathsUnchanged": [
+    "scripts/generate-tenbot-knowledge.mjs",
+    "scripts/tenbot-knowledge/release-sync.mjs",
+    "scripts/tenbot-knowledge/manifest.mjs",
+    "scripts/tenbot-knowledge/architecture.mjs",
+    "next.config.ts",
+    "src/app/manifest.ts",
+    "src/lib/dev-branding.mjs",
+    "src/lib/branding-environment.mjs",
+    "supabase/functions/_shared/tenbot-agent.ts",
+    "supabase/functions/_shared/tenbot-openai-metering.ts"
+  ],
+  "canaryUiAbsent": true,
+  "productionOnlyAncestry": true,
+  "verifierUnchanged": true,
+  "proofRevision": "4a67385680240c9139074043fbf8ce5d0e77f39d",
+  "proofPath": "docs/project-memory/2026-11-02-tenbot-final-pending-source-proof.md",
+  "changedPaths": [
+    "docs/project-memory/2026-11-02-tenbot-agentic-completion.md",
+    "docs/project-memory/2026-11-02-tenbot-final-pending-source-proof.md",
+    "docs/project-memory/2026-11-02-tenbot-integrated-staging.md",
+    "docs/project-memory/2026-11-02-tenbot-pending-quantity-completion.md",
+    "docs/project-memory/2026-11-02-tenbot-production-readiness-source-proof.md",
+    "docs/project-memory/2026-11-02-tenbot-real-terra-acceptance.md",
+    "docs/project-memory/evidence/2026-11-02-tenbot-pending-quantity-completion/receipt.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-production-readiness/hosting.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-production-readiness/superseded-source-reviews.json",
+    "docs/project-memory/evidence/2026-11-02-tenbot-real-terra-acceptance.json",
+    "scripts/tenbot-knowledge/infrastructure-reviews.json",
+    "scripts/tenbot-knowledge/source-reviews.json",
+    "src/app/client-layout-shell.tsx",
+    "src/app/inventory/page.tsx",
+    "src/app/layout.tsx",
+    "src/components/GlobalMessaging.tsx",
+    "src/components/GlobalTenbot.tsx",
+    "src/lib/auth-action-session.ts",
+    "src/lib/auth.tsx",
+    "src/lib/supabase.ts",
+    "src/modules/inventory/invoice-quantity.ts",
+    "src/modules/my-work/InboxDialog.tsx",
+    "src/modules/tenbot/GlobalTenbotWorkspace.tsx",
+    "src/modules/tenbot/TenbotWorkspace.tsx",
+    "src/modules/tenbot/actions/ActionReviewCard.tsx",
+    "src/modules/tenbot/actions/ActionWorkspaceBridge.tsx",
+    "src/modules/tenbot/actions/README.md",
+    "src/modules/tenbot/actions/adapter.ts",
+    "src/modules/tenbot/actions/contract.ts",
+    "src/modules/tenbot/actions/presentation-fixture.ts",
+    "src/modules/tenbot/capability-requests/CapabilityRequestCard.tsx",
+    "src/modules/tenbot/capability-requests/CapabilityRequestSlot.tsx",
+    "src/modules/tenbot/capability-requests/README.md",
+    "src/modules/tenbot/capability-requests/model.ts",
+    "src/modules/tenbot/capability-requests/presentation-fixture.ts",
+    "src/modules/tenbot/events.ts",
+    "src/modules/tenbot/global-workspace.css",
+    "supabase/functions/_shared/tenbot-action-auth.ts",
+    "supabase/functions/_shared/tenbot-action-transport.ts",
+    "supabase/functions/_shared/tenbot-actions.ts",
+    "supabase/functions/_shared/tenbot-agent-operations.ts",
+    "supabase/functions/_shared/tenbot-agent-session.ts",
+    "supabase/functions/_shared/tenbot-business-operations.ts",
+    "supabase/functions/_shared/tenbot-core.ts",
+    "supabase/functions/_shared/tenbot-employee-history.ts",
+    "supabase/functions/_shared/tenbot-handler.ts",
+    "supabase/functions/_shared/tenbot-hosted-operations.ts",
+    "supabase/functions/_shared/tenbot-hosted.ts",
+    "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+    "supabase/functions/_shared/tenbot-job-routing.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/_shared/tenbot-openai.ts",
+    "supabase/functions/_shared/tenbot-proposal-operations.ts",
+    "supabase/functions/_shared/tenbot-qwen-agent.ts",
+    "supabase/functions/_shared/tenbot-read-investigation.ts",
+    "supabase/functions/_shared/tenbot-read-routing.ts",
+    "supabase/functions/_shared/tenbot-reviewed-operations.ts",
+    "supabase/functions/_shared/tenbot-terra-acceptance.ts",
+    "supabase/functions/tenbot/index.ts",
+    "supabase/migrations/20261102100000_tenbot_monthly_allowance.sql",
+    "supabase/migrations/20261102120000_tenbot_reviewed_actions.sql",
+    "supabase/migrations/20261102130000_tenbot_action_canonical_receivals.sql",
+    "supabase/migrations/20261102140000_tenbot_operation_history.sql",
+    "supabase/migrations/20261102150000_tenbot_canary_deferred_record_boundary.sql",
+    "supabase/migrations/20261102160000_tenbot_invoice_quantity_total_evidence.sql"
+  ],
+  "fullPendingRolloutBlocked": true,
+  "pendingBlocker": "Approved shared application and readback of exact required170000 companion, then matching runtime release/explicit activation; local correction validated.",
+  "deployed": false,
+  "hostedMutations": 0,
+  "inferenceCalls": 0,
+  "preparationCommits": [
+    "6233fb7d2bac9883fac4f22ec283e90993aca116",
+    "4a67385680240c9139074043fbf8ce5d0e77f39d",
+    "40037650c63c68214aa1e4c1ce71a2812ce45650",
+    "3fb80972adeb762946c894a165adba1f6d4a1607",
+    "0e360c3fecc5d290371ce22728c7543d425f5ba5",
+    "570068659fe3b0760a5f153af5adcde3ae426ddc",
+    "74290bee8bff5412ba27d69e21d9803ff5e160b0",
+    "d05d552352470a46872c69e7589654792c5b1f36"
+  ],
+  "proofFormattingCorrection": {
+    "rejectedCandidate": "74290bee8bff5412ba27d69e21d9803ff5e160b0",
+    "rejectedProof": "d05d552352470a46872c69e7589654792c5b1f36",
+    "reason": "Unchanged contract sentence must start its own line for the original mandatory verifier; no source/runtime/gate/verifier change."
+  },
+  "headerReviewCorrection": {
+    "previousCandidate": "0e360c3fecc5d290371ce22728c7543d425f5ba5",
+    "reason": "Carry four exact existing accepted global header semantic dependency reviews; original verifier unchanged.",
+    "runtimeChanged": false
+  },
+  "validatedRootPatch": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "candidateMigrationsToApply": [],
+  "remainingRequiredContract": {
+    "status": "implemented and isolated-validated locally; shared application and activation remain unapproved",
+    "migration": {
+      "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "artifact": "/private/tmp/tenops-final-pending-authorization-20261102/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "sourceRevision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+      "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+      "appliedToShared": false,
+      "requiredBeforePendingActivation": true,
+      "realIsolatedValidationPassed": true,
+      "coveredByFrontendReleaseProof": false
+    }
+  },
+  "acceptedPriorCandidate": "40037650c63c68214aa1e4c1ce71a2812ce45650",
+  "pendingAuthorizationRootPatch": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "sourceDeltaFromAccepted400": [
+    "docs/project-memory/2026-11-02-tenbot-final-pending-source-proof.md",
+    "scripts/tenbot-knowledge/infrastructure-reviews.json",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "requiredUnappliedCompanionMigrations": [
+    {
+      "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "artifact": "/private/tmp/tenops-final-pending-authorization-20261102/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "sourceRevision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+      "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+      "appliedToShared": false,
+      "requiredBeforePendingActivation": true,
+      "realIsolatedValidationPassed": true,
+      "coveredByFrontendReleaseProof": false
+    }
+  ],
+  "requiredMigrationsBeforePendingActivation": [
+    "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql"
+  ],
+  "frontendProofBoundary": "Frontend/Edge source only; required unapplied SQL companion is separately pinned and not cleared by its proof.",
+  "runtimeCandidateMigrationsToApply": [],
+  "pairedPackageMigrationsToApply": [
+    "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql"
+  ]
+}

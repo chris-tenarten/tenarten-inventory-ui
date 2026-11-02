@@ -1,0 +1,161 @@
+{
+  "readOnly": true,
+  "at": "2026-11-02T22:27:20.488Z",
+  "tenops": {
+    "sha": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+    "deploymentId": "eb191ab7-6e40-4275-b0a1-c616044b89a5",
+    "url": "https://eb191ab7.tenops.pages.dev",
+    "publicEnvironmentNames": [
+      "NEXT_PUBLIC_ENABLE_PLANNING",
+      "NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "NEXT_PUBLIC_SUPABASE_URL"
+    ]
+  },
+  "tendev": {
+    "sha": "afb549d157453b767e726313bcea87dc4e43f2ed",
+    "deploymentId": "4f87390b-6f14-490d-b3d6-d859abfd3240",
+    "url": "https://4f87390b.tendev.pages.dev",
+    "publicEnvironmentNames": [
+      "NEXT_PUBLIC_DARK_PROTOTYPE",
+      "NEXT_PUBLIC_DEV_BRANDING",
+      "NEXT_PUBLIC_EARLY_ACCESS",
+      "NEXT_PUBLIC_ENABLE_PLANNING",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "NEXT_PUBLIC_SUPABASE_URL"
+    ]
+  },
+  "edge": [
+    {
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 67,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "sourceHash": "7d48ef0647128fb5b78a6624da68df523870a01de1bb4a5b407517a854177230"
+    }
+  ],
+  "allComparedControlsAccountingAndProtectedFingerprintsUnchanged": [
+    "policy",
+    "action",
+    "pilot",
+    "execution",
+    "enrollment",
+    "usageRows",
+    "usageHash",
+    "activeGrants",
+    "activePermits",
+    "capsHash",
+    "stockRows",
+    "stockFingerprint",
+    "inventoryTransactions",
+    "pendingCount",
+    "proposalCount"
+  ],
+  "usageRows": 173,
+  "usageHash": "ef0176dd59599ef82a318c2ea6fce57a",
+  "meter": {
+    "ok": true,
+    "enabled": false,
+    "version": 13,
+    "expiresAt": "2026-11-03T01:54:46.647445+00:00",
+    "heldMicrousd": 142953,
+    "allowanceMode": "monthly",
+    "allowedModels": [
+      "gpt-6.1-terra"
+    ],
+    "monthStartsAt": "2026-11-01T00:00:00+00:00",
+    "accountedMicrousd": 1088814,
+    "remainingMicrousd": 478426,
+    "monthLimitMicrousd": 842208,
+    "totalLimitMicrousd": 5000000,
+    "uncertainReservations": 3,
+    "monthAccountedMicrousd": 363782,
+    "legacyAccountedMicrousd": 558679,
+    "legacyUnresolvedMicrousd": 18723
+  },
+  "actionControl": {
+    "singleton": true,
+    "policy_version": 13,
+    "proposal_enabled": false,
+    "receivals_enabled": false
+  },
+  "executionControl": {
+    "singleton": true,
+    "validated_at": "2026-11-02T21:54:46.651537+00:00",
+    "execution_enabled": false,
+    "isolated_validation_receipt": "Product-approved one Pending objective; exact quantity correction; current matched release and new funding receipt; focused isolated validation SHA256 861761ef5769bc9e441a39dac6e47acb7a11bb6fc17ee8a2dd0c4788c382e65e"
+  },
+  "pilotEnabled": false,
+  "enrollment": [],
+  "allCheckedSpendAndAgentWriteFlagsOff": true,
+  "employeeMode": "absent/default OFF",
+  "configuredCredentialExpiry": "2026-11-28T22:46:56Z",
+  "credentialDigestMatches": true,
+  "credentialValueRead": false,
+  "newMigrationPresent": false,
+  "monthlyHardCeiling": "CHECK ((month_limit_microusd <= 5000000))",
+  "functionMetadata": [
+    {
+      "acl": [
+        "tenbot_invoice_executor=X/tenbot_invoice_executor",
+        "authenticated=X/tenbot_invoice_executor"
+      ],
+      "oid": "38243",
+      "owner": "tenbot_invoice_executor",
+      "config": [
+        "search_path=pg_catalog, public",
+        "lock_timeout=3s",
+        "statement_timeout=15s"
+      ],
+      "bodyMd5": "4329aef56968fa225f30dc3c334cc409",
+      "signature": "execute_invoice_receival_draft(uuid,text,uuid)",
+      "securityDefiner": true
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "oid": "45391",
+      "owner": "postgres",
+      "config": [
+        "search_path=pg_catalog, public",
+        "lock_timeout=3s",
+        "statement_timeout=20s"
+      ],
+      "bodyMd5": "78e5c6b1bdfebfaaaef5f06846980516",
+      "signature": "execute_tenbot_reviewed_action(uuid,integer,text)",
+      "securityDefiner": true
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "oid": "45456",
+      "owner": "postgres",
+      "config": [
+        "search_path=pg_catalog, public"
+      ],
+      "bodyMd5": "4dd2da5f62fa72d9ba35fba388350811",
+      "signature": "tenbot_action_guard_receival_execution()",
+      "securityDefiner": true
+    },
+    {
+      "acl": [
+        "tenbot_invoice_executor=X/tenbot_invoice_executor"
+      ],
+      "oid": "37987",
+      "owner": "tenbot_invoice_executor",
+      "config": [
+        "search_path=pg_catalog, public",
+        "lock_timeout=3s",
+        "statement_timeout=15s"
+      ],
+      "bodyMd5": "9ece0116640913fd35524f137df29b3a",
+      "signature": "tenbot_execute_invoice_receival_core(uuid,text,uuid)",
+      "securityDefiner": true
+    }
+  ],
+  "newInferenceCalls": 0,
+  "sharedMutations": 0
+}

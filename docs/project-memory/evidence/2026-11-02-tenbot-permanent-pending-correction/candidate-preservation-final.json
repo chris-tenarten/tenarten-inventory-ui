@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "at": "2026-11-02T22:34:14.750074+00:00",
+  "candidate": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "candidateTree": "5f996554a9e7a88251996da746fa423891574d06",
+  "rootSource": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "rootHead": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "rootIndexUnstaged": true,
+  "rootOriginalDirtyChecks": {
+    "docs/README.md": true,
+    "docs/project-memory/2026-11-02-tenbot-limited-terra-evaluation.md": true,
+    "docs/project-memory/CURRENT_STATE.md": true,
+    "docs/project/ENGINEERING_EXECUTION_STANDARD.md": true,
+    "scripts/support/tenbot-scoped-evaluation-budget.mts": true,
+    "scripts/verify-tenbot-agent.mts": true,
+    "scripts/verify-tenbot-scoped-evaluation-budget.mts": true,
+    "supabase/functions/_shared/tenbot-agent.ts": true
+  },
+  "originalDirtyPathsUnchanged": 8,
+  "candidateClean": true,
+  "accepted400SourceUnchangedAndClean": true,
+  "accepted400OutputPreserved": true,
+  "processesStopped": 0,
+  "worktreesCreated": 0,
+  "rootWritesByCandidateOwner": 0,
+  "runtimeCandidatePendingMigrationFiles": 0,
+  "requiredUnappliedSqlCompanions": 1,
+  "sharedMigrationApplied": false,
+  "overallPendingActivationReady": false
+}

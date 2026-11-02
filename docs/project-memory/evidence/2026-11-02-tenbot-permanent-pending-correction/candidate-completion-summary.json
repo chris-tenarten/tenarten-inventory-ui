@@ -1,0 +1,124 @@
+{
+  "status": "Exact paired runtime/SQL artifacts prepared; no shared application/deployment/activation",
+  "runtimeCandidate": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "runtimeTree": "5f996554a9e7a88251996da746fa423891574d06",
+  "acceptedPriorCandidate": "40037650c63c68214aa1e4c1ce71a2812ce45650",
+  "productionBase": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "pendingAuthorizationRootPatch": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "priorEligibilityRootPatch": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "acceptedTenDev": "afb549d157453b767e726313bcea87dc4e43f2ed",
+  "applicationDeltaPaths": [
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "totalCandidateDeltaFiles": 4,
+  "runtimeProof": {
+    "holds": 0,
+    "generatorAndReleaseVerifierUnchanged": true,
+    "scope": "frontend/Edge source only; does not approve or clear SQL companion"
+  },
+  "build": {
+    "passed": true,
+    "artifacts": 278,
+    "edgeModules": 55,
+    "durationMs": 32553,
+    "branding": {
+      "title": "TenOps Cloud \u2014 Dashboard",
+      "manifestName": "TenOps",
+      "manifestShortName": "TenOps",
+      "productionGoldIcons": true,
+      "pwaManifestsExactBaseBytes": true
+    },
+    "environmentSource": "fresh22:27Productionconfiguration; private values not exported",
+    "canaryRouteAbsent": true,
+    "canaryControlsOff": true,
+    "fundingAndEmployeeGatesUnchanged": true
+  },
+  "sqlCompanion": {
+    "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+    "artifact": "/private/tmp/tenops-final-pending-authorization-20261102/20261102170000_tenbot_permanent_reviewed_pending.sql",
+    "sourceRevision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+    "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+    "appliedToShared": false,
+    "requiredBeforePendingActivation": true,
+    "realIsolatedValidationPassed": true,
+    "coveredByFrontendReleaseProof": false
+  },
+  "pairedPackageMigrationsToApply": [
+    "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql"
+  ],
+  "sixPriorMigrations": "already-applied immutable history; never reapply",
+  "actualIsolatedDatabaseGroups": 11,
+  "genuineOwnPasswordNoPilotProof": true,
+  "fixtureRestoredAndControlsOff": true,
+  "prior61FocusedChecksReused": true,
+  "overallPendingActivationReady": false,
+  "requiredNextBoundary": "Explicit Product approval of exact SQL/shared application and narrow readback, matching runtime release, cohort/action controls and separate funding before any Pending activation.",
+  "recoveryBundle": {
+    "file": "final-pending-candidate.bundle",
+    "bytes": 34454407,
+    "sha256": "51e54b13ff20a55ef79d08ebb0a9f9611391d6f9162af4c271901cfde12ff4d3",
+    "declaredPrerequisite": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+    "includedProofRevisions": 20
+  },
+  "evidence": {
+    "candidate.json": {
+      "bytes": 36126,
+      "sha256": "e2df45c0c9fdde8c4a1ab70786d657c2af66a970e5cc8ee8f47c4114f5d9588b"
+    },
+    "paired-release-artifacts.json": {
+      "bytes": 1687,
+      "sha256": "3341b2efcc455ca9be670ba4b97e8b4437cef765492127647f2889bfdc7d95db"
+    },
+    "source-delta.json": {
+      "bytes": 1539,
+      "sha256": "f39b7d9388070768263cf8875581b65308055df3812876fd01b271facc6f8172"
+    },
+    "mandatory-proof.json": {
+      "bytes": 1070,
+      "sha256": "d7be1371ccf91819bffcac7804ac491e17c0d0027b181bd4840bbbf3471a96e3"
+    },
+    "build.json": {
+      "bytes": 1922,
+      "sha256": "0a4c05717871b95c488424097b7f9898d8dd3103b2d44e9d071bd322f6a96a32"
+    },
+    "edge-closure.json": {
+      "bytes": 9393,
+      "sha256": "3f85d10313cdca93163fd4ceed84d4d9a25f3cd4989c5f8b9deb64ab9076e39f"
+    },
+    "build-artifacts.json": {
+      "bytes": 39289,
+      "sha256": "2d29f48db93591d7b9d4aa19961bceae26a54df04964ef55a1dc2c46f20dbfd2"
+    },
+    "compatibility.json": {
+      "bytes": 1616,
+      "sha256": "df94a686231032787a39dcc7bf6212e7f0036dc96a3367a48d897c267f477f55"
+    },
+    "source-recovery.json": {
+      "bytes": 3413,
+      "sha256": "69b12afc01242049cdf0f2b50b370a562a019be751b2717922349ae4d2f52cba"
+    },
+    "candidate-preservation-final.json": {
+      "bytes": 1209,
+      "sha256": "b88ada8190e2043817964831871353431c66de4a60dde843d6aa2ad820b655fd"
+    },
+    "validated-pending-source.json": {
+      "bytes": 727,
+      "sha256": "ee2adae189c3d673ec639781ce92956d2d268dd3b3bae6127f4b65b8eb669b25"
+    },
+    "database/combined-results.json": {
+      "bytes": 5066,
+      "sha256": "c61c64e4ccf6e075a893ff2b9f7b684bdb24c57a2e0af7d786c4ce6f9d50996a"
+    },
+    "20261102170000_tenbot_permanent_reviewed_pending.sql": {
+      "bytes": 4990,
+      "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e"
+    }
+  },
+  "sharedMigrationApplied": false,
+  "hostedCallsByCandidateOwner": 0,
+  "deployments": 0,
+  "inferenceCalls": 0,
+  "browserScreenshots": 0,
+  "rootSourceWritesByCandidateOwner": 0,
+  "candidateDiffCheckPassed": true
+}

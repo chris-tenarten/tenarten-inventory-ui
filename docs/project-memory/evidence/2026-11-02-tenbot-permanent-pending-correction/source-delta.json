@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "candidate": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "tree": "5f996554a9e7a88251996da746fa423891574d06",
+  "acceptedParent": "40037650c63c68214aa1e4c1ce71a2812ce45650",
+  "productionBase": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "rootSource": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "applicationSourceChanges": [
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "allOtherSelectedSourceRowsUnchanged": true,
+  "frontendPublicPwaConfigurationSourceExactAccepted400": true,
+  "fullDeltaPaths": [
+    "docs/project-memory/2026-11-02-tenbot-final-pending-source-proof.md",
+    "scripts/tenbot-knowledge/infrastructure-reviews.json",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "requiredMigrationCompanion": {
+    "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+    "artifact": "/private/tmp/tenops-final-pending-authorization-20261102/20261102170000_tenbot_permanent_reviewed_pending.sql",
+    "sourceRevision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+    "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+    "appliedToShared": false,
+    "requiredBeforePendingActivation": true,
+    "realIsolatedValidationPassed": true,
+    "coveredByFrontendReleaseProof": false
+  },
+  "runtimeProofBoundary": "SQL companion not in frontend source tree and not approved/cleared by runtime release proof",
+  "overallPendingActivationReady": false,
+  "sharedMigrationApplied": false
+}

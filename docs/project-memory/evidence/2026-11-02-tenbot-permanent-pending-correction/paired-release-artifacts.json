@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "productionBase": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "acceptedPriorCandidate": "40037650c63c68214aa1e4c1ce71a2812ce45650",
+  "runtimeCandidate": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "runtimeTree": "5f996554a9e7a88251996da746fa423891574d06",
+  "rootSource": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "appChangedPaths": [
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "derivedChangedPaths": [
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+    "scripts/tenbot-knowledge/infrastructure-reviews.json",
+    "docs/project-memory/2026-11-02-tenbot-final-pending-source-proof.md"
+  ],
+  "requiredUnappliedMigration": {
+    "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+    "artifact": "/private/tmp/tenops-final-pending-authorization-20261102/20261102170000_tenbot_permanent_reviewed_pending.sql",
+    "sourceRevision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+    "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+    "appliedToShared": false,
+    "requiredBeforePendingActivation": true,
+    "realIsolatedValidationPassed": true,
+    "coveredByFrontendReleaseProof": false
+  },
+  "overallPendingActivationReady": false,
+  "reason": "Exact shared migration approval/application/readback and explicit coordinated release/activation remain required.",
+  "sourceOnlyMigrationProofDiagnostic": "Original Production generator sensitivePath covers supabase/migrations; isInfrastructurePath excludes SQL and historical-deployed requires actual executed evidence. New unapplied170000 would remain unclassified-sensitive-path; no attempted bypass or verifier change."
+}

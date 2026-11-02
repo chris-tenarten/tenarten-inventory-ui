@@ -1,0 +1,30 @@
+{
+  "sourceCommit": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "newOfflineGroups": 4,
+  "newRealAuthDatabaseGroups": 11,
+  "prior61GroupsReused": true,
+  "typescript": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exitCode": 0,
+    "initialFailure": "Nine unknown RPC response accesses in newly added test group; corrected with runtime shape guards. Application/SQL unchanged; actual retained RPC results support guards."
+  },
+  "eslint": {
+    "allAffectedSourceAndTestFiles": true,
+    "exitCode": 0,
+    "newlyGuardedFileRechecked": true
+  },
+  "diffCheckPassed": true,
+  "independentReview": "Approved affected SQL/Edge authorization and actual isolated results; no blocker",
+  "acceptedEvidenceReused": [
+    "real Terra reasoning/tool composition",
+    "Proposal persistence/password confirmation",
+    "Workspace/Messaging desktop/mobile",
+    "quantity normalization/lifecycle contracts",
+    "prior cohort and current-capability guards"
+  ],
+  "newPaidInferenceCalls": 0,
+  "sharedMutations": 0,
+  "screenCapture": false
+}

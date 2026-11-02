@@ -1,0 +1,58 @@
+{
+  "createdAt": "2026-11-02T22:28:20.708873+00:00",
+  "baseHead": "e9195ffbacf3e07cc923abb040daf933cf689469",
+  "status": "implemented-locally-source-frozen-pending-isolated-database-and-candidate-validation",
+  "paths": [
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "518a8c04f728eb1403f375bfd26c1e4e353711a54b1fb54f1863f06d69a50b91"
+    },
+    {
+      "path": "scripts/verify-tenbot-canonical-action-receivals.mts",
+      "sha256": "85d1cf760872c42d5c49fe9f6adc1a30c9175e123faf0d18717edf582381e6c6"
+    },
+    {
+      "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e"
+    }
+  ],
+  "checks": [
+    {
+      "command": "node --import tsx scripts/verify-tenbot-canonical-action-receivals.mts --permanent-only",
+      "exitCode": 0,
+      "groups": 4,
+      "receipt": "/private/tmp/tenops-tenbot-canonical-action-receivals-20261102/permanent-offline.json"
+    },
+    {
+      "command": "git diff --check -- supabase/functions/tenbot/index.ts scripts/verify-tenbot-canonical-action-receivals.mts",
+      "exitCode": 0
+    }
+  ],
+  "unchangedEvidenceReused": "Prior61focusedgroups and accepted Auth/Proposal/Terra/Workspace/quantity contracts; no unchanged historical verifier rerun. Root owns one final type/lint check after DB verifier freeze.",
+  "migration": {
+    "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+    "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+    "expectedPredecessorProsrcMd5": "78e5c6b1bdfebfaaaef5f06846980516",
+    "persistentlyAppliedByThisWorker": false
+  },
+  "scope": [
+    "Reviewed Pending new-execution branch invokes existing canonical core after existing private transaction dispatch; completed reconciliation retains public pilot wrapper",
+    "Exact target predecessor/owner/ACL/configuration and disabled-controls preconditions; existing non-bypass core and enabled commit guard required",
+    "Normal eligible Edge branch stages without pilot/enrollment/permit, retaining existing execution flag",
+    "Finite acceptance Edge pilot/permit path retained; no new SQL lane discriminator or additional SQL permit requirement is claimed",
+    "No tables/grants/RLS/roles/funding/control mutations"
+  ],
+  "review": "Root reports frozen review approved; independent reviewer received exact three-path boundary",
+  "actualInference": false,
+  "actualDatabase": false,
+  "hostedCalls": 0,
+  "hostedMutations": 0,
+  "screenCapture": false,
+  "commit": null,
+  "buildRunByThisWorker": false,
+  "outstanding": [
+    "DB worker performs focused isolated real Auth/PostgreSQL checks and restoration",
+    "Root final type/lint, scoped commit and selective-candidate preparation",
+    "Separate Product authorization needed for shared migration application/release/activation"
+  ]
+}

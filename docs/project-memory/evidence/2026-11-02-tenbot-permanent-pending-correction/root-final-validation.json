@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "originalDirtyContentPreserved": 8,
+  "onlyOwnedExecutionStandardAppend": true,
+  "exactSourceCommit": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "runtimeCandidateClean": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "runtimeIndexMatchesValidatedSource": true,
+  "exactUnappliedCompanionVerified": true,
+  "bundleSha256Verified": true,
+  "relativeLinksValid": true,
+  "sanitizedJsonFiles": 17,
+  "newInferenceCalls": 0,
+  "sharedMutations": 0
+}

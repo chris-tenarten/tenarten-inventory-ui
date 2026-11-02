@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "realIsolatedDatabasePassed": true,
+  "revision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "sourcePaths": [
+    "supabase/functions/tenbot/index.ts"
+  ],
+  "indexSha256": "518a8c04f728eb1403f375bfd26c1e4e353711a54b1fb54f1863f06d69a50b91",
+  "migrationPath": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+  "migrationSha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+  "isolatedValidationReceipt": "/private/tmp/tenops-final-pending-authorization-20261102/database/combined-results.json",
+  "newActualDatabaseGroups": 11,
+  "prior61ChecksReused": true,
+  "sharedApplied": false,
+  "rootReportsTypesLintDiffPass": true,
+  "sourceFrozen": true
+}

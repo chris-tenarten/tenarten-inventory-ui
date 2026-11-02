@@ -1,0 +1,167 @@
+{
+  "passed": true,
+  "riskTier": 3,
+  "testingLevel": 3,
+  "fixtureRef": "jltgxcfiprocydhbrahz",
+  "groupsPassed": 11,
+  "newlyExecutedGroups": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "checks": [
+    {
+      "name": "canonical Pending staging preserves real original evidence and direct legacy call cannot bypass action dispatch",
+      "durationMs": 4430
+    },
+    {
+      "name": "real password-to-stage/permit/canonical Pending creation returns actual IDs, exact quantities and durable audit; concurrent retries are idempotent",
+      "durationMs": 3605
+    },
+    {
+      "name": "changed same-ID catalog details invalidate immutable employee review and consume failed stage proof",
+      "durationMs": 3147
+    },
+    {
+      "name": "canonical Pending partial failure rolls dispatch, claim, audit and permit back while retaining a consumed failed action proof",
+      "durationMs": 3667
+    },
+    {
+      "name": "concurrent FIRST Pending executions commit one canonical receipt and one pending row",
+      "durationMs": 3308
+    },
+    {
+      "name": "real Supabase local logout revokes the exact execution session despite an otherwise valid signed JWT",
+      "durationMs": 3057
+    },
+    {
+      "name": "permanent Pending default-OFF, emergency action invalidation and canonical disable remain enforced",
+      "durationMs": 8200
+    },
+    {
+      "name": "permanent Pending exact owner, live session, action revision/hash, cancellation, expiry and supersession reject stale authority",
+      "durationMs": 11475
+    },
+    {
+      "name": "permanent Pending current business capability and actor revocation cannot be bypassed or resurrect old proofs",
+      "durationMs": 6075
+    },
+    {
+      "name": "canonical core ACL and commit trigger deny dispatch-free execution and roll back all attempted records",
+      "durationMs": 4143
+    },
+    {
+      "name": "legacy pilot remains finite and compatible for unrelated drafts while a valid permit cannot bypass a reviewed stage",
+      "durationMs": 7284
+    }
+  ],
+  "actualSupabaseAuth": true,
+  "actualPostgreSQL": true,
+  "actualPrivateStorage": true,
+  "normalReviewedExecution": {
+    "realExistingSyntheticOwnPassword": true,
+    "pilotEnabled": false,
+    "pilotEnrollment": 0,
+    "permitRequired": false,
+    "createdPendingRows": 2,
+    "receivedQuantity": 0,
+    "auditsPerRecord": 1,
+    "dispatchesPerRecord": 1,
+    "records": [
+      {
+        "id": "5f38bde2-bca0-4a37-8d55-dd0d36ffb61e",
+        "status": "pending",
+        "quantity_expected": "2",
+        "quantity_received": "0",
+        "unit": "Bag",
+        "draft_id": "cea4927c-9e68-45e1-9178-f1690e00b50a",
+        "executed_audits": 1,
+        "reviewed_stages": 1,
+        "dispatches": 1,
+        "permits": 0
+      },
+      {
+        "id": "be60207b-1f9f-429e-95aa-d3faeadbc0c5",
+        "status": "pending",
+        "quantity_expected": "2",
+        "quantity_received": "0",
+        "unit": "Bag",
+        "draft_id": "a303cd18-0883-4d62-a710-a70decc1e4f0",
+        "executed_audits": 1,
+        "reviewed_stages": 1,
+        "dispatches": 1,
+        "permits": 0
+      }
+    ]
+  },
+  "legacyCompatibility": {
+    "unrelatedPilotCreatedRows": 1,
+    "reviewedStageBypassDeniedWithValidPermit": true,
+    "record": {
+      "id": "1dfc93f2-56e4-4baf-b343-ebf1d726289f",
+      "status": "pending",
+      "quantity_expected": "2",
+      "quantity_received": "0",
+      "unit": "Bag",
+      "draft_id": "3f3808b2-d9ec-426b-8647-d0ebf5a16571",
+      "executed_audits": 1,
+      "reviewed_stages": 0,
+      "dispatches": 0,
+      "permits": 1
+    }
+  },
+  "sourceLifecycle": [
+    {
+      "lifecycle_state": "deleted",
+      "count": 13
+    },
+    {
+      "lifecycle_state": "retained",
+      "count": 3
+    }
+  ],
+  "interruption": {
+    "run": "2e44e945",
+    "passedGroupsReused": 7,
+    "adapterError": "invoice_source_unavailable",
+    "cause": "Existing20-unretained-upload fixture guard reached; only task-owned disposable sources retired through canonical owner cleanup, originals preserved locally; four unfinished groups resumed",
+    "failedReceiptPreserved": true,
+    "applicationAuthorizationFailure": false
+  },
+  "restoration": {
+    "passed": true,
+    "fixtureRef": "jltgxcfiprocydhbrahz",
+    "migration": {
+      "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+      "appliedInIsolation": true,
+      "sharedApplied": false,
+      "fixturePersisted": false,
+      "appliedBodyMd5": "14b1cf22f3cda304115704b30b11ee06"
+    },
+    "childStatus": 0,
+    "originalFunctionRestored": true,
+    "otherFunctionsPreserved": true,
+    "stockAndTransactionsPreserved": true,
+    "capabilitiesPreserved": true,
+    "controlsOff": true,
+    "enrollment": 0,
+    "providerCalls": 0,
+    "sharedCalls": 0
+  },
+  "providerCalls": 0,
+  "sharedCalls": 0,
+  "priorFixtureSourcesTouched": 0,
+  "evidenceRuns": [
+    "2e44e945",
+    "ae194ff7"
+  ]
+}

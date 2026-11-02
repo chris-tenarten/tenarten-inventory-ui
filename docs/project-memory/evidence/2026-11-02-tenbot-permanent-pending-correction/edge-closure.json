@@ -1,0 +1,238 @@
+{
+  "passed": true,
+  "candidate": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "modules": [
+    {
+      "path": "src/modules/inventory/invoice-quantity.ts",
+      "sha256": "131c894139009436f19f53219ed4b52c96d18686a2ed6015129bd19acc69e70c"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-attachments.ts",
+      "sha256": "620cd88fc655ee194622e266fd527ea3fe92dcec2842b43f0c5e6308afac4edb"
+    },
+    {
+      "path": "src/modules/inventory/invoice-receival-service.ts",
+      "sha256": "4cc9d6fe8164e8fe98026d499d53f5235f18ff44cfa34c46eb472f9ae8c82343"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-access.ts",
+      "sha256": "7352ee25ce61da18ed879e5a51fd710fe992243861d0127aa1b4e3048f1d7d97"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-execution.ts",
+      "sha256": "d20623ca2be46394e2ca958ad123a4d75fd7c6488eea846346f22565660cbbfc"
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-funding.ts",
+      "sha256": "8eb5f6f963c04bed1b10717bd3fcd6ac4c249a74f42b2d1596fee238bcd17964"
+    },
+    {
+      "path": "src/modules/proposals/estimate-defaults.ts",
+      "sha256": "1c30b431b2ad755f996a5f49f69fd9ef53c72e65e76313db65298a3d8a776065"
+    },
+    {
+      "path": "src/modules/proposals/model.ts",
+      "sha256": "398dbc61f85ff223a480e1bd357e83dd1eab1a6fd44050ad35e7978ecf752ac2"
+    },
+    {
+      "path": "src/modules/proposals/types.ts",
+      "sha256": "e5df4249aad9c89bc959972e4f9b20a0d0c5d3e5878c23417a9805a65e13b9e1"
+    },
+    {
+      "path": "src/modules/purchasing/catalog-records.ts",
+      "sha256": "7190bf30a6a1649f645c617ffdb897e58fc30973896f30eff330a219584a76b6"
+    },
+    {
+      "path": "supabase/functions/_shared/labor-hours.mjs",
+      "sha256": "fe42f91ba1e2610e4e771adc8f29721222dd9662919849df15088cd5c99261ab"
+    },
+    {
+      "path": "supabase/functions/_shared/production-job-facts.mjs",
+      "sha256": "ef01a0c8b341fca3c2762128f08fad3598678de007573abded12b8bc00b47f39"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-action-auth.ts",
+      "sha256": "49d073e3e41968c76c3d89ec805298178ec563388afa97057a99b9198b98c3e3"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-action-transport.ts",
+      "sha256": "b1e184f627ab1dc6061e5a0fad93d3a3a5845042a40bdc138ef0f565334d7f73"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-actions.ts",
+      "sha256": "bd90cc2f060c9b03aae9b306dc56b5d33fd01440b3ff56480c120deeaae3129e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-history-store.ts",
+      "sha256": "a4b504e0ed0d5a1591286c6f1bc85106e2de438cf19ae2e28a247d7eb1231481"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-knowledge.ts",
+      "sha256": "cf16874ea61a2ddc637561699826f4e37e024829c2b7beb450afcf3ddd8ef027"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-operations.ts",
+      "sha256": "6c2b95c2e47a8cd7b3c7ff65947a30ed3bc2c4bb766dd220e442db9ad78f22c8"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "sha256": "cfbf0ef71e3b0811b1dc4a379f954aefdc06d75fbabd5c6883fb2472e0c169c6"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-agent.ts",
+      "sha256": "f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-business-operations.ts",
+      "sha256": "2e28eb92278df20d3845805ba59bc03a1882c6c96e064e98d686f8c6e3f2610e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-canary-funding.ts",
+      "sha256": "df875a6cd45c35b13198a20c062c221dd76b8e2191e5f0986401eb89a317471b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-conversation-context.ts",
+      "sha256": "209ec2c0ffea93b5891c65ea3a29efc4d7301c335fb9dd7df7ae29489790e077"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-core.ts",
+      "sha256": "a29c355acb7705a244a96e2d7da4fcff2836d7aa12e7976b3de6986849b026ea"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-employee-history.ts",
+      "sha256": "6441f4cd2a8c573b3e1db8c552adca9626f002ce9c2e386294cf275bdb588baf"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-handler.ts",
+      "sha256": "354470f58a351b8f4967d4c0a1baa0a679b2247bf9503bf5b78d22eb3e0172d7"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-history-scope.ts",
+      "sha256": "0fe4161be9c6bb7e4ce73833eabdfc283356d29ca40b20b69dfd7b0833211201"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted-operations.ts",
+      "sha256": "4c48cd577b9029f24018bef0955bd19a949c6a8e9c17dd88fd166320f7524b5b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "sha256": "159c721738553ae4d2c9777677f8a35f96f159fc5c33659e665afeb36bd443a4"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+      "sha256": "8e3d5370571cba3a75dfc9af277ac6028a375e38f8de44da4b5a9c8739c8e0dc"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice-catalog.ts",
+      "sha256": "37911acdadc696ab28672b66112d6b25ddf6568570a8de13d393343a0996668b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice-extraction.ts",
+      "sha256": "53e7a45ff333652e0ff62787a06d85d2f58851c0562cac8a243d78d232bf06c2"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-invoice.ts",
+      "sha256": "9e60c5101092678155920c008691420100e69d032f1aa8c544e28499d52684d1"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-filters.ts",
+      "sha256": "7ec39eff8077d9663e4d02e42b3fe1dec150df8c985b4cbb9f9a8d7838e1a465"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-presentation.ts",
+      "sha256": "9bbe435ea42429aa71edf94fdd92f73815f4d4d64ddcda03451ce6c22f28084b"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-routing.ts",
+      "sha256": "98d4d02ea068cfd4e829beabc04361dcdee3c7d4af6837513ba59f2ff956a384"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-session.ts",
+      "sha256": "718205cdbd37b07c23ee467cfab61160464093b1aeb73b4a06728bfb39c6ad35"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-job-tools.ts",
+      "sha256": "5ab6a975b2295403cd712bf98db00f925896915f77c14be513ef608722a7dbea"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge-snapshot.ts",
+      "sha256": "e437c143e3246c469007695cac1393c37b2a9430c3bbac264944d2f09797b3ed"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-knowledge.ts",
+      "sha256": "b145b092f1f54c367a0cf03ba0d3543cefa46290da356320a84027869f67599e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-models.ts",
+      "sha256": "cbf127a0692b07053021e72e4331ced03ecf820e35b12a851a18554d813e915f"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai-metering.ts",
+      "sha256": "ba11e374ee20e639a60992f32224695c82dc004eaa802224f21630057e6f17b3"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "sha256": "5d804e670dc72eda3ed9614c72a9c7e31d5802b1396d053f54ce89d5eba7c0b5"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-operational-history.ts",
+      "sha256": "4ff3e8caf4f9a33d6be6d8b1e518f95a7797a42b9bddb2d9240bcd0756a24c9a"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-privacy.ts",
+      "sha256": "0003b5a33f3a400f380cf923d7850bb6711755fcdaff8a37b4c1a616e8034ecf"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-proposal-operations.ts",
+      "sha256": "21540d045e301fae28aaa85b8a3e8e120a2b1a74553b8b9f0d5a3a1a9675b6bb"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-qwen-agent.ts",
+      "sha256": "413c7467e4f803f1c2b354f846bf42be2d8d624b1f781cb4f993ff817e4be979"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-read-investigation.ts",
+      "sha256": "a5354a799f6a8e963fb8c0c7f5766551d597521fb05c7fb794eda886f2a722cd"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-read-routing.ts",
+      "sha256": "715191b76189b86900ffd0d0707f112dbc2e2c1a6607fe91be4ab6dc415f0dd8"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-hosted.ts",
+      "sha256": "62cdec1252f2333e8f917a5aa573d09e2a02e516fe07ee272508b24f644010cc"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-receival-runtime.ts",
+      "sha256": "160ad160362603acef95baa7ad6fac01ad025b6250f56a32fc249984f15bf22e"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-reviewed-operations.ts",
+      "sha256": "ba08f0a01df663b468d0b13425d718d466862e539568e24ecfd64043a7c56b66"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-terra-acceptance.ts",
+      "sha256": "d531331f7c6e1422aed0698aeb1cb0f233a19d6821b5724bb75d9d2ab3ef1c02"
+    },
+    {
+      "path": "supabase/functions/_shared/tenbot-workflow-supplement.ts",
+      "sha256": "7bed56259d1969c0c2cdc68ff68f6491d920dfb4d2d233b45b4a8223e35e4eec"
+    },
+    {
+      "path": "supabase/functions/tenbot/index.ts",
+      "sha256": "518a8c04f728eb1403f375bfd26c1e4e353711a54b1fb54f1863f06d69a50b91"
+    }
+  ],
+  "external": [
+    "node:crypto",
+    "npm:@supabase/supabase-js@2.101.1",
+    "npm:pdf-lib@1.17.1"
+  ],
+  "exactRuntimeImportResolution": true,
+  "actualHostedBundling": false,
+  "acceptedModuleCount": 55,
+  "allowedLocalIntegrationPaths": [
+    "supabase/functions/tenbot/index.ts",
+    "supabase/functions/_shared/tenbot-knowledge-snapshot.ts"
+  ]
+}

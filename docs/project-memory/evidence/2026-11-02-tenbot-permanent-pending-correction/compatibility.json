@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "candidate": "6233fb7d2bac9883fac4f22ec283e90993aca116",
+  "productionBase": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "acceptedTenDev": "afb549d157453b767e726313bcea87dc4e43f2ed",
+  "accessRevision": "fbff048ee24ea9b8283811b84c9c1089709d2612",
+  "pendingAuthorizationRootPatch": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+  "sourceRows": 52,
+  "acceptedMainEdgeModuleClosure": 55,
+  "unchangedOutsideDeclaredScope": true,
+  "productionOnlyAncestry": true,
+  "unchangedKnowledgeClaimsAndPins": true,
+  "originalProductionProofAndGeneratorUnchanged": true,
+  "publicBrandingPwaSourceUnchanged": true,
+  "canaryRouteAbsent": true,
+  "canaryControlsOff": true,
+  "actionsAdapterBuildEnabledServerGatesRemainOff": true,
+  "migrationsApplied": 0,
+  "historyOnlyMigrations": 6,
+  "requiredUnappliedCompanionMigrations": [
+    {
+      "path": "supabase/migrations/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "artifact": "/private/tmp/tenops-final-pending-authorization-20261102/20261102170000_tenbot_permanent_reviewed_pending.sql",
+      "sourceRevision": "047fff5a7abf2aa5522b8a056f83e4ed82a74857",
+      "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e",
+      "appliedToShared": false,
+      "requiredBeforePendingActivation": true,
+      "realIsolatedValidationPassed": true,
+      "coveredByFrontendReleaseProof": false
+    }
+  ],
+  "runtimeProofDoesNotApproveSql": true,
+  "fullPendingRolloutBlocked": true,
+  "actualHostedAcceptance": "Prior accepted Proposal/Pending/Workspace evidence reused; no repeated real inference or employee write."
+}
