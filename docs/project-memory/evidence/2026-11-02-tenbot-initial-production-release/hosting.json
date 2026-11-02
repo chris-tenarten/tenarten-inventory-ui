@@ -1,0 +1,175 @@
+{
+  "at": "2026-11-02T22:41:40.830Z",
+  "readOnly": true,
+  "requests": [
+    {
+      "name": "tenops",
+      "status": 200,
+      "path": "/private/tmp/tenops-initial-production-release-20261102/fresh-tenops-1793659300810.private.json"
+    },
+    {
+      "name": "tendev",
+      "status": 200,
+      "path": "/private/tmp/tenops-initial-production-release-20261102/fresh-tendev-1793659300810.private.json"
+    },
+    {
+      "name": "functions",
+      "status": 200,
+      "path": "/private/tmp/tenops-initial-production-release-20261102/fresh-functions-1793659300810.private.json"
+    },
+    {
+      "name": "secrets",
+      "status": 200,
+      "path": "/private/tmp/tenops-initial-production-release-20261102/fresh-secrets-1793659300810.private.json"
+    }
+  ],
+  "tenops": {
+    "sha": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+    "deploymentId": "eb191ab7-6e40-4275-b0a1-c616044b89a5",
+    "url": "https://eb191ab7.tenops.pages.dev",
+    "configPath": "/private/tmp/tenops-initial-production-release-20261102/fresh-tenops-1793659300810.private.json",
+    "publicEnvironmentNames": [
+      "NEXT_PUBLIC_ENABLE_PLANNING",
+      "NEXT_PUBLIC_PRODUCTION_APPROVAL_PASSWORD",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "NEXT_PUBLIC_SUPABASE_URL"
+    ]
+  },
+  "tendev": {
+    "sha": "afb549d157453b767e726313bcea87dc4e43f2ed",
+    "deploymentId": "4f87390b-6f14-490d-b3d6-d859abfd3240",
+    "url": "https://4f87390b.tendev.pages.dev",
+    "configPath": "/private/tmp/tenops-initial-production-release-20261102/fresh-tendev-1793659300810.private.json",
+    "publicEnvironmentNames": [
+      "NEXT_PUBLIC_DARK_PROTOTYPE",
+      "NEXT_PUBLIC_DEV_BRANDING",
+      "NEXT_PUBLIC_EARLY_ACCESS",
+      "NEXT_PUBLIC_ENABLE_PLANNING",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "NEXT_PUBLIC_SUPABASE_URL"
+    ]
+  },
+  "edge": [
+    {
+      "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+      "version": 67,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "sourceHash": "7d48ef0647128fb5b78a6624da68df523870a01de1bb4a5b407517a854177230"
+    }
+  ],
+  "flagDigests": [
+    {
+      "name": "TENBOT_ALLOWED_ORIGINS",
+      "digest": "d2a5e34a9b3d31436b5d4c5c14bd55859062eca5e68e3e2847168013eb983e2f"
+    },
+    {
+      "name": "TENBOT_AI_ENABLED",
+      "digest": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "name": "TENBOT_CF_ACCOUNT_ID",
+      "digest": "07f8c0acf12647b7ae7463c6b0fa0b67a319c9493e3671d2d13f23d282bb6961"
+    },
+    {
+      "name": "TENBOT_CF_AI_TOKEN",
+      "digest": "dc022f762b062f85e9e1296498ddb89ce5caa45271cd317fc9829d26a19f1ea2"
+    },
+    {
+      "name": "TENBOT_CF_MODEL",
+      "digest": "68ec4dedb371f6a5adea2b3a171ea7108601aa14ac5e57f2a701fe88d02eb691"
+    },
+    {
+      "name": "TENBOT_OPENAI_API_KEY",
+      "digest": "a8cca9eaa4e620f3d5619ec5f57bc98a59f992b4c209c85dc6b02ffcc9d69873"
+    },
+    {
+      "name": "TENBOT_OPENAI_ENABLED",
+      "digest": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "name": "TENBOT_OPENAI_SPEND_AUTHORIZED",
+      "digest": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "name": "TENBOT_OPENAI_ALLOWED_ORIGINS",
+      "digest": "d2a5e34a9b3d31436b5d4c5c14bd55859062eca5e68e3e2847168013eb983e2f"
+    },
+    {
+      "name": "TENBOT_OPENAI_KEY_EXPIRES_AT",
+      "digest": "32d05a72fb7f2aaa1435d4767e98a5a38aa415a6dab77b2dea14f682aae92a84"
+    },
+    {
+      "name": "TENBOT_RECEIVAL_CLEANUP_WAKE_SECRET",
+      "digest": "937b200b99f06ec4324e2668f3f8c77805e150c2ad3df6e94895689765b207b9"
+    },
+    {
+      "name": "TENBOT_RECEIVAL_PILOT_ENABLED",
+      "digest": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "name": "TENBOT_RECEIVAL_EXECUTION_ENABLED",
+      "digest": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "name": "TENBOT_RECEIVAL_CLEANUP_ENABLED",
+      "digest": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "name": "TENBOT_RECEIVAL_ALLOWED_ORIGINS",
+      "digest": "0f9a39610ff7cb62e2a3eb3acd4cac8cb1e46de91b50456e0ae968c2d9f9d447"
+    },
+    {
+      "name": "TENBOT_RECEIVAL_EMPLOYEE_IDS",
+      "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "TENBOT_RECEIVAL_PILOT_EXPIRES_AT",
+      "digest": "5fbcef46ea6eb1fab7d2a9172d19d75ed645f2872a2d55d3fdb7186ddaf30195"
+    },
+    {
+      "name": "TENBOT_INVOICE_PREPARATION_ENABLED",
+      "digest": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "name": "TENBOT_INVOICE_PREPARATION_SPEND_AUTHORIZED",
+      "digest": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "name": "TENBOT_INVOICE_PREPARATION_STARTS_AT",
+      "digest": "2e16c7798db655ea934f08e850d7249201f5bd75288b9373999bbb1a8b22aa36"
+    },
+    {
+      "name": "TENBOT_INVOICE_PREPARATION_EXPIRES_AT",
+      "digest": "4287e54d9ad6cd12d5908ae603ab15e4bf2fbfb8d5664ceb6d27eba50dbcdde0"
+    },
+    {
+      "name": "TENBOT_MODEL_DIRECTED_READ_ORIGINS",
+      "digest": "0f9a39610ff7cb62e2a3eb3acd4cac8cb1e46de91b50456e0ae968c2d9f9d447"
+    },
+    {
+      "name": "TENBOT_TERRA_ACCEPTANCE_ENABLED",
+      "digest": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "name": "TENBOT_TERRA_ACCEPTANCE_OWNER_IDS",
+      "digest": "6399f4498702b7e6409880527be1bbd1539d52621dc12412b9df5b99af35c37b"
+    },
+    {
+      "name": "TENBOT_TERRA_ACCEPTANCE_STARTS_AT",
+      "digest": "6e5851c87c72f967cf2a875779ddd138aacb9403873d4b0937859559bb3b5f57"
+    },
+    {
+      "name": "TENBOT_TERRA_ACCEPTANCE_EXPIRES_AT",
+      "digest": "5fbcef46ea6eb1fab7d2a9172d19d75ed645f2872a2d55d3fdb7186ddaf30195"
+    },
+    {
+      "name": "TENBOT_REVIEWED_OPERATIONS_ENABLED",
+      "digest": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "name": "TENBOT_REVIEWED_ACTIONS_ENABLED",
+      "digest": "fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T14:04:17.469Z",
+  "servedSha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "projects": [
+    {
+      "name": "tendev",
+      "deployment": "e89f6b3f-8e42-4054-aa00-ad88bb96fcaf",
+      "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2"
+    },
+    {
+      "name": "tenops",
+      "deployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+      "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2"
+    }
+  ],
+  "edge": {
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 16,
+    "status": "ACTIVE",
+    "verifyJwt": true,
+    "bundleSha256": "4d0dea56cb24f9f702208280812566ece63efc33012241cde5ad3672ce076221",
+    "exactOwnedRuntimeModules": 24
+  },
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 733674,
+      "remainingMicrousd": 3806282,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "policy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "assistantMigrations": [
+      {
+        "version": "20261029220000",
+        "statementHash": "32c650283e576741e0d1d97e9332845b"
+      },
+      {
+        "version": "20261029221000",
+        "statementHash": "be5c3401a75dac351ff14b1d84d33511"
+      }
+    ],
+    "receivalMigrationPresent": false
+  },
+  "providerSecretDigestsUnchanged": true,
+  "pagesConfigurationUnchanged": true,
+  "policyUnchanged": true,
+  "migrationChanges": false,
+  "invoiceApprovalMigrationPresent": false,
+  "operationalWrites": false,
+  "unrelatedFunctionsUnchanged": true,
+  "remoteHeads": [
+    "2a3e45c64163968d421d77b5a41a49f5ac469fc2\trefs/heads/dev",
+    "2a3e45c64163968d421d77b5a41a49f5ac469fc2\trefs/heads/main"
+  ],
+  "localDevPreserved": "85b73182ecfcd8ff99e6f2523d233d1e77b25fdc",
+  "unrelatedConcurrentDevWorkExcluded": true
+}

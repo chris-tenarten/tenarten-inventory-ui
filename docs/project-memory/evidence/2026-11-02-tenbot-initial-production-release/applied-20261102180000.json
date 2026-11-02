@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "applied": true,
+  "independentReadback": true,
+  "at": "2026-11-02T22:49:11.020Z",
+  "projectRef": "vxdxjhazkqhpkwdqtobp",
+  "rootCommit": "98309d2e6376a5df5790640d074e62e361d6c410",
+  "migrations": [
+    {
+      "version": "20261102170000",
+      "name": "tenbot_permanent_reviewed_pending",
+      "statementCount": 1,
+      "sha256": "be839c362c8363fcc8e40134e53f739dbe66dc0195d684ade7e47d306c33576e"
+    },
+    {
+      "version": "20261102180000",
+      "name": "tenbot_monthly_allowance_ceiling_ten",
+      "statementCount": 1,
+      "sha256": "795139323cc470baefaf69db96e9ddd6eb017f679e25b2675c612ac3eb6fa48d"
+    }
+  ],
+  "sqlSha256": "971d8a2a3097f41237e7f127ab4d848a3aabfdbc00c02197bc357fa5e1958178",
+  "functionOid": 45391,
+  "newBodyMd5": "14b1cf22f3cda304115704b30b11ee06",
+  "newBodySha256": "3474b0bb32e1f1cc4b8e7a8b66f9676b12b758c41352288a2e457efe1138338b",
+  "exactTwoLedgerEntries": true,
+  "oldMigrationsNotReapplied": true,
+  "otherFunctionsMetadataSchemaAclRlsControlsAccountsBusinessAccountingPreserved": true,
+  "allGatesAndFundingOff": true,
+  "edgeAndSecretDigestsUnchanged": true,
+  "providerCalls": 0,
+  "automaticRetry": false
+}

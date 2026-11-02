@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:17:29.772Z",
+  "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "target": "tendev",
+  "output": "/private/tmp/tenops-tenbot-knowledge-release-20261030/tendev/out",
+  "builds": 1,
+  "durationMs": 23949,
+  "prebuildFullCandidateGate": true,
+  "files": 277,
+  "artifactManifestSha256": "8f62d2834041848317fded59907a9baad504f0e8c18cbfdedaecd1af965dd03e",
+  "privateEnvironmentExcluded": true,
+  "sourceUnchanged": true
+}

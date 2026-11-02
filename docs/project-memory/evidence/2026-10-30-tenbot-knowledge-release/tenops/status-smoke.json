@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:55:10.252Z",
+  "startedAt": "2026-10-30T13:55:09.481Z",
+  "target": "tenops",
+  "action": "status",
+  "question": null,
+  "mode": "assistant",
+  "contentScope": null,
+  "conversationId": null,
+  "message": null,
+  "staticHistoryTurns": null,
+  "durationMs": 768,
+  "origin": "https://tenops.pages.dev",
+  "signedOwnerVerified": true,
+  "actorIdentitySha256": "6399f4498702b7e6409880527be1bbd1539d52621dc12412b9df5b99af35c37b",
+  "credentialsLogged": false,
+  "operationalWrites": 0,
+  "forcedProviderConfiguration": false
+}

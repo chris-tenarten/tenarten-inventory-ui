@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:35:57.202Z",
+  "startedAt": "2026-10-30T13:35:56.202Z",
+  "target": "tendev",
+  "action": "status",
+  "question": null,
+  "mode": "assistant",
+  "contentScope": null,
+  "conversationId": null,
+  "message": null,
+  "staticHistoryTurns": null,
+  "durationMs": 995,
+  "origin": "https://tendev.pages.dev",
+  "signedOwnerVerified": true,
+  "actorIdentitySha256": "6399f4498702b7e6409880527be1bbd1539d52621dc12412b9df5b99af35c37b",
+  "credentialsLogged": false,
+  "operationalWrites": 0,
+  "forcedProviderConfiguration": false
+}

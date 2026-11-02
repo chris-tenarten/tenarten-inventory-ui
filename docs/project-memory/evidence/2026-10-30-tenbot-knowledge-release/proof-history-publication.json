@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T14:01:52.559144+00:00",
+  "ref": "refs/tenops/proofs/knowledge-20261030/3bf04ef3f712",
+  "sha": "3bf04ef3f712f92f7eba4913b5904755a4d25ca3",
+  "newBranchesOrTags": false,
+  "activeSourceUnchanged": true,
+  "devHistoryMerged": false,
+  "accepted85RefPublished": false,
+  "freshCheckoutInstruction": "git fetch origin refs/tenops/proofs/knowledge-20261030/3bf04ef3f712:refs/tenops/proofs/knowledge-20261030/3bf04ef3f712"
+}

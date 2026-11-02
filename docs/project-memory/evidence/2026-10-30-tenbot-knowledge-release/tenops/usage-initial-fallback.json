@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "safeFallback": true,
+  "mode": "operational",
+  "message": "Current authorization could not be verified; no operational facts were returned. The operational data tool is unavailable; no conclusion can be drawn from missing results.",
+  "operationalFactsReturned": false,
+  "businessActions": 0,
+  "reconciliation": "Four current caller capabilities returned true and meter had zero uncertain reservations; one same-question retry authorized within release smoke scope, no code/policy change."
+}

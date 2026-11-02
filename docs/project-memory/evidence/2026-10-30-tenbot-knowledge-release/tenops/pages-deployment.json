@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:53:50.298Z",
+  "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "target": "tenops",
+  "deployment": "966ec1da-e537-4582-a82b-0c7a116daf58",
+  "url": "https://tenops.pages.dev",
+  "deploymentUrl": "https://966ec1da.tenops.pages.dev",
+  "configurationUnchanged": true
+}

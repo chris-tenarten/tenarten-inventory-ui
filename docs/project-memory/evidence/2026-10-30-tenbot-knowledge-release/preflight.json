@@ -1,0 +1,82 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:16:20.470Z",
+  "candidate": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "baseline": "9a7c6249851fad76f72454ccd5c045dbee5ad50d",
+  "projects": [
+    {
+      "name": "tendev",
+      "deployment": "845b86cf-2d17-46a0-bef4-3712e65064c5",
+      "sha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d"
+    },
+    {
+      "name": "tenops",
+      "deployment": "2019c461-3dab-422f-b750-64a17fcdcc2e",
+      "sha": "9a7c6249851fad76f72454ccd5c045dbee5ad50d"
+    }
+  ],
+  "edge": {
+    "id": "49ff50b8-45db-490a-ac29-a1426659589e",
+    "version": 15,
+    "status": "ACTIVE",
+    "verifyJwt": true
+  },
+  "state": {
+    "meter": {
+      "ok": true,
+      "enabled": true,
+      "version": 3,
+      "expiresAt": "2026-10-30T23:00:00+00:00",
+      "allowedModels": [
+        "gpt-6.1-terra"
+      ],
+      "accountedMicrousd": 639164,
+      "remainingMicrousd": 3900792,
+      "totalLimitMicrousd": 4539956,
+      "uncertainReservations": 0,
+      "legacyAccountedMicrousd": 539956
+    },
+    "policy": {
+      "enabled": true,
+      "version": 3,
+      "singleton": true,
+      "expires_at": "2026-10-30T23:00:00+00:00",
+      "allowed_models": [
+        "gpt-6.1-terra"
+      ],
+      "user_open_limit": 2,
+      "global_open_limit": 8,
+      "carryover_evidence": "local-367-settled:sha256:bd57924ffeb1d65b178b11f0ddd96c7e8d73bd9fa4c51a57f0b703a416e0fdb0",
+      "day_limit_microusd": 4000000,
+      "request_step_limit": 16,
+      "legacy_accounted_day": "2026-10-29",
+      "month_limit_microusd": 4539956,
+      "total_limit_microusd": 4539956,
+      "request_limit_microusd": 250000,
+      "user_day_request_limit": 60,
+      "user_minute_step_limit": 16,
+      "user_day_limit_microusd": 250000,
+      "global_day_request_limit": 300,
+      "global_minute_step_limit": 60,
+      "legacy_accounted_microusd": 539956
+    },
+    "assistantMigrations": [
+      {
+        "version": "20261029220000",
+        "statementHash": "32c650283e576741e0d1d97e9332845b"
+      },
+      {
+        "version": "20261029221000",
+        "statementHash": "be5c3401a75dac351ff14b1d84d33511"
+      }
+    ],
+    "receivalMigrationPresent": false
+  },
+  "secretValuesRead": false,
+  "settingsDigestsVerified": true,
+  "migrationChanges": false,
+  "remoteHeads": [
+    "9a7c6249851fad76f72454ccd5c045dbee5ad50d\trefs/heads/dev",
+    "9a7c6249851fad76f72454ccd5c045dbee5ad50d\trefs/heads/main"
+  ]
+}

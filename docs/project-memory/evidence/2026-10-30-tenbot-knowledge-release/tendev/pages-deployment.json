@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "recordedAt": "2026-10-30T13:33:49.174Z",
+  "sha": "2a3e45c64163968d421d77b5a41a49f5ac469fc2",
+  "target": "tendev",
+  "deployment": "e89f6b3f-8e42-4054-aa00-ad88bb96fcaf",
+  "url": "https://tendev.pages.dev",
+  "deploymentUrl": "https://e89f6b3f.tendev.pages.dev",
+  "configurationUnchanged": true
+}
