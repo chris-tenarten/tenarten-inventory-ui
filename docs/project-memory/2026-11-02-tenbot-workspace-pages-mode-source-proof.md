@@ -1,0 +1,32 @@
+# TenDev reviewed-action mode precedence — exact Pages source proof
+
+## Accepted record source review — reviewed action mode precedence
+
+Chris approves the bounded TenDev staging and employee acceptance under **TENDEV — INTEGRATED TENBOT STAGING & REAL EMPLOYEE ACCEPTANCE**. That authorization includes narrow release-critical corrections. Root reviewed correction 853f71f29ed1e22d582a24cd72920572ad0fd73d after the actual first Proposal UI request failed before inference. The approved correction source path src/modules/tenbot/TenbotWorkspace.tsx has exact Git blob a9cbc8b8f6033f4483e551bac655a922ac1b0e72 and SHA256 0bda7304757283c2c5d962e467b0084c70e64ebe05224def2cfbcbe2b9abebda.
+
+Business meaning, permission policy, lifecycle, and effects are unchanged for the seven existing Messaging knowledge records below. Their primary Inbox source, original semantic source, record content/authority digest, recipient/message services and permission contracts remain unchanged. This review updates only the additional shared-controller dependency. It is not a claim that the previously broken assistant request path was correct.
+
+When both reviewed-action and legacy receival status flags are available, the existing controller selected legacy invoice mode and added orderDetails to an ordinary ask. The strict host rejected that request before any inference. The correction prefers reviewed-action presentation when the current frontend and server both support it; legacy behavior remains available when the new mode is off. It changes no tool registry, schema, authorization, password flow, model prompt, provider, budget or backend operation. Actual failed request and zero-new-usage receipts are preserved.
+
+Scope: tendev-preparation.
+This review is not evidence of hosted application or deployment.
+This review grants no migration application, write activation, push or deployment authority.
+
+| Record | Path | Original semantic blob | Current exact blob | Record content/authority digest |
+|---|---|---|---|---|
+| dm | src/modules/my-work/InboxDialog.tsx | 1e2fe3d86211d6819f0b38170e305ee4142764bf | edfda5849a7349e5544ba4031651639bbcb35576 | bc307fd6417f038fcff168d590a4ad46b7107ea36665e67a71fc5a6d55c16910 |
+Dependencies: src/components/GlobalMessaging.tsx a433f1d16afa622bec747b1fee4d0ed00cd6eccd, src/modules/my-work/inbox.ts 75a07f550fd894b3572b7648c83d684a52fe0684, src/modules/tenbot/TenbotWorkspace.tsx a9cbc8b8f6033f4483e551bac655a922ac1b0e72, src/modules/tenbot/history-presentation.ts e5ddaa3b540e4994b8d80e3369997bdadf0d036d.
+| group | src/modules/my-work/InboxDialog.tsx | 1e2fe3d86211d6819f0b38170e305ee4142764bf | edfda5849a7349e5544ba4031651639bbcb35576 | 6e87c76817da022ca9355b2d1596ae9548df742613d915c75db6b4e88e293e9b |
+Dependencies: src/components/GlobalMessaging.tsx a433f1d16afa622bec747b1fee4d0ed00cd6eccd, src/modules/my-work/inbox.ts 75a07f550fd894b3572b7648c83d684a52fe0684, src/modules/tenbot/TenbotWorkspace.tsx a9cbc8b8f6033f4483e551bac655a922ac1b0e72, src/modules/tenbot/history-presentation.ts e5ddaa3b540e4994b8d80e3369997bdadf0d036d.
+| message-attachments | src/modules/my-work/InboxDialog.tsx | 1e2fe3d86211d6819f0b38170e305ee4142764bf | edfda5849a7349e5544ba4031651639bbcb35576 | a6855e912e9f78b26d9305924519b1c0cf53f27dd4459f7694d551a0bd454282 |
+Dependencies: src/components/GlobalMessaging.tsx a433f1d16afa622bec747b1fee4d0ed00cd6eccd, src/modules/my-work/inbox.ts 75a07f550fd894b3572b7648c83d684a52fe0684, src/modules/tenbot/TenbotWorkspace.tsx a9cbc8b8f6033f4483e551bac655a922ac1b0e72, src/modules/tenbot/history-presentation.ts e5ddaa3b540e4994b8d80e3369997bdadf0d036d.
+| message-reply | src/modules/my-work/InboxDialog.tsx | 1e2fe3d86211d6819f0b38170e305ee4142764bf | edfda5849a7349e5544ba4031651639bbcb35576 | 065244fc9a7c4116d49cc1b1d89b058d01632ebc41fbfff3cb2c31433eae01c7 |
+Dependencies: src/components/GlobalMessaging.tsx a433f1d16afa622bec747b1fee4d0ed00cd6eccd, src/modules/my-work/inbox.ts 75a07f550fd894b3572b7648c83d684a52fe0684, src/modules/tenbot/TenbotWorkspace.tsx a9cbc8b8f6033f4483e551bac655a922ac1b0e72, src/modules/tenbot/history-presentation.ts e5ddaa3b540e4994b8d80e3369997bdadf0d036d.
+| share-job | src/modules/my-work/InboxDialog.tsx | 1e2fe3d86211d6819f0b38170e305ee4142764bf | edfda5849a7349e5544ba4031651639bbcb35576 | fc4df7a747c85087a62ad91cf7b8e7988ed857a445366406ea9704549dde436b |
+Dependencies: src/components/GlobalMessaging.tsx a433f1d16afa622bec747b1fee4d0ed00cd6eccd, src/modules/my-work/inbox.ts 75a07f550fd894b3572b7648c83d684a52fe0684, src/modules/tenbot/TenbotWorkspace.tsx a9cbc8b8f6033f4483e551bac655a922ac1b0e72, src/modules/tenbot/history-presentation.ts e5ddaa3b540e4994b8d80e3369997bdadf0d036d.
+| workflow-message-drafts | src/modules/my-work/InboxDialog.tsx | 1e2fe3d86211d6819f0b38170e305ee4142764bf | edfda5849a7349e5544ba4031651639bbcb35576 | 2dfa7d12fe043f2e664cfb790afe5e42f079aece85a86c3d9e1649367db51cae |
+Dependencies: src/components/GlobalMessaging.tsx a433f1d16afa622bec747b1fee4d0ed00cd6eccd, src/modules/my-work/inbox.ts 75a07f550fd894b3572b7648c83d684a52fe0684, src/modules/tenbot/TenbotWorkspace.tsx a9cbc8b8f6033f4483e551bac655a922ac1b0e72, src/modules/tenbot/history-presentation.ts e5ddaa3b540e4994b8d80e3369997bdadf0d036d.
+| workflow-message-edit | src/modules/my-work/InboxDialog.tsx | 1e2fe3d86211d6819f0b38170e305ee4142764bf | edfda5849a7349e5544ba4031651639bbcb35576 | 7dcffd764fbb864982286711333092b30d6f73fccb0c195797a8bc1a60791628 |
+Dependencies: src/components/GlobalMessaging.tsx a433f1d16afa622bec747b1fee4d0ed00cd6eccd, src/modules/my-work/inbox.ts 75a07f550fd894b3572b7648c83d684a52fe0684, src/modules/tenbot/TenbotWorkspace.tsx a9cbc8b8f6033f4483e551bac655a922ac1b0e72, src/modules/tenbot/history-presentation.ts e5ddaa3b540e4994b8d80e3369997bdadf0d036d.
+
+This is a child of the staged candidate276bae12. The deployed Edge50 executable source, migrations, controls and knowledge claims are inherited. Only the derived server-only knowledge artifact integrity metadata is regenerated to match these source proofs; the corrected source therefore requires a matching Edge and Pages deployment to synchronize integrity metadata. Root separately pauses operational/acceptance controls without changing the active finite funding policy before that matched release. Existing verifier, generator, manifest, architecture and release pins are unchanged. Prior candidate receipts and superseded source bindings remain intact.

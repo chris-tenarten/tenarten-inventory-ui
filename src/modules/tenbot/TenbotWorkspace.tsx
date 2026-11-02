@@ -244,9 +244,12 @@ function useTenbotConversationController():TenbotConversation{
      // available. Never send experimental flags or enable document controls.
      const status=await invoke<{mode:string;historyAvailable:boolean;persistentHistoryAvailable?:boolean;receivalPilotAvailable?:boolean;reviewedActionsAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
      if(!active()||status?.mode!=='assistant'||status.historyAvailable!==true)return;
-     setReviewedActions(status.reviewedActionsAvailable===true&&configuredActionEndpoint()!==null);
+     const actionsAvailable=status.reviewedActionsAvailable===true&&configuredActionEndpoint()!==null;
+     setReviewedActions(actionsAvailable);
      persistentAvailable=status.persistentHistoryAvailable===true;
-     if(status.receivalPilotAvailable===true){
+     // The Pending execution pilot also serves reviewed actions. Its legacy
+     // invoice presentation must not add orderDetails to ordinary agent asks.
+     if(status.receivalPilotAvailable===true&&!actionsAvailable){
       try{
        const candidate=await invoke<LocalDemoStatus>({action:'status',hostedReceivalRequest:true},owner);if(!active())return;
        if(candidate.mode!=='authenticated-receivals'||candidate.simulation!==false||candidate.requiresPrivateOriginal!==true)throw new Error('Incompatible invoice workspace status.');
