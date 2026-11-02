@@ -52,7 +52,7 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
   sessionStore:historyStore,
   // A Qwen orchestration failure must never dispatch a second inference through
   // the legacy explanation path. Direct guidance remains available without it.
-  fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,config.modelDirectedReads?null:qwen,undefined,tools,undefined,{context,history}),
+  fallback:(body,tools,context,history)=>handleTenbot(body,owner,caller,service,config.modelDirectedReads?null:qwen,undefined,tools,undefined,{context,history,completeRequestsOnly:config.modelDirectedReads===true}),
   provider(){
    // Check on every turn and again before every network dispatch. An operator's
    // verified expiry is a hard upper bound, never evidence of key validity.

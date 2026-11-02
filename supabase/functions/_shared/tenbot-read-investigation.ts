@@ -78,14 +78,17 @@ export function publishModelReadAnswer(result:AgentResult,question:string,scopeS
    try{text=groundedProse(claim.text,sources,question);workflowTexts.push(text);for(const id of ids)workflowIds.add(id);}catch{return null;}
   }
   if(!text)return null;
-  const id=origin?.id??'workflow';let block=blocks.find(item=>item.id===id);
+  // Present one coherent paragraph per canonical Job even when its facts came
+  // from several tools. Evidence remains attached to every selected sentence.
+  const payload=origin&&object(origin.data)&&object(origin.data.data)?origin.data.data:null;
+  const id=payload&&object(payload.job)&&typeof payload.job.job_id==='string'?'job:'+payload.job.job_id:origin?.id??'workflow';let block=blocks.find(item=>item.id===id);
   if(!block){block={id,texts:[],limits:[]};blocks.push(block);}
   if(origin&&object(origin.data)&&Array.isArray(origin.data.answer_facts)){
    const issuedFacts=origin.data.answer_facts.flatMap(fact=>object(fact)&&typeof fact.text==='string'?[{id:typeof fact.id==='string'?fact.id:'',text:fact.text,kind:typeof fact.kind==='string'?fact.kind:''}]:[]);
    const identity=issuedFacts.find(fact=>fact.id==='job_identity');if(identity&&!block.texts.includes(identity.text))block.texts.unshift(identity.text);
    // Unknown, physical-readiness and unreported-work qualifications remain
    // host-owned companions even when the model selects a short numeric fact.
-   block.limits=issuedFacts.filter(fact=>fact.kind==='limitation').map(fact=>String(fact.text));
+   block.limits=[...new Set([...block.limits,...issuedFacts.filter(fact=>fact.kind==='limitation').map(fact=>String(fact.text))])];
   }
   if(!block.texts.includes(text))block.texts.push(text);
  }

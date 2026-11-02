@@ -42,7 +42,7 @@ Deno.serve(async(request:Request)=>{
   return reply(await receivals(body));
  }
  const hosted=createHostedTenbot({owner:data.user.id,origin,
-  config:openAI,
+  config:{...openAI,modelDirectedReads:(Deno.env.get('TENBOT_MODEL_DIRECTED_READ_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean).includes(origin)},
   caller:(n,a)=>caller.rpc(n,a),service:(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?service.rpc(n,a):Promise.resolve({data:null,error:{message:'Metering action unavailable'}}),qwen:provider,jobTools:createTenbotJobTools(caller)});
  const result=await hosted(body);
  if(body.action==='status'&&preparation.enabled){if(hostedInvoicePreparationEnabled(preparation,data.user.id,origin)){const allowed=await caller.rpc('can_prepare_invoice_receival',{});if(!allowed.error&&allowed.data===true)return reply({...result,receivalPilotAvailable:true});}return reply(result);}

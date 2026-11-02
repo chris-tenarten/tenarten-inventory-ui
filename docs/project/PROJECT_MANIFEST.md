@@ -66,6 +66,8 @@ TenBot is a conversational AI assistant in the existing Messaging conversation, 
 
 Employee TenBot questions and completed answers form a persistent, owner-private Messaging conversation. Displayed operational history keeps its original timestamps and is reauthorized against current source and record access; changed live values alone do not erase a past answer. New operational requests requery current authorized records. Display history stays separate from bounded model context, and Admin lifecycle authority does not grant routine access to another employee’s transcript. This Product decision supersedes short-lived answer visibility; see the [November1 implementation and release boundary](../project-memory/2026-11-01-tenbot-persistent-conversations.md).
 
+Chris's [November 2 Product direction](../project-memory/2026-11-02-infrastructure-tenbot-simplification.md#deferred-assistant-home--november-2-product-direction) moves TenBot's primary home, after the infrastructure/orchestration pass, to a dedicated global header icon: a right-side desktop assistant panel expandable into a full workspace, and a full-screen assistant on mobile. Persistent conversation history must remain intact. Conversation/session contracts should remain independent of Messaging presentation where practical. Relocation is deferred; it grants no anticipatory UI refactor or additional testing scope to the current pass.
+
 ### Allow incomplete operational handoff
 
 A job may enter Production before every identifier, material detail, or schedule date exists. Project name is the minimum identity. The UI should expose missing planning information without blocking useful early entry.

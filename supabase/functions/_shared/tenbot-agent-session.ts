@@ -44,6 +44,9 @@ import {resolveJobIntent,resolveExactJobReference,completeJobLookup,buildJobEvid
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
 import {modelScopeFacts,publishModelReadAnswer,MODEL_READ_INSTRUCTIONS} from './tenbot-read-investigation.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {isSimpleJobRead} from './tenbot-read-routing.ts';
 export type AgentDemoScenario='job-investigation'|'invoice-preparation'|'tool-recovery';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Deno import.
@@ -222,6 +225,10 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const can=(capability:string)=>deps.can(owner,capability);
    session.context=await currentConversationContext(session.context,now(),deps.jobTools(owner),proof=>sourceIsCurrent(proof,owner),persistent);
    const priorContext=session.context;
+   const directIntent=modelDirected?resolveJobIntent(question,{jobId:session.context?.references.length===1?session.context.references[0]:'',continuity:session.context??undefined},new Date(now())):null;
+   // Population count/list answers are already complete host-owned results.
+   // Keep them immediate; richer briefings still select tools through the model.
+   const directRead=Boolean(directIntent&&['overview','search'].includes(directIntent.kind)&&isSimpleJobRead(question,directIntent));
    const followup=deps.readOnlyHosted&&!modelDirected?resolveJobIntent(question,{jobId:session.context?.references.length===1?session.context.references[0]:'',continuity:session.context??undefined},new Date(now())):null;
    const pendingContext=followup?.kind==='clarify'&&priorContext?{...priorContext,...(followup.operation?{operation:followup.operation}:{}),resultType:'clarification' as const,awaitingClarification:true,selection:{...priorContext.selection,...(followup.operation==='get_job_labor_summary'&&typeof followup.args?.start_date==='string'&&typeof followup.args?.end_date==='string'?{startDate:followup.args.start_date,endDate:followup.args.end_date}:{})}}:null;
    const explicitReferences=modelDirected?explicitJobReferences(question):[];
@@ -312,7 +319,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }
    if(followup?.kind==='job'&&'jobId' in followup.reference||followup?.kind==='jobs'){const ids=followup.kind==='jobs'?followup.references:['jobId' in followup.reference?followup.reference.jobId:''];retainedContext.push({question:'Current requested Job operation',answer:JSON.stringify({tool:followup.tool,job_ids:ids,args:followup.args})+'. These canonical references were reauthorized as lookup seeds, not facts. Discover and call the requested existing exact-Job tool for each reference; do not search pronouns or carry collection filters into an exact read. Re-fetch current fields; unavailable results and unsaved fields are different from no matching records.'});}
    if(session.invoiceAttached&&deps.invoice)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:(deps.invoice.document.extraction?'Actual OpenAI image preprocessing produced this transcription. Check read_invoice extraction provenance and compare it against the original image. ':'Synthetic text fixture only. ')+'Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
-   const result=await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic:deps.onDiagnostic,...(deps.readOnlyHosted?{limits:modelDirected?{maxDurationMs:75000,maxRounds:6,maxCalls:10,maxOutputTokens:640}:{maxDurationMs:75000}}:{}),async authorize(check){
+   const result=directRead?null:await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic:deps.onDiagnostic,...(deps.readOnlyHosted?{limits:modelDirected?{maxDurationMs:75000,maxRounds:6,maxCalls:10,maxOutputTokens:640}:{maxDurationMs:75000}}:{}),async authorize(check){
     if(!await can('readOperationalData'))return false;
     // Do not retransmit retained guidance after a grant/version changes mid-turn.
     if(check.phase==='before_model'){
@@ -339,16 +346,17 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }});
    const workflowPermissions=new Set<string>();
    if(modelDirected&&knowledgeProofs.size)for(const capability of requiredInferencePermissions(agentKnowledgeEntries().filter(entry=>knowledgeProofs.has(entry.id))))if(await can(capability)){workflowPermissions.add(capability);knowledgeGrants.add(capability);}
-   const modelMessage=modelDirected?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions):null;
-   if(modelDirected&&result.status==='completed'&&!modelMessage){
+   const modelMessage=modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions):null;
+   if(modelDirected&&result?.status==='completed'&&!modelMessage){
     result.status='provider-unavailable';result.reason='invalid-final';result.final=null;result.evidence=[];result.proposals=[];
     emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:'invalid-final'});
    }
-   if(deps.readOnlyHosted&&(result.status==='provider-unavailable'||result.status==='limit'&&result.reason==='cost-limit')){
-    if(!deps.fallback)throw new HostedAgentUnavailable(id,result.reason??'provider-unavailable');
+   if(deps.readOnlyHosted&&(directRead||result?.status==='provider-unavailable'||result?.status==='limit'&&result.reason==='cost-limit')){
+    if(!deps.fallback)throw new HostedAgentUnavailable(id,result?.reason??'provider-unavailable');
     const fallbackProofs=session.guidance.flatMap(t=>t.sources);
     const history=session.guidance.length?['Conversation context:\n'+session.guidance.map(t=>`Employee: ${t.question}\nTenBot: ${t.answer}`).join('\n')]:[];
     fallbackAttempted=true;
+    const usedFallback=!directRead;
     const fallback=await deps.fallback({...body,conversationId:id},{execute:job.execute,authorizeHistory:deps.jobTools(owner).authorizeHistory},session.context,history);
     // The canonical legacy handler appended exactly one turn and advanced the
     // shared conversation revision under our existing claim. Never reclaim or
@@ -389,12 +397,13 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
      const scope=await scopeDigest(owner),rows=[...archivePage.turns,archive].slice(-20);let turns:Awaited<ReturnType<typeof restoreEmployeePage>>=[];
      if(!await publicationAllowed(async()=>{turns=await restoreEmployeePage(rows,deps.jobTools(owner),scope,id,now(),p=>sourceIsCurrent(p,owner));return await can('readOperationalData')&&await scopeDigest(owner)===scope&&await modelContextCurrent();}))throw new TenbotError('Private history could not be reauthorized. Please retry.',503);
      const current=turns.find(t=>t.id===archive.id);if(!current||current.answer.history.state!=='verified')throw new TenbotError('Your access changed. No answer was published.',403);current.answer.history.historical=false;
-     return {...fallback,...current.answer,conversationId:id,fallback:true,persistentHistory:true,nextCursor:archivePage.appendCursor,historyTurns:turns,historyTurnId:archive.id,createdAt,answeredAt};
+     return {...fallback,...current.answer,conversationId:id,fallback:usedFallback,persistentHistory:true,nextCursor:archivePage.appendCursor,historyTurns:turns,historyTurnId:archive.id,createdAt,answeredAt};
     }
     const rechecked=await restoreHistory(session.operational,deps.jobTools(owner),now(),await scopeDigest(owner),id,responseMode,p=>sourceIsCurrent(p,owner));
     if(!await can('readOperationalData')||savedOperational&&!rechecked.kept.some(t=>t.id===savedOperational.id))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
-    return {...fallback,conversationId:id,contentScope:savedOperational?'operational-history':workflow?'workflow':'volatile',fallback:true,...(operationalEnabled?{historyTurns:rechecked.turns}:{}),...(savedOperational?{history:operationalHistoryMeta(savedOperational,now(),false)}:{}),...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};
+    return {...fallback,conversationId:id,contentScope:savedOperational?'operational-history':workflow?'workflow':'volatile',fallback:usedFallback,...(operationalEnabled?{historyTurns:rechecked.turns}:{}),...(savedOperational?{history:operationalHistoryMeta(savedOperational,now(),false)}:{}),...(historyTurnId?{historyTurnId,createdAt,answeredAt}:{})};
    }
+   if(!result)throw new TenbotError('Direct Job reads are unavailable.',503);
    session.questions=[...session.questions,question].slice(-3);
    // Failed/attempted operational tools make a turn ineligible even if no result
    // was published. No invoice, live-record prose, tool payload or provider-native

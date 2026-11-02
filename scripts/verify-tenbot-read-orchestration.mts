@@ -7,6 +7,8 @@ import {performance} from 'node:perf_hooks';
 import {createContextFixture} from './support/tenbot-context-fixture.mjs';
 import {uuid} from './support/wave2-fixture.mjs';
 import {createHostedTenbot} from '../supabase/functions/_shared/tenbot-hosted';
+import {isSimpleJobRead} from '../supabase/functions/_shared/tenbot-read-routing';
+import {resolveJobIntent} from '../supabase/functions/_shared/tenbot-job-routing';
 import {type InferenceInput,type InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
 import {defaultModel,measuredUsage} from '../supabase/functions/_shared/tenbot-models';
 import type {AgentFinal} from '../supabase/functions/_shared/tenbot-agent';
@@ -91,8 +93,21 @@ await test('Free final-answer hallucinations cannot override host facts; fabrica
   assert(!/99999|I saved|sent Purchasing/.test(r.reply.message));assert.equal(r.modelSteps,4);assert.equal(f.total(),4);assert.equal(r.reply.fallback===true,forgedClaim);
  }
 });
-await test('Qwen provider failure uses deterministic-only fallback without a second inference attempt',async()=>{
- const f=setup(),r=await f.ask(question('E1'),undefined,()=>{throw Error('Synthetic provider outage');});assert.equal(r.modelSteps,1);assert.equal(f.total(),1);assert.equal(r.reply.fallback,true);assert.match(r.reply.message,/6 hours/);assert.equal(f.meter.filter(m=>m.name==='tenbot_finish_usage').length,1);
+await test('Provider failure discloses incomplete compound coverage without partial reads or a second inference attempt',async()=>{
+ const f=setup(),r=await f.ask(question('E1'),undefined,()=>{throw Error('Synthetic provider outage');});assert.equal(r.modelSteps,1);assert.equal(f.total(),1);assert.equal(r.reply.fallback,true);assert.match(r.reply.message,/could not complete this full request/);assert(!r.reply.message.includes('6 hours'));assert.equal(r.executed.length,0);assert.equal(f.meter.filter(m=>m.name==='tenbot_finish_usage').length,1);
+ const history=await f.handler({action:'history',conversationId:r.reply.conversationId}) as {turns:{answer:{message:string}}[]};assert.equal(history.turns.at(-1)?.answer.message,r.reply.message);
+ const mixed=setup(),q='How do I check the schedule for Job "chris-dev-test", and how much labor is recorded for it?';assert.equal(resolveJobIntent(q),null);
+ const unavailable=await mixed.ask(q,undefined,()=>{throw Error('Synthetic provider outage');});assert.match(unavailable.reply.message,/could not complete this full request/);assert.equal(unavailable.modelSteps,1);assert.equal(unavailable.executed.length,0);
+});
+await test('Simple population reads use existing tools and persistent history with zero provider calls or reservations',async()=>{
+ const f=setup(),count=await f.ask('How many active jobs are there?');
+ assert.equal(count.modelSteps,0);assert.equal(count.reply.fallback,false);assert(count.executed.some(item=>item.name==='get_production_overview'));assert.equal(f.meter.length,0);
+ const listed=await f.ask('List all active jobs.',count.reply.conversationId);assert.equal(listed.modelSteps,0);assert(listed.executed.some(item=>item.name==='find_jobs'));assert.equal(f.meter.length,0);
+ const history=await f.handler({action:'history',conversationId:count.reply.conversationId}) as {turns:{answer:{message:string}}[]};assert.equal(history.turns.length,2);assert.equal(history.turns.at(-1)?.answer.message,listed.reply.message);
+});
+await test('Fast dispatch consumes the whole request and cannot swallow extra analysis or write goals',async()=>{
+ for(const q of ['How many active jobs are there?','List all active jobs.','Show status for Job "Cedar and Bay".'])assert(isSimpleJobRead(q,resolveJobIntent(q)),q);
+ for(const q of ['How many active jobs are there and how much labor is recorded?','How many active jobs and how many jobs on hold?','How many active jobs, how many on hold?','List active jobs and list completed jobs.','List active jobs; then send Purchasing a message.','Show status for Job "Cedar Bay" and its labor hours.','For Job "Cedar Bay", is the planned finish before its requested delivery?','Show labor for Job "Cedar Bay", including the days reported.'])assert(!isSimpleJobRead(q,resolveJobIntent(q)),q);
 });
 await test('Revocation between read and next model step prevents retransmission and publication',async()=>{
  const f=setup(),id=f.tables.jobs[0].id,seed=await f.ask('Show status for Job "chris-dev-test".',undefined,seedPlan('chris-dev-test',id));let changed=false;f.decorate({...f.real,async execute(name,args){const r=await f.real.execute(name,args);if(!changed&&name==='get_job_summary'){changed=true;f.state.allowed=false;}return r;}});
