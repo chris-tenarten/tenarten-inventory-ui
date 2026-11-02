@@ -28,6 +28,30 @@ test('explicit conflicting package evidence survives selection, edits and revali
 test('per-container factors cannot masquerade as total quantities in compound invoice lines',()=>{
  const line='3 Bag × 50 LB = 150 LB';for(const source of [{quantity:'3',unit:'Bag'},{quantity:'150',unit:'LB'}])assert.equal(deriveInvoiceQuantity(source,bag,line).receivalQuantity,'3');const wrong=deriveInvoiceQuantity({quantity:'50',unit:'LB'},bag,line);assert(wrong.reasons.includes('source_quantity_is_package_size'));assert.equal(wrong.receivalQuantity,null);assert(deriveInvoiceQuantity({quantity:'50',unit:'LB'},bag,'Package: 50 LB Bag').reasons.includes('source_quantity_is_package_size'));for(const label of ['50 LB/Bag','50-LB Bag','50-LB/Bag','50 LB. Bag']){assert(deriveInvoiceQuantity({quantity:'50',unit:'LB'},bag,`Package: ${label}`).reasons.includes('source_quantity_is_package_size'));assert.equal(deriveInvoiceQuantity({quantity:'150',unit:'LB'},bag,`Total: 150 LB | Package: ${label}`).receivalQuantity,'3');}
 });
+test('a separate same-line material total can equal its verified package size without becoming package-only evidence',()=>{
+ for(const [quantity,expected]of [['50','1'],['100','2']] as const){
+  const source={quantity,unit:'LB'},before=structuredClone(source),line=`Alaska White | #0 | ${quantity} LB (50 LB Bag)`;
+  const checked=invoiceQuantityIssues(source,bag,expected,'Bag',line);
+  assert.deepEqual(checked.reasons,[]);assert.equal(checked.basis.packageCount,expected);assert.equal(checked.basis.receivalQuantity,expected);
+  assert.deepEqual(checked.basis.totalMaterial,source);assert.deepEqual(checked.basis.perPackage,{quantity:'50',unit:'LB',container:'Bag'});
+  assert.equal(checked.basis.calculation,'exact_catalog_package_conversion');assert.equal(checked.basis.inventoryStockingUnit,null);assert.deepEqual(source,before);
+ }
+});
+test('factor context is occurrence-specific when an independent total equals one package',()=>{
+ for(const line of ['1 Bag × 50 LB = 50 LB','1 Bag x 50 LB = 50 LB','1 Bag at 50 LB = 50 LB','1 Bag each 50 LB = 50 LB','50 LB total | 1 Bag @ 50 LB']){
+  for(const [source,kind]of [[{quantity:'50',unit:'LB'},'material_total'],[{quantity:'1',unit:'Bag'},'package_count']] as const){
+   const checked=invoiceQuantityIssues(source,bag,'1','Bag',line);assert.deepEqual(checked.reasons,[],line);assert.equal(checked.basis.receivalQuantity,'1');assert.equal(checked.basis.sourceKind,kind);assert.deepEqual(checked.basis.totalMaterial,{quantity:'50',unit:'LB'});
+  }
+ }
+});
+test('an equal package size cannot hide absent totals or conflicting totals, counts and package assertions',()=>{
+ for(const line of ['Package: 50 LB Bag','Package: 50 LB Bag (50 LB)','50 LB Bag (50 LB)','50 LB Bag ((50 LB))','50 LB Bag (50 LB','1 Bag × 50 LB','1 Bag x 50 LB','1 Bag @ 50 LB','1 Bag at 50 LB','1 Bag each 50 LB','50 LB Bag\nTotal: 50 LB','Total: 50 LB\r\n50 LB Bag']){
+  const checked=invoiceQuantityIssues({quantity:'50',unit:'LB'},bag,'1','Bag',line);assert(checked.reasons.includes('source_quantity_is_package_size'),line);assert.equal(checked.basis.receivalQuantity,null);
+ }
+ for(const [line,reason]of [['50 LB (50 LB Bag) | 100 LB','conflicting_source_quantity'],['2 Bag × 50 LB = 50 LB','conflicting_source_quantity'],['50 LB (25 LB Bag)','invoice_catalog_package_conflict'],['50 LB (50 KG Bag)','invoice_catalog_package_conflict'],['50 LB (50 LB Pail)','invoice_catalog_package_conflict']] as const){
+  const checked=invoiceQuantityIssues({quantity:'50',unit:'LB'},bag,'1','Bag',line);assert(checked.reasons.includes(reason),line);assert.equal(checked.basis.receivalQuantity,null);
+ }
+});
 test('conflicting count/total assertions hold only their own invoice line',()=>{
  for(const source of [{quantity:'3',unit:'Bag'},{quantity:'200',unit:'LB'}]){const basis=deriveInvoiceQuantity(source,bag,'3 Bag × 50 LB = 200 LB');assert(basis.reasons.includes('conflicting_source_quantity'));assert.equal(basis.receivalQuantity,null);}assert.equal(deriveInvoiceQuantity({quantity:'10',unit:'GAL'},pail,'10 GAL').receivalQuantity,'2');
 });
