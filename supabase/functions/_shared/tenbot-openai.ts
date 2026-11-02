@@ -39,7 +39,7 @@ const COUNT_ENDPOINT = ENDPOINT+'/input_tokens';
 const MAX_REQUEST_BYTES = 180000;
 const MAX_RESPONSE_BYTES = 96000;
 function object(value: unknown): value is Record<string, unknown> { return !!value && typeof value === 'object' && !Array.isArray(value); }
-const errorCodes = new Set(['invalid_api_key', 'expired_secret_key', 'invalid_request_error', 'invalid_value', 'unsupported_value', 'unknown_parameter', 'unsupported_parameter', 'model_not_found', 'permission_denied', 'insufficient_quota', 'rate_limit_exceeded', 'server_error', 'internal_error', 'invalid_json', 'invalid_parameter']);
+const errorCodes = new Set(['invalid_api_key', 'expired_secret_key', 'invalid_request_error', 'invalid_value', 'unsupported_value', 'unknown_parameter', 'unsupported_parameter', 'model_not_found', 'permission_denied', 'insufficient_quota', 'rate_limit_exceeded', 'server_error', 'internal_error', 'invalid_json', 'invalid_parameter', 'organization_usage_limit_exceeded', 'organization_spend_limit_exceeded', 'project_spend_limit_exceeded', 'credit_balance_exhausted']);
 const errorTypes = new Set(['invalid_request_error', 'authentication_error', 'permission_error', 'rate_limit_error', 'server_error', 'not_found_error', 'insufficient_quota']);
 const errorParameters = new Set(['model', 'store', 'service_tier', 'instructions', 'input', 'reasoning', 'reasoning.effort', 'include', 'max_output_tokens', 'prompt_cache_options', 'prompt_cache_options.mode', 'prompt_cache_options.ttl', 'parallel_tool_calls', 'tools', 'text', 'text.format', 'text.format.schema']);
 const completionStatuses = new Set(['queued', 'in_progress', 'completed', 'incomplete', 'failed', 'cancelled']);
@@ -204,7 +204,11 @@ export function createOpenAIProvider(options: OpenAIProviderOptions): AgentProvi
       observe(response.status, payload);
       if(response.ok&&requireResponseMetadata&&(!object(payload)||payload.model!==model||payload.service_tier!=='default'))throw new AgentStepError('unexpected-provider-metadata');
       if (object(payload)) { const actual = measuredUsage(payload.usage, price, reserved); if (actual) { usage = actual; measured = true; } }
-      if (!response.ok) throw new AgentStepError('provider-http-error', usage, response.status === 429 || response.status >= 500);
+      // Billing quota requires restored credits/limits; another attempt cannot
+      // repair it. Temporary rate limits and server failures retain one retry.
+      // https://help.openai.com/en/articles/6614457-troubleshooting-api-usage-and-spend-limits
+      const quotaExhausted = response.status === 429 && object(payload) && object(payload.error) && payload.error.type === 'insufficient_quota';
+      if (!response.ok) throw new AgentStepError('provider-http-error', usage, (response.status === 429 && !quotaExhausted) || response.status >= 500);
       if (!measured) throw new AgentStepError('missing-provider-usage', usage);
       const step = parseStep(payload, usage); await reservation.settle(usage.costUsd); return step;
     } catch (error) {

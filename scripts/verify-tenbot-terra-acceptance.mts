@@ -124,4 +124,24 @@ await check('Incomplete-provider status and absent usage fields are visible with
  await missing.handler()({action:'ask',question:missing.archived.question});
  assert.equal(missing.state.providerCalls,1);assert([...missing.reservations.values()].every(value=>value.actual===undefined));assert(missing.diagnostics.some(({event})=>event.reasonCode==='missing-provider-usage'));assert(missing.responseMetadata[0].usagePresent);assert.equal(missing.responseMetadata[0].cacheWriteTokensPresent,false);
 });
+await check('Documented billing-limit codes remain finite content-free metadata',()=>{
+ for(const code of ['organization_usage_limit_exceeded','organization_spend_limit_exceeded','project_spend_limit_exceeded','credit_balance_exhausted']){
+  const projected=safeOpenAIResponseMetadata({httpStatus:429,errorCode:code,errorType:'insufficient_quota',message:'SECRET provider billing details',id:owner});
+  assert.equal(projected.errorCode,code);assert.equal(projected.errorType,'insufficient_quota');assert(!JSON.stringify(projected).includes('SECRET')&&!JSON.stringify(projected).includes(owner));
+ }
+ assert.equal(safeOpenAIResponseMetadata({errorCode:'SECRET unknown billing code'}).errorCode,'other');
+});
+await check('Permanent insufficient-quota 429 stops after one provider attempt and retains exactly one unknown-cost hold',async()=>{
+ const f=fixture();f.respond(async()=>Response.json({error:{type:'insufficient_quota',code:'organization_usage_limit_exceeded',message:'SECRET billing context'}},{status:429}));
+ await f.handler()({action:'ask',question:f.archived.question});
+ assert.equal(f.state.providerCalls,1);assert.equal(f.reservations.size,1);assert.equal(f.reserveRequests.length,1);assert([...f.reservations.values()].every(value=>value.actual===undefined));
+ assert.equal(f.responseMetadata.length,1);assert.equal(f.responseMetadata[0].errorType,'insufficient_quota');assert.equal(f.responseMetadata[0].errorCode,'organization_usage_limit_exceeded');assert(f.diagnostics.some(({event})=>event.reasonCode==='provider-http-error'));
+});
+await check('Temporary 429 and server failures preserve the existing single automatic retry and conservative holds',async()=>{
+ for(const [status,type,code] of [[429,'rate_limit_error','rate_limit_exceeded'],[503,'insufficient_quota','server_error']] as const){
+  const f=fixture();f.respond(async()=>Response.json({error:{type,code}},{status}));
+  await f.handler()({action:'ask',question:f.archived.question});
+  assert.equal(f.state.providerCalls,2);assert.equal(f.reservations.size,2);assert.equal(f.reserveRequests.length,2);assert([...f.reservations.values()].every(value=>value.actual===undefined));assert.equal(f.responseMetadata.length,2);
+ }
+});
 console.log(JSON.stringify({passed:true,groups:checks.length,checks,actualInference:false,actualDatabase:false,mode:'Offline server gate/hosted transport with existing atomic meter RPC doubles'}));
