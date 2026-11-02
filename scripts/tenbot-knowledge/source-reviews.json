@@ -2240,9 +2240,9 @@
     "classification": "candidate-source",
     "authority": "technical-review",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-openai.ts",
-    "blob": "4782daac3e0c38176a46f3bc0c4fede5a03c9d64",
-    "sha256": "c626dc4f65868eb0ae2807f7d6bdc16c6c6ecf27c03e82e2209da07abafb745f",
+    "path": "supabase/functions/tenbot/index.ts",
+    "blob": "de695667ca741b00e3a36f028363f9ae1892fbf8",
+    "sha256": "eb7d8b7080cc0b43d5b73d0732480f429ee7caad25582e589a0324faf291fc78",
     "reviewedCandidate": "239ac4c2903db4884b74a044d37af53379da8194",
     "scope": "tendev-preparation",
     "receipt": {
@@ -2255,15 +2255,15 @@
     "classification": "candidate-source",
     "authority": "technical-review",
     "kind": "runtime",
-    "path": "supabase/functions/tenbot/index.ts",
-    "blob": "de695667ca741b00e3a36f028363f9ae1892fbf8",
-    "sha256": "eb7d8b7080cc0b43d5b73d0732480f429ee7caad25582e589a0324faf291fc78",
-    "reviewedCandidate": "239ac4c2903db4884b74a044d37af53379da8194",
+    "path": "supabase/functions/_shared/tenbot-openai.ts",
+    "blob": "5fefd1bdbab029b121bb32b00c0839e507b9d7c0",
+    "sha256": "5d804e670dc72eda3ed9614c72a9c7e31d5802b1396d053f54ce89d5eba7c0b5",
+    "reviewedCandidate": "424c7c7043a6130af34d1fefc92ce375b93295d5",
     "scope": "tendev-preparation",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-terra-provider-metadata-source-proof.md",
-      "revision": "239ac4c2903db4884b74a044d37af53379da8194",
-      "heading": "## Candidate technical source review — bounded Terra provider metadata"
+      "path": "docs/project-memory/2026-11-02-tenbot-terra-metered-source-proof.md",
+      "revision": "424c7c7043a6130af34d1fefc92ce375b93295d5",
+      "heading": "## Candidate technical source review — quota retry and bounded token telemetry"
     }
   }
 ]
