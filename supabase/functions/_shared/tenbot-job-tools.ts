@@ -1,5 +1,8 @@
 import { ACTIVE_PRODUCTION_STATUSES, ADMIN_ONLY_PRODUCTION_FIXTURE_ID, applyProductionLifecycle, getJobReadiness, isActiveProductionRework } from './production-job-facts.mjs';
 import { entryHundredths } from './labor-hours.mjs';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Edge extension.
+import {JOB_LIFECYCLE_STATUSES,parseJobStatuses,matchesJobPopulation} from './tenbot-job-filters.ts';
 
 /** The adapter must be the requesting user's JWT-bound client. It has no
  * service-role argument, SQL input, write method or caller-selected projection. */
@@ -44,6 +47,8 @@ export type JobToolData = JobFindData | JobSummaryData | JobPlanningData | JobLa
 export type JobToolResult = {
   tool: TenbotJobToolName; version: 'tenbot-job-read.v1';
   status: 'ok' | 'partial' | 'not_found_or_not_authorized' | 'unavailable' | 'invalid_request';
+  /** Server-only authorization references. Removed before model dispatch. */
+  accessRefs?: string[];
   observed_at: string; timezone: 'America/Chicago'; filters: Record<string, unknown>;
   read_started_at: string; read_completed_at: string; consistency: 'best_effort_multi_query';
   units: Record<string, string>; sources: JobSourceReference[]; unknowns: string[];
@@ -58,7 +63,7 @@ export const TENBOT_JOB_TOOL_LIMITS = { page: 200, jobs: 1000, labor_entries: 20
 const JOB_COLUMNS = 'id,name,customer,job_number,production_status,material_status,requested_delivery_date,planned_start,planned_end,estimated_man_hours,archived_at,updated_at';
 const REWORK_COLUMNS = 'id,job_id,sequence_number,production_status,planned_start,planned_end,updated_at';
 const LABOR_COLUMNS = 'id,job_id,rework_cycle_id,work_date,am_hours,pm_hours,updated_at';
-const STATUSES = ['not_started', 'on_deck', 'in_production', 'on_hold', 'shipped', 'complete', 'cancelled'];
+const STATUSES:readonly string[] = JOB_LIFECYCLE_STATUSES;
 const MATERIAL_STATUSES = ['unknown', 'not_ready', 'ordered', 'ready'];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 type Row = Record<string, unknown>;
@@ -198,12 +203,13 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
         if (!object(suppliedArgs)) throw new InvalidInput();
         const args = suppliedArgs, today = chicagoDate(now);
         if (tool === 'find_jobs') {
-          strictKeys(args, ['query', 'include_archived', 'limit', 'cursor']);
+          strictKeys(args, ['query', 'include_archived', 'limit', 'cursor', 'statuses']);
           if (args.query !== undefined && (typeof args.query !== 'string' || args.query.length > 120 || /[\u0000-\u001f\u007f]/.test(args.query))) throw new InvalidInput();
-          const query = typeof args.query === 'string' ? args.query.trim() : '', archived = includeArchived(args), limit = resultLimit(args);
+          const query = typeof args.query === 'string' ? args.query.trim() : '', archived = includeArchived(args), limit = resultLimit(args), statuses=parseJobStatuses(args.statuses);
+          if(statuses===null)throw new InvalidInput();
           if (args.cursor !== undefined && (typeof args.cursor !== 'string' || !/^\d{1,4}$/.test(args.cursor) || Number(args.cursor) >= TENBOT_JOB_TOOL_LIMITS.jobs)) throw new InvalidInput();
           const offset = Number(args.cursor ?? 0);
-          result.filters = { query, include_archived: archived, limit, cursor: offset, fixture_scope: 'excluded_except_exact_admin_lookup' };
+          result.filters = { query, include_archived: archived, ...(args.statuses!==undefined?{statuses}:{}), limit, cursor: offset, fixture_scope: 'excluded_except_exact_admin_lookup' };
           result.units = { jobs: 'jobs' };
           let candidates: JobRow[] = [], match: JobFindData['match'] = query ? 'search' : 'browse';
           if (isUuid(query)) {
@@ -234,8 +240,14 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
               candidates = search.rows.map(jobRow);
             }
           }
-          const page = candidates.slice(offset, offset + limit), cycles = await activeCycles(page.map(job => job.id));
-          const jobs = page.map(job => facts(job, cycles.get(job.id) ?? null)), more = offset + page.length < candidates.length;
+          // Status belongs to the effective canonical lifecycle, not the base
+          // Job column. Filter the complete bounded candidate set before its
+          // page offset; a late-page Rework match must not disappear.
+          const populationCycles=statuses.length?await activeCycles(candidates.map(job=>job.id)):null;
+          const population=statuses.length?candidates.filter(job=>matchesJobPopulation(facts(job,populationCycles!.get(job.id)??null),{statuses,includeArchived:archived})):candidates;
+          if(offset>0&&offset>=population.length)throw new InvalidInput();
+          const page = population.slice(offset, offset + limit), cycles = populationCycles??await activeCycles(page.map(job => job.id));
+          const jobs = page.map(job => facts(job, cycles.get(job.id) ?? null)), more = offset + page.length < population.length;
           result.data = { jobs, match, has_more: more, next_cursor: more ? String(offset + page.length) : null };
           verifiedIds = jobs.map(job => job.job_id);
           result.truncated = more;
@@ -243,9 +255,10 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
           return result;
         }
         if (tool === 'get_production_overview') {
-          strictKeys(args, ['include_archived', 'start_date', 'end_date', 'limit']);
-          const archived = includeArchived(args), range = period(args, today, true), limit = resultLimit(args);
-          result.filters = { include_archived: archived, ...range, upcoming_statuses: [...ACTIVE_PRODUCTION_STATUSES], fixture_scope: 'excluded', limit };
+          strictKeys(args, ['include_archived', 'start_date', 'end_date', 'limit', 'statuses']);
+          const archived = includeArchived(args), range = period(args, today, true), limit = resultLimit(args),statuses=parseJobStatuses(args.statuses);
+          if(statuses===null)throw new InvalidInput();
+          result.filters = { include_archived: archived, ...(args.statuses!==undefined?{statuses}:{}), ...range, upcoming_statuses: [...ACTIVE_PRODUCTION_STATUSES], fixture_scope: 'excluded', limit };
           result.units = { jobs: 'jobs', active_jobs: 'jobs', scheduled: 'jobs', unscheduled: 'jobs', upcoming: 'jobs', dates: 'calendar_date' };
           const empty: JobOverviewData = { counts: { jobs: null, active_jobs: null, by_status: Object.fromEntries(STATUSES.map(status => [status, null])), scheduled: null, unscheduled: null }, upcoming: [], has_more_upcoming: false };
           result.data = empty;
@@ -255,10 +268,12 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
             return q;
           }, TENBOT_JOB_TOOL_LIMITS.jobs);
           if (!loaded.complete) { partial('The Job scope is incomplete; exact counts and upcoming lists are unavailable.', true); return result; }
-          const rows = loaded.rows.map(jobRow), cycles = await activeCycles(rows.map(job => job.id)), jobs = rows.map(job => facts(job, cycles.get(job.id) ?? null));
-          verifiedIds = rows.map(job => job.id);
-          const byStatus = Object.fromEntries(STATUSES.map(status => [status, 0]));
-          for (const job of jobs) byStatus[job.effective.status] += 1;
+          const rows = loaded.rows.map(jobRow), cycles = await activeCycles(rows.map(job => job.id)), jobs = rows.map(job => facts(job, cycles.get(job.id) ?? null)).filter(job=>matchesJobPopulation(job,{statuses,includeArchived:archived}));
+          verifiedIds = jobs.map(job => job.job_id);
+          // An unselected status is outside this result's population, not a
+          // verified global zero. Only the requested status union is counted.
+          const byStatus:Record<string,number|null> = Object.fromEntries(STATUSES.map(status => [status, statuses.length&&!statuses.includes(status as typeof statuses[number])?null:0]));
+          for (const job of jobs) byStatus[job.effective.status] = (byStatus[job.effective.status]??0)+1;
           const scheduled = jobs.filter(job => job.effective.planned_start && job.effective.planned_end).length;
           const upcoming = jobs.filter(job => !job.archived && ACTIVE_PRODUCTION_STATUSES.includes(job.effective.status) && job.effective.planned_end && job.effective.planned_end >= range.start_date && job.effective.planned_end <= range.end_date)
             .sort((a, b) => a.effective.planned_end!.localeCompare(b.effective.planned_end!) || a.job_id.localeCompare(b.job_id));
@@ -359,6 +374,7 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
             if (!allowed) { result.status = 'not_found_or_not_authorized'; result.complete = false; result.data = null; result.sources = []; result.unknowns = ['The requested operational records are unavailable or no longer authorized.']; }
           } catch { result.status = 'unavailable'; result.complete = false; result.data = null; result.sources = []; result.unknowns = ['Current authorization could not be verified; no operational facts were returned.']; }
         }
+        if(result.data!==null&&['ok','partial'].includes(result.status))result.accessRefs=[...new Set(verifiedIds)];
         result.read_completed_at = (options.now?.() ?? new Date()).toISOString();
         result.observed_at = result.read_completed_at;
       }
@@ -373,6 +389,10 @@ export function createTenbotJobTools(caller: JobToolCaller, options: { now?: () 
   const deadlineMs = options.deadlineMs ?? 4000;
   if (!Number.isSafeInteger(deadlineMs) || deadlineMs < 1 || deadlineMs > 10000) throw new Error('Invalid operational tool deadline.');
   return {
+    async authorizeHistory(ids:string[]):Promise<'authorized'|'denied'|'unavailable'>{
+      if(ids.length>1000||ids.some(id=>!isUuid(id)))return 'denied';
+      try{const request=caller.rpc('tenbot_authorize_history_jobs',{p_ids:ids}) as ReturnType<JobToolCaller['rpc']>&{abortSignal?:(s:AbortSignal)=>ReturnType<JobToolCaller['rpc']>};const signal=AbortSignal.timeout(deadlineMs);const r=await Promise.race([Promise.resolve(request.abortSignal?request.abortSignal(signal):request),new Promise<never>((_,reject)=>signal.addEventListener('abort',()=>reject(new Unavailable()),{once:true}))]);return r.error?'unavailable':r.data===true?'authorized':'denied';}catch{return 'unavailable';}
+    },
     async execute(tool: TenbotJobToolName, args: Record<string, unknown> = {}): Promise<JobToolResult> {
       const controller = new AbortController();
       let rejectDeadline: (error: Error) => void = () => {};

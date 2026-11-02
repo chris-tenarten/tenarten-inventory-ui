@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "at": "2026-11-01T21:10:03.626Z",
+  "candidate": "9415adc577e5509c2473001fbd514ab644077e3c",
+  "migration": {
+    "path": "supabase/migrations/20261101200000_tenbot_persistent_employee_history.sql",
+    "version": "20261101200000",
+    "name": "tenbot_persistent_employee_history",
+    "sha256": "535410dd08c0f199a87d9b1d7439990d9d5a2e90052d27cf9f62b4971f9f9811"
+  },
+  "ledger": {
+    "name": "tenbot_persistent_employee_history",
+    "sha256": "535410dd08c0f199a87d9b1d7439990d9d5a2e90052d27cf9f62b4971f9f9811",
+    "version": "20261101200000"
+  },
+  "historyRlsAclUnchanged": true,
+  "businessAuthorizationUnchanged": true,
+  "oldFunctionsAclPreserved": true,
+  "providerSpendingAndControlsUnchanged": true,
+  "allWritesOff": true
+}

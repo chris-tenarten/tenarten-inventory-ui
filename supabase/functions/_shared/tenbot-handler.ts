@@ -109,7 +109,7 @@ async function handleTenbotDefault(body:Record<string,unknown>,userId:string,cal
   if(jobIntent){
    prepared=jobTools?await prepareJobRequest(jobIntent,jobTools,resolved.question):{intent:null,result:null,evidence:null,message:'Live Job information is temporarily unavailable. Workflow guidance and the rest of TenOps remain available.'};
    result=operationalReply(prepared);
-   if(provider&&prepared.evidence?.facts.length&&!prepared.choices?.length&&['ok','partial'].includes(prepared.evidence.status)&&canExplainOperationally(resolved.question,prepared.evidence)){
+   if(provider&&!prepared.results&&prepared.evidence?.facts.length&&!prepared.choices?.length&&['ok','partial'].includes(prepared.evidence.status)&&canExplainOperationally(resolved.question,prepared.evidence)){
     const input=buildOperationalInferenceInput(resolved.question,prepared.evidence);await reserve(input);
     let raw:unknown;try{raw=await provider.infer(input);}catch{throw new TenbotError('TenBot AI is unavailable.',503);}
     const validated=validateOperationalExplanation(raw,prepared.evidence,resolved.question);
@@ -117,8 +117,9 @@ async function handleTenbotDefault(body:Record<string,unknown>,userId:string,cal
     // Inference can outlive a grant or a record change. Reread using the same
     // authenticated caller before publishing; old model prose is never authority.
     const fresh=jobTools&&prepared.intent?await prepareJobRequest(prepared.intent,jobTools,resolved.question):prepared;
-    const unchanged=JSON.stringify(fresh.result?.data)===JSON.stringify(prepared.result?.data)&&fresh.result?.status===prepared.result?.status;
-    prepared=fresh;result=operationalReply(fresh,unchanged?validated.message:fresh.message,unchanged,!unchanged);
+    const signature=(p:PreparedJobRequest)=>(p.results??(p.result?[p.result]:[])).map(r=>({data:r.data,status:r.status,complete:r.complete,truncated:r.truncated}));
+    const unchanged=JSON.stringify(signature(fresh))===JSON.stringify(signature(prepared));
+    prepared=fresh;const quantitative=['get_production_overview','get_job_labor_summary'].includes(fresh.result?.tool??'');result=operationalReply(fresh,unchanged&&!quantitative?validated.message:fresh.message,unchanged,!unchanged);
    }
   }else result=await answer(body,permissions,provider,reserve,history);
  }catch(e){

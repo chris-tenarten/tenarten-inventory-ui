@@ -2,12 +2,17 @@
 // lookup marker survives a turn; every use executes fresh caller-authorized reads.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports.
-import {buildJobEvidence,renderJobEvidence,resolveExactJobReference,type JobEvidence,type JobIntent} from './tenbot-job-routing.ts';
+import {buildJobEvidence,renderJobEvidence,resolveExactJobReference,completeJobLookup,isJobDetailTool,type JobEvidence,type JobIntent} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared with Next and Deno
 // @ts-ignore -- Deno requires explicit .ts imports.
-import type {JobToolResult,JobIdentity,JobFacts,TenbotJobToolName} from './tenbot-job-tools.ts';
+import type {JobToolResult,JobIdentity,TenbotJobToolName} from './tenbot-job-tools.ts';
 
-export type JobTools={execute(name:TenbotJobToolName,args:Record<string,unknown>):Promise<JobToolResult>};
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Deno import.
+import {presentJobResult} from './tenbot-job-presentation.ts';
+const present=(result:JobToolResult,evidence:JobEvidence,question='')=>presentJobResult(result,question)??renderJobEvidence(evidence,1400,question);
+
+export type JobTools={authorizeHistory?(ids:string[]):Promise<'authorized'|'denied'|'unavailable'>;execute(name:TenbotJobToolName,args:Record<string,unknown>):Promise<JobToolResult>};
 export const LIVE_QUESTION='[Live Production lookup]';
 const marker='tenbot-job-context.v1:';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -16,48 +21,54 @@ export function retainedJobIntent(turns:{question:string;answer:string}[]):JobIn
  try{
   const intent=JSON.parse(turn.answer.slice(marker.length));
   if(intent.kind==='job'&&['get_job_summary','get_job_planning','get_job_labor_summary'].includes(intent.tool)&&uuid.test(intent.reference?.jobId)&&intent.args&&typeof intent.args==='object')return intent;
+  if(intent.kind==='jobs'&&isJobDetailTool(intent.tool)&&Array.isArray(intent.references)&&intent.references.length>0&&intent.references.length<=4&&intent.references.every((id:unknown)=>typeof id==='string'&&uuid.test(id))&&new Set(intent.references).size===intent.references.length&&intent.args&&typeof intent.args==='object')return intent;
   if(['overview','search'].includes(intent.kind)&&['get_production_overview','find_jobs'].includes(intent.tool)&&intent.args&&typeof intent.args==='object')return intent;
  }catch{}
  return null;
 }
-export function jobHistoryMarker(intent:JobIntent|null):string{return marker+JSON.stringify(intent?.kind==='job'&&'jobId' in intent.reference||intent?.kind==='overview'?intent:null);}
+export function jobHistoryMarker(intent:JobIntent|null):string{return marker+JSON.stringify(intent?.kind==='job'&&'jobId' in intent.reference||intent?.kind==='overview'||intent?.kind==='jobs'?intent:null);}
 export function withoutLiveHistory(turns:{question:string;answer:string}[]){return turns.filter(turn=>turn.question!==LIVE_QUESTION&&!turn.answer.startsWith(marker));}
-export type PreparedJobRequest={intent:JobIntent|null;result:JobToolResult|null;evidence:JobEvidence|null;message:string;choices?:{job_id:string;reference:string}[]};
+export type PreparedJobRequest={intent:JobIntent|null;result:JobToolResult|null;results?:JobToolResult[];evidence:JobEvidence|null;message:string;choices?:{job_id:string;reference:string}[]};
 export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question=''):Promise<PreparedJobRequest>{
  if(intent.kind==='blocked'||intent.kind==='clarify')return {intent:null,result:null,evidence:null,message:intent.message};
+ if(intent.kind==='jobs'){
+  const group=intent;
+  if(!isJobDetailTool(intent.tool)||!Array.isArray(intent.references)||!intent.references.length||intent.references.length>4||intent.references.some(id=>!uuid.test(id))||new Set(intent.references).size!==intent.references.length)return {intent:null,result:null,evidence:null,message:'Choose up to four distinct exact Production Jobs before requesting their details.'};
+  const results:JobToolResult[]=[];
+  const suppressed=(status:JobToolResult['status'],message:string):PreparedJobRequest=>({intent:null,result:null,results,evidence:{tool:group.tool,observedAt:results.at(-1)?.observed_at??new Date().toISOString(),status,facts:[],unknowns:[message],complete:false,truncated:results.some(r=>r.truncated),jobContext:null},message});
+  for(const id of intent.references){
+   const result=await tools.execute(intent.tool,{...intent.args,job_id:id});results.push(result);
+   if(result.status!=='ok'||!result.complete)return suppressed(result.status==='ok'?'partial':result.status,'I could not verify every requested Job. No grouped answer is shown; choose an exact Job or retry after access and data availability are confirmed.');
+  }
+  if(tools.authorizeHistory){const access=await tools.authorizeHistory(intent.references).catch(()=>'unavailable' as const);if(access!=='authorized')return suppressed(access==='denied'?'not_found_or_not_authorized':'unavailable','The selected Jobs could not all be reauthorized. No grouped answer is shown.');}
+  const evidence=results.map(buildJobEvidence),messages=results.map((result,index)=>`${index+1}. ${present(result,evidence[index],question)}`),message=messages.join('\n\n');
+  if(message.length>2400)return suppressed('partial','The verified group is too long for one complete answer. Please request fewer Jobs; no partial grouped answer is shown.');
+  const grouped:JobEvidence={tool:intent.tool,observedAt:results.at(-1)!.observed_at,status:'ok',facts:evidence.flatMap((e,index)=>e.facts.map(f=>({...f,id:`job_${index+1}_${f.id}`}))),unknowns:evidence.flatMap((e,index)=>e.unknowns.map(text=>`Job ${index+1}: ${text}`)),complete:true,truncated:results.some(r=>r.truncated),jobContext:null};
+  return {intent,result:null,results,evidence:grouped,message};
+ }
+
  if(intent.kind==='job'&&'query' in intent.reference){
   const found=await tools.execute('find_jobs',{query:intent.reference.query,include_archived:intent.includeArchived===true});
   const rows=(found.data as {jobs?:JobIdentity[]}|null)?.jobs??[];
   const resolution=resolveExactJobReference(intent.reference.query,rows);
-  if(found.complete&&resolution.kind==='selected')intent={...intent,reference:{jobId:resolution.jobId}};
+  if(completeJobLookup(found)&&resolution.kind==='selected')intent={...intent,reference:{jobId:resolution.jobId}};
   else{
    const evidence=buildJobEvidence(found),choices=rows.map(job=>({job_id:job.job_id,reference:job.reference}));
    return {intent:{kind:'search',tool:'find_jobs',args:{query:intent.reference.query,include_archived:intent.includeArchived===true}},result:found,evidence,
-    message:choices.length?'Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. '+renderJobEvidence(evidence):renderJobEvidence(evidence),choices};
+    message:choices.length?'Choose the exact Job number or full project name from the matching Jobs. I have not selected a Job. '+present(found,evidence,question):present(found,evidence,question),choices};
   }
  }
- if(intent.kind==='search'&&intent.selection?.statuses.length){
-  // Reuse bounded, caller-authorized browsing. Filter fresh canonical lifecycle
-  // data on the server; never reinterpret a saved count as the list of Jobs.
-  const jobs:JobFacts[]=[],all:JobToolResult[]=[];let cursor:unknown=undefined;
-  for(let page=0;page<3;page++){
-   const result=await tools.execute('find_jobs',{...intent.args,limit:20,...(cursor?{cursor}:{})});all.push(result);
-   const data=result.data as {jobs?:JobFacts[];has_more?:boolean;next_cursor?:string}|null;
-   if(result.status!=='ok'||!result.complete||!data?.jobs){const evidence=buildJobEvidence(result);return {intent,result,evidence,message:renderJobEvidence(evidence)};}
-   jobs.push(...data.jobs.filter(j=>intent.kind==='search'&&intent.selection!.statuses.includes(j.effective.status)));
-   cursor=data.has_more?data.next_cursor:undefined;if(!cursor||jobs.length>=20)break;
-  }
-  const last=all.at(-1)!,result:JobToolResult={...last,filters:{...last.filters,requested_statuses:intent.selection.statuses},data:{...(last.data as {jobs:JobFacts[];match:'browse';has_more:boolean;next_cursor:string|null}),jobs:jobs.slice(0,20),has_more:Boolean(cursor)||jobs.length>20},sources:all.flatMap(r=>r.sources),truncated:Boolean(cursor)||jobs.length>20,unknowns:[...last.unknowns,...(cursor||jobs.length>20?['Only a bounded portion of the matching scope is shown; this is not a complete count.']:[])]};
-  const evidence=buildJobEvidence(result);return {intent,result,evidence,message:renderJobEvidence(evidence,1400,question)};
- }
+ // Status selection is a native contract of both population tools. Retain
+ // old server-authored search seeds without keeping a second paging engine.
+ if(intent.kind==='search'&&intent.selection?.statuses.length&&intent.args.statuses===undefined)intent={...intent,args:{...intent.args,statuses:intent.selection.statuses}};
  const result=await tools.execute(intent.tool,intent.kind==='job'?{...intent.args,job_id:'jobId' in intent.reference?intent.reference.jobId:''}:intent.args);
  const evidence=buildJobEvidence(result);
- return {intent,result,evidence,message:renderJobEvidence(evidence,1400,question)};
+ return {intent,result,evidence,message:present(result,evidence,question)};
 }
 export function operationalReply(prepared:PreparedJobRequest,message=prepared.message,ai=false,fallback=false){
  const evidence=prepared.evidence;
  return {mode:ai?'operational-ai':'operational',message,resolution:evidence?.status==='not_found_or_not_authorized'?'permission-denied':evidence?.complete?'available':'partial',
   sources:[],snapshot:{revision:'tenbot-job-read.v1',verifiedAt:evidence?.observedAt??new Date().toISOString()},summary:null,notices:evidence?.unknowns??[],suggestionAllowed:false,fallback,
   operational:{tool:evidence?.tool??null,observedAt:evidence?.observedAt??null,complete:evidence?.complete??false,truncated:evidence?.truncated??false,
-   facts:evidence?.facts.map(fact=>({id:fact.id,text:fact.text}))??[],sources:prepared.result?.sources??[],choices:prepared.choices??[],refreshable:prepared.intent!==null}};
+   facts:evidence?.facts.map(fact=>({id:fact.id,text:fact.text}))??[],sources:prepared.results?(evidence?.complete?prepared.results.flatMap(result=>result.sources):[]):prepared.result?.sources??[],choices:prepared.choices??[],refreshable:prepared.intent!==null}};
 }

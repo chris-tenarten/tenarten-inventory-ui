@@ -3,12 +3,18 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
 import type {AgentTool,JsonValue,StrictSchema} from './tenbot-agent.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Deno extension.
+import {AgentToolError} from './tenbot-investigation-diagnostics.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
 import type {JobTools} from './tenbot-job-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
 import type {TenbotJobToolName,JobToolResult} from './tenbot-job-tools.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Edge extension.
+import {JOB_LIFECYCLE_STATUSES} from './tenbot-job-filters.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
 import {hasGuidePermission,publishedKnowledgeSource,type CapabilityEntry} from './tenbot-knowledge.ts';
@@ -21,12 +27,13 @@ const string=(maxLength:number):StrictSchema=>({type:'string',maxLength});
 const object=(properties:Record<string,StrictSchema>):StrictSchema=>({type:'object',properties,required:Object.keys(properties),additionalProperties:false});
 const jobId={type:'string',minLength:36,maxLength:36} as const;
 const period={start_date:string(10),end_date:string(10)};
+const statuses:StrictSchema={type:'array',items:{type:'string',enum:[...JOB_LIFECYCLE_STATUSES]},maxItems:JOB_LIFECYCLE_STATUSES.length};
 const specifications:{name:TenbotJobToolName;description:string;parameters:StrictSchema}[]=[
- {name:'find_jobs',description:'Find caller-visible canonical Production Jobs by exact number/name or bounded search. Never choose an ambiguous match. Empty query/cursor means browse/start; limit 1–20; archived only when explicitly requested.',parameters:object({query:string(120),include_archived:{type:'boolean'},limit:{type:'integer',minimum:1,maximum:20},cursor:string(300)})},
+ {name:'find_jobs',description:'List/search caller-visible canonical Production Jobs. statuses selects a union of current effective lifecycle statuses, including active Rework; [] means all statuses. Use query "" to enumerate by status; query is only a Job number/name/customer search, never a status label. The same statuses/include_archived population is available to get_production_overview. include_archived=false excludes archives; true includes them. Filter before pagination, limit 1–20; cursor "" starts. Follow next_cursor until has_more=false. A 1,000-Job scan/deadline bound can make results incomplete; never report incomplete retrieval as zero. Never choose an ambiguous identity.',parameters:object({query:string(120),statuses,include_archived:{type:'boolean'},limit:{type:'integer',minimum:1,maximum:20},cursor:string(300)})},
  {name:'get_job_summary',description:'Read one exact authorized Job: lifecycle/Rework, saved dates, material status, planning completeness and structured follow-up counts. Counts are not raw issues; material status does not establish physical sufficiency.',parameters:object({job_id:jobId})},
  {name:'get_job_planning',description:'Read persisted schedule and planning setup for one exact authorized Job. Phase/item planning detail is disabled. Saved dates are not forecasts.',parameters:object({job_id:jobId})},
  {name:'get_job_labor_summary',description:'Read deterministic recorded labor totals for one exact Job. Use both YYYY-MM-DD dates or both empty for the canonical trailing 30 Chicago dates. Recorded hours do not establish remaining work.',parameters:object({job_id:jobId,...period})},
- {name:'get_production_overview',description:'Read bounded caller-visible current Job counts, active statuses and upcoming saved finishes. Empty dates use canonical upcoming Chicago window. Counts are current, not historical completion events.',parameters:object({include_archived:{type:'boolean'},...period,limit:{type:'integer',minimum:1,maximum:20}})},
+ {name:'get_production_overview',description:'Count the same current caller-visible canonical Job population as find_jobs: identical statuses/include_archived selectors, effective active-Rework status, [] means all statuses; include_archived=false excludes archives and true includes them. counts.jobs is the selected population; unselected by_status entries are null, never global zero. Active Jobs exclude archives and terminal statuses. A 1,000-Job scan/deadline bound can prevent exact counts; preserve incomplete/unknown results. Dates affect only upcoming saved finishes (both empty uses Chicago window), not historical status events; limit bounds upcoming rows, not counts.',parameters:object({statuses,include_archived:{type:'boolean'},...period,limit:{type:'integer',minimum:1,maximum:20}})},
 ];
 const json=(value:unknown):JsonValue=>JSON.parse(JSON.stringify(value)) as JsonValue;
 function argsFor(name:TenbotJobToolName,args:Record<string,JsonValue>){
@@ -36,12 +43,18 @@ function argsFor(name:TenbotJobToolName,args:Record<string,JsonValue>){
  if(name==='get_job_summary'||name==='get_job_planning')return {job_id:values.job_id};
  return values;
 }
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit extension for Deno.
+import {prepareJobRequest,type PreparedJobRequest} from './tenbot-job-session.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit extension for Deno.
+import {resolveExactJobReference,completeJobLookup,type JobIntent} from './tenbot-job-routing.ts';
 function comparable(result:JobToolResult){return JSON.stringify({data:result.data,status:result.status,complete:result.complete,truncated:result.truncated,unknowns:result.unknowns,filters:result.filters});}
 
 /** Reuses the five real authorized executors; freshness is a caller check, never model policy. */
-export function createTenbotAgentJobTools(jobTools:JobTools){
+export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:JobIntent;question:string}){
  const reads=new Map<string,{name:TenbotJobToolName;args:Record<string,unknown>;result:JobToolResult}>();
- let inconsistent=false;
+ let inconsistent=false,scoped:PreparedJobRequest|undefined;
  const execute:JobTools['execute']=async(name,canonical)=>{
   const result=await jobTools.execute(name,canonical);
   const key=JSON.stringify([name,canonical]),previous=reads.get(key);
@@ -50,10 +63,47 @@ export function createTenbotAgentJobTools(jobTools:JobTools){
   return result;
  };
  const tools:AgentTool[]=specifications.map(spec=>({...spec,kind:'read',async execute(args){
-  const result=await execute(spec.name,argsFor(spec.name,args));
-  return {data:json(result)};
+  // The model still chooses tools and pages. Only the employee's compiled
+  // population selectors override model guesses, for count and list alike.
+  let result:JobToolResult;const canonical=argsFor(spec.name,args);
+  const intent=followup?.intent;
+  let references=intent?.kind==='job'&&'jobId' in intent.reference?[intent.reference.jobId]:intent?.kind==='jobs'?intent.references:[];
+  if(intent?.kind==='clarify'||intent?.kind==='blocked')throw new AgentToolError('invalid-arguments');
+  if(intent?.kind==='job'&&'query' in intent.reference){
+   const query=intent.reference.query;
+   if(spec.name==='find_jobs'){canonical.query=query;canonical.statuses=[];canonical.include_archived=intent.includeArchived===true;}
+   else if(spec.name==='get_production_overview')throw new AgentToolError('invalid-arguments');
+   else{const found=[...reads.values()].find(r=>r.name==='find_jobs'&&r.args.query===query)?.result;
+    if(!found||!completeJobLookup(found)||!found.data||!('jobs' in found.data))throw new AgentToolError('invalid-arguments');
+    const resolved=resolveExactJobReference(query,found.data.jobs);if(resolved.kind!=='selected')throw new AgentToolError('invalid-arguments');references=[resolved.jobId];
+   }
+  }
+
+  if(references.length){
+   if(['find_jobs','get_production_overview'].includes(spec.name))throw new AgentToolError('invalid-arguments');
+   if(references.length===1)canonical.job_id=references[0];
+   else if(!references.includes(String(canonical.job_id)))throw new AgentToolError('invalid-arguments');
+   if(spec.name==='get_job_labor_summary'&&intent&&(intent.kind==='job'||intent.kind==='jobs')&&intent.tool===spec.name){for(const key of ['start_date','end_date']){delete canonical[key];if(typeof intent.args[key]==='string'&&intent.args[key])canonical[key]=intent.args[key];}}
+   // Population filters never flow into an exact identity read. The original
+   // executor still validates arguments and authorizes the caller each time.
+  }
+  if(followup&&(intent?.kind==='search'||intent?.kind==='overview')&&['find_jobs','get_production_overview'].includes(spec.name)){
+   const selected=intent.args,query=intent.kind==='search'&&typeof selected.query==='string'?selected.query:'';
+   const population={statuses:selected.statuses??(intent.kind==='search'?intent.selection?.statuses:undefined)??[],include_archived:selected.include_archived===true};
+   if(spec.name==='find_jobs'){
+    const prepared=await prepareJobRequest({kind:'search',tool:'find_jobs',args:{...canonical,...population,query}},{execute},followup.question);
+    // Preserve the first scoped page's has_more/unknowns; a later final page
+    // cannot make the first displayed subset look like a complete population.
+    if(!scoped)scoped=prepared;
+    result=prepared.result!;
+   }else{
+    if(query)throw new Error('Production overview cannot preserve a retained Job search; use find_jobs.');
+    result=await execute(spec.name,{...canonical,...population});
+   }
+  }else result=await execute(spec.name,canonical);
+  const {accessRefs:_references,...modelResult}=result;void _references;return {data:json(modelResult)};
  }}));
- return {tools,execute,reads:()=>structuredClone([...reads.values()]),async fresh(){
+ return {tools,execute,scoped:()=>scoped,reads:()=>structuredClone([...reads.values()]),async fresh(){
   if(inconsistent)return false;
   for(const read of reads.values()){
    const current=await jobTools.execute(read.name,read.args);

@@ -6,6 +6,7 @@ import {Info,MoreHorizontal,Paperclip,X} from 'lucide-react';
 import {useAuth} from '@/lib/auth';
 import {supabase} from '@/lib/supabase';
 import {ReceivalDraftReview} from './ReceivalDraftReview';
+import {previousAnswerNotice} from './history-presentation';
 import {createInvoiceReceivalAttachmentService,invoiceOriginalSha256} from '../inventory/invoice-receival-attachments';
 import {parseTenbotCanaryAccess,tenbotCanaryRemainingMs} from '../inventory/tenbot-canary-access';
 import {clearHistoryLocator,historyAccessHash,readHistoryLocator,saveHistoryLocator,type HistoryBinding} from './conversation-history';
@@ -19,10 +20,10 @@ type Feedback={id:string;submitter_name:string;status:string;created_at:string;d
 type Usage={sharedDayLimit:number;sharedDayUsed:number;sharedDayRemaining:number;sharedMonthLimit:number;sharedMonthUsed:number;sharedMonthRemaining:number;perAccountMinuteLimit:number;dayNeuronLimit:number;dayAccountedNeurons:number;monthNeuronLimit:number;monthAccountedNeurons:number;dayMeasuredInputTokens:number;dayMeasuredOutputTokens:number;dayUnmeasuredAttempts:number};
 type AgentClaim={text:string;evidence_ids:string[]};
 type AgentView={mode:'offline-scripted'|'openai';provider:string;model:string;status:string;durationMs:number;executionAvailable:false;final:{observations:AgentClaim[];inferences:AgentClaim[];recommendations:AgentClaim[];questions:string[];completed_actions:[]}|null;proposals:{evidenceId:string;tool:string;proposal:Record<string,unknown>}[];evidence:{id:string;tool:string;data:unknown}[];trace:{event:string;name?:string;outcome:string;durationMs:number}[];usage:{inputTokens:number;outputTokens:number;costUsd:number;reservedUsd:number}};
-type ExperimentalAnswer=Answer&{contentScope?:'workflow'|'scope'|'volatile';historyTurnId?:string;createdAt?:string;answeredAt?:string;agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
-// Only the server may classify a source-/permission-checked, knowledge-only turn.
+type ExperimentalAnswer=Answer&{persistentHistory?:boolean;nextCursor?:string|null;contentScope?:'workflow'|'scope'|'volatile'|'operational-history';history?:{state:'verified'|'redacted';persistent?:boolean;reason?:'expired'|'access-or-evidence-changed'|'temporarily-unavailable';historical:boolean;observedAt:string;checkedAt:string;expiresAt?:string};historyTurns?:Turn[];historyTurnId?:string;createdAt?:string;answeredAt?:string;agent?:AgentView;localDemo?:{simulation:boolean;draft:LocalReceivalDraft|null;attachment?:{id:string;filename:string;mediaType:string}}};
+// Only the server classifies proven guidance or reauthorized operational display.
 // Missing classification remains volatile for compatibility with older servers.
-const volatileAnswer=(answer:ExperimentalAnswer|null|undefined)=>Boolean(answer?.contentScope==='volatile'||answer?.operational||answer?.agent&&!['workflow','scope'].includes(answer.contentScope??''));
+const volatileAnswer=(answer:ExperimentalAnswer|null|undefined)=>Boolean(!answer?.history&&(answer?.contentScope==='volatile'||answer?.operational||answer?.agent&&!['workflow','scope'].includes(answer.contentScope??'')));
 const objectValue=(value:unknown):Record<string,unknown>=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{};
 const rowsValue=(value:unknown):Record<string,unknown>[]=>Array.isArray(value)?value.map(objectValue):[];
 const displayValue=(value:unknown)=>value===null||value===undefined||value===''?'—':String(value);
@@ -91,8 +92,15 @@ function moduleContext(pathname:string):ModuleContext{
   default:return {label:'TenOps',module:'General'};
  }
 }
-type Turn={id:number|string;question:string;createdAt:string;answeredAt?:string;answer:ExperimentalAnswer|null;error?:string};
-type ExperimentalHistory={conversationId:string;mode:'agent-experiment'|'assistant';turns:{id:string;question:string;createdAt:string;answeredAt:string;answer:ExperimentalAnswer}[]};
+type Turn={id:number|string;question:string;createdAt:string;answeredAt?:string;answer:ExperimentalAnswer|null;error?:string;historyPending?:{expiresAt?:string}};
+// Retry carries only an opaque turn ID and deadline, never hidden prose.
+const operationalTurn=(t:Turn)=>!!t.historyPending||!!t.answer?.history||volatileAnswer(t.answer);
+const unavailableHistory=(t:Turn)=>previousAnswerNotice(t)!==null;
+function hideOperationalTurn(t:Turn,retryable=true):Turn{
+ const expiresAt=t.answer?.history?.expiresAt??t.historyPending?.expiresAt;
+ return {...t,question:'Previous operational request',answer:null,error:'Previous operational result unavailable.',historyPending:retryable&&(t.answer?.history?.persistent||t.historyPending||expiresAt&&Date.parse(expiresAt)>Date.now())?{expiresAt}:undefined};
+}
+type ExperimentalHistory={persistentHistory?:boolean;nextCursor?:string|null;conversationId:string;mode:'agent-experiment'|'assistant';turns:{id:string;question:string;createdAt:string;answeredAt:string;answer:ExperimentalAnswer}[]};
 type AssistantEntry={id:string;createdAt:string;content:ReactNode};
 export type TenbotConversation={available:boolean;busy:boolean;restoring:boolean;send:(question:string)=>Promise<boolean>;history:ReactNode;entries:AssistantEntry[];controls:(question:string)=>ReactNode;menu:(question:string)=>ReactNode;disclosure:ReactNode;attachmentControl:ReactNode;attachmentStatus:ReactNode;activityKey:string};
 const messageTime=(value:string)=>new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date(value));
@@ -109,7 +117,8 @@ export function useTenbotConversation():TenbotConversation{
  const currentModule=moduleContext(pathname);
  const [messages,setMessages]=useState<Turn[]>([]);
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
- const [historyLoading,setHistoryLoading]=useState(false);
+ const [historyLoading,setHistoryLoading]=useState(false),[historyCursor,setHistoryCursor]=useState<string|null>(null);
+ const pageBefore=useRef<string|undefined>(undefined);
  const [draft,setDraft]=useState<Draft|null>(null),[confirmed,setConfirmed]=useState(false);
  const [notice,setNotice]=useState(''),[showFeedback,setShowFeedback]=useState(false);
  const [items,setItems]=useState<Feedback[]>([]),[filter,setFilter]=useState(''),[moduleFilter,setModuleFilter]=useState('');
@@ -128,10 +137,9 @@ export function useTenbotConversation():TenbotConversation{
  const [notes,setNotes]=useState<Record<string,string>>({});
  const lock=useRef(false),sequence=useRef(0);
  const conversation=useRef<{owner:string;id?:string}>({owner});
- const historyBinding=useRef<HistoryBinding|null>(null),lifecycle=useRef(0);
+ const historyBinding=useRef<HistoryBinding|null>(null),lifecycle=useRef(0),historyRefreshTask=useRef<Promise<void>|null>(null),hasOperationalHistory=useRef(false),requestHistoryRefresh=useRef<()=>void>(()=>{});
+ hasOperationalHistory.current=messages.some(t=>operationalTurn(t));
  const currentOwner=useRef(owner);currentOwner.current=owner;
- const liveTurn=useRef<{id:number|string;owner:string}|null>(null);
- const liveRefresh=useRef(false);
  const foreground=useRef(true);
  if(conversation.current.owner!==owner)conversation.current={owner};
  const draftForm=useRef<HTMLFormElement>(null);
@@ -186,7 +194,7 @@ export function useTenbotConversation():TenbotConversation{
  useEffect(()=>{
   let current=true;const generation=++lifecycle.current;
   const active=()=>current&&generation===lifecycle.current&&currentOwner.current===owner&&currentAccess.current===accessFingerprint;
-  historyBinding.current=null;conversation.current={owner};liveTurn.current=null;
+  historyBinding.current=null;conversation.current={owner};pageBefore.current=undefined;setHistoryCursor(null);
   setMessages([]);setExperiment(false);setAuthenticatedExperiment(false);setHostedReceivals(false);setDeveloperDiagnostics(window.location.origin==='http://localhost:3000'&&new URLSearchParams(window.location.search).get('tenbotDiagnostics')==='1');setExperimentStatus(null);setCanaryDeadline(null);setOrderDetails({orderedBy:'',orderDate:'',location:''});setAttachment(null);setSelectedAttachment(null);setAttachmentPreview('');setAttachmentOrigin(null);setReceivalDraft(null);setLocalApproval(null);setSyntheticConfirmed(false);
   setHistoryLoading(available);
   if(!available){
@@ -194,7 +202,7 @@ export function useTenbotConversation():TenbotConversation{
    // same account is being hydrated during an ordinary component remount.
    if(auth.ready&&auth.accessStatus!=='pending')clearHistoryLocator();
   }else void (async()=>{
-   let receivals=false,initializationStage:TenbotInitializationStage='hosted-status',invoiceStatus:LocalDemoStatus|null=null;
+   let persistentAvailable=false;let receivals=false,initializationStage:TenbotInitializationStage='hosted-status',invoiceStatus:LocalDemoStatus|null=null;
    try{
     const {data}=await supabase.auth.getSession();if(!active()||data.session?.user.id!==owner)return;
     const authenticated=Boolean(data.session.access_token),enabled=localAgentExperimentRequested(window.location.origin,window.location.search,authenticated);
@@ -208,8 +216,9 @@ export function useTenbotConversation():TenbotConversation{
     }else{
      // An older/Qwen-only backend can reject status; normal conversation remains
      // available. Never send experimental flags or enable document controls.
-     const status=await invoke<{mode:string;historyAvailable:boolean;receivalPilotAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
+     const status=await invoke<{mode:string;historyAvailable:boolean;persistentHistoryAvailable?:boolean;receivalPilotAvailable?:boolean}>({action:'status'},owner).catch(()=>null);
      if(!active()||status?.mode!=='assistant'||status.historyAvailable!==true)return;
+     persistentAvailable=status.persistentHistoryAvailable===true;
      if(status.receivalPilotAvailable===true){
       try{
        const candidate=await invoke<LocalDemoStatus>({action:'status',hostedReceivalRequest:true},owner);if(!active())return;
@@ -242,18 +251,18 @@ export function useTenbotConversation():TenbotConversation{
     }
     const binding:HistoryBinding={owner,accessHash:await historyAccessHash(accessFingerprint),mode:enabled?(receivals?'authenticated':'synthetic'):'hosted'};
     if(!active())return;historyBinding.current=binding;
-    const id=readHistoryLocator(binding);if(!id)return;
+    const id=readHistoryLocator(binding);if(!id&&!persistentAvailable)return;
     try{
-     const saved=await invoke<ExperimentalHistory>({action:'history',conversationId:id,...(enabled?{localAgentExperiment:true,localReceivalExecution:receivals}:{})},owner);
+     const saved=await invoke<ExperimentalHistory>({action:'history',...(id?{conversationId:id}:{}),...(enabled?{localAgentExperiment:true,localReceivalExecution:receivals}:{})},owner);
      if(!active())return;
      const expectedMode=enabled?'agent-experiment':'assistant';
-     if(saved.conversationId!==id||saved.mode!==expectedMode||!Array.isArray(saved.turns)||saved.turns.length>8||saved.turns.some(turn=>typeof turn.id!=='string'||typeof turn.question!=='string'||typeof turn.createdAt!=='string'||!Number.isFinite(Date.parse(turn.createdAt))||typeof turn.answeredAt!=='string'||!Number.isFinite(Date.parse(turn.answeredAt))||!turn.answer||turn.answer.mode!==expectedMode||!['workflow','scope'].includes(turn.answer.contentScope??'')||typeof turn.answer.message!=='string'||turn.answer.operational||turn.answer.agent||turn.answer.localDemo))throw new Error('Invalid saved conversation.');
-     conversation.current={owner,id};setMessages(saved.turns);
+     if(id&&saved.conversationId!==id||saved.mode!==expectedMode||!Array.isArray(saved.turns)||saved.turns.length>(saved.persistentHistory?20:8)||saved.turns.some(turn=>typeof turn.id!=='string'||typeof turn.question!=='string'||typeof turn.createdAt!=='string'||!Number.isFinite(Date.parse(turn.createdAt))||typeof turn.answeredAt!=='string'||!Number.isFinite(Date.parse(turn.answeredAt))||!turn.answer||turn.answer.mode!==expectedMode||!['workflow','scope','operational-history'].includes(turn.answer.contentScope??'')||typeof turn.answer.message!=='string'||turn.answer.operational||turn.answer.agent||turn.answer.localDemo))throw new Error('Invalid saved conversation.');
+     conversation.current={owner,id:saved.conversationId};saveHistoryLocator(binding,saved.conversationId);pageBefore.current=undefined;setHistoryCursor(saved.nextCursor??null);setMessages(saved.turns);
     }catch(caught){
      if(active()){
       const status=caught&&typeof caught==='object'&&'status' in caught?caught.status:undefined;
       if([400,401,403,404].includes(Number(status))){clearHistoryLocator();conversation.current={owner};setError('Saved TenBot history is unavailable or no longer authorized. No AI request was repeated.');}
-      else{conversation.current={owner,id};setError('Saved TenBot history is temporarily unavailable. Reopen TenBot to restore it. No AI request was repeated.');}
+      else{conversation.current={owner,id:id??undefined};setError('Saved TenBot history is temporarily unavailable. Reopen TenBot to restore it. No AI request was repeated.');}
      }
     }
    }catch(caught){if(active()){const failure=tenbotInitializationFailure(caught,initializationStage);setError(failure.message);console.warn('TenBot workspace initialization failed',failure.diagnostic);}}
@@ -262,25 +271,30 @@ export function useTenbotConversation():TenbotConversation{
   return()=>{current=false;lifecycle.current=generation+1;};
  },[owner,available,accessFingerprint,auth.ready,auth.accessStatus,receiveExperimentStatus]);
  useEffect(()=>{
-  const invalidate=()=>setMessages(turns=>turns.map(turn=>volatileAnswer(turn.answer)?{...turn,answer:null,error:'Live Job facts need refreshing.'}:turn));
-  const refresh=async()=>{
-   const live=liveTurn.current,id=conversation.current.id;
-   if(!available||!live||live.owner!==owner||!id||!foreground.current||document.visibilityState!=='visible'||liveRefresh.current||lock.current)return;
-   liveRefresh.current=true;invalidate();
-   try{
-    const result=await invoke<Answer&{expired?:boolean}>({action:'refresh-job',conversationId:id},owner);
-    if(currentOwner.current!==live.owner||liveTurn.current?.id!==live.id||!foreground.current||document.visibilityState!=='visible')return;
-    if(result.expired){liveTurn.current=null;return;}
-    setMessages(turns=>turns.map(turn=>turn.id===live.id?{...turn,answer:result,error:undefined}:turn));
-   }catch{invalidate();}finally{liveRefresh.current=false;}
+  const refresh=()=>{
+   if(historyRefreshTask.current||!hasOperationalHistory.current||!available||!conversation.current.id||!historyBinding.current||!foreground.current||document.visibilityState!=='visible'||lock.current)return;
+   const id=conversation.current.id,generation=lifecycle.current;
+   const task=(async()=>{
+    try{
+     const saved=await invoke<ExperimentalHistory>({action:'history',conversationId:id,...(pageBefore.current?{before:pageBefore.current}:{}),...(experiment?{localAgentExperiment:true,localReceivalExecution:authenticatedReceivals}:{})},owner);
+     if(currentOwner.current!==owner||generation!==lifecycle.current||conversation.current.id!==id||lock.current)return;
+     setHistoryCursor(saved.nextCursor??null);
+     const byId=new Map(saved.turns.map(t=>[t.id,t]));
+     setMessages(turns=>turns.map(t=>byId.get(String(t.id))??(operationalTurn(t)?hideOperationalTurn(t,false):t)));
+    }catch(caught){
+     const status=Number(objectValue(caught).status),retryable=![400,401,403,404].includes(status);
+     if(currentOwner.current===owner&&generation===lifecycle.current)setMessages(turns=>turns.map(t=>operationalTurn(t)?hideOperationalTurn(t,retryable):t));
+    }
+   })();historyRefreshTask.current=task;void task.finally(()=>{if(historyRefreshTask.current===task)historyRefreshTask.current=null;});
   };
-  const blur=()=>{foreground.current=false;invalidate();};
-  const visibility=()=>{if(document.visibilityState!=='visible')blur();else{foreground.current=true;void refresh();}};
-  const focus=()=>{foreground.current=true;void refresh();};
+  requestHistoryRefresh.current=refresh;
+  const blur=()=>{foreground.current=false;};
+  const focus=()=>{foreground.current=true;refresh();};
+  const visibility=()=>{if(document.visibilityState==='visible')focus();else blur();};
   window.addEventListener('blur',blur);window.addEventListener('focus',focus);document.addEventListener('visibilitychange',visibility);
-  const timer=window.setInterval(()=>void refresh(),30000);
+  const timer=window.setInterval(refresh,30000);
   return()=>{clearInterval(timer);window.removeEventListener('blur',blur);window.removeEventListener('focus',focus);document.removeEventListener('visibilitychange',visibility);};
- },[owner,available]);
+ },[owner,available,experiment,authenticatedReceivals]);
  useEffect(()=>{
   if(drafting&&draftForm.current?.getClientRects().length){
    draftForm.current.scrollIntoView({block:'nearest'});
@@ -314,6 +328,8 @@ export function useTenbotConversation():TenbotConversation{
  function begin(){if(!available||historyLoading||lock.current)return false;lock.current=true;setBusy(true);setError('');return true;}
  function finish(){lock.current=false;setBusy(false);}
  async function send(question:string):Promise<boolean>{
+  if(historyRefreshTask.current)await historyRefreshTask.current;
+  if(currentOwner.current!==owner)return false;
   const current=question.trim();
   if(historyLoading||experiment&&!experimentStatus){setError('TenBot is restoring the current conversation. Please wait a moment.');return false;}
   if(!current||current.length>1200||lock.current)return false;
@@ -336,8 +352,7 @@ export function useTenbotConversation():TenbotConversation{
   // Retrying an unsuccessful send updates that turn instead of duplicating it.
   const retry=previous?.error&&previous.question===current?previous:undefined;
   const turn:Turn={id:retry?.id??++sequence.current,question:current,createdAt:retry?.createdAt??new Date().toISOString(),answer:null};
-  liveTurn.current=null;
-  setMessages(m=>[...m.filter(item=>item.id!==turn.id).slice(-7).map(item=>volatileAnswer(item.answer)?{...item,answer:null,error:'Live Job facts are refreshed for each request.'}:item),turn]);
+  setMessages(m=>[...m.filter(item=>item.id!==turn.id).map(item=>item.answer?.history?{...item,answer:{...item.answer,history:{...item.answer.history,historical:true}}}:volatileAnswer(item.answer)?{...item,answer:null,error:'Previous operational answer requires fresh access verification.'}:item),turn]);
   try{
    const response=await request<ExperimentalAnswer>({action:'ask',question:current,context:context(),...(invoiceTurn?{...(turnAttachment?{attachmentId:turnAttachment.attachmentId}:{}),orderDetails}:experiment&&experimentStatus?.executionOnly!==true?{demoScenario:'job-investigation',orderDetails}:{})});
    if(generation!==lifecycle.current||currentOwner.current!==owner||currentAccess.current!==requestAccess)return false;
@@ -345,13 +360,14 @@ export function useTenbotConversation():TenbotConversation{
     setMessages(m=>m.map(item=>item.id===turn.id?{...item,error:inactiveResponse}:item));
     return true;
    }
-   if(response.operational)liveTurn.current={id:turn.id,owner};
    if(invoiceTurn){const received=response.localDemo?.draft??null;setReceivalDraft(received);setLocalApproval(null);if(received&&!received.simulation&&turnAttachment?.sourceId&&received.attachmentId===turnAttachment.sourceId)savePreparedDraftLocator(owner,turnAttachment.sourceId);}
-   setMessages(m=>m.map(item=>item.id===turn.id?{...item,id:response.historyTurnId??item.id,createdAt:response.createdAt??item.createdAt,answer:response,answeredAt:response.answeredAt??new Date().toISOString()}:item));
+   if(response.persistentHistory&&response.historyTurns){pageBefore.current=undefined;setHistoryCursor(response.nextCursor??null);setMessages(response.historyTurns);return true;}
+   setMessages(m=>m.map(item=>{if(item.id===turn.id)return {...item,id:response.historyTurnId??item.id,createdAt:response.createdAt??item.createdAt,answer:response,answeredAt:response.answeredAt??new Date().toISOString()};const restored=response.historyTurns?.find(t=>t.id===String(item.id));return restored??(operationalTurn(item)?hideOperationalTurn(item,!Array.isArray(response.historyTurns)):item);}));
    return true;
   }catch(e){
    const failure=e instanceof Error?e.message:'TenBot unavailable.';
-   setMessages(m=>m.map(item=>item.id===turn.id?{...item,error:failure}:item));
+   const retryable=![400,401,403,404].includes(Number(objectValue(e).status));
+   setMessages(m=>m.map(item=>item.id===turn.id?{...item,error:failure}:operationalTurn(item)?hideOperationalTurn(item,retryable):item));
    return false;
   }finally{finish();}
  }
@@ -444,12 +460,21 @@ export function useTenbotConversation():TenbotConversation{
    setReceivalDraft(value.draft);setLocalApproval(value);setNotice(value.simulation?value.catalogAdditions?.length?'Simulated catalog additions and dependent pending receivals approved locally. No catalog or receival records were created.':'Simulated pending receivals approved locally. No catalog or receival records were created.':`${value.createdCatalogRecords?.length?`${value.createdCatalogRecords.length} catalog material(s) and `:''}${value.idempotent?value.receivals.length:value.createdCount} pending receivals ${value.idempotent?'already created':'created'} through your authorized TenOps access. Open Inventory or review the returned record IDs below.`);
   }catch(e){setError(e instanceof Error?e.message:'The pending entries could not be approved.');}finally{finish();}
  }
- const entries:AssistantEntry[]=available?messages.flatMap(m=>[{id:`assistant-question-${m.id}`,createdAt:m.createdAt,content:<article className="relative mb-3 ml-auto max-w-[88%] rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
+ async function loadHistoryPage(before?:string){
+  if(!available||!conversation.current.id||lock.current||!begin())return;
+  const id=conversation.current.id,generation=lifecycle.current;
+  try{const page=await invoke<ExperimentalHistory>({action:'history',conversationId:id,...(before?{before}:{})},owner);if(generation!==lifecycle.current||currentOwner.current!==owner)return;if(page.conversationId!==id||!page.persistentHistory||!Array.isArray(page.turns)||page.turns.length>20)throw Error('Private history is unavailable.');pageBefore.current=before;setHistoryCursor(page.nextCursor??null);setMessages(page.turns);}
+  catch{setMessages(turns=>turns.map(t=>operationalTurn(t)?hideOperationalTurn(t):t));setError('Private history could not be verified. Please retry.');}finally{finish();}
+ }
+ const visibleMessages=messages.filter((m,i)=>!unavailableHistory(m)||!messages.slice(i+1).some(unavailableHistory));
+ const focusComposer=()=>{document.querySelector<HTMLTextAreaElement>('[data-messaging-composer] textarea')?.focus();};
+ const entries:AssistantEntry[]=available?[...(historyCursor||pageBefore.current?[{id:'tenbot-history-page',createdAt:messages[0]?.createdAt??new Date().toISOString(),content:<div className="flex items-center gap-3 px-3 py-1 text-xs text-slate-500">{historyCursor?<button type="button" disabled={busy} onClick={()=>void loadHistoryPage(historyCursor)} className="min-h-9 text-blue-800 underline">Earlier messages</button>:null}{pageBefore.current?<button type="button" disabled={busy} onClick={()=>void loadHistoryPage()} className="min-h-9 text-blue-800 underline">Latest messages</button>:null}</div>}]:[]),...visibleMessages.flatMap(m=>previousAnswerNotice(m)?[{id:`assistant-answer-${m.id}`,createdAt:m.answeredAt??m.createdAt,content:<article aria-label="TenBot previous result" data-tenbot-history-kind={previousAnswerNotice(m)!.kind} className="mb-3 flex flex-wrap items-center gap-2 px-3 py-2 text-xs text-slate-500"><span>{previousAnswerNotice(m)!.message}</span><time dateTime={m.answeredAt??m.createdAt}>{new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(m.answeredAt??m.createdAt))}</time><button type="button" disabled={busy} onClick={()=>previousAnswerNotice(m)!.retry?requestHistoryRefresh.current():focusComposer()} className="min-h-9 rounded px-2 font-medium text-blue-800 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500">{previousAnswerNotice(m)!.retry?'Retry access check':'Ask for an update'}</button></article>}]:[{id:`assistant-question-${m.id}`,createdAt:m.createdAt,content:<article className="relative mb-3 ml-auto max-w-[88%] rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
     <div className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-800">{m.question}</div>
     <time className="mt-1 block text-[10px] text-slate-400">{messageTime(m.createdAt)}</time>
    </article>},{id:`assistant-answer-${m.id}`,createdAt:m.answeredAt??m.createdAt,content:<article aria-label="TenBot assistant reply" className="relative mb-3 max-w-[88%] space-y-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm">
     <p className="text-xs font-semibold text-slate-600">TenBot · Assistant</p>
     {m.answer?<>
+     {m.answer.history?<p data-tenbot-history-state data-tenbot-history-contract={m.answer.history.persistent?'persistent':'legacy'} className="text-xs text-slate-500">{m.answer.history.state==='redacted'?'Previous answer unavailable':m.answer.history.historical?'Previous answer':m.answer.contentScope==='operational-history'?'Operational result':'Answer'} · {new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(m.answer.history.observedAt))}</p>:null}
      {m.answer.mode==='guide'?<p className="text-xs text-slate-500">{m.answer.fallback?"AI is unavailable right now. Here’s guidance from the TenOps Guide.":"Here’s what I found in the TenOps Guide."}</p>:null}
      <p data-tenbot-answer className="whitespace-pre-wrap break-words leading-relaxed text-slate-800">{m.answer.mode==='guide'&&m.answer.sources[0]?guideText(m.answer.sources[0]):m.answer.message}</p>
      {m.answer.agent?<details className="text-xs text-slate-600"><summary className="min-h-9 cursor-pointer py-2">Sources and evidence</summary><AgentReview agent={m.answer.agent} liveDemo={liveDemo} simulation={!authenticatedReceivals} diagnostics={developerDiagnostics}/>{answerNotices(m.answer)}</details>:answerNotices(m.answer)}
@@ -471,9 +496,9 @@ export function useTenbotConversation():TenbotConversation{
       <div className="space-y-1 border-t border-slate-100 pt-2">{m.answer.operational.facts.map(fact=><p key={fact.id}>{fact.text}</p>)}</div>
       {m.answer.operational.truncated?<p>Some records could not be included. Incomplete totals are not presented as exact.</p>:null}
      </details>:null}
-    </>:m.error===inactiveResponse?<p role="status" className="text-slate-600">{m.error}</p>:m.error?.startsWith('Live Job facts')?<p className="text-xs text-slate-500">Previous live answer hidden. Ask a follow-up to refresh the subject.</p>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">{busy?'Working…':'No answer was displayed. Ask again to retry.'}</p>}
+    </>:m.error===inactiveResponse?<p role="status" className="text-slate-600">{m.error}</p>:m.error?.startsWith('Previous operational')?<p role="status" className="text-xs text-slate-500">{m.error}</p>:m.error?<p role="alert" className="text-red-800">{m.error} TenBot could not answer. Use Send to retry.</p>:<p role="status" className="text-slate-500">{busy?'Working…':'No answer was displayed. Ask again to retry.'}</p>}
     {m.answeredAt?<time className="block text-[10px] text-slate-400">{messageTime(m.answeredAt)}</time>:null}
-   </article>}]):[];
+   </article>}])]:[];
  const history=available?<div role="log" aria-label="TenBot conversation" aria-live="polite">{entries.map(entry=><div key={entry.id}>{entry.content}</div>)}</div>:null;
  const menu=(question:string):ReactNode=>{
   if(!available)return null;
@@ -493,7 +518,7 @@ export function useTenbotConversation():TenbotConversation{
   <summary aria-label="About TenBot AI" title="About TenBot AI" className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:ring-2 focus-visible:ring-blue-500 [&::-webkit-details-marker]:hidden"><Info className="h-4 w-4" aria-hidden="true"/></summary>
   <div role="note" aria-label="TenBot AI privacy" className="absolute right-0 top-full z-40 mt-1 max-h-[min(24rem,60dvh)] w-72 max-w-[calc(100vw-3rem)] overflow-y-auto rounded-md border border-slate-200 bg-white p-3 text-xs leading-relaxed text-slate-600 shadow-lg">
    <p>TenBot uses AI to help answer questions and process attachments. Submitted content may be processed by OpenAI. Your TenOps permissions still apply.</p>
-   <details className="mt-2"><summary className="min-h-9 cursor-pointer py-2 text-slate-500">More privacy details</summary><p>{authenticatedReceivals?<>This restricted candidate sends only the approved original test document, submitted questions and narrowly authorized catalog/Job tool results to OpenAI. Documents are untrusted input and cannot grant permissions or approve actions. Original invoices are stored privately as batch evidence. Previews may be rendered locally; the server processes verified original bytes. Reads use your authenticated TenOps access. {experimentStatus?.executionEnabled===true?'Explicit approval submits the exact server-reviewed operations through authenticated TenOps services. Catalog and receival permissions are checked independently.':'Review and explicit approval are separate from model reasoning; execution is currently disabled by the server.'} No personal ChatGPT context is connected.</>:liveDemo?'This local demo sends the approved synthetic attachment image and questions you submit to OpenAI for actual inference. A one-page PDF is rendered locally into an image without offline OCR or text extraction. Operational records, catalog matches and approved pending entries are simulated locally. No Production records are read or written, and real database authorization/RLS is not validated by this demonstration.':'When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live answers are refreshed for each request and are not saved in assistant history. TenBot does not independently read private messages, personal tasks or financial information. Eligible private workflow guidance expires automatically: Terra history after one hour without a new turn, and Qwen context after eight hours.'}</p></details>
+   <details className="mt-2"><summary className="min-h-9 cursor-pointer py-2 text-slate-500">More privacy details</summary><p>{authenticatedReceivals?<>This restricted candidate sends only the approved original test document, submitted questions and narrowly authorized catalog/Job tool results to OpenAI. Documents are untrusted input and cannot grant permissions or approve actions. Original invoices are stored privately as batch evidence. Previews may be rendered locally; the server processes verified original bytes. Reads use your authenticated TenOps access. {experimentStatus?.executionEnabled===true?'Explicit approval submits the exact server-reviewed operations through authenticated TenOps services. Catalog and receival permissions are checked independently.':'Review and explicit approval are separate from model reasoning; execution is currently disabled by the server.'} No personal ChatGPT context is connected.</>:liveDemo?'This local demo sends the approved synthetic attachment image and questions you submit to OpenAI for actual inference. A one-page PDF is rendered locally into an image without offline OCR or text extraction. Operational records, catalog matches and approved pending entries are simulated locally. No Production records are read or written, and real database authorization/RLS is not validated by this demonstration.':'When AI is available, text you submit, recent private TenBot turns and limited authorized Production facts are processed by the configured AI provider. Job lookups use your current access. Live facts are refreshed for each request. Your private TenBot questions and completed answers remain in this conversation. Historical answers show their original timestamps and are checked against your current permissions and source requirements when opened. Restricted content is redacted; changed live values do not make a past answer current. Displayed history is separate from the bounded context used by AI. TenBot does not independently read private messages, personal tasks or financial information. New operational questions always use current authorized records. Clearing the conversation explicitly removes your saved TenBot history.'}</p></details>
   </div>
  </details>;
  const attachmentControl=available&&liveDemo&&experimentStatus?.executionOnly!==true?<>
