@@ -15,25 +15,32 @@ type Rpc=(name:string,args:Record<string,unknown>)=>Promise<{data:unknown;error:
 const object=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object'&&!Array.isArray(value);
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const sameKeys=(value:Record<string,unknown>,keys:string[])=>Object.keys(value).length===keys.length&&keys.every(key=>Object.hasOwn(value,key));
+const toolProtocol='Qwen tool-call protocol: The supplied tools array is the complete set of capabilities callable on this step. Registry descriptions and prior messages do not make another capability callable. If a needed capability is absent from tools, use discover_capabilities to request its exact name; use names [] to inspect the registry when names are unknown. Wait for the discovery result and the updated tools array before calling a newly loaded capability; do not combine its discovery and first call in one batch. Use distinct call id labels within each returned batch. The server assigns execution identities and returns those identities in subsequent tool_result items. Pair each tool result with its corresponding server-issued call identity. These protocol rules do not grant access or change the employee goal.';
 function measured(provider:InferenceProvider,input:InferenceInput):InferenceUsage|null{
  let value:InferenceUsage|null=null;try{value=provider.usage?.(input)??null;}catch{return null;}
  return value&&value.model===defaultModel&&Number.isSafeInteger(value.inputTokens)&&value.inputTokens>=0&&value.inputTokens<=100000&&Number.isSafeInteger(value.outputTokens)&&value.outputTokens>=0&&value.outputTokens<=maxOutputTokens&&Number.isFinite(value.estimatedNeurons)&&value.estimatedNeurons>=0?value:null;
 }
 function usage(value:InferenceUsage|null):AgentUsage{return value?{inputTokens:value.inputTokens,cachedInputTokens:0,outputTokens:value.outputTokens,costUsd:0,reservedUsd:0}:emptyUsage();}
-function parseStep(raw:unknown,measuredUsage:AgentUsage):AgentStep{
+function parseStep(raw:unknown,measuredUsage:AgentUsage,stepId:string):AgentStep{
  if(!object(raw)||!sameKeys(raw,['calls','final'])||!Array.isArray(raw.calls)||raw.calls.length>4||!isJsonValue(raw))throw new AgentStepError('invalid-provider-step',measuredUsage);
  if(raw.calls.length?(raw.final!==null):(raw.final===null||!object(raw.final)))throw new AgentStepError('invalid-provider-step',measuredUsage);
- const calls=raw.calls.map(value=>{
+ const labels=new Set<string>();
+ const calls=raw.calls.map((value,index)=>{
   if(!object(value)||!sameKeys(value,['id','name','arguments'])||typeof value.id!=='string'||!/^[a-zA-Z0-9_-]{1,100}$/.test(value.id)||typeof value.name!=='string'||!/^[a-z][a-z0-9_]{1,63}$/.test(value.name)||!object(value.arguments)||!isJsonValue(value.arguments))throw new AgentStepError('invalid-provider-step',measuredUsage);
-  return {id:value.id,name:value.name,arguments:value.arguments as Record<string,JsonValue>};
+  if(labels.has(value.id))throw new AgentStepError('invalid-provider-step',measuredUsage);
+  labels.add(value.id);
+  return {id:`${stepId}_${index+1}`,name:value.name,arguments:value.arguments as Record<string,JsonValue>};
  });
- return {calls,...(raw.final===null?{}:{final:raw.final}),continuation:[raw as JsonValue],usage:measuredUsage};
+ // Model labels are batch-local, not global execution identities. The server's
+ // calls and provider continuation must use the same IDs so results stay paired.
+ return {calls,...(raw.final===null?{}:{final:raw.final}),continuation:[{calls,final:raw.final} as JsonValue],usage:measuredUsage};
 }
 
 export function createQwenAgentProvider(options:{provider:InferenceProvider;owner:string;rpc:Rpc;can():Promise<boolean>}):AgentProvider{
  const {provider,owner,rpc,can}=options;
+ const namespace='qwen_'+crypto.randomUUID().replaceAll('-','');let sequence=0;
  return {name:provider.name,model:defaultModel,async step(request:AgentStepRequest){
-  const input:InferenceInput={question:'Bounded read-only capability investigation',context:[],excerpts:[],draft:false,agent:{instructions:request.instructions,history:request.history,tools:request.tools,finalSchema:request.finalSchema,maxOutputTokens:request.maxOutputTokens}};
+  const input:InferenceInput={question:'Bounded read-only capability investigation',context:[],excerpts:[],draft:false,agent:{instructions:request.instructions+'\n'+toolProtocol,history:request.history,tools:request.tools,finalSchema:request.finalSchema,maxOutputTokens:request.maxOutputTokens}};
   if(request.signal.aborted)throw new AgentStepError('provider-cancelled');
   if(!Number.isSafeInteger(request.maxOutputTokens)||request.maxOutputTokens<=0)throw new AgentStepError('invalid-output-budget');
   if(new TextEncoder().encode(JSON.stringify(input)).byteLength>160000)throw new AgentStepError('oversized-request');
@@ -57,7 +64,7 @@ export function createQwenAgentProvider(options:{provider:InferenceProvider;owne
    const raw=await provider.infer(input,request.signal),value=measured(provider,input);
    if(!value)throw new AgentStepError('missing-provider-usage');
    if(value.outputTokens>Math.min(maxOutputTokens,request.maxOutputTokens))throw new AgentStepError('invalid-usage',usage(value));
-   const step=parseStep(raw,usage(value));
+   const step=parseStep(raw,usage(value),`${namespace}_${++sequence}`);
    if(request.signal.aborted)throw new AgentStepError('provider-cancelled',step.usage);
    await finish('completed');return step;
   }catch(error){

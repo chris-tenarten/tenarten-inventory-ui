@@ -1,0 +1,1495 @@
+{
+  "status": "protocol-correction-implemented-live-read-proven-quality-hold",
+  "baseline": "c1992d3d234dc45c58f6c7752150b0b8c1da14a4",
+  "applicationBaseline": "16ccb2fdac836f8a9b1cb57177e0af775d0e0840",
+  "sourceManifest": {
+    "archive": "c1992d3d234dc45c58f6c7752150b0b8c1da14a4",
+    "overlayHashes": {
+      "supabase/functions/_shared/tenbot-qwen-agent.ts": "413c7467e4f803f1c2b354f846bf42be2d8d624b1f781cb4f993ff817e4be979",
+      "scripts/verify-tenbot-qwen-agent.mts": "ce7664e9d2453d28d5ddfa5a75fcda273216d9c06fad540dbff8bbaf2f98bba9",
+      "scripts/evaluate-tenbot-qwen-tools-live.mts": "7e9b6c0f8caba1037f521a956ea301a4156055d64d98e8603fbe9c446ae37f0c"
+    },
+    "noWorktreeOrBranchCreated": true,
+    "unrelatedAgentAndVerifierEditsExcluded": true
+  },
+  "runtimePins": {
+    "tenbot-agent.ts": "f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98",
+    "tenbot-agent-session.ts": "16bdfc1401ef8336f5011b3122be7e045d39a599f2d239bb97db1ea15ad5c367",
+    "tenbot-qwen-agent.ts": "413c7467e4f803f1c2b354f846bf42be2d8d624b1f781cb4f993ff817e4be979",
+    "tenbot-agent-operations.ts": "6c2b95c2e47a8cd7b3c7ff65947a30ed3bc2c4bb766dd220e442db9ad78f22c8",
+    "tenbot-job-routing.ts": "98d4d02ea068cfd4e829beabc04361dcdee3c7d4af6837513ba59f2ff956a384",
+    "tenbot-job-tools.ts": "5ab6a975b2295403cd712bf98db00f925896915f77c14be513ef608722a7dbea"
+  },
+  "rootCause": {
+    "providerLabelsDuplicatedAcrossRounds": true,
+    "transportReusedOrAlteredIds": false,
+    "runtimeCorrectlyRequiredUniqueExecutionIds": true,
+    "discoveryEnforcementWasNotBypassed": true,
+    "initialCallableSchemas": [
+      "discover_capabilities"
+    ],
+    "catalogWasMisreadAsCallable": true,
+    "wrongToolResultPairingObservedBeforeFix": false,
+    "failureWasCombination": "Provider protocol compliance and missing batch-local-to-server ID adaptation; no evidence of credential/transport/data failure"
+  },
+  "previousActualRawPlans": [
+    {
+      "turn": 0,
+      "sequence": 1,
+      "transport": "wrangler-remote-ai-binding",
+      "latencyMs": 711,
+      "reservedNeurons": 70,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 1940,
+        "outputTokens": 30,
+        "estimatedNeurons": 9.887
+      },
+      "rawOutput": {
+        "calls": [
+          {
+            "id": "call_1",
+            "name": "describe_assistant_scope",
+            "arguments": {}
+          }
+        ],
+        "final": null
+      },
+      "uncertain": false
+    },
+    {
+      "turn": 0,
+      "sequence": 2,
+      "transport": "wrangler-remote-ai-binding",
+      "latencyMs": 825,
+      "reservedNeurons": 72,
+      "usage": {
+        "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+        "inputTokens": 2027,
+        "outputTokens": 38,
+        "estimatedNeurons": 10.533
+      },
+      "rawOutput": {
+        "calls": [
+          {
+            "id": "call_1",
+            "name": "search_workflow_knowledge",
+            "arguments": {
+              "query": "How to count Jobs currently In Production"
+            }
+          }
+        ],
+        "final": null
+      },
+      "uncertain": false
+    }
+  ],
+  "implementation": {
+    "scope": [
+      "supabase/functions/_shared/tenbot-qwen-agent.ts",
+      "scripts/verify-tenbot-qwen-agent.mts",
+      "scripts/evaluate-tenbot-qwen-tools-live.mts"
+    ],
+    "serverOwnedUniqueIds": true,
+    "batchDuplicateLabelsStillRejected": true,
+    "callsAndContinuationShareIds": true,
+    "rawNamesArgumentsOrderingUnchanged": true,
+    "runtimeAuthorizationDiscoverySchemaBoundsUnchanged": true,
+    "discoveryInjectedByHost": false,
+    "genericRuntimeEdited": false
+  },
+  "offlineValidation": {
+    "riskTier": 2,
+    "changedProtocolGroups": 14,
+    "adjacentReadOrchestrationGroups": 17,
+    "scriptedRegressionOnly": true,
+    "regressionNetworkRequests": 0,
+    "targetedStrictTypes": "PASS",
+    "targetedEslint": "PASS",
+    "exactIsolatedWebpackBuild": true,
+    "existing103TransportChecks": "reused",
+    "existingDatabaseJwtRlsAndQuotaChecks": "reused",
+    "review": "Independent focused EM review found no blocking issues",
+    "buildNotes": [
+      "Default Turbopack rejected external node_modules symlink; established Webpack path used.",
+      "One Webpack invocation inadvertently ran in dev and passed; no tracked changes resulted. Exact isolated candidate build subsequently passed with dummy build-only public configuration."
+    ]
+  },
+  "actualLive": {
+    "fixture": "jltgxcfiprocydhbrahz",
+    "genuineSyntheticJwt": true,
+    "scriptedResponses": false,
+    "turns": [
+      {
+        "id": "production-count-proof",
+        "status": "completed",
+        "reason": "completed",
+        "durationMs": 9167,
+        "modelCalls": 4,
+        "selectedCalls": [
+          {
+            "id": "call_1",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "get_production_overview"
+              ]
+            }
+          },
+          {
+            "id": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_1_2",
+            "name": "get_production_overview",
+            "arguments": {
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "start_date": "",
+              "end_date": "",
+              "limit": 20
+            }
+          },
+          {
+            "id": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_3_1",
+            "name": "search_workflow_knowledge",
+            "arguments": {
+              "query": "How many Jobs are currently In Production?"
+            }
+          }
+        ],
+        "message": "Production overview counts describe current visible Jobs in the selected lifecycle-status and archive scope; the date window applies only to upcoming persisted planned completions. Production Jobs in scope: 0. Active Production Jobs: 0. Scheduled Production Jobs across all statuses in scope: 0. Unscheduled Production Jobs across all statuses in scope: 0. Production Jobs with effective status In Production: 0.",
+        "deterministicControl": {
+          "intent": {
+            "kind": "overview",
+            "tool": "get_production_overview",
+            "args": {
+              "statuses": [
+                "in_production"
+              ]
+            }
+          },
+          "message": "There are 0 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+          "durationMs": 424
+        },
+        "actualModelSelectedJobReads": [
+          {
+            "hostCallId": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_2_1",
+            "name": "get_production_overview",
+            "arguments": {
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "limit": 20
+            },
+            "status": "ok",
+            "complete": true,
+            "durationMs": 379,
+            "resultSha256": "2f9397bcab32c350877da7baffd94763411d477aa240f01b89b7737465396f8e"
+          }
+        ],
+        "neurons": 76.456
+      },
+      {
+        "id": "contextual-list",
+        "status": "stopped",
+        "reason": "round-limit",
+        "durationMs": 19587,
+        "modelCalls": 6,
+        "selectedCalls": [
+          {
+            "id": "call_1",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "find_jobs",
+                "get_job_summary",
+                "get_job_planning",
+                "get_job_labor_summary",
+                "get_production_overview",
+                "search_workflow_knowledge",
+                "describe_assistant_scope"
+              ]
+            }
+          },
+          {
+            "id": "qwen_836e759b088d480fa7274b3e84748578_1_2",
+            "name": "get_production_overview",
+            "arguments": {
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "start_date": "",
+              "end_date": "",
+              "limit": 20
+            }
+          },
+          {
+            "id": "qwen_836e759b088d480fa7274b3e84748578_3_1",
+            "name": "find_jobs",
+            "arguments": {
+              "query": "",
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "limit": 20,
+              "cursor": ""
+            }
+          },
+          {
+            "id": "qwen_836e759b088d480fa7274b3e84748578_4_1",
+            "name": "search_workflow_knowledge",
+            "arguments": {
+              "query": "Production Jobs"
+            }
+          },
+          {
+            "id": "qwen_836e759b088d480fa7274b3e84748578_5_1",
+            "name": "describe_assistant_scope",
+            "arguments": {}
+          },
+          {
+            "id": "qwen_836e759b088d480fa7274b3e84748578_6_1",
+            "name": "search_workflow_knowledge",
+            "arguments": {
+              "query": "Production Jobs"
+            }
+          }
+        ],
+        "message": "The read-only investigation could not verify an answer. Please clarify the Job or try again.",
+        "deterministicControl": {
+          "intent": {
+            "kind": "search",
+            "tool": "find_jobs",
+            "args": {
+              "statuses": [
+                "in_production"
+              ]
+            }
+          },
+          "message": "No Jobs match this search within your current access.",
+          "durationMs": 744
+        },
+        "actualModelSelectedJobReads": [
+          {
+            "hostCallId": "qwen_836e759b088d480fa7274b3e84748578_2_1",
+            "name": "get_production_overview",
+            "arguments": {
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "limit": 20
+            },
+            "status": "ok",
+            "complete": true,
+            "durationMs": 334,
+            "resultSha256": "b6f4bada7be69ca9ed80f9870fd47676ca178f030356b189d8188ec533beea1b"
+          },
+          {
+            "hostCallId": "qwen_836e759b088d480fa7274b3e84748578_3_1",
+            "name": "find_jobs",
+            "arguments": {
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "limit": 20
+            },
+            "status": "ok",
+            "complete": true,
+            "durationMs": 341,
+            "resultSha256": "1b81a0a9d8b22d31ecf91d81f7fe0f572cb5f54bafba95582d9e6f84e5d22635"
+          }
+        ],
+        "neurons": 187.965
+      }
+    ],
+    "actualModelRounds": [
+      {
+        "turn": 0,
+        "sequence": 1,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 1110,
+        "reservedNeurons": 74,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 2083,
+          "outputTokens": 34,
+          "estimatedNeurons": 10.671
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "call_1",
+              "name": "discover_capabilities",
+              "arguments": {
+                "names": [
+                  "get_production_overview"
+                ]
+              }
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 0,
+        "sequence": 2,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 749,
+        "reservedNeurons": 103,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 3293,
+          "outputTokens": 80,
+          "estimatedNeurons": 17.669
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_1_2",
+              "name": "get_production_overview",
+              "arguments": {
+                "statuses": [
+                  "in_production"
+                ],
+                "include_archived": false,
+                "start_date": "",
+                "end_date": "",
+                "limit": 20
+              }
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 0,
+        "sequence": 3,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 968,
+        "reservedNeurons": 119,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 4106,
+          "outputTokens": 69,
+          "estimatedNeurons": 21.094
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_3_1",
+              "name": "search_workflow_knowledge",
+              "arguments": {
+                "query": "How many Jobs are currently In Production?"
+              }
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 0,
+        "sequence": 4,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 1453,
+        "reservedNeurons": 121,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 4261,
+          "outputTokens": 240,
+          "estimatedNeurons": 27.022
+        },
+        "rawOutput": {
+          "calls": [],
+          "final": {
+            "answer": "There are currently 0 Jobs in Production based on the latest overview data. This count includes active Jobs and excludes archives. The upcoming planned completion window was from 2026-11-01 to 2026-11-30, but no active Jobs in scope had persisted planned completion dates in this window.",
+            "observations": [
+              {
+                "text": "Production overview counts describe current visible Jobs in the selected lifecycle-status and archive scope; the date window applies only to upcoming persisted planned completions.",
+                "evidence_ids": [
+                  "e1"
+                ]
+              },
+              {
+                "text": "Production Jobs in scope: 0.",
+                "evidence_ids": [
+                  "e1"
+                ]
+              },
+              {
+                "text": "Active Production Jobs: 0.",
+                "evidence_ids": [
+                  "e1"
+                ]
+              },
+              {
+                "text": "Scheduled Production Jobs across all statuses in scope: 0.",
+                "evidence_ids": [
+                  "e1"
+                ]
+              },
+              {
+                "text": "Unscheduled Production Jobs across all statuses in scope: 0.",
+                "evidence_ids": [
+                  "e1"
+                ]
+              },
+              {
+                "text": "Production Jobs with effective status In Production: 0.",
+                "evidence_ids": [
+                  "e1"
+                ]
+              }
+            ],
+            "inferences": [],
+            "recommendations": [],
+            "questions": [],
+            "completed_actions": []
+          }
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 1,
+        "sequence": 5,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 773,
+        "reservedNeurons": 80,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 2336,
+          "outputTokens": 62,
+          "estimatedNeurons": 12.694
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "call_1",
+              "name": "discover_capabilities",
+              "arguments": {
+                "names": [
+                  "find_jobs",
+                  "get_job_summary",
+                  "get_job_planning",
+                  "get_job_labor_summary",
+                  "get_production_overview",
+                  "search_workflow_knowledge",
+                  "describe_assistant_scope"
+                ]
+              }
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 1,
+        "sequence": 6,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 678,
+        "reservedNeurons": 147,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 5045,
+          "outputTokens": 85,
+          "estimatedNeurons": 25.924
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "qwen_836e759b088d480fa7274b3e84748578_1_2",
+              "name": "get_production_overview",
+              "arguments": {
+                "statuses": [
+                  "in_production"
+                ],
+                "include_archived": false,
+                "start_date": "",
+                "end_date": "",
+                "limit": 20
+              }
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 1,
+        "sequence": 7,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 817,
+        "reservedNeurons": 162,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 5868,
+          "outputTokens": 82,
+          "estimatedNeurons": 29.639
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "qwen_836e759b088d480fa7274b3e84748578_3_1",
+              "name": "find_jobs",
+              "arguments": {
+                "query": "",
+                "statuses": [
+                  "in_production"
+                ],
+                "include_archived": false,
+                "limit": 20,
+                "cursor": ""
+              }
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 1,
+        "sequence": 8,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 831,
+        "reservedNeurons": 169,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 6264,
+          "outputTokens": 68,
+          "estimatedNeurons": 31.044
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "qwen_836e759b088d480fa7274b3e84748578_4_1",
+              "name": "search_workflow_knowledge",
+              "arguments": {
+                "query": "Production Jobs"
+              }
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 1,
+        "sequence": 9,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 830,
+        "reservedNeurons": 232,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 8742,
+          "outputTokens": 65,
+          "estimatedNeurons": 42.413
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "qwen_836e759b088d480fa7274b3e84748578_5_1",
+              "name": "describe_assistant_scope",
+              "arguments": {}
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      },
+      {
+        "turn": 1,
+        "sequence": 10,
+        "transport": "wrangler-remote-ai-binding",
+        "latencyMs": 963,
+        "reservedNeurons": 252,
+        "usage": {
+          "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+          "inputTokens": 9552,
+          "outputTokens": 68,
+          "estimatedNeurons": 46.251
+        },
+        "rawOutput": {
+          "calls": [
+            {
+              "id": "qwen_836e759b088d480fa7274b3e84748578_6_1",
+              "name": "search_workflow_knowledge",
+              "arguments": {
+                "query": "Production Jobs"
+              }
+            }
+          ],
+          "final": null
+        },
+        "uncertain": false
+      }
+    ],
+    "normalizedProtocolSteps": [
+      {
+        "turn": 0,
+        "modelSequence": 1,
+        "mappings": [
+          {
+            "providerCallId": "call_1",
+            "hostCallId": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_1_1",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "get_production_overview"
+              ]
+            }
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_1_1",
+                "name": "discover_capabilities",
+                "arguments": {
+                  "names": [
+                    "get_production_overview"
+                  ]
+                }
+              }
+            ],
+            "final": null
+          }
+        ]
+      },
+      {
+        "turn": 0,
+        "modelSequence": 2,
+        "mappings": [
+          {
+            "providerCallId": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_1_2",
+            "hostCallId": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_2_1",
+            "name": "get_production_overview",
+            "arguments": {
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "start_date": "",
+              "end_date": "",
+              "limit": 20
+            }
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_2_1",
+                "name": "get_production_overview",
+                "arguments": {
+                  "statuses": [
+                    "in_production"
+                  ],
+                  "include_archived": false,
+                  "start_date": "",
+                  "end_date": "",
+                  "limit": 20
+                }
+              }
+            ],
+            "final": null
+          }
+        ]
+      },
+      {
+        "turn": 0,
+        "modelSequence": 3,
+        "mappings": [
+          {
+            "providerCallId": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_3_1",
+            "hostCallId": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_3_1",
+            "name": "search_workflow_knowledge",
+            "arguments": {
+              "query": "How many Jobs are currently In Production?"
+            }
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_9594e7a4dfee4600afc57c0c7aad73f3_3_1",
+                "name": "search_workflow_knowledge",
+                "arguments": {
+                  "query": "How many Jobs are currently In Production?"
+                }
+              }
+            ],
+            "final": null
+          }
+        ]
+      },
+      {
+        "turn": 0,
+        "modelSequence": 4,
+        "mappings": [],
+        "continuation": [
+          {
+            "calls": [],
+            "final": {
+              "answer": "There are currently 0 Jobs in Production based on the latest overview data. This count includes active Jobs and excludes archives. The upcoming planned completion window was from 2026-11-01 to 2026-11-30, but no active Jobs in scope had persisted planned completion dates in this window.",
+              "observations": [
+                {
+                  "text": "Production overview counts describe current visible Jobs in the selected lifecycle-status and archive scope; the date window applies only to upcoming persisted planned completions.",
+                  "evidence_ids": [
+                    "e1"
+                  ]
+                },
+                {
+                  "text": "Production Jobs in scope: 0.",
+                  "evidence_ids": [
+                    "e1"
+                  ]
+                },
+                {
+                  "text": "Active Production Jobs: 0.",
+                  "evidence_ids": [
+                    "e1"
+                  ]
+                },
+                {
+                  "text": "Scheduled Production Jobs across all statuses in scope: 0.",
+                  "evidence_ids": [
+                    "e1"
+                  ]
+                },
+                {
+                  "text": "Unscheduled Production Jobs across all statuses in scope: 0.",
+                  "evidence_ids": [
+                    "e1"
+                  ]
+                },
+                {
+                  "text": "Production Jobs with effective status In Production: 0.",
+                  "evidence_ids": [
+                    "e1"
+                  ]
+                }
+              ],
+              "inferences": [],
+              "recommendations": [],
+              "questions": [],
+              "completed_actions": []
+            }
+          }
+        ]
+      },
+      {
+        "turn": 1,
+        "modelSequence": 5,
+        "mappings": [
+          {
+            "providerCallId": "call_1",
+            "hostCallId": "qwen_836e759b088d480fa7274b3e84748578_1_1",
+            "name": "discover_capabilities",
+            "arguments": {
+              "names": [
+                "find_jobs",
+                "get_job_summary",
+                "get_job_planning",
+                "get_job_labor_summary",
+                "get_production_overview",
+                "search_workflow_knowledge",
+                "describe_assistant_scope"
+              ]
+            }
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_836e759b088d480fa7274b3e84748578_1_1",
+                "name": "discover_capabilities",
+                "arguments": {
+                  "names": [
+                    "find_jobs",
+                    "get_job_summary",
+                    "get_job_planning",
+                    "get_job_labor_summary",
+                    "get_production_overview",
+                    "search_workflow_knowledge",
+                    "describe_assistant_scope"
+                  ]
+                }
+              }
+            ],
+            "final": null
+          }
+        ]
+      },
+      {
+        "turn": 1,
+        "modelSequence": 6,
+        "mappings": [
+          {
+            "providerCallId": "qwen_836e759b088d480fa7274b3e84748578_1_2",
+            "hostCallId": "qwen_836e759b088d480fa7274b3e84748578_2_1",
+            "name": "get_production_overview",
+            "arguments": {
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "start_date": "",
+              "end_date": "",
+              "limit": 20
+            }
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_836e759b088d480fa7274b3e84748578_2_1",
+                "name": "get_production_overview",
+                "arguments": {
+                  "statuses": [
+                    "in_production"
+                  ],
+                  "include_archived": false,
+                  "start_date": "",
+                  "end_date": "",
+                  "limit": 20
+                }
+              }
+            ],
+            "final": null
+          }
+        ]
+      },
+      {
+        "turn": 1,
+        "modelSequence": 7,
+        "mappings": [
+          {
+            "providerCallId": "qwen_836e759b088d480fa7274b3e84748578_3_1",
+            "hostCallId": "qwen_836e759b088d480fa7274b3e84748578_3_1",
+            "name": "find_jobs",
+            "arguments": {
+              "query": "",
+              "statuses": [
+                "in_production"
+              ],
+              "include_archived": false,
+              "limit": 20,
+              "cursor": ""
+            }
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_836e759b088d480fa7274b3e84748578_3_1",
+                "name": "find_jobs",
+                "arguments": {
+                  "query": "",
+                  "statuses": [
+                    "in_production"
+                  ],
+                  "include_archived": false,
+                  "limit": 20,
+                  "cursor": ""
+                }
+              }
+            ],
+            "final": null
+          }
+        ]
+      },
+      {
+        "turn": 1,
+        "modelSequence": 8,
+        "mappings": [
+          {
+            "providerCallId": "qwen_836e759b088d480fa7274b3e84748578_4_1",
+            "hostCallId": "qwen_836e759b088d480fa7274b3e84748578_4_1",
+            "name": "search_workflow_knowledge",
+            "arguments": {
+              "query": "Production Jobs"
+            }
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_836e759b088d480fa7274b3e84748578_4_1",
+                "name": "search_workflow_knowledge",
+                "arguments": {
+                  "query": "Production Jobs"
+                }
+              }
+            ],
+            "final": null
+          }
+        ]
+      },
+      {
+        "turn": 1,
+        "modelSequence": 9,
+        "mappings": [
+          {
+            "providerCallId": "qwen_836e759b088d480fa7274b3e84748578_5_1",
+            "hostCallId": "qwen_836e759b088d480fa7274b3e84748578_5_1",
+            "name": "describe_assistant_scope",
+            "arguments": {}
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_836e759b088d480fa7274b3e84748578_5_1",
+                "name": "describe_assistant_scope",
+                "arguments": {}
+              }
+            ],
+            "final": null
+          }
+        ]
+      },
+      {
+        "turn": 1,
+        "modelSequence": 10,
+        "mappings": [
+          {
+            "providerCallId": "qwen_836e759b088d480fa7274b3e84748578_6_1",
+            "hostCallId": "qwen_836e759b088d480fa7274b3e84748578_6_1",
+            "name": "search_workflow_knowledge",
+            "arguments": {
+              "query": "Production Jobs"
+            }
+          }
+        ],
+        "continuation": [
+          {
+            "calls": [
+              {
+                "id": "qwen_836e759b088d480fa7274b3e84748578_6_1",
+                "name": "search_workflow_knowledge",
+                "arguments": {
+                  "query": "Production Jobs"
+                }
+              }
+            ],
+            "final": null
+          }
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "turn": 0,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1456,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 0,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "discover_capabilities",
+        "outcome": "ok",
+        "durationMs": 145,
+        "reasonCode": "ok"
+      },
+      {
+        "turn": 0,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1032,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 0,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "get_production_overview",
+        "outcome": "ok",
+        "durationMs": 839,
+        "reasonCode": "ok"
+      },
+      {
+        "turn": 0,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1259,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 0,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "search_workflow_knowledge",
+        "outcome": "error",
+        "durationMs": 75,
+        "reasonCode": "capability-not-discovered"
+      },
+      {
+        "turn": 0,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1749,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 0,
+        "kind": "agent-diagnostic",
+        "stage": "stop",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 0,
+        "reasonCode": "completed"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1115,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "discover_capabilities",
+        "outcome": "ok",
+        "durationMs": 152,
+        "reasonCode": "ok"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 962,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "get_production_overview",
+        "outcome": "ok",
+        "durationMs": 561,
+        "reasonCode": "ok"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1100,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "find_jobs",
+        "outcome": "ok",
+        "durationMs": 575,
+        "reasonCode": "ok"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1125,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "search_workflow_knowledge",
+        "outcome": "ok",
+        "durationMs": 1596,
+        "reasonCode": "ok"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1446,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "describe_assistant_scope",
+        "outcome": "ok",
+        "durationMs": 214,
+        "reasonCode": "ok"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "model",
+        "tool": null,
+        "outcome": "ok",
+        "durationMs": 1272,
+        "reasonCode": "received"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "tool",
+        "tool": "search_workflow_knowledge",
+        "outcome": "ok",
+        "durationMs": 1586,
+        "reasonCode": "ok"
+      },
+      {
+        "turn": 1,
+        "kind": "agent-diagnostic",
+        "stage": "stop",
+        "tool": null,
+        "outcome": "stopped",
+        "durationMs": 0,
+        "reasonCode": "round-limit"
+      }
+    ],
+    "meterRpcEvents": [
+      {
+        "turn": 0,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 87,
+        "reservedNeurons": 74,
+        "success": true
+      },
+      {
+        "turn": 0,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 81,
+        "outcome": "completed",
+        "inputTokens": 2083,
+        "outputTokens": 34,
+        "estimatedNeurons": 10.671,
+        "success": true
+      },
+      {
+        "turn": 0,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 72,
+        "reservedNeurons": 103,
+        "success": true
+      },
+      {
+        "turn": 0,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 62,
+        "outcome": "completed",
+        "inputTokens": 3293,
+        "outputTokens": 80,
+        "estimatedNeurons": 17.669,
+        "success": true
+      },
+      {
+        "turn": 0,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 78,
+        "reservedNeurons": 119,
+        "success": true
+      },
+      {
+        "turn": 0,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 71,
+        "outcome": "completed",
+        "inputTokens": 4106,
+        "outputTokens": 69,
+        "estimatedNeurons": 21.094,
+        "success": true
+      },
+      {
+        "turn": 0,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 75,
+        "reservedNeurons": 121,
+        "success": true
+      },
+      {
+        "turn": 0,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 73,
+        "outcome": "completed",
+        "inputTokens": 4261,
+        "outputTokens": 240,
+        "estimatedNeurons": 27.022,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 80,
+        "reservedNeurons": 80,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 86,
+        "outcome": "completed",
+        "inputTokens": 2336,
+        "outputTokens": 62,
+        "estimatedNeurons": 12.694,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 70,
+        "reservedNeurons": 147,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 70,
+        "outcome": "completed",
+        "inputTokens": 5045,
+        "outputTokens": 85,
+        "estimatedNeurons": 25.924,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 72,
+        "reservedNeurons": 162,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 69,
+        "outcome": "completed",
+        "inputTokens": 5868,
+        "outputTokens": 82,
+        "estimatedNeurons": 29.639,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 75,
+        "reservedNeurons": 169,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 71,
+        "outcome": "completed",
+        "inputTokens": 6264,
+        "outputTokens": 68,
+        "estimatedNeurons": 31.044,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 73,
+        "reservedNeurons": 232,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 66,
+        "outcome": "completed",
+        "inputTokens": 8742,
+        "outputTokens": 65,
+        "estimatedNeurons": 42.413,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_reserve_usage",
+        "status": 200,
+        "code": null,
+        "durationMs": 85,
+        "reservedNeurons": 252,
+        "success": true
+      },
+      {
+        "turn": 1,
+        "name": "tenbot_finish_usage",
+        "status": 204,
+        "code": null,
+        "durationMs": 69,
+        "outcome": "completed",
+        "inputTokens": 9552,
+        "outputTokens": 68,
+        "estimatedNeurons": 46.251,
+        "success": true
+      }
+    ],
+    "statistics": {
+      "modelCalls": 10,
+      "inputTokens": 51550,
+      "outputTokens": 853,
+      "neurons": 264.421,
+      "providerLatencyMs": 9172,
+      "calls": 9,
+      "uniqueHostIds": 9,
+      "perTurn": [
+        {
+          "id": "production-count-proof",
+          "status": "completed",
+          "rounds": 4,
+          "durationMs": 9167,
+          "neurons": 76.456,
+          "baselineMs": 424
+        },
+        {
+          "id": "contextual-list",
+          "status": "stopped",
+          "rounds": 6,
+          "durationMs": 19587,
+          "neurons": 187.965,
+          "baselineMs": 744
+        }
+      ]
+    },
+    "successfulTasks": 1,
+    "attemptedTasks": 2,
+    "plannedTasks": 4,
+    "remainingCasesNotRun": [
+      "Specific Job \u2192 schedule",
+      "Compound Job summary"
+    ],
+    "successfulModelSelectedJobReads": 3,
+    "totalSelectedCalls": 9,
+    "uniqueHostCallIds": 9,
+    "invalidCallCollisions": 0,
+    "unnecessaryKnowledgeScopeAttempts": 4,
+    "unnecessaryAttemptsBlockedByDiscovery": 1,
+    "deliveredFallbacks": 0,
+    "fallbackConfigured": false,
+    "fallbackRequiredTasks": 1,
+    "actualUsd": 0,
+    "usdBasis": "Workers Free verification and atomic existing meters/headroom; no paid activation",
+    "remainingStop": "round-limit",
+    "noAdditionalCallsAfterStop": true
+  },
+  "durableReconciliation": {
+    "newInferenceRows": 10,
+    "inputTokens": 51550,
+    "outputTokens": 853,
+    "newRateDerivedNeurons": 264.421,
+    "newUnmeasured": 0,
+    "stillReserved": 0,
+    "allLedgerRowsIncludingPriorTestsAndCalls": 18,
+    "allAccountedNeurons": 285.877,
+    "historicalAccountingRetained": true,
+    "accountPermissionsPreserved": true,
+    "unrelatedPoliciesPreserved": true,
+    "allNewAccountGuardEntriesSettled": true,
+    "newAccountGuardChargedNeurons": 264.421
+  },
+  "limitsUnchanged": {
+    "maxRounds": 6,
+    "maxCalls": 10,
+    "maxCallsPerRound": 4,
+    "maxOutputTokens": 640,
+    "maxDurationMs": 75000,
+    "additionalExperimentNeurons": 500,
+    "dayRequests": 300,
+    "monthRequests": 6000,
+    "minuteRequestsPerUser": 6,
+    "dayNeurons": 8000,
+    "monthNeurons": 240000
+  },
+  "finalHarnessState": {
+    "disposed": true,
+    "modelCalls": 10,
+    "chargedOrReservedNeurons": 264.42099999999994,
+    "grantActivations": 0,
+    "enrollmentChanges": 0,
+    "operationalWrites": 0,
+    "fixtureSetupWrites": 0,
+    "providerConfigurationChanges": 0
+  },
+  "process": {
+    "exitCode": 1,
+    "timedOut": false,
+    "elapsedSeconds": 94.392
+  },
+  "recommendation": "Hold TenDev/model-directed opt-in. Server identity/pairing defect corrected and real read proven; live follow-up termination/relevance and count-first presentation remain insufficient. No general Qwen capability conclusion from two zero-population turns.",
+  "sharedOrProductionChanges": false,
+  "privateEvidence": [
+    "/private/tmp/tenops-tenbot-qwen-tool-protocol-20261101",
+    "/private/tmp/tenops-tenbot-qwen-tools-live-hewKBH"
+  ]
+}

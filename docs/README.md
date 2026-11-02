@@ -95,3 +95,5 @@ The [October31 consolidated TenBot release readiness](project-memory/2026-10-30-
 - [Consolidated TenBot Production release](project-memory/2026-11-01-tenbot-consolidated-production-release.md): TenOps `e71bd981` / `eb191ab7-6e40-4275-b0a1-c616044b89a5`, shared Edge41/JWT ON; persistent history/Messaging/Job Intelligence/direct answers released.35 assets/41 modules/access-boundary/health pass; no genuine employee smoke, no renewed spending, all operational writes OFF.
 
 - [Qwen evaluation transport correction and quota blocker — November 1, 2026](project-memory/2026-11-01-tenbot-qwen-evaluation-transport.md).
+
+- [Qwen tool-call protocol correction and live retest — November 1, 2026](project-memory/2026-11-01-tenbot-qwen-tool-protocol.md): server-owned call mapping and clear discovery contract; real count succeeds, follow-up reaches round limit. 264.421 Neurons/$0; TenDev remains HOLD.

@@ -1,19 +1,20 @@
 /** Opt-in live evaluation only. Genuine Qwen + existing synthetic Auth/JWT/RLS
  * reads and shared meter RPCs; no setup, SQL, history persistence or business writes.
- * Run from the pinned 16ccb2f archive with only reviewed evaluation infra overlaid. */
+ * Run from the accepted archive with only the pinned protocol/evaluation delta. */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash,randomUUID,type BinaryLike} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {createClient} from '@supabase/supabase-js';
-import {createTenbotAgentSessions} from '../supabase/functions/_shared/tenbot-agent-session';
+import {createTenbotAgentSessions,HostedAgentUnavailable} from '../supabase/functions/_shared/tenbot-agent-session';
 import {createQwenAgentProvider} from '../supabase/functions/_shared/tenbot-qwen-agent';
 import {createTenbotJobTools,type JobToolCaller,type TenbotJobToolName,type JobFacts} from '../supabase/functions/_shared/tenbot-job-tools';
 import type {InferenceInput,InferenceProvider} from '../supabase/functions/_shared/tenbot-core';
 import type {AgentSessionStore,StoredAgentState} from '../supabase/functions/_shared/tenbot-agent-history-store';
 import {validateStoredAgentState} from '../supabase/functions/_shared/tenbot-agent-history-store';
 import type {InvestigationDiagnostic} from '../supabase/functions/_shared/tenbot-investigation-diagnostics';
+import type {AgentProvider} from '../supabase/functions/_shared/tenbot-agent';
 import {defaultModel,type InferenceUsage} from '../supabase/functions/_shared/tenbot-models';
 import {openPilotProvider} from './support/tenbot-ai-pilot.mjs';
 
@@ -23,10 +24,13 @@ const CONFIG='/private/tmp/tenops-tenbot-hosted-adapter-20261029/free-project-cr
 const BASELINE='/private/tmp/tenops-tenbot-consolidated-production-20261101/candidate';
 const ROOT=path.resolve(import.meta.dirname,'..');
 const SHA='16ccb2fdac836f8a9b1cb57177e0af775d0e0840';
+const TRANSPORT_BASELINE='c1992d3';
+// Stop after any failed turn: this protocol retest does not spend through
+// unreliable discovery, final output, authorization or metering behavior.
 const pins:Record<string,string>={
  'tenbot-agent.ts':'f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98',
  'tenbot-agent-session.ts':'16bdfc1401ef8336f5011b3122be7e045d39a599f2d239bb97db1ea15ad5c367',
- 'tenbot-qwen-agent.ts':'5b94998cbc47e0e4f4879ae4418e74d0fbb539de7b0d7342f49d86806b320138',
+ 'tenbot-qwen-agent.ts':'413c7467e4f803f1c2b354f846bf42be2d8d624b1f781cb4f993ff817e4be979',
  'tenbot-agent-operations.ts':'6c2b95c2e47a8cd7b3c7ff65947a30ed3bc2c4bb766dd220e442db9ad78f22c8',
  'tenbot-job-routing.ts':'98d4d02ea068cfd4e829beabc04361dcdee3c7d4af6837513ba59f2ff956a384',
  'tenbot-job-tools.ts':'5ab6a975b2295403cd712bf98db00f925896915f77c14be513ef608722a7dbea',
@@ -50,8 +54,8 @@ assert(object(actor)&&typeof actor.id==='string'&&uuid.test(actor.id)&&typeof ac
 assert(typeof cfg.anonKey==='string'&&typeof cfg.serviceRoleKey==='string','Existing fixture keys unavailable');
 const owner=actor.id as string,started=Date.now(),deadline=started+12*60000;
 const DIR=fs.mkdtempSync('/private/tmp/tenops-tenbot-qwen-tools-live-');fs.chmodSync(DIR,0o700);
-const events:Record<string,unknown>[]=[],turns:Record<string,unknown>[]=[],modelRounds:Record<string,unknown>[]=[],meterEvents:Record<string,unknown>[]=[],controls:Record<string,unknown>[]=[];
-let phase='preflight',turnIndex=-1,lastDispatch=0,chargedNeurons=0,dispatches=0,disposed=false;
+const events:Record<string,unknown>[]=[],turns:Record<string,unknown>[]=[],modelRounds:Record<string,unknown>[]=[],meterEvents:Record<string,unknown>[]=[],controls:Record<string,unknown>[]=[],protocolSteps:Record<string,unknown>[]=[];
+let phase='preflight',turnIndex=-1,lastDispatch=0,chargedNeurons=0,dispatches=0,disposed=false,terminalReason:string|null=null;
 let pending:{id:string;name:string;arguments:Record<string,unknown>;used:boolean}[]=[];
 const save=(name:string,value:unknown)=>fs.writeFileSync(path.join(DIR,name),JSON.stringify(value,null,2)+'\n',{mode:0o600});
 const progress=(state:string)=>console.log(JSON.stringify({state,turn:turnIndex,dispatches,chargedNeurons:Math.round(chargedNeurons*1000)/1000,evidenceDirectory:DIR}));
@@ -82,7 +86,7 @@ async function meter(name:string,args:Record<string,unknown>){
  meterEvents.push({turn:turnIndex,name,status:response.status,code,durationMs:Date.now()-before,...(name==='tenbot_finish_usage'?{outcome:args.p_outcome,inputTokens:args.p_input_tokens,outputTokens:args.p_output_tokens,estimatedNeurons:args.p_estimated_neurons}:{reservedNeurons:args.p_reserved_neurons}),success:response.ok});
  return {data:response.ok?data:null,error:response.ok?null:{code:'fixture-meter-http-'+response.status}};
 }
-const canonicalArgs=(args:Record<string,unknown>)=>Object.fromEntries(Object.entries(args).filter(([k,v])=>!(v===''&&['query','cursor','start_date','end_date'].includes(k))).sort(([a],[b])=>a.localeCompare(b)));
+const canonicalArgs=(args:Record<string,unknown>)=>Object.fromEntries(Object.entries(args).filter(([k,v])=>!(v===''&&['query','cursor','start_date','end_date'].includes(k))).map(([k,v])=>[k,k==='job_id'&&typeof v==='string'&&uuid.test(v)?v.toLowerCase():v] as [string,unknown]).sort(([a],[b])=>a.localeCompare(b)));
 const rawTools=createTenbotJobTools(client as unknown as JobToolCaller,{deadlineMs:10000});
 const readTrace:Record<string,unknown>[]=[];
 const tracedTools={authorizeHistory:rawTools.authorizeHistory,async execute(name:TenbotJobToolName,args:Record<string,unknown>){
@@ -123,7 +127,7 @@ try{
  const chosen=jobs.filter(j=>j.job_number&&j.job_number.length<100).slice(0,2);assert(chosen.length===2,'existing-synthetic-Job-numbers-unavailable');
  const expectedOverview=await tracedTools.execute('get_production_overview',{statuses:['in_production'],include_archived:false});
  assert(expectedOverview.status==='ok'&&expectedOverview.complete,'complete-authorized-baseline-count-unavailable');
- save('scope.json',{candidate:SHA,pins,baseline:'e71bd981a583e0a4e706f9953c6cc1fcc4d576e1',baselinePins,fixture:REF,existingSyntheticIdentity:true,maxAdditionalNeurons:500,ordinarySpendingChanged:false,operationalWrites:0,fixtureSetupWrites:0,displayStore:'owner-scoped memory only',limits:{maxRounds:6,maxCalls:10,maxOutputTokens:640,maxDurationMs:75000},chosenJobs:chosen.map(j=>({job_id:j.job_id,job_number:j.job_number})),startedAt:new Date(started).toISOString()});
+ save('scope.json',{applicationBaseline:SHA,protocolCorrection:true,pins,transportBaseline:TRANSPORT_BASELINE,transportHashes:Object.fromEntries(['scripts/support/tenbot-ai-pilot.mjs','scripts/tenbot-ai/worker.ts','scripts/evaluate-tenbot-qwen-tools-live.mts'].map(file=>[file,hash(fs.readFileSync(path.join(ROOT,file)))])),baseline:'e71bd981a583e0a4e706f9953c6cc1fcc4d576e1',baselinePins,fixture:REF,existingSyntheticIdentity:true,maxAdditionalNeurons:500,ordinarySpendingChanged:false,operationalWrites:0,fixtureSetupWrites:0,displayStore:'owner-scoped memory only',limits:{maxRounds:6,maxCalls:10,maxOutputTokens:640,maxDurationMs:75000},chosenJobs:chosen.map(j=>({job_id:j.job_id,job_number:j.job_number})),startedAt:new Date(started).toISOString()});
  opened=await openPilotProvider({model:defaultModel});
  const transport=opened.provider;
  const measured:InferenceProvider={name:transport.name,reserveEstimate:input=>{const estimate=transport.reserveEstimate?.(input);assert(estimate&&chargedNeurons+estimate.neurons<=500,'evaluation-500-neuron-bound');return estimate;},usage:input=>transport.usage?.(input)??null,async infer(input:InferenceInput,signal?:AbortSignal){
@@ -134,33 +138,51 @@ try{
   try{value=await transport.infer(input,signal);pending=object(value)&&Array.isArray(value.calls)?value.calls.filter(object).filter(call=>typeof call.id==='string'&&typeof call.name==='string'&&object(call.arguments)).map(call=>({id:call.id as string,name:call.name as string,arguments:call.arguments as Record<string,unknown>,used:false})):[];return value;}
   finally{usage=transport.usage?.(input)??null;if(usage){assert(usage.model===defaultModel&&usage.estimatedNeurons<=estimate.neurons,'actual-usage-exceeds-conservative-bound');chargedNeurons+=usage.estimatedNeurons-estimate.neurons;}modelRounds.push({turn:turnIndex,sequence:dispatches,transport:opened!.transport,latencyMs:Date.now()-start,reservedNeurons:estimate.neurons,usage,rawOutput:bounded(value??null,16000),uncertain:usage===null});save('model-rounds.json',modelRounds);}
  }};
- const sessions=createTenbotAgentSessions({mode:'openai',readOnlyHosted:true,modelDirectedReads:true,operationalHistory:false,sessionStore:memoryStore(),can,jobTools:id=>{assert.equal(id,owner);return tracedTools;},provider:()=>createQwenAgentProvider({provider:measured,owner,rpc:meter,can:()=>can(owner,'readOperationalData')}),onDiagnostic(event:InvestigationDiagnostic){events.push({turn:turnIndex,kind:'agent-diagnostic',...event});}});
+ const provider=():AgentProvider=>{
+  const adapter=createQwenAgentProvider({provider:measured,owner,rpc:meter,can:()=>can(owner,'readOperationalData')});
+  return {...adapter,async step(request){
+   const step=await adapter.step(request),raw=modelRounds.at(-1)?.rawOutput;
+   assert(object(raw)&&Array.isArray(raw.calls)&&raw.calls.length===step.calls.length,'provider-call-map-length');
+   const originalCalls=raw.calls;
+   const mappings=step.calls.map((call,index)=>{
+    const original=originalCalls[index];assert(object(original)&&original.name===call.name&&JSON.stringify(original.arguments)===JSON.stringify(call.arguments),'provider-call-map-identity');
+    return {providerCallId:original.id,hostCallId:call.id,name:call.name,arguments:call.arguments};
+   });
+   pending=step.calls.map(call=>({...call,used:false}));
+   protocolSteps.push({turn:turnIndex,modelSequence:modelRounds.length,mappings,continuation:bounded(step.continuation)});save('protocol-steps.json',protocolSteps);return step;
+  }};
+ };
+ const sessions=createTenbotAgentSessions({mode:'openai',readOnlyHosted:true,modelDirectedReads:true,operationalHistory:false,sessionStore:memoryStore(),can,jobTools:id=>{assert.equal(id,owner);return tracedTools;},provider,onDiagnostic(event:InvestigationDiagnostic){events.push({turn:turnIndex,kind:'agent-diagnostic',...event});}});
  let conversationId:string|undefined;
  const cases=[
   {id:'production-count-proof',question:'How many Jobs are currently In Production?',reset:false},
   {id:'contextual-list',question:'Which Jobs are they?',reset:false},
-  {id:'explicit-identity-compound',question:`For Job "${chosen[1].job_number}", give the saved scheduled dates, recorded labor hours for 2026-10-01 through 2026-10-31, and the number of recorded open follow-ups. Use the current Job rather than any previously discussed one. Distinguish unknown fields.`,reset:false},
-  {id:'ambiguous-missing-information',question:'For that Job, when will it actually finish and how many labor hours remain? Explain what information is missing if that cannot be established.',reset:true},
+  {id:'explicit-prior-job',question:`What are the saved scheduled dates for Job "${chosen[0].job_number}"?`,reset:false},
+  {id:'explicit-identity-compound',question:`For Job "${chosen[1].job_number}", summarize its current status, saved scheduled dates, recorded labor hours for 2026-10-01 through 2026-10-31, and the number of recorded open follow-ups. Distinguish unknown fields.`,reset:false},
  ];
  for(const [index,test] of cases.entries()){
   turnIndex=index;checkDeadline();if(index){while(Date.now()-lastDispatch<61000){progress('pacing-shared-six-round-per-minute-limit');await new Promise(resolve=>setTimeout(resolve,Math.min(10000,61000-(Date.now()-lastDispatch))));checkDeadline();}}
   const baseline=await control(test.question,test.reset);controls.push({id:test.id,...baseline});save('controls.json',controls);phase='agent';pending=[];const roundStart=modelRounds.length,readStart=readTrace.length,eventStart=events.length,start=Date.now();
-  const result=await sessions({action:'ask',question:test.question,...(!test.reset&&conversationId?{conversationId}:{})},owner) as Record<string,unknown>;
+  let result:Record<string,unknown>={},turnError:unknown=null;
+  try{result=await sessions({action:'ask',question:test.question,...(!test.reset&&conversationId?{conversationId}:{})},owner) as Record<string,unknown>;}
+  catch(error){turnError=error;if(error instanceof HostedAgentUnavailable)conversationId=error.conversationId;}
   if(typeof result.conversationId==='string')conversationId=result.conversationId;
   const stop=events.slice(eventStart).filter(event=>event.kind==='agent-diagnostic'&&event.stage==='stop').at(-1);
-  const status=stop?.reasonCode==='completed'&&stop.outcome==='ok'?'completed':'stopped';
+  const reason=turnError instanceof HostedAgentUnavailable?turnError.reason:turnError?'unknown-session-failure':typeof stop?.reasonCode==='string'?stop.reasonCode:'missing-stop-diagnostic';
+  const status=!turnError&&reason==='completed'&&stop?.outcome==='ok'?'completed':'stopped';
   const selected=modelRounds.slice(roundStart).flatMap(round=>object(round.rawOutput)&&Array.isArray(round.rawOutput.calls)?round.rawOutput.calls:[]);
   const actualReads=readTrace.slice(readStart).filter(r=>r.origin==='model-selected');
-  const record={id:test.id,actualModelInference:modelRounds.length>roundStart,status,reason:stop?.reasonCode??'missing-stop-diagnostic',deterministicFallback:false,message:bounded(result.message,6000),durationMs:Date.now()-start,modelCalls:modelRounds.length-roundStart,selectedCalls:selected,actualModelSelectedReads:actualReads,hostFreshnessReads:readTrace.slice(readStart).filter(r=>r.origin!=='model-selected'),sessionResponse:bounded(result,28000),baseline};
+  const identityExpectation=test.id==='explicit-prior-job'?{expectedJobId:chosen[0].job_id}:test.id==='explicit-identity-compound'?{expectedJobId:chosen[1].job_id,previousExplicitJobId:chosen[0].job_id,previousExactJobTurnCompleted:turns.some(turn=>turn.id==='explicit-prior-job'&&turn.status==='completed')}:{};
+  const record={id:test.id,...identityExpectation,actualModelInference:modelRounds.length>roundStart,status,reason,sessionRejected:turnError!==null,deterministicFallback:false,message:bounded(result.message,6000),durationMs:Date.now()-start,modelCalls:modelRounds.length-roundStart,selectedCalls:selected,actualModelSelectedReads:actualReads,hostFreshnessReads:readTrace.slice(readStart).filter(r=>r.origin!=='model-selected'),sessionResponse:bounded(result,28000),baseline};
   turns.push(record);save('turns.json',turns);save('events.json',events);save('meter.json',meterEvents);progress('turn-complete');
   if(index===0)assert(modelRounds.length>roundStart&&actualReads.some(r=>jobNames.has(r.name as TenbotJobToolName)&&r.status==='ok'),'first-real-model-selected-read-proof-failed-stop');
-  if(status!=='completed')break;
+  if(status!=='completed'){terminalReason=reason;throw turnError??Error('Model-directed task did not complete');}
  }
- save('report.json',{evaluationFinished:true,allScenariosRuntimeCompleted:turns.length===cases.length&&turns.every(turn=>turn.status==='completed'),candidate:SHA,fixture:REF,actualModelInference:true,actualJwtRls:true,scriptedModelResponses:false,modelCalls:dispatches,chargedOrReservedNeurons:chargedNeurons,measuredUsage:modelRounds.map(r=>r.usage),turns:turns.length,latencyMs:Date.now()-started,actualUsd:0,usdBasis:'Existing verified Workers Free allowance; quota usage measured in Neurons, no paid activation',databaseWrites:'Only canonical shared inference reserve/finish accounting RPCs; zero business/history/Auth/profile writes',limitations:['Small existing synthetic fixture only; no Production data accessed.','Deterministic control uses the same authorized current tools and pinned Production router; no control prose inference.','Correctness requires inspecting recorded model answers, selected calls and same-caller control evidence; completion alone is not correctness.','No permission changes or new revoked-access scenarios executed; prior security evidence reused.','No hosted opt-in activation or Production routing changes.']});
+ save('report.json',{evaluationFinished:true,allScenariosRuntimeCompleted:turns.length===cases.length&&turns.every(turn=>turn.status==='completed'),applicationBaseline:SHA,protocolCorrection:true,fixture:REF,actualModelInference:true,actualJwtRls:true,scriptedModelResponses:false,modelCalls:dispatches,chargedOrReservedNeurons:chargedNeurons,measuredUsage:modelRounds.map(r=>r.usage),turns:turns.length,latencyMs:Date.now()-started,actualUsd:0,usdBasis:'Existing verified Workers Free allowance; quota usage measured in Neurons, no paid activation',databaseWrites:'Only canonical shared inference reserve/finish accounting RPCs; zero business/history/Auth/profile writes',limitations:['Small existing synthetic fixture only; no Production data accessed.','Deterministic control uses the same authorized current tools and pinned Production router; no control prose inference.','Correctness requires inspecting recorded model answers, selected calls and same-caller control evidence; completion alone is not correctness.','No permission changes or new revoked-access scenarios executed; prior security evidence reused.','No hosted opt-in activation or Production routing changes.']});
  progress('evaluation-finished');
 }catch(error){
  const stop=events.filter(event=>event.kind==='agent-diagnostic'&&event.stage==='stop').at(-1);
- const safe=error instanceof assert.AssertionError?error.message.slice(0,160):typeof stop?.reasonCode==='string'?stop.reasonCode:'live-evaluation-failed-see-safe-trace';
+ const safe=terminalReason??(error instanceof assert.AssertionError?error.message.slice(0,160):typeof stop?.reasonCode==='string'?stop.reasonCode:'live-evaluation-failed-see-safe-trace');
  save('stop.json',{completed:false,reason:safe,phase,turn:turnIndex,modelCalls:dispatches,chargedOrReservedNeurons:chargedNeurons,elapsedMs:Date.now()-started});save('turns.json',turns);save('model-rounds.json',modelRounds);save('events.json',events);save('meter.json',meterEvents);console.error(JSON.stringify({stopped:true,reason:safe,evidenceDirectory:DIR}));process.exitCode=1;
 }finally{
  save('read-trace.json',readTrace);
