@@ -46,11 +46,11 @@ function fixture(){
  const actionCaller={async rpc(name:string,args:Record<string,unknown>){const result=await caller(name,args);return {data:result.data,error:result.error?{code:'unavailable'}:null};}};
  const operationHistory={authorizeAccess:(refs:Parameters<typeof authorizeHostedOperationHistory>[1])=>authorizeHostedOperationHistory({owner:f.owner,caller:reviewedCaller,can},refs),getAction:(reference:ActionReference)=>createReviewedActionService(actionCaller).get(reference)};
  const operations=(input:{question:string;documentIds:string[]})=>createHostedOperations({owner:f.owner,...input,caller:reviewedCaller,service:{async rpc(name,args){const result=await service(name,args);return {data:result.data,error:result.error?{code:'unavailable'}:null};}},sessionId,can});
- function plan(document=false,clarify=false){
-  const calls=clarify?[]:[...(document?[{name:'read_supplied_document',arguments:{source_id:sourceId}}]:[]),{name:'prepare_proposal_draft',arguments:proposal(document)}];let index=0;
+ function plan(document=false,clarify=false,scopeReads=0,scopeOnly=false){
+  const calls=clarify?[]:[...Array.from({length:scopeReads},()=>({name:'describe_assistant_scope',arguments:{}})),...(!scopeOnly?[...(document?[{name:'read_supplied_document',arguments:{source_id:sourceId}}]:[]),{name:'prepare_proposal_draft',arguments:proposal(document)}]:[])];let index=0;
   return (request?:AgentStepRequest):AgentStep=>{
    if(request)requests.push(structuredClone({instructions:request.instructions,history:request.history,tools:request.tools}));
-   index++;if(!clarify&&index===1)return {calls:[{id:'discover',name:'discover_capabilities',arguments:{names:calls.map(call=>call.name)}}],continuation:[],usage:emptyUsage()};
+   index++;if(!clarify&&index===1)return {calls:[{id:'discover',name:'discover_capabilities',arguments:{names:[...new Set(calls.map(call=>call.name))]}}],continuation:[],usage:emptyUsage()};
    if(!clarify&&index<=calls.length+1){const call=calls[index-2];return {calls:[{id:'operation'+index,...call,arguments:call.arguments as Record<string,JsonValue>}],continuation:[],usage:emptyUsage()};}
    const text=clarify?'Which Proposal details should I use?':summary;
    return {calls:[],continuation:[],usage:emptyUsage(),final:{answer:text,observations:clarify?[]:[{text,evidence_ids:['e'+calls.length]}],inferences:[],recommendations:[],questions:clarify?[text]:[],completed_actions:[]}};
@@ -60,8 +60,8 @@ function fixture(){
   const step=plan(document,clarify),provider:AgentProvider={name:'local injected session provider',model:'offline-scripted',async step(request){return step(request);}};
   return createTenbotAgentSessions({readOnlyHosted:true,modelDirectedReads:true,mode:'openai',sessionStore:createTenbotAgentHistoryStore(caller,service,{persistent:true}),can:async()=>f.state.allowed,jobTools:()=>f.state.jobTools!,provider:()=>provider,now:()=>f.state.now,reviewedOperations:operations,operationHistory});
  }
- function hosted(options:{enabled?:boolean;origin?:string;document?:boolean;clarify?:boolean}={}){
-  const step=plan(options.document,options.clarify),fetcher:typeof fetch=async(_url,init)=>{
+ function hosted(options:{enabled?:boolean;origin?:string;document?:boolean;clarify?:boolean;scopeReads?:number;scopeOnly?:boolean}={}){
+  const step=plan(options.document,options.clarify,options.scopeReads,options.scopeOnly),fetcher:typeof fetch=async(_url,init)=>{
    const request=JSON.parse(String(init?.body));requests.push(request);f.state.providerCalls++;assert.equal(request.model,'gpt-6.1-terra');
    const response=step();return Response.json({status:'completed',model:'gpt-6.1-terra',service_tier:'default',usage:{input_tokens:80,output_tokens:10,total_tokens:90,input_tokens_details:{cached_tokens:0,cache_write_tokens:0}},output:response.calls.length?response.calls.map(call=>({type:'function_call',call_id:call.id,name:call.name,arguments:JSON.stringify(call.arguments)})):[{type:'message',role:'assistant',content:[{type:'output_text',text:JSON.stringify(response.final)}]}]});
   };
@@ -84,6 +84,19 @@ await check('actual hosted constructor/provider transport discovers the real reg
  const serialized=JSON.stringify(f.requests);assert(serialized.includes('prepare_proposal_draft'));assert(serialized.includes('Employee-provided text uses source_ref employee'));assert(!serialized.includes('"contract":"tenbot.actions.v1"'));
  for(const options of [{enabled:false},{enabled:true,origin:'https://tenops.pages.dev'}]){const denied=fixture();await assert.rejects(denied.hosted(options)({action:'ask',question,documentIds:[sourceId]}),/Invalid read-only/);await assert.rejects(denied.hosted(options)({action:'ask',question,supersedes:reply.actionStatuses![0].card.reference}),/Invalid read-only/);assert.equal(denied.state.providerCalls,0);assert.equal(denied.published.length,0);}
  for(const extra of [{password:'PRIVATE-AUTH-PASSWORD'},{parameters:{}},{actionCards:[]}])await assert.rejects(f.hosted()({action:'ask',question,...extra}),/Invalid read-only/);
+});
+await check('hosted operations can finish after six sequential tool rounds while both round limits remain finite',async()=>{
+ // Reproduce the six successful tool-round shape, using the existing actual
+ // scope/document/Proposal adapters and a free scripted provider transport.
+ const f=fixture(),reply=await f.hosted({document:true,scopeReads:3})({action:'ask',question,documentIds:[sourceId]}) as Reply;
+ assert.equal(f.state.providerCalls,7);assert.equal(reply.actionStatuses?.length,1);assert.equal(reply.message,summary);assert.equal(f.published.length,1);
+ const requests=f.requests as Array<{max_output_tokens:number}>;
+ assert.equal(requests[0].max_output_tokens,640);assert(requests.slice(1).every(request=>request.max_output_tokens===1800));
+ for(const enabled of [true,false]){
+  const bounded=fixture(),stopped=await bounded.hosted({enabled,scopeReads:9,scopeOnly:true})({action:'ask',question:'Explain the available assistant scope and its boundaries.'}) as Reply;
+  assert.equal(bounded.state.providerCalls,enabled?8:6);assert.equal(bounded.published.length,0);assert.equal(stopped.actionStatuses,undefined);
+  assert((bounded.requests as Array<{max_output_tokens:number}>).every(request=>request.max_output_tokens===640));
+ }
 });
 await check('private original revocation redacts the saved action and question, blocks later retransmission and needs no inference for history',async()=>{
  const f=fixture(),reply=await f.session(true)({action:'ask',question,documentIds:[sourceId]},f.owner) as Reply;assert.equal(reply.actionStatuses?.length,1);f.source.state='deleted';const before=f.requests.length;
