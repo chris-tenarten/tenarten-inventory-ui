@@ -10,7 +10,7 @@ import {createTenbotAgentHistoryStore} from './tenbot-agent-history-store.ts';
 import {createHostedOpenAIMetering} from './tenbot-openai-metering.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge imports require explicit extensions.
-import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING} from './tenbot-openai.ts';
+import {createOpenAIProvider,OPENAI_EXPERIMENT_PRICING,type OpenAIResponseMetadata} from './tenbot-openai.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Node/Deno module
 // @ts-ignore -- Edge imports require explicit extensions.
 import {AgentStepError} from './tenbot-agent.ts';
@@ -37,7 +37,7 @@ export const TENBOT_HOSTED_SERVICE_RPCS=new Set([
  'tenbot_openai_reserve','tenbot_openai_settle','tenbot_openai_meter_status',
  'tenbot_agent_load','tenbot_agent_commit','tenbot_employee_commit','tenbot_employee_page',
 ]);
-export function createHostedTenbot(options:{owner:string;origin:string;config:HostedTenbotConfig;caller:HostedRpc;service:HostedRpc;jobTools:JobTools;qwen:InferenceProvider|null;fetcher?:typeof fetch;now?:()=>number;acceptanceSpendingAuthorized?:()=>boolean;requestId?:string;onDiagnostic?:InvestigationDiagnosticSink}){
+export function createHostedTenbot(options:{owner:string;origin:string;config:HostedTenbotConfig;caller:HostedRpc;service:HostedRpc;jobTools:JobTools;qwen:InferenceProvider|null;fetcher?:typeof fetch;now?:()=>number;acceptanceSpendingAuthorized?:()=>boolean;requestId?:string;onDiagnostic?:InvestigationDiagnosticSink;onResponseMetadata?:(metadata:OpenAIResponseMetadata)=>void|Promise<void>}){
  const {owner,caller,service,jobTools,qwen,config}=options,now=options.now??Date.now;
  const canSpend=()=>config.spendingAuthorized||options.acceptanceSpendingAuthorized?.()===true;
  const enabled=config.enabled&&Boolean(options.origin)&&config.origins.includes(options.origin);
@@ -64,6 +64,7 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
    if(!canSpend()||config.apiKey.length<16||!Number.isFinite(expires)||expires<=now())return config.modelDirectedReads&&qwen?createQwenAgentProvider({provider:qwen,owner,rpc:service,can:()=>can('readOperationalData')}):{name:'OpenAI Responses',model:'gpt-6.1-terra',async step(){throw new AgentStepError('provider-not-configured');}};
    const meter=createHostedOpenAIMetering({owner,model:'gpt-6.1-terra',requestId:options.requestId??crypto.randomUUID(),rpc:service});
    return createOpenAIProvider({model:'gpt-6.1-terra',apiKey:config.apiKey,spendingAuthorized:true,pricing:OPENAI_EXPERIMENT_PRICING['gpt-6.1-terra'],requireResponseMetadata:true,
+    onResponseMetadata:options.onResponseMetadata,
     async reserveBudget(usd){
      if(!canSpend())throw new AgentStepError('spending-not-authorized');
      return meter.reserveBudget(usd);

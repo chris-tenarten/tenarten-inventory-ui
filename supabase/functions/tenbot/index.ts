@@ -6,6 +6,7 @@ import {createHostedTenbot,TENBOT_HOSTED_SERVICE_RPCS} from '../_shared/tenbot-h
 import {createHostedReceivalContract,createHostedReceivalRuntime,hostedReceivalPilotEnabled,hostedInvoicePreparationEnabled,ordinaryTenbotSpendingAuthorized,TENBOT_RECEIVAL_SERVICE_RPCS,TENBOT_RECEIVAL_WORKSPACE} from '../_shared/tenbot-receival-hosted.ts';
 import {terraAcceptanceSpendingAuthorized} from '../_shared/tenbot-terra-acceptance.ts';
 import {safeInvestigationDiagnostic} from '../_shared/tenbot-investigation-diagnostics.ts';
+import {safeOpenAIResponseMetadata} from '../_shared/tenbot-openai.ts';
 Deno.serve(async(request:Request)=>{
  const origin=request.headers.get('origin')||'';
  const allowed=(Deno.env.get('TENBOT_ALLOWED_ORIGINS')||'').split(',').map(s=>s.trim()).filter(Boolean);
@@ -53,6 +54,7 @@ Deno.serve(async(request:Request)=>{
  const hosted=createHostedTenbot({owner:data.user.id,origin,
   config:{...openAI,modelDirectedReads},acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
   onDiagnostic:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_acceptance',{requestId,...safeInvestigationDiagnostic(event)});}:undefined,
+  onResponseMetadata:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_provider',{requestId,...safeOpenAIResponseMetadata(event)});}:undefined,
   caller:(n,a)=>caller.rpc(n,a),service:(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?service.rpc(n,a):Promise.resolve({data:null,error:{message:'Metering action unavailable'}}),qwen:provider,jobTools:createTenbotJobTools(caller)});
  const result=await hosted(body);
  if(body.action==='status'&&preparation.enabled){if(hostedInvoicePreparationEnabled(preparation,data.user.id,origin)){const allowed=await caller.rpc('can_prepare_invoice_receival',{});if(!allowed.error&&allowed.data===true)return reply({...result,receivalPilotAvailable:true});}return reply(result);}

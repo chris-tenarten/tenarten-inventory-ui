@@ -1,0 +1,53 @@
+{
+  "reason": "Optional content-free provider metadata supersedes exact transport/hosted/index source-byte bindings; previous release and acceptance gate evidence is preserved.",
+  "baseline": "971be62140a5890f09fb64426e1f166d768e9b39",
+  "implementation": "40fe20eb19a26f0b2a563eab6a3b86d962ab2973",
+  "replaced": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "blob": "9eee1e6256f5e88168eeafea1be1f93e7f50f53d",
+      "sha256": "15beeaa80b55725f6984616d58fbc9253834ecc12939991250d20934327f846a",
+      "reviewedCandidate": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "16e7c7f6f77195bea9fa52cd6694d56ebb6ff5d7",
+        "heading": "## Accepted candidate source review — restricted TenDev preparation"
+      },
+      "acceptedAuthorityRevision": "ffed10ac28736e48ecff8edf032a3b414254f307"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "blob": "26250d5f139843af6f415f945b91258d22e1bc69",
+      "sha256": "73b3b8934d5d14862af19be785c182cc3198d7b7294859ca289286e20287cb09",
+      "reviewedCandidate": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-terra-acceptance-source-proof.md",
+        "revision": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+        "heading": "## Candidate technical source review — closed TenDev Terra acceptance gate"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/tenbot/index.ts",
+      "blob": "7c6d9f227858abb4e2aba9b437b53884200dde25",
+      "sha256": "f34df657c51226bdc2f675c187bc4b2787d6dbb7de914706dead6aef6294cdb1",
+      "reviewedCandidate": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-terra-acceptance-source-proof.md",
+        "revision": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+        "heading": "## Candidate technical source review — closed TenDev Terra acceptance gate"
+      }
+    }
+  ]
+}
