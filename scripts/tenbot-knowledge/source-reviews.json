@@ -1796,21 +1796,6 @@
   },
   {
     "classification": "candidate-source",
-    "authority": "technical-review",
-    "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-read-investigation.ts",
-    "blob": "e4ca199a21b1cd94eb273cd3c3584b0a639aec53",
-    "sha256": "3c709d195cd52b9c658efa39f79401b91be7cb65d04a11baa3bbd507f1151646",
-    "reviewedCandidate": "23feb9381dbc7b132286c28474be1ce3fc88225d",
-    "scope": "tendev-preparation",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-terra-publication-source-proof.md",
-      "revision": "23feb9381dbc7b132286c28474be1ce3fc88225d",
-      "heading": "## Candidate technical source review \u2014 Terra read-final contract alignment"
-    }
-  },
-  {
-    "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-action-auth.ts",
@@ -1909,22 +1894,6 @@
     "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-hosted.ts",
-    "blob": "2a7d1a626a4b25719de9f1643a1e83dddf4d4853",
-    "sha256": "982a95b3657db6c084e56178c7537e8c07ece3d189f98c15b71ab1d79feefa34",
-    "acceptedAuthorityRevision": "28005dc70d086a2a68830165c4f299ba51bc63ba",
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-    "scope": "tendev-preparation",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted candidate source review \u2014 integrated TenBot actions"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-reviewed-operations.ts",
     "blob": "0423aeaa4e1f6d667b24e0249d7e1e22007540ff",
     "sha256": "ba08f0a01df663b468d0b13425d718d466862e539568e24ecfd64043a7c56b66",
@@ -1935,21 +1904,6 @@
       "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
       "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
       "heading": "## Accepted candidate source review \u2014 integrated TenBot actions"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "technical-review",
-    "kind": "runtime",
-    "path": "supabase/functions/tenbot/index.ts",
-    "blob": "f063802c767cc5cd26e71e014e7e4c5282e918da",
-    "sha256": "b967de54eb4941532081fcfc2a99b22a5a8bb021d805408e450f13367c9e9971",
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-    "scope": "tendev-preparation",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Candidate technical source review \u2014 finite designated acceptance gate"
     }
   },
   {
@@ -2315,30 +2269,75 @@
     "classification": "candidate-source",
     "authority": "technical-review",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-proposal-operations.ts",
-    "blob": "5432aa24622a1de34a38bacb93cb6e5ba50ce229",
-    "sha256": "4532b51b398611f0cabe3d59a9624afbb8b1f33f827f6a5cc2990e1905d4a52e",
-    "reviewedCandidate": "917626449571142790e5516986b60bfdad6adf68",
+    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+    "blob": "35ef6f1879182c0fcd7216881a8fbb6bc22b8a63",
+    "sha256": "2f8b3ca9745709e08dd8b061710527d9a22645fd554e8beea0ceeb34c90fe67d",
+    "reviewedCandidate": "b43dbccce8261266872f1eb86c625cd65cb8d724",
     "scope": "tendev-preparation",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-bounded-diagnostics-source-proof.md",
-      "revision": "917626449571142790e5516986b60bfdad6adf68",
-      "heading": "## Candidate technical source review \u2014 closed Proposal diagnostics and current tool names"
+      "path": "docs/project-memory/2026-11-02-tenbot-agentic-completion-source-proof.md",
+      "revision": "b43dbccce8261266872f1eb86c625cd65cb8d724",
+      "heading": "## Candidate technical source review \u2014 agentic completion and normal availability"
     }
   },
   {
     "classification": "candidate-source",
     "authority": "technical-review",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
-    "blob": "12e09e761e032981ac1d5bd413890b8ddb8518e1",
-    "sha256": "7d2bb8ec3f2fdbb65c7bc43420c7a905e8bd9681e83c5e16e0d606f21b698b3b",
-    "reviewedCandidate": "4eef1d9cd05a674b7e916b9f74855e79a065caa9",
+    "path": "supabase/functions/_shared/tenbot-hosted.ts",
+    "blob": "2c17dff8535e3feea4d83a05d60e114de48683ee",
+    "sha256": "5839207a7252ef76cb98d409dfe1c89f76cdb5510b01d3302fbda956fd83fde0",
+    "reviewedCandidate": "b43dbccce8261266872f1eb86c625cd65cb8d724",
     "scope": "tendev-preparation",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-reviewed-round-limit-source-proof.md",
-      "revision": "4eef1d9cd05a674b7e916b9f74855e79a065caa9",
-      "heading": "## Candidate technical source review \u2014 bounded reviewed-operation completion"
+      "path": "docs/project-memory/2026-11-02-tenbot-agentic-completion-source-proof.md",
+      "revision": "b43dbccce8261266872f1eb86c625cd65cb8d724",
+      "heading": "## Candidate technical source review \u2014 agentic completion and normal availability"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-proposal-operations.ts",
+    "blob": "a8cc7b4e6dd8bc86b50be1bf2a7fac81ce1f2f68",
+    "sha256": "21540d045e301fae28aaa85b8a3e8e120a2b1a74553b8b9f0d5a3a1a9675b6bb",
+    "reviewedCandidate": "b43dbccce8261266872f1eb86c625cd65cb8d724",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-agentic-completion-source-proof.md",
+      "revision": "b43dbccce8261266872f1eb86c625cd65cb8d724",
+      "heading": "## Candidate technical source review \u2014 agentic completion and normal availability"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-read-investigation.ts",
+    "blob": "221c9d9f59a6f1359d4b57dc2563fd6544ddce77",
+    "sha256": "a5354a799f6a8e963fb8c0c7f5766551d597521fb05c7fb794eda886f2a722cd",
+    "reviewedCandidate": "b43dbccce8261266872f1eb86c625cd65cb8d724",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-agentic-completion-source-proof.md",
+      "revision": "b43dbccce8261266872f1eb86c625cd65cb8d724",
+      "heading": "## Candidate technical source review \u2014 agentic completion and normal availability"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/tenbot/index.ts",
+    "blob": "58d2f323ada0a6fcdfebd9ded8f1fdda5c235df1",
+    "sha256": "19ac45beedc675f7c26066b3f394b07d534e69873e6966c89d82df9d20acff19",
+    "reviewedCandidate": "b43dbccce8261266872f1eb86c625cd65cb8d724",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-agentic-completion-source-proof.md",
+      "revision": "b43dbccce8261266872f1eb86c625cd65cb8d724",
+      "heading": "## Candidate technical source review \u2014 agentic completion and normal availability"
     }
   }
 ]
