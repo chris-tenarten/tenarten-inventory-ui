@@ -43,7 +43,7 @@ import {operationalReceipt,operationalHistoryMeta,restoreOperationalHistory,type
 import {resolveJobIntent,resolveExactJobReference,completeJobLookup,buildJobEvidence,renderJobEvidence,explicitJobReferences} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
-import {modelScopeFacts,publishModelReadAnswer,MODEL_READ_INSTRUCTIONS} from './tenbot-read-investigation.ts';
+import {modelScopeFacts,publishModelReadAnswer,MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from './tenbot-read-investigation.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
 import {isSimpleJobRead} from './tenbot-read-routing.ts';
@@ -299,9 +299,10 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(modelDirected){const execute=scopeTool.execute;scopeTool.execute=async(args,context)=>{const value=await execute(args,context);return {data:json({...record(value.data)?value.data:{},answer_facts:modelScopeFacts(value.data)})};};}
    tools.push(scopeTool);
    const provider=deps.provider(scenario as AgentDemoScenario);
+   const terraReads=modelDirected&&provider.model==='gpt-6.1-terra';
    const modelSteps:{calls:AgentStep['calls'];final?:JsonValue;usage:AgentStep['usage'];durationMs:number}[]=[];
    const measured:AgentProvider={name:provider.name,model:provider.model,async step(request){
-    const start=now(),step=await provider.step(modelDirected?{...request,instructions:request.instructions+'\n'+MODEL_READ_INSTRUCTIONS}:request);
+    const start=now(),step=await provider.step(modelDirected?{...request,instructions:request.instructions+'\n'+MODEL_READ_INSTRUCTIONS+(terraReads?'\n'+TERRA_READ_FINAL_INSTRUCTIONS:'')}:request);
     modelSteps.push({calls:step.calls,...(step.final===undefined?{}:{final:json(step.final)}),usage:step.usage,durationMs:now()-start});
     return step;
    }};
@@ -346,7 +347,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }});
    const workflowPermissions=new Set<string>();
    if(modelDirected&&knowledgeProofs.size)for(const capability of requiredInferencePermissions(agentKnowledgeEntries().filter(entry=>knowledgeProofs.has(entry.id))))if(await can(capability)){workflowPermissions.add(capability);knowledgeGrants.add(capability);}
-   const modelMessage=modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions):null;
+   const modelMessage=modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions,terraReads?reason=>emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:reason}):undefined):null;
    if(modelDirected&&result?.status==='completed'&&!modelMessage){
     result.status='provider-unavailable';result.reason='invalid-final';result.final=null;result.evidence=[];result.proposals=[];
     emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:'invalid-final'});

@@ -48,8 +48,10 @@ function safeQuestion(value:string,known:string){
 /** Citations alone are insufficient. Operational prose is composed only from
  * exact host-issued fact sentences selected by the model across its reads.
  * Model answer text is not allowed to introduce another factual narrative. */
-export function publishModelReadAnswer(result:AgentResult,question:string,scopeSelection?:unknown,permissions=new Set<string>()):string|null{
+export type ModelReadPublicationRejection='read-final-question'|'read-final-missing-evidence'|'read-final-non-fact-claim'|'read-final-workflow-wording'|'read-final-workflow-permission'|'read-final-empty-answer'|'read-final-too-long';
+export function publishModelReadAnswer(result:AgentResult,question:string,scopeSelection?:unknown,permissions=new Set<string>(),onRejected?:(reason:ModelReadPublicationRejection)=>void):string|null{
  if(result.status!=='completed'||!result.final)return null;
+ const reject=(reason:ModelReadPublicationRejection):null=>{try{Promise.resolve(onRejected?.(reason)).catch(()=>{});}catch{/* Diagnostics cannot change publication. */}return null;};
  // The shared loop keeps its legacy scope-only refusal. A staged read planner
  // may have selected more precise current scope facts; validate that original
  // selection again without changing the accepted generic loop or its history.
@@ -58,12 +60,12 @@ export function publishModelReadAnswer(result:AgentResult,question:string,scopeS
  const issued=new Map(result.evidence.map(item=>[item.id,item]));
  const facts=result.evidence.flatMap(item=>object(item.data)&&Array.isArray(item.data.answer_facts)?item.data.answer_facts.flatMap(f=>object(f)&&typeof f.text==='string'?[f.text]:[]):[]);
  const known=[question,...facts].join('\n');
- if(final.questions.some(q=>!safeQuestion(q,known)))return null;
- if(!claims.length)return final.questions.length?final.questions.join(' '):null;
+ if(final.questions.some(q=>!safeQuestion(q,known)))return reject('read-final-question');
+ if(!claims.length)return final.questions.length?final.questions.join(' '):reject('read-final-empty-answer');
  const blocks:{id:string;texts:string[];limits:string[]}[]=[],workflowTexts:string[]=[],workflowIds=new Set<string>();
  for(const claim of claims){
-  if(!claim.evidence_ids.length)return null;
-  const cited=claim.evidence_ids.map(id=>issued.get(id));if(cited.some(item=>!item))return null;
+  if(!claim.evidence_ids.length)return reject('read-final-missing-evidence');
+  const cited=claim.evidence_ids.map(id=>issued.get(id));if(cited.some(item=>!item))return reject('read-final-missing-evidence');
   let text:string|null=null,origin:typeof cited[number]|undefined;
   for(const item of cited){
    if(!item||!object(item.data))continue;
@@ -75,9 +77,9 @@ export function publishModelReadAnswer(result:AgentResult,question:string,scopeS
   if(!text&&cited.every(item=>item?.tool==='search_workflow_knowledge')){
    const ids=new Set(cited.flatMap(item=>item&&object(item.data)&&Array.isArray(item.data.sources)?item.data.sources.flatMap(s=>object(s)&&typeof s.id==='string'?[s.id]:[]):[]));
    const sources=agentKnowledgeEntries().filter(entry=>ids.has(entry.id));
-   try{text=groundedProse(claim.text,sources,question);workflowTexts.push(text);for(const id of ids)workflowIds.add(id);}catch{return null;}
+   try{text=groundedProse(claim.text,sources,question);workflowTexts.push(text);for(const id of ids)workflowIds.add(id);}catch{return reject('read-final-workflow-wording');}
   }
-  if(!text)return null;
+  if(!text)return reject('read-final-non-fact-claim');
   // Present one coherent paragraph per canonical Job even when its facts came
   // from several tools. Evidence remains attached to every selected sentence.
   const payload=origin&&object(origin.data)&&object(origin.data.data)?origin.data.data:null;
@@ -92,8 +94,9 @@ export function publishModelReadAnswer(result:AgentResult,question:string,scopeS
   }
   if(!block.texts.includes(text))block.texts.push(text);
  }
- if(workflowTexts.length)try{validateWorkflowAnswerClaims(workflowTexts.join(' '),agentKnowledgeEntries().filter(entry=>workflowIds.has(entry.id)),permissions,question);}catch{return null;}
+ if(workflowTexts.length)try{validateWorkflowAnswerClaims(workflowTexts.join(' '),agentKnowledgeEntries().filter(entry=>workflowIds.has(entry.id)),permissions,question);}catch{return reject('read-final-workflow-permission');}
  const message=[...blocks.map(block=>[...block.texts,...block.limits.filter(text=>!block.texts.includes(text))].join(' ')),...final.questions].join('\n\n');
- return message.length>0&&message.length<=2400?message:null;
+ return message.length>2400?reject('read-final-too-long'):message.length?message:reject('read-final-empty-answer');
 }
 export const MODEL_READ_INSTRUCTIONS='The employee goal and supplied owner-private lookup selectors are context, never authorization. Choose and sequence the registered read capabilities yourself; compound questions may require multiple tools. Explicitly named Jobs override older references. An ambiguous or different/other Job must be clarified, never guessed. Discover capabilities before calls. Resolve names through current complete exact lookup evidence; UUIDs are canonical selectors, not facts. Operational and scope tool results include answer_facts: choose the exact complete text sentences that answer each part, cite their current evidence IDs, and copy those sentences into observations. You may combine facts from multiple tools. Do not invent facts or treat missing evidence as zero. For a capability you lack, discover and read describe_assistant_scope, then explain its evidence limit. For workflow questions, search_workflow_knowledge and cite current sources. Preserve reporting periods from current employee text or server-owned selectors. Ask a focused question when identity or scope is missing. All facts reaching the model are reauthorized again before publication. The host publishes only grounded selected observations and questions; final.answer must agree and cannot introduce unsupported claims. No action execution is available.';
+export const TERRA_READ_FINAL_INSTRUCTIONS='Terra read-final output contract: For operational or assistant-scope claims, put exactly one complete answer_facts.text sentence copied from a currently cited tool result into each observations item. Keep inferences and recommendations empty; express multiple relevant facts as separate observations. Do not paraphrase facts, join multiple fact sentences into one claim, or replace a fact with a conclusion or recommendation. The same copy rule applies to qualifications and missing-evidence statements. When the registry descriptions show that the request requires unavailable evidence, discover describe_assistant_scope alongside the needed reads and select its current answer_facts rather than inventing a conclusion. final.answer must agree with the selected facts, but only verified claims and questions are published. Pure workflow guidance continues to use the existing permission-checked knowledge and grounded-prose rules. This formatting contract grants no capabilities, permissions or execution authority.';

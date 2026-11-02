@@ -1,0 +1,55 @@
+{
+  "reason": "Terra read-final formatting and finite rejection diagnostics supersede only exact session/publisher/diagnostic source bytes; prior source and release evidence remain.",
+  "baseline": "1f7c2d3fc5ca241791f37ae3bbbcd0520d1163dd",
+  "implementation": "45b0697db7fa07f54200958112021e77563e0206",
+  "replaced": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-investigation-diagnostics.ts",
+      "blob": "bea0e13636c95718fb35d08da4b30e01c85f1395",
+      "sha256": "84a4d315742e76458bdb6ff840fbaaa195089ac2ddec5184468847abde85379d",
+      "reviewedCandidate": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-10-30-tenbot-receival-release-proof.md",
+        "revision": "b21c8ada58c884fd78ef84af0ab6031d0c2f643d",
+        "heading": "## Accepted candidate source review — read-only synthetic invoice preparation"
+      },
+      "acceptedAuthorityRevision": "4fba20b71970a0d9c60aeb09352854be21977e56"
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "9a09067b18f54d7b0ba1210bcdc4e32f7b922756",
+      "sha256": "9c85f928cd158fdcd699c5f0580c8b22dd46a2e9a88f120da8caa222f9eba769",
+      "reviewedCandidate": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "b5f7f66bfe924a2876834d0e698decf206eff9bb",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-simplification-tendev-source-proof.md",
+        "revision": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
+        "heading": "## Accepted candidate source review — TenDev read simplification, November 2, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-read-investigation.ts",
+      "blob": "0162f5cd2dfbeae403953271ce94453534d44707",
+      "sha256": "a45bb9c61271de06189d7cee0cd41e199d01c013d0c33b6353ff820d5b6b7337",
+      "reviewedCandidate": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "b5f7f66bfe924a2876834d0e698decf206eff9bb",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-simplification-tendev-source-proof.md",
+        "revision": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
+        "heading": "## Accepted candidate source review — TenDev read simplification, November 2, 2026"
+      }
+    }
+  ]
+}

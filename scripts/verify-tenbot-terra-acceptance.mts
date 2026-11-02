@@ -7,6 +7,7 @@ import {safeInvestigationDiagnostic,type InvestigationDiagnostic} from '../supab
 import {ordinaryTenbotSpendingAuthorized,hostedInvoicePreparationEnabled,hostedReceivalPilotEnabled} from '../supabase/functions/_shared/tenbot-receival-hosted';
 import {createHostedTenbotFixture} from './support/tenbot-hosted-fixture.mjs';
 import {safeOpenAIResponseMetadata,type OpenAIResponseMetadata} from '../supabase/functions/_shared/tenbot-openai';
+import {MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from '../supabase/functions/_shared/tenbot-read-investigation';
 const owner='11111111-1111-4111-8111-111111111111',other='33333333-3333-4333-8333-333333333333';
 const requestId='22222222-2222-4222-8222-222222222222',origin='https://tendev.pages.dev';
 const starts=Date.parse('2026-11-02T16:00:00Z'),expires=starts+3_600_000;
@@ -21,7 +22,7 @@ function fixture(changes:Partial<TerraAcceptanceScope>={},configChanges:Partial<
  const f=createHostedTenbotFixture(owner,archived);f.state.now=starts+1000;
  const currentScope={...scope,...changes},currentConfig={...config,...configChanges};
  const allowed=()=>terraAcceptanceSpendingAuthorized(currentConfig,currentScope,f.state.now);
- const diagnostics:{requestId:string;event:InvestigationDiagnostic}[]=[],responseMetadata:OpenAIResponseMetadata[]=[],reserveRequests:string[]=[];
+ const diagnostics:{requestId:string;event:InvestigationDiagnostic}[]=[],responseMetadata:OpenAIResponseMetadata[]=[],reserveRequests:string[]=[],providerInstructions:string[]=[];
  let afterReserve:(()=>void)|undefined,afterFetch:(()=>void)|undefined;
  let observeThrows=false,transformResponse:((response:Response)=>Promise<Response>)|undefined;
  const service:HostedRpc=async(name,args)=>{
@@ -34,9 +35,9 @@ function fixture(changes:Partial<TerraAcceptanceScope>={},configChanges:Partial<
   acceptanceSpendingAuthorized:allowed,requestId,onDiagnostic:event=>{if(allowed())diagnostics.push({requestId,event:safeInvestigationDiagnostic(event)});},
   onResponseMetadata:event=>{if(allowed())responseMetadata.push(safeOpenAIResponseMetadata(event));if(observeThrows)throw Error('Synthetic metadata observer unavailable');},
   caller:f.caller,service,qwen:null,jobTools:{async execute(){throw Error('Unexpected operational read');}},now:()=>f.state.now,
-  async fetcher(url,init){const result=await f.fetcher(url,init);afterFetch?.();return transformResponse?transformResponse(result):result;},
+  async fetcher(url,init){providerInstructions.push(JSON.parse(String(init?.body)).instructions);const result=await f.fetcher(url,init);afterFetch?.();return transformResponse?transformResponse(result):result;},
  });
- return {...f,handler,allowed,diagnostics,responseMetadata,reserveRequests,afterReserve(fn:()=>void){afterReserve=fn;},afterFetch(fn:()=>void){afterFetch=fn;},metadataObserverThrows(){observeThrows=true;},respond(fn:(response:Response)=>Promise<Response>){transformResponse=fn;}};
+ return {...f,handler,allowed,diagnostics,responseMetadata,reserveRequests,providerInstructions,afterReserve(fn:()=>void){afterReserve=fn;},afterFetch(fn:()=>void){afterFetch=fn;},metadataObserverThrows(){observeThrows=true;},respond(fn:(response:Response)=>Promise<Response>){transformResponse=fn;}};
 }
 
 await check('Only the exact enabled TenDev owner/model-read lane inside the finite server window is authorized',()=>{
@@ -150,5 +151,11 @@ await check('Temporary 429 and server failures preserve the existing single auto
   await f.handler()({action:'ask',question:f.archived.question});
   assert.equal(f.state.providerCalls,2);assert.equal(f.reservations.size,2);assert.equal(f.reserveRequests.length,2);assert([...f.reservations.values()].every(value=>value.actual===undefined));assert.equal(f.responseMetadata.length,2);
  }
+});
+await check('Terra read-only sessions receive the generic final contract without changing schema, profile or successful scope publication',async()=>{
+ const f=fixture(),result=await f.handler()({action:'ask',question:f.archived.question}) as {message:string};
+ assert.equal(result.message,fact);assert.equal(f.state.providerCalls,3);assert.equal(f.providerInstructions.length,3);
+ for(const instruction of f.providerInstructions){assert(instruction.includes(MODEL_READ_INSTRUCTIONS));assert(instruction.endsWith(TERRA_READ_FINAL_INSTRUCTIONS));}
+ assert(f.diagnostics.some(({event})=>event.reasonCode==='completed'));assert(!f.diagnostics.some(({event})=>event.reasonCode.startsWith('read-final-')));
 });
 console.log(JSON.stringify({passed:true,groups:checks.length,checks,actualInference:false,actualDatabase:false,mode:'Offline server gate/hosted transport with existing atomic meter RPC doubles'}));
