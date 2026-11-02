@@ -1846,22 +1846,6 @@
     "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-business-operations.ts",
-    "blob": "9197db1cc627de03c4f68f36dac3a703c8a7b800",
-    "sha256": "aa293d61ad4d980629184ebf17f608faecfe62012d3b41f42ef967fbe5c11259",
-    "acceptedAuthorityRevision": "28005dc70d086a2a68830165c4f299ba51bc63ba",
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-    "scope": "tendev-preparation",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted candidate source review \u2014 integrated TenBot actions"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-employee-history.ts",
     "blob": "b77f8fcacbbe6d89cae36e11aae50c7ab3160207",
     "sha256": "6441f4cd2a8c573b3e1db8c552adca9626f002ce9c2e386294cf275bdb588baf",
@@ -2338,6 +2322,51 @@
       "path": "docs/project-memory/2026-11-02-tenbot-agentic-completion-source-proof.md",
       "revision": "b43dbccce8261266872f1eb86c625cd65cb8d724",
       "heading": "## Candidate technical source review \u2014 agentic completion and normal availability"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-business-operations.ts",
+    "blob": "3dc5a9fb8dfd76f6cc596f072febb3e3b4f1739d",
+    "sha256": "2e28eb92278df20d3845805ba59bc03a1882c6c96e064e98d686f8c6e3f2610e",
+    "reviewedCandidate": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-pending-quantity-source-proof.md",
+      "revision": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+      "heading": "## Candidate technical source review \u2014 Pending quantity completion"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "src/modules/inventory/invoice-quantity.ts",
+    "blob": "3c3d95c93f791480170893f6787a1adeadd98c84",
+    "sha256": "131c894139009436f19f53219ed4b52c96d18686a2ed6015129bd19acc69e70c",
+    "reviewedCandidate": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-pending-quantity-source-proof.md",
+      "revision": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+      "heading": "## Candidate technical source review \u2014 Pending quantity completion"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "unapplied-migration",
+    "path": "supabase/migrations/20261102160000_tenbot_invoice_quantity_total_evidence.sql",
+    "blob": "d331f7a28cd3b4907613f6cfbae80d5dae91fd62",
+    "sha256": "9ff784a80eeef6d403250ce0afba114e88ab4b10088ba7162967631a8be40e79",
+    "reviewedCandidate": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-pending-quantity-source-proof.md",
+      "revision": "d35694d8591aa3c672c42f367b11690ce39d01c7",
+      "heading": "## Candidate technical source review \u2014 Pending quantity completion"
     }
   }
 ]
