@@ -1,0 +1,23 @@
+{
+  "parentCandidate": "d1a9dc7048972a5156e11183a00d851dcf8f198f",
+  "reviewedCorrection": "81b1f4d5f273ce5e06e0d84ca35fc475471f9c6b",
+  "reason": "Permit one final model response after sequential reviewed-operation tool calls; preserve ordinary six-round requests and every other bound.",
+  "replaced": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "22f2e3881bf4f72c552a4690ee274568b9b97d92",
+      "sha256": "20592e1a3ac60f0ff3ff16de7ef8fa5f87b620950d8e4b1d25cf0d4fffb10a00",
+      "acceptedAuthorityRevision": "28005dc70d086a2a68830165c4f299ba51bc63ba",
+      "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
+        "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+        "heading": "## Accepted candidate source review \u2014 integrated TenBot actions"
+      }
+    }
+  ]
+}
