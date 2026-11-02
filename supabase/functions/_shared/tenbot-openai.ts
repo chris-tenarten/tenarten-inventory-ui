@@ -13,6 +13,13 @@ export const OPENAI_EXPERIMENT_PRICING: Record<OpenAIModel, OpenAIPrice> = {
 export const OPENAI_PRICING_SOURCE = 'https://developers.openai.com/api/docs/pricing';
 export const OPENAI_CACHE_ACCOUNTING_SOURCE = 'https://developers.openai.com/api/docs/guides/prompt-caching';
 export type BudgetReservation = { settle(actualUsd?: number): Promise<void> | void };
+export type OpenAIResponseMetadata = {
+  httpStatus: number | null; errorCode: string; errorType: string; errorParameter: string;
+  completionStatus: string; incompleteReason: string;
+  usagePresent: boolean; inputTokensPresent: boolean; outputTokensPresent: boolean;
+  cachedTokensPresent: boolean; cacheWriteTokensPresent: boolean;
+  modelMatches: boolean; serviceTierMatches: boolean;
+};
 export type OpenAIProviderOptions = {
   model: OpenAIModel; apiKey: string; spendingAuthorized: boolean; pricing: OpenAIPrice;
   /** Atomic server-side reservation must reject when session/month budget is unavailable. Undefined settlement retains the reservation. */
@@ -20,6 +27,8 @@ export type OpenAIProviderOptions = {
   fetcher?: typeof fetch; timeoutMs?: number;
   /** Hosted accounting pins both the model and Standard service tier. */
   requireResponseMetadata?:boolean;
+  /** Optional content-free observer; it cannot change accounting or provider behavior. */
+  onResponseMetadata?(metadata: OpenAIResponseMetadata): void | Promise<void>;
   /** Server-downloaded original only. Never a caller-supplied URL or derivative.
    * File/image inputs require an exact pre-count before the shared reservation. */
   originalAttachment?:{filename:string;mediaType:'application/pdf'|'image/png'|'image/jpeg';bytes:Uint8Array};
@@ -30,6 +39,33 @@ const COUNT_ENDPOINT = ENDPOINT+'/input_tokens';
 const MAX_REQUEST_BYTES = 180000;
 const MAX_RESPONSE_BYTES = 96000;
 function object(value: unknown): value is Record<string, unknown> { return !!value && typeof value === 'object' && !Array.isArray(value); }
+const errorCodes = new Set(['invalid_api_key', 'expired_secret_key', 'invalid_request_error', 'invalid_value', 'unsupported_value', 'unknown_parameter', 'unsupported_parameter', 'model_not_found', 'permission_denied', 'insufficient_quota', 'rate_limit_exceeded', 'server_error', 'internal_error', 'invalid_json', 'invalid_parameter']);
+const errorTypes = new Set(['invalid_request_error', 'authentication_error', 'permission_error', 'rate_limit_error', 'server_error', 'not_found_error', 'insufficient_quota']);
+const errorParameters = new Set(['model', 'store', 'service_tier', 'instructions', 'input', 'reasoning', 'reasoning.effort', 'include', 'max_output_tokens', 'prompt_cache_options', 'prompt_cache_options.mode', 'prompt_cache_options.ttl', 'parallel_tool_calls', 'tools', 'text', 'text.format', 'text.format.schema']);
+const completionStatuses = new Set(['queued', 'in_progress', 'completed', 'incomplete', 'failed', 'cancelled']);
+const incompleteReasons = new Set(['max_output_tokens', 'content_filter']);
+const enumValue = (value: unknown, allowed: Set<string>) => value === undefined || value === null || value === 'none' ? 'none' : typeof value === 'string' && allowed.has(value) ? value : 'other';
+/** Fresh projection at both producer and hosted sink. Unknown strings, extra
+ * fields, raw provider errors, response IDs and content can never cross it. */
+export function safeOpenAIResponseMetadata(value: unknown): OpenAIResponseMetadata {
+  const item = object(value) ? value : {};
+  return {
+    httpStatus: typeof item.httpStatus === 'number' && Number.isSafeInteger(item.httpStatus) && item.httpStatus >= 100 && item.httpStatus <= 599 ? item.httpStatus : null,
+    errorCode: enumValue(item.errorCode, errorCodes), errorType: enumValue(item.errorType, errorTypes), errorParameter: enumValue(item.errorParameter, errorParameters),
+    completionStatus: enumValue(item.completionStatus, completionStatuses), incompleteReason: enumValue(item.incompleteReason, incompleteReasons),
+    usagePresent: item.usagePresent === true, inputTokensPresent: item.inputTokensPresent === true, outputTokensPresent: item.outputTokensPresent === true,
+    cachedTokensPresent: item.cachedTokensPresent === true, cacheWriteTokensPresent: item.cacheWriteTokensPresent === true,
+    modelMatches: item.modelMatches === true, serviceTierMatches: item.serviceTierMatches === true,
+  };
+}
+function responseMetadata(httpStatus: number, payload: unknown, model: OpenAIModel): OpenAIResponseMetadata {
+  const value = object(payload) ? payload : {}, error = object(value.error) ? value.error : {}, incomplete = object(value.incomplete_details) ? value.incomplete_details : {};
+  const usage = object(value.usage) ? value.usage : {}, details = object(usage.input_tokens_details) ? usage.input_tokens_details : {};
+  return safeOpenAIResponseMetadata({ httpStatus, errorCode: error.code, errorType: error.type, errorParameter: error.param, completionStatus: value.status, incompleteReason: incomplete.reason,
+    usagePresent: object(value.usage), inputTokensPresent: Object.hasOwn(usage, 'input_tokens'), outputTokensPresent: Object.hasOwn(usage, 'output_tokens'),
+    cachedTokensPresent: Object.hasOwn(details, 'cached_tokens'), cacheWriteTokensPresent: Object.hasOwn(details, 'cache_write_tokens'),
+    modelMatches: value.model === model, serviceTierMatches: value.service_tier === 'default' });
+}
 function originalContent(original:NonNullable<OpenAIProviderOptions['originalAttachment']>):JsonValue {
   let binary='';for(let offset=0;offset<original.bytes.length;offset+=8192)binary+=String.fromCharCode(...original.bytes.subarray(offset,offset+8192));
   const data='data:'+original.mediaType+';base64,'+btoa(binary);
@@ -124,6 +160,11 @@ export function createOpenAIProvider(options: OpenAIProviderOptions): AgentProvi
   // Copy configuration so later mutation cannot silently authorize spending or alter pricing.
   const model = options.model; const price = { ...options.pricing }; const spendingAuthorized = options.spendingAuthorized === true;
   const apiKey = options.apiKey; const fetcher = options.fetcher ?? fetch; const reserve = options.reserveBudget; const timeoutMs = options.timeoutMs ?? 25000; const requireResponseMetadata=options.requireResponseMetadata===true;
+  const onResponseMetadata = options.onResponseMetadata;
+  const observe = (status: number, payload: unknown) => {
+    if (!onResponseMetadata) return;
+    try { Promise.resolve(onResponseMetadata(responseMetadata(status, payload, model))).catch(() => {}); } catch { /* Telemetry never affects inference or settlement. */ }
+  };
   const original=options.originalAttachment?{...options.originalAttachment,bytes:new Uint8Array(options.originalAttachment.bytes)}:null;
   if(original&&(!original.filename.trim()||original.filename.length>180||/[\u0000-\u001f\u007f]/.test(original.filename)||!['application/pdf','image/png','image/jpeg'].includes(original.mediaType)||!original.bytes.length||original.bytes.length>12000000))throw new AgentStepError('invalid-original-attachment');
   return { name: 'OpenAI Responses', model, async step(request) {
@@ -159,7 +200,8 @@ export function createOpenAIProvider(options: OpenAIProviderOptions): AgentProvi
       request.onReserve(reserved); if (request.signal.aborted) throw new AgentStepError('provider-cancelled'); attempted = true;
       const response = await fetcher(ENDPOINT, { method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' }, body, signal: controller.signal });
       const raw = await boundedBody(response, controller.signal); let payload: unknown;
-      try { payload = JSON.parse(raw); } catch { throw new AgentStepError('invalid-provider-json'); }
+      try { payload = JSON.parse(raw); } catch { observe(response.status, undefined); throw new AgentStepError('invalid-provider-json'); }
+      observe(response.status, payload);
       if(response.ok&&requireResponseMetadata&&(!object(payload)||payload.model!==model||payload.service_tier!=='default'))throw new AgentStepError('unexpected-provider-metadata');
       if (object(payload)) { const actual = measuredUsage(payload.usage, price, reserved); if (actual) { usage = actual; measured = true; } }
       if (!response.ok) throw new AgentStepError('provider-http-error', usage, response.status === 429 || response.status >= 500);

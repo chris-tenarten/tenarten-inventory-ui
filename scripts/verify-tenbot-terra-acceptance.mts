@@ -6,6 +6,7 @@ import {terraAcceptanceSpendingAuthorized,type TerraAcceptanceConfig,type TerraA
 import {safeInvestigationDiagnostic,type InvestigationDiagnostic} from '../supabase/functions/_shared/tenbot-investigation-diagnostics';
 import {ordinaryTenbotSpendingAuthorized,hostedInvoicePreparationEnabled,hostedReceivalPilotEnabled} from '../supabase/functions/_shared/tenbot-receival-hosted';
 import {createHostedTenbotFixture} from './support/tenbot-hosted-fixture.mjs';
+import {safeOpenAIResponseMetadata,type OpenAIResponseMetadata} from '../supabase/functions/_shared/tenbot-openai';
 const owner='11111111-1111-4111-8111-111111111111',other='33333333-3333-4333-8333-333333333333';
 const requestId='22222222-2222-4222-8222-222222222222',origin='https://tendev.pages.dev';
 const starts=Date.parse('2026-11-02T16:00:00Z'),expires=starts+3_600_000;
@@ -20,8 +21,9 @@ function fixture(changes:Partial<TerraAcceptanceScope>={},configChanges:Partial<
  const f=createHostedTenbotFixture(owner,archived);f.state.now=starts+1000;
  const currentScope={...scope,...changes},currentConfig={...config,...configChanges};
  const allowed=()=>terraAcceptanceSpendingAuthorized(currentConfig,currentScope,f.state.now);
- const diagnostics:{requestId:string;event:InvestigationDiagnostic}[]=[],reserveRequests:string[]=[];
+ const diagnostics:{requestId:string;event:InvestigationDiagnostic}[]=[],responseMetadata:OpenAIResponseMetadata[]=[],reserveRequests:string[]=[];
  let afterReserve:(()=>void)|undefined,afterFetch:(()=>void)|undefined;
+ let observeThrows=false,transformResponse:((response:Response)=>Promise<Response>)|undefined;
  const service:HostedRpc=async(name,args)=>{
   const result=await f.service(name,args);
   if(name==='tenbot_openai_reserve'){reserveRequests.push(String(args?.p_request_id));afterReserve?.();}
@@ -30,10 +32,11 @@ function fixture(changes:Partial<TerraAcceptanceScope>={},configChanges:Partial<
  const handler=()=>createHostedTenbot({owner:currentScope.owner,origin:currentScope.origin,
   config:{persistentHistory:false,enabled:true,origins:[origin,'https://tenops.pages.dev'],apiKey:'synthetic-never-a-real-key',keyExpiresAt:new Date(expires+3_600_000).toISOString(),spendingAuthorized:false,modelDirectedReads:currentScope.modelDirectedReads},
   acceptanceSpendingAuthorized:allowed,requestId,onDiagnostic:event=>{if(allowed())diagnostics.push({requestId,event:safeInvestigationDiagnostic(event)});},
+  onResponseMetadata:event=>{if(allowed())responseMetadata.push(safeOpenAIResponseMetadata(event));if(observeThrows)throw Error('Synthetic metadata observer unavailable');},
   caller:f.caller,service,qwen:null,jobTools:{async execute(){throw Error('Unexpected operational read');}},now:()=>f.state.now,
-  async fetcher(url,init){const result=await f.fetcher(url,init);afterFetch?.();return result;},
+  async fetcher(url,init){const result=await f.fetcher(url,init);afterFetch?.();return transformResponse?transformResponse(result):result;},
  });
- return {...f,handler,allowed,diagnostics,reserveRequests,afterReserve(fn:()=>void){afterReserve=fn;},afterFetch(fn:()=>void){afterFetch=fn;}};
+ return {...f,handler,allowed,diagnostics,responseMetadata,reserveRequests,afterReserve(fn:()=>void){afterReserve=fn;},afterFetch(fn:()=>void){afterFetch=fn;},metadataObserverThrows(){observeThrows=true;},respond(fn:(response:Response)=>Promise<Response>){transformResponse=fn;}};
 }
 
 await check('Only the exact enabled TenDev owner/model-read lane inside the finite server window is authorized',()=>{
@@ -62,7 +65,7 @@ await check('Accepted server gate reuses the existing atomic reserve/settle mete
 await check('Production, different owner, disabled lane, expired window and disabled acceptance cannot reserve or dispatch Terra',async()=>{
  for(const [scopeChanges,configChanges] of [[{origin:'https://tenops.pages.dev'},{}],[{owner:other},{}],[{modelDirectedReads:false},{}],[{hostedEnabled:false},{}],[{},{enabled:false}],[{},{expiresAt:new Date(starts).toISOString()}]] as [Partial<TerraAcceptanceScope>,Partial<TerraAcceptanceConfig>][]){
   const f=fixture(scopeChanges,configChanges);try{await f.handler()({action:'ask',question:f.archived.question});}catch{/* A denied synthetic owner cannot claim the original owner's history. */}
-  assert.equal(f.state.providerCalls,0);assert.equal(f.reservations.size,0);assert.equal(f.diagnostics.length,0);
+  assert.equal(f.state.providerCalls,0);assert.equal(f.reservations.size,0);assert.equal(f.diagnostics.length,0);assert.equal(f.responseMetadata.length,0);
  }
 });
 await check('Caller-forged acceptance, correlation, provider, history and write fields are rejected before inference',async()=>{
@@ -88,5 +91,37 @@ await check('Deployed Production persistent-history integration is preserved and
  assert(edge.indexOf('return reply(await receivals(body));')<edge.indexOf('const acceptance='));
  assert(edge.includes("ordinaryTenbotSpendingAuthorized(Deno.env.get('TENBOT_OPENAI_SPEND_AUTHORIZED')==='true',preparation)"));
  assert(!edge.includes('body.acceptance')&&!edge.includes('body.requestId'));
+});
+await check('Provider metadata projects only finite enums, status and presence booleans with no raw response content',()=>{
+ const unknown='SECRET customer text';
+ const metadata=safeOpenAIResponseMetadata({httpStatus:NaN,errorCode:unknown,errorType:unknown,errorParameter:unknown,completionStatus:unknown,incompleteReason:unknown,usagePresent:unknown,inputTokensPresent:1,outputTokensPresent:{secret:unknown},cachedTokensPresent:false,cacheWriteTokensPresent:true,modelMatches:unknown,serviceTierMatches:true,message:unknown,payload:{output:unknown},id:owner});
+ assert.deepEqual(metadata,{httpStatus:null,errorCode:'other',errorType:'other',errorParameter:'other',completionStatus:'other',incompleteReason:'other',usagePresent:false,inputTokensPresent:false,outputTokensPresent:false,cachedTokensPresent:false,cacheWriteTokensPresent:true,modelMatches:false,serviceTierMatches:true});
+ assert(!JSON.stringify(metadata).includes(unknown)&&!JSON.stringify(metadata).includes(owner));
+ assert.deepEqual(safeOpenAIResponseMetadata(metadata),metadata);
+});
+await check('Optional provider metadata does not alter successful calls, accounting or outcomes even when its observer throws',async()=>{
+ for(const throws of [false,true]){
+  const f=fixture();if(throws)f.metadataObserverThrows();const result=await f.handler()({action:'ask',question:f.archived.question}) as {message:string};
+  assert.equal(result.message,fact);assert.equal(f.state.providerCalls,3);assert.equal(f.reservations.size,3);assert([...f.reservations.values()].every(value=>value.actual===200));assert.equal(f.responseMetadata.length,3);
+  for(const metadata of f.responseMetadata){assert.equal(metadata.httpStatus,200);assert.equal(metadata.errorCode,'none');assert.equal(metadata.completionStatus,'completed');assert.equal(metadata.usagePresent,true);assert.equal(metadata.inputTokensPresent,true);assert.equal(metadata.outputTokensPresent,true);assert.equal(metadata.cachedTokensPresent,true);assert.equal(metadata.cacheWriteTokensPresent,true);assert(metadata.modelMatches&&metadata.serviceTierMatches);}
+  for(const secret of [owner,f.archived.question,'synthetic-never-a-real-key','evidence_ids','arguments','answer_facts'])assert(!JSON.stringify(f.responseMetadata).includes(secret));
+ }
+});
+await check('HTTP error metadata identifies only allowed API configuration fields and preserves the original unknown-cost hold',async()=>{
+ const f=fixture();f.respond(async()=>Response.json({error:{code:'unknown_parameter',type:'invalid_request_error',param:'prompt_cache_options',message:'SECRET provider error with customer content'},id:owner},{status:400}));
+ await f.handler()({action:'ask',question:f.archived.question});
+ assert.equal(f.state.providerCalls,1);assert.equal(f.reservations.size,1);assert([...f.reservations.values()].every(value=>value.actual===undefined));
+ assert(f.diagnostics.some(({event})=>event.reasonCode==='provider-http-error'));
+ assert.equal(f.responseMetadata.length,1);assert.deepEqual(f.responseMetadata[0],{httpStatus:400,errorCode:'unknown_parameter',errorType:'invalid_request_error',errorParameter:'prompt_cache_options',completionStatus:'none',incompleteReason:'none',usagePresent:false,inputTokensPresent:false,outputTokensPresent:false,cachedTokensPresent:false,cacheWriteTokensPresent:false,modelMatches:false,serviceTierMatches:false});
+ assert(!JSON.stringify(f.responseMetadata).includes('SECRET')&&!JSON.stringify(f.responseMetadata).includes(owner));
+});
+await check('Incomplete-provider status and absent usage fields are visible without weakening parsing or settlement',async()=>{
+ const incomplete=fixture();incomplete.respond(async response=>Response.json({...await response.json(),status:'incomplete',incomplete_details:{reason:'max_output_tokens'},output:[{type:'message',content:'SECRET generated output'}]}));
+ await incomplete.handler()({action:'ask',question:incomplete.archived.question});
+ assert.equal(incomplete.state.providerCalls,1);assert([...incomplete.reservations.values()].every(value=>value.actual===200));assert(incomplete.diagnostics.some(({event})=>event.reasonCode==='incomplete-provider-response'));
+ assert.equal(incomplete.responseMetadata[0].completionStatus,'incomplete');assert.equal(incomplete.responseMetadata[0].incompleteReason,'max_output_tokens');assert(incomplete.responseMetadata[0].usagePresent);assert(!JSON.stringify(incomplete.responseMetadata).includes('SECRET'));
+ const missing=fixture();missing.respond(async response=>{const payload=await response.json();delete payload.usage.input_tokens_details.cache_write_tokens;return Response.json(payload);});
+ await missing.handler()({action:'ask',question:missing.archived.question});
+ assert.equal(missing.state.providerCalls,1);assert([...missing.reservations.values()].every(value=>value.actual===undefined));assert(missing.diagnostics.some(({event})=>event.reasonCode==='missing-provider-usage'));assert(missing.responseMetadata[0].usagePresent);assert.equal(missing.responseMetadata[0].cacheWriteTokensPresent,false);
 });
 console.log(JSON.stringify({passed:true,groups:checks.length,checks,actualInference:false,actualDatabase:false,mode:'Offline server gate/hosted transport with existing atomic meter RPC doubles'}));
