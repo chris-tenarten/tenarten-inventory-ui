@@ -2224,33 +2224,47 @@
   },
   {
     "classification": "candidate-source",
-    "authority": "product-accepted",
+    "authority": "technical-review",
     "kind": "runtime",
-    "path": "supabase/functions/tenbot/index.ts",
-    "blob": "917c85d1a2938537eb293839b4b352e1823a7db0",
-    "sha256": "7e3a4da16f0bb0f89093f66bf5e009226f02101647a4efda7cbcc5a5e3ff45c8",
-    "reviewedCandidate": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
+    "path": "supabase/functions/_shared/tenbot-hosted.ts",
+    "blob": "26250d5f139843af6f415f945b91258d22e1bc69",
+    "sha256": "73b3b8934d5d14862af19be785c182cc3198d7b7294859ca289286e20287cb09",
+    "reviewedCandidate": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
     "scope": "tendev-preparation",
-    "acceptedAuthorityRevision": "b5f7f66bfe924a2876834d0e698decf206eff9bb",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-simplification-tendev-source-proof.md",
-      "revision": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
-      "heading": "## Accepted candidate source review — TenDev read simplification, November 2, 2026"
+      "path": "docs/project-memory/2026-11-02-tenbot-terra-acceptance-source-proof.md",
+      "revision": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+      "heading": "## Candidate technical source review — closed TenDev Terra acceptance gate"
     }
   },
   {
     "classification": "candidate-source",
     "authority": "technical-review",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-hosted.ts",
-    "blob": "f9958952617c1fee086ac4d3ccfb3962c257ecc4",
-    "sha256": "1b63cdd33529e1b9d44c1bdc5647e9ce7987a74206af864a7c7201ac14fadfe2",
-    "reviewedCandidate": "e6aea980898a17ae74476d067039d0ceabab6727",
+    "path": "supabase/functions/_shared/tenbot-terra-acceptance.ts",
+    "blob": "66537cbccc1ecb0713ab4f22e3327f413402004d",
+    "sha256": "d531331f7c6e1422aed0698aeb1cb0f233a19d6821b5724bb75d9d2ab3ef1c02",
+    "reviewedCandidate": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
     "scope": "tendev-preparation",
     "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-simplification-tendev-source-proof.md",
-      "revision": "e6aea980898a17ae74476d067039d0ceabab6727",
-      "heading": "## Candidate technical source review — exact combined hosted integration"
+      "path": "docs/project-memory/2026-11-02-tenbot-terra-acceptance-source-proof.md",
+      "revision": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+      "heading": "## Candidate technical source review — closed TenDev Terra acceptance gate"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/tenbot/index.ts",
+    "blob": "7c6d9f227858abb4e2aba9b437b53884200dde25",
+    "sha256": "f34df657c51226bdc2f675c187bc4b2787d6dbb7de914706dead6aef6294cdb1",
+    "reviewedCandidate": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-terra-acceptance-source-proof.md",
+      "revision": "f0fe39dd3bb50f761d72f25a17e46c4e5f9ce9b4",
+      "heading": "## Candidate technical source review — closed TenDev Terra acceptance gate"
     }
   }
 ]
