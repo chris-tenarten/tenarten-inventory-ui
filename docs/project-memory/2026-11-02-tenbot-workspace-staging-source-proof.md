@@ -45,7 +45,9 @@ Current Product authorization requires a designated test identity, finite infere
 
 ## Accepted record source review — shared Workspace integration
 
-Chris accepts the shared Workspace integration at 28005dc70d086a2a68830165c4f299ba51bc63ba. Business meaning, permission policy, lifecycle, and effects are unchanged for the existing records listed below. This declaration concerns the existing DM, group, attachment, reply, shared Job, draft/edit and shell-navigation knowledge claims only; it does not describe new action semantics as unchanged.
+Chris accepts the shared Workspace integration at 28005dc70d086a2a68830165c4f299ba51bc63ba.
+
+Business meaning, permission policy, lifecycle, and effects are unchanged for the existing records listed below. This declaration concerns the existing DM, group, attachment, reply, shared Job, draft/edit and shell-navigation knowledge claims only; it does not describe new action semantics as unchanged.
 
 The Inbox changes reuse the exact existing account-scoped controller/composer only for the TenBot participant and supply action interaction visibility. Normal DM/group bodies, recipients, uploads, editing, replies and private authorization retain their existing services. The shell change adds a global launcher/provider at the header and retains existing navigation. Existing Inventory, Manpower and Intake records and routes do not change. The accepted focused Messaging/draft/account isolation browser evidence is reused; no unseen hosted behavior is claimed.
 
