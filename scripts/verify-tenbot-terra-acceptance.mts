@@ -95,7 +95,7 @@ await check('Deployed Production persistent-history integration is preserved and
 await check('Provider metadata projects only finite enums, status and presence booleans with no raw response content',()=>{
  const unknown='SECRET customer text';
  const metadata=safeOpenAIResponseMetadata({httpStatus:NaN,errorCode:unknown,errorType:unknown,errorParameter:unknown,completionStatus:unknown,incompleteReason:unknown,usagePresent:unknown,inputTokensPresent:1,outputTokensPresent:{secret:unknown},cachedTokensPresent:false,cacheWriteTokensPresent:true,modelMatches:unknown,serviceTierMatches:true,message:unknown,payload:{output:unknown},id:owner});
- assert.deepEqual(metadata,{httpStatus:null,errorCode:'other',errorType:'other',errorParameter:'other',completionStatus:'other',incompleteReason:'other',usagePresent:false,inputTokensPresent:false,outputTokensPresent:false,cachedTokensPresent:false,cacheWriteTokensPresent:true,modelMatches:false,serviceTierMatches:true});
+ assert.deepEqual(metadata,{httpStatus:null,errorCode:'other',errorType:'other',errorParameter:'other',completionStatus:'other',incompleteReason:'other',usagePresent:false,inputTokensPresent:false,outputTokensPresent:false,cachedTokensPresent:false,cacheWriteTokensPresent:true,inputTokens:null,outputTokens:null,cachedInputTokens:null,cacheWriteTokens:null,modelMatches:false,serviceTierMatches:true});
  assert(!JSON.stringify(metadata).includes(unknown)&&!JSON.stringify(metadata).includes(owner));
  assert.deepEqual(safeOpenAIResponseMetadata(metadata),metadata);
 });
@@ -103,7 +103,7 @@ await check('Optional provider metadata does not alter successful calls, account
  for(const throws of [false,true]){
   const f=fixture();if(throws)f.metadataObserverThrows();const result=await f.handler()({action:'ask',question:f.archived.question}) as {message:string};
   assert.equal(result.message,fact);assert.equal(f.state.providerCalls,3);assert.equal(f.reservations.size,3);assert([...f.reservations.values()].every(value=>value.actual===200));assert.equal(f.responseMetadata.length,3);
-  for(const metadata of f.responseMetadata){assert.equal(metadata.httpStatus,200);assert.equal(metadata.errorCode,'none');assert.equal(metadata.completionStatus,'completed');assert.equal(metadata.usagePresent,true);assert.equal(metadata.inputTokensPresent,true);assert.equal(metadata.outputTokensPresent,true);assert.equal(metadata.cachedTokensPresent,true);assert.equal(metadata.cacheWriteTokensPresent,true);assert(metadata.modelMatches&&metadata.serviceTierMatches);}
+  for(const metadata of f.responseMetadata){assert.equal(metadata.httpStatus,200);assert.equal(metadata.errorCode,'none');assert.equal(metadata.completionStatus,'completed');assert.equal(metadata.usagePresent,true);assert.equal(metadata.inputTokensPresent,true);assert.equal(metadata.outputTokensPresent,true);assert.equal(metadata.cachedTokensPresent,true);assert.equal(metadata.cacheWriteTokensPresent,true);assert.equal(metadata.inputTokens,100);assert.equal(metadata.outputTokens,20);assert.equal(metadata.cachedInputTokens,0);assert.equal(metadata.cacheWriteTokens,0);assert(metadata.modelMatches&&metadata.serviceTierMatches);}
   for(const secret of [owner,f.archived.question,'synthetic-never-a-real-key','evidence_ids','arguments','answer_facts'])assert(!JSON.stringify(f.responseMetadata).includes(secret));
  }
 });
@@ -112,7 +112,7 @@ await check('HTTP error metadata identifies only allowed API configuration field
  await f.handler()({action:'ask',question:f.archived.question});
  assert.equal(f.state.providerCalls,1);assert.equal(f.reservations.size,1);assert([...f.reservations.values()].every(value=>value.actual===undefined));
  assert(f.diagnostics.some(({event})=>event.reasonCode==='provider-http-error'));
- assert.equal(f.responseMetadata.length,1);assert.deepEqual(f.responseMetadata[0],{httpStatus:400,errorCode:'unknown_parameter',errorType:'invalid_request_error',errorParameter:'prompt_cache_options',completionStatus:'none',incompleteReason:'none',usagePresent:false,inputTokensPresent:false,outputTokensPresent:false,cachedTokensPresent:false,cacheWriteTokensPresent:false,modelMatches:false,serviceTierMatches:false});
+ assert.equal(f.responseMetadata.length,1);assert.deepEqual(f.responseMetadata[0],{httpStatus:400,errorCode:'unknown_parameter',errorType:'invalid_request_error',errorParameter:'prompt_cache_options',completionStatus:'none',incompleteReason:'none',usagePresent:false,inputTokensPresent:false,outputTokensPresent:false,cachedTokensPresent:false,cacheWriteTokensPresent:false,inputTokens:null,outputTokens:null,cachedInputTokens:null,cacheWriteTokens:null,modelMatches:false,serviceTierMatches:false});
  assert(!JSON.stringify(f.responseMetadata).includes('SECRET')&&!JSON.stringify(f.responseMetadata).includes(owner));
 });
 await check('Incomplete-provider status and absent usage fields are visible without weakening parsing or settlement',async()=>{
@@ -122,6 +122,33 @@ await check('Incomplete-provider status and absent usage fields are visible with
  assert.equal(incomplete.responseMetadata[0].completionStatus,'incomplete');assert.equal(incomplete.responseMetadata[0].incompleteReason,'max_output_tokens');assert(incomplete.responseMetadata[0].usagePresent);assert(!JSON.stringify(incomplete.responseMetadata).includes('SECRET'));
  const missing=fixture();missing.respond(async response=>{const payload=await response.json();delete payload.usage.input_tokens_details.cache_write_tokens;return Response.json(payload);});
  await missing.handler()({action:'ask',question:missing.archived.question});
- assert.equal(missing.state.providerCalls,1);assert([...missing.reservations.values()].every(value=>value.actual===undefined));assert(missing.diagnostics.some(({event})=>event.reasonCode==='missing-provider-usage'));assert(missing.responseMetadata[0].usagePresent);assert.equal(missing.responseMetadata[0].cacheWriteTokensPresent,false);
+ assert.equal(missing.state.providerCalls,1);assert([...missing.reservations.values()].every(value=>value.actual===undefined));assert(missing.diagnostics.some(({event})=>event.reasonCode==='missing-provider-usage'));assert(missing.responseMetadata[0].usagePresent);assert.equal(missing.responseMetadata[0].cacheWriteTokensPresent,false);assert.equal(missing.responseMetadata[0].cacheWriteTokens,null);
+});
+await check('Token telemetry accepts only bounded integer counters, preserves zero and retains unknown as null',()=>{
+ for(const [key,maximum] of [['inputTokens',500000],['outputTokens',100000],['cachedInputTokens',500000],['cacheWriteTokens',500000]] as const){
+  for(const value of [0,17,maximum])assert.equal(safeOpenAIResponseMetadata({[key]:value})[key],value);
+  for(const value of [undefined,null,-1,1.5,Infinity,NaN,maximum+1,'SECRET','17',{},[]])assert.equal(safeOpenAIResponseMetadata({[key]:value})[key],null);
+ }
+ const counters=safeOpenAIResponseMetadata({inputTokens:1234,outputTokens:98,cachedInputTokens:234,cacheWriteTokens:56,rawUsage:'SECRET'});assert.deepEqual(safeOpenAIResponseMetadata(counters),counters);assert(!JSON.stringify(counters).includes('SECRET'));
+});
+await check('Documented billing-limit codes remain finite content-free metadata',()=>{
+ for(const code of ['organization_usage_limit_exceeded','organization_spend_limit_exceeded','project_spend_limit_exceeded','credit_balance_exhausted']){
+  const projected=safeOpenAIResponseMetadata({httpStatus:429,errorCode:code,errorType:'insufficient_quota',message:'SECRET provider billing details',id:owner});
+  assert.equal(projected.errorCode,code);assert.equal(projected.errorType,'insufficient_quota');assert(!JSON.stringify(projected).includes('SECRET')&&!JSON.stringify(projected).includes(owner));
+ }
+ assert.equal(safeOpenAIResponseMetadata({errorCode:'SECRET unknown billing code'}).errorCode,'other');
+});
+await check('Permanent insufficient-quota 429 stops after one provider attempt and retains exactly one unknown-cost hold',async()=>{
+ const f=fixture();f.respond(async()=>Response.json({error:{type:'insufficient_quota',code:'organization_usage_limit_exceeded',message:'SECRET billing context'}},{status:429}));
+ await f.handler()({action:'ask',question:f.archived.question});
+ assert.equal(f.state.providerCalls,1);assert.equal(f.reservations.size,1);assert.equal(f.reserveRequests.length,1);assert([...f.reservations.values()].every(value=>value.actual===undefined));
+ assert.equal(f.responseMetadata.length,1);assert.equal(f.responseMetadata[0].errorType,'insufficient_quota');assert.equal(f.responseMetadata[0].errorCode,'organization_usage_limit_exceeded');assert(f.diagnostics.some(({event})=>event.reasonCode==='provider-http-error'));
+});
+await check('Temporary 429 and server failures preserve the existing single automatic retry and conservative holds',async()=>{
+ for(const [status,type,code] of [[429,'rate_limit_error','rate_limit_exceeded'],[503,'insufficient_quota','server_error']] as const){
+  const f=fixture();f.respond(async()=>Response.json({error:{type,code}},{status}));
+  await f.handler()({action:'ask',question:f.archived.question});
+  assert.equal(f.state.providerCalls,2);assert.equal(f.reservations.size,2);assert.equal(f.reserveRequests.length,2);assert([...f.reservations.values()].every(value=>value.actual===undefined));assert.equal(f.responseMetadata.length,2);
+ }
 });
 console.log(JSON.stringify({passed:true,groups:checks.length,checks,actualInference:false,actualDatabase:false,mode:'Offline server gate/hosted transport with existing atomic meter RPC doubles'}));

@@ -18,6 +18,8 @@ export type OpenAIResponseMetadata = {
   completionStatus: string; incompleteReason: string;
   usagePresent: boolean; inputTokensPresent: boolean; outputTokensPresent: boolean;
   cachedTokensPresent: boolean; cacheWriteTokensPresent: boolean;
+  inputTokens: number | null; outputTokens: number | null;
+  cachedInputTokens: number | null; cacheWriteTokens: number | null;
   modelMatches: boolean; serviceTierMatches: boolean;
 };
 export type OpenAIProviderOptions = {
@@ -39,12 +41,13 @@ const COUNT_ENDPOINT = ENDPOINT+'/input_tokens';
 const MAX_REQUEST_BYTES = 180000;
 const MAX_RESPONSE_BYTES = 96000;
 function object(value: unknown): value is Record<string, unknown> { return !!value && typeof value === 'object' && !Array.isArray(value); }
-const errorCodes = new Set(['invalid_api_key', 'expired_secret_key', 'invalid_request_error', 'invalid_value', 'unsupported_value', 'unknown_parameter', 'unsupported_parameter', 'model_not_found', 'permission_denied', 'insufficient_quota', 'rate_limit_exceeded', 'server_error', 'internal_error', 'invalid_json', 'invalid_parameter']);
+const errorCodes = new Set(['invalid_api_key', 'expired_secret_key', 'invalid_request_error', 'invalid_value', 'unsupported_value', 'unknown_parameter', 'unsupported_parameter', 'model_not_found', 'permission_denied', 'insufficient_quota', 'rate_limit_exceeded', 'server_error', 'internal_error', 'invalid_json', 'invalid_parameter', 'organization_usage_limit_exceeded', 'organization_spend_limit_exceeded', 'project_spend_limit_exceeded', 'credit_balance_exhausted']);
 const errorTypes = new Set(['invalid_request_error', 'authentication_error', 'permission_error', 'rate_limit_error', 'server_error', 'not_found_error', 'insufficient_quota']);
 const errorParameters = new Set(['model', 'store', 'service_tier', 'instructions', 'input', 'reasoning', 'reasoning.effort', 'include', 'max_output_tokens', 'prompt_cache_options', 'prompt_cache_options.mode', 'prompt_cache_options.ttl', 'parallel_tool_calls', 'tools', 'text', 'text.format', 'text.format.schema']);
 const completionStatuses = new Set(['queued', 'in_progress', 'completed', 'incomplete', 'failed', 'cancelled']);
 const incompleteReasons = new Set(['max_output_tokens', 'content_filter']);
 const enumValue = (value: unknown, allowed: Set<string>) => value === undefined || value === null || value === 'none' ? 'none' : typeof value === 'string' && allowed.has(value) ? value : 'other';
+const tokenCount = (value: unknown, maximum: number): number | null => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 && value <= maximum ? value : null;
 /** Fresh projection at both producer and hosted sink. Unknown strings, extra
  * fields, raw provider errors, response IDs and content can never cross it. */
 export function safeOpenAIResponseMetadata(value: unknown): OpenAIResponseMetadata {
@@ -55,6 +58,8 @@ export function safeOpenAIResponseMetadata(value: unknown): OpenAIResponseMetada
     completionStatus: enumValue(item.completionStatus, completionStatuses), incompleteReason: enumValue(item.incompleteReason, incompleteReasons),
     usagePresent: item.usagePresent === true, inputTokensPresent: item.inputTokensPresent === true, outputTokensPresent: item.outputTokensPresent === true,
     cachedTokensPresent: item.cachedTokensPresent === true, cacheWriteTokensPresent: item.cacheWriteTokensPresent === true,
+    inputTokens: tokenCount(item.inputTokens, 500000), outputTokens: tokenCount(item.outputTokens, 100000),
+    cachedInputTokens: tokenCount(item.cachedInputTokens, 500000), cacheWriteTokens: tokenCount(item.cacheWriteTokens, 500000),
     modelMatches: item.modelMatches === true, serviceTierMatches: item.serviceTierMatches === true,
   };
 }
@@ -64,6 +69,7 @@ function responseMetadata(httpStatus: number, payload: unknown, model: OpenAIMod
   return safeOpenAIResponseMetadata({ httpStatus, errorCode: error.code, errorType: error.type, errorParameter: error.param, completionStatus: value.status, incompleteReason: incomplete.reason,
     usagePresent: object(value.usage), inputTokensPresent: Object.hasOwn(usage, 'input_tokens'), outputTokensPresent: Object.hasOwn(usage, 'output_tokens'),
     cachedTokensPresent: Object.hasOwn(details, 'cached_tokens'), cacheWriteTokensPresent: Object.hasOwn(details, 'cache_write_tokens'),
+    inputTokens: usage.input_tokens, outputTokens: usage.output_tokens, cachedInputTokens: details.cached_tokens, cacheWriteTokens: details.cache_write_tokens,
     modelMatches: value.model === model, serviceTierMatches: value.service_tier === 'default' });
 }
 function originalContent(original:NonNullable<OpenAIProviderOptions['originalAttachment']>):JsonValue {
@@ -204,7 +210,11 @@ export function createOpenAIProvider(options: OpenAIProviderOptions): AgentProvi
       observe(response.status, payload);
       if(response.ok&&requireResponseMetadata&&(!object(payload)||payload.model!==model||payload.service_tier!=='default'))throw new AgentStepError('unexpected-provider-metadata');
       if (object(payload)) { const actual = measuredUsage(payload.usage, price, reserved); if (actual) { usage = actual; measured = true; } }
-      if (!response.ok) throw new AgentStepError('provider-http-error', usage, response.status === 429 || response.status >= 500);
+      // Billing quota requires restored credits/limits; another attempt cannot
+      // repair it. Temporary rate limits and server failures retain one retry.
+      // https://help.openai.com/en/articles/6614457-troubleshooting-api-usage-and-spend-limits
+      const quotaExhausted = response.status === 429 && object(payload) && object(payload.error) && payload.error.type === 'insufficient_quota';
+      if (!response.ok) throw new AgentStepError('provider-http-error', usage, (response.status === 429 && !quotaExhausted) || response.status >= 500);
       if (!measured) throw new AgentStepError('missing-provider-usage', usage);
       const step = parseStep(payload, usage); await reservation.settle(usage.costUsd); return step;
     } catch (error) {

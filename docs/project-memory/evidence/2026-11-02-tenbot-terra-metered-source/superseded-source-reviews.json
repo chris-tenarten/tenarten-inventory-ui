@@ -1,0 +1,22 @@
+{
+  "reason": "Cumulative quota retry correction and bounded token counters supersede only exact OpenAI transport bytes; prior metadata, acceptance gate and release evidence remain.",
+  "baseline": "41e387c028fa845bdd460a63092368964bdb4c03",
+  "implementation": "ff8098ebdff7085acbd8179e76d4f2a945ec24de",
+  "replaced": [
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-openai.ts",
+      "blob": "4782daac3e0c38176a46f3bc0c4fede5a03c9d64",
+      "sha256": "c626dc4f65868eb0ae2807f7d6bdc16c6c6ecf27c03e82e2209da07abafb745f",
+      "reviewedCandidate": "239ac4c2903db4884b74a044d37af53379da8194",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-terra-provider-metadata-source-proof.md",
+        "revision": "239ac4c2903db4884b74a044d37af53379da8194",
+        "heading": "## Candidate technical source review — bounded Terra provider metadata"
+      }
+    }
+  ]
+}
