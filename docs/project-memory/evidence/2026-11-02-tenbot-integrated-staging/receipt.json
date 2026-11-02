@@ -1,0 +1,396 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-02T20:36:00.304385+00:00",
+  "status": "TenDev staging verified; employee operational acceptance failed; temporary gates closed; revise before Production",
+  "stagingPassed": true,
+  "employeeOperationalAcceptancePassed": false,
+  "authority": "Chris: TENDEV \u2014 INTEGRATED TENBOT STAGING & REAL EMPLOYEE ACCEPTANCE; accepted28005dc; supplied Product contract governs; separate Advisory thread unavailable",
+  "riskTier": 3,
+  "testingLevel": 3,
+  "deployment": {
+    "tenDev": {
+      "sourceSha": "a0a629d81f25b372c326248ca85f6d21e2eeb467",
+      "deploymentId": "8a59b9e6-c7b8-463e-9b2f-2e1cd4650a7d",
+      "url": "https://tendev.pages.dev",
+      "servedAssetsByteVerified": 99,
+      "title": "TenDev Cloud \u2014 Dashboard",
+      "manifestName": "TenDev"
+    },
+    "tenOpsProduction": {
+      "sourceSha": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+      "deploymentId": "eb191ab7-6e40-4275-b0a1-c616044b89a5",
+      "unchanged": true
+    },
+    "sharedTenBotEdge": {
+      "deployedSourceVersion": 59,
+      "b2ExecutionVersion": 60,
+      "finalVersion": 61,
+      "jwtVerification": true,
+      "status": "ACTIVE",
+      "apiSourceSha256": "cb4ae319689cd44b2c670df7249734286e06778c33831845838f017233aff4fe",
+      "downloadedBodySha256": "31155fbb685a1692c71cb2287f98d5f88358ba6a98331a944fbbf54ee4d9c7e6",
+      "downloadedBodyBytes": 33831289,
+      "exactModuleBytesVerified": 55,
+      "finalMetadataCheckedAt": "2026-11-02T20:31:27.840Z"
+    }
+  },
+  "source": {
+    "rootImplementationBranch": "dev",
+    "rootRuntimeBoundary": "81b1f4d5f273ce5e06e0d84ca35fc475471f9c6b",
+    "acceptedIntegratedInput": "28005dc70d086a2a68830165c4f299ba51bc63ba",
+    "acceptedBackendInput": "afa4bfa47319f5a74101e202a1b675ecf471a1b3",
+    "acceptedWorkspaceInput": "262c25f714592edfa8834053b8c1f76112bbc37a",
+    "corrections": [
+      {
+        "sha": "2fe019431bdd62191d0d90b83c58fab9b822d06d",
+        "purpose": "Existing finite designated-owner/window scopes new operations and actions; Qwen fallback cannot bypass the gate"
+      },
+      {
+        "sha": "853f71f29ed1e22d582a24cd72920572ad0fd73d",
+        "purpose": "Prefer reviewed presentation over legacy invoice mode when both status flags are available"
+      },
+      {
+        "sha": "91e8dff2e26d1d67f4ad7becab1282667ce96726",
+        "purpose": "Closed Proposal failure subreasons and actual registry-name telemetry; validation and price semantics unchanged"
+      },
+      {
+        "sha": "81b1f4d5f273ce5e06e0d84ca35fc475471f9c6b",
+        "purpose": "Reviewed-operation maxRounds8; ordinary6 and all other bounds unchanged"
+      }
+    ],
+    "finalPrivateCandidateClean": true,
+    "unrelatedDirtyPathsPreserved": 8,
+    "wholesaleDevMerge": false,
+    "mainPromotion": false,
+    "gitRemotePush": false,
+    "unrelatedInventoryCanaryAndDirtyAgentEditsExcluded": true
+  },
+  "migrations": {
+    "applied": true,
+    "projectRef": "vxdxjhazkqhpkwdqtobp",
+    "verifiedAt": "2026-11-02T19:45:29.104883+00:00",
+    "ordered": [
+      {
+        "path": "supabase/migrations/20261102120000_tenbot_reviewed_actions.sql",
+        "version": "20261102120000",
+        "sha256": "e7cb74fc2f85460576391be2fc7416ccadf38e79989ab0fd4ca70ef03bb8be3c"
+      },
+      {
+        "path": "supabase/migrations/20261102130000_tenbot_action_canonical_receivals.sql",
+        "version": "20261102130000",
+        "sha256": "c72332345e87a590e2f44389a3176ea7f105f7f0302cf2eaa35e1c0eef78b92b"
+      },
+      {
+        "path": "supabase/migrations/20261102140000_tenbot_operation_history.sql",
+        "version": "20261102140000",
+        "sha256": "02b1f0237c34faf11edcc705f7721032f003f1003157dff6a864cfd15d9c65b1"
+      },
+      {
+        "path": "supabase/migrations/20261102150000_tenbot_canary_deferred_record_boundary.sql",
+        "version": "20261102150000",
+        "sha256": "0413a8c2cd7babba685d570f2175cbfbf47379af73fab0bbdb273a411fba710f"
+      }
+    ],
+    "onlyFourApprovedApplied": true,
+    "monthlyAllowanceMigrationReapplied": false,
+    "guardedCompatibilityReadbackPassed": true,
+    "privateRlsTables": 4,
+    "newTriggers": 6,
+    "expectedFunctionsGrantsVerified": true,
+    "restrictedStorageAndUnrelatedSchemaRolesPoliciesPreserved": true
+  },
+  "employeeAcceptance": {
+    "identity": "Chris explicitly designated his existing account; normal Chrome sign-in",
+    "questions": {
+      "proposal": "Prepare a Proposal draft for Synthetic TenDev Acceptance Customer, for the Synthetic Lobby Review project. Quote two white terrazzo treads, each 48 by 12 by 2 inches, at $12.50 each. We do not have the customer's address or contact details yet, and freight has not been quoted. Leave those unknown and do not link a Production Job. Show me the review and preview before saving anything. This is approved synthetic acceptance data.",
+      "invoice": "Add the materials from this invoice to Pending Receivals, but check whether we already have them outstanding. This is the approved synthetic test. Ordered by Chris Ngo on November 2, 2026 for Denton. Do not mark anything received."
+    },
+    "initialUiRequest": {
+      "inferenceCalls": 0,
+      "outcome": "Strict host rejected legacy orderDetails in ordinary ask; corrected by853f71f"
+    },
+    "requests": [
+      {
+        "label": "a",
+        "requestId": "38f78b2a-10ca-450b-b41d-d6f94252355f",
+        "measuredModelSteps": 4,
+        "confirmedCostMicrousd": 14318,
+        "newHeldMicrousd": 0,
+        "httpStatusCounts": {
+          "200": 4
+        },
+        "completeTokenCorrelation": true,
+        "toolAttempts": {
+          "discover_capabilities": 1,
+          "unknown-tool": 2
+        },
+        "toolOutcomes": {
+          "ok": 1,
+          "error": 2
+        },
+        "reasonCounts": null,
+        "tokenTotals": {
+          "inputTokens": 20233,
+          "outputTokens": 496,
+          "cachedInputTokens": 11210,
+          "cacheWriteTokens": 9011,
+          "reasoningTokens": null
+        },
+        "trustedActionPublished": false,
+        "businessRecordsCreated": 0,
+        "configuredModelAndTierMatched": true
+      },
+      {
+        "label": "a2",
+        "requestId": "efce696c-acd8-485f-b34b-3b7796418d56",
+        "measuredModelSteps": 4,
+        "confirmedCostMicrousd": 7937,
+        "newHeldMicrousd": 0,
+        "httpStatusCounts": {
+          "200": 4
+        },
+        "completeTokenCorrelation": true,
+        "toolAttempts": {
+          "discover_capabilities": 1,
+          "prepare_proposal_draft": 2
+        },
+        "toolOutcomes": {
+          "ok": 1,
+          "error": 2
+        },
+        "reasonCounts": {
+          "toolReasons": {
+            "proposal_invalid_decimal": 1,
+            "proposal_quote_rate_unproven": 1
+          },
+          "stopReasons": {
+            "completed": 1,
+            "invalid-final": 1,
+            "read-final-empty-answer": 1
+          }
+        },
+        "tokenTotals": {
+          "inputTokens": 20592,
+          "outputTokens": 528,
+          "cachedInputTokens": 17035,
+          "cacheWriteTokens": 3545,
+          "reasoningTokens": null
+        },
+        "trustedActionPublished": false,
+        "businessRecordsCreated": 0,
+        "configuredModelAndTierMatched": true
+      },
+      {
+        "label": "b",
+        "requestId": "b5e9db37-0412-468e-bba7-573630aea4aa",
+        "measuredModelSteps": 6,
+        "confirmedCostMicrousd": 17900,
+        "newHeldMicrousd": 0,
+        "httpStatusCounts": {
+          "200": 6
+        },
+        "completeTokenCorrelation": true,
+        "toolAttempts": {
+          "discover_capabilities": 1,
+          "describe_assistant_scope": 1,
+          "read_supplied_document": 1,
+          "search_material_catalog": 1,
+          "find_receivals": 1,
+          "prepare_pending_receivals": 1
+        },
+        "toolOutcomes": {
+          "ok": 6
+        },
+        "reasonCounts": {
+          "stopReasons": {
+            "round-limit": 1
+          }
+        },
+        "tokenTotals": {
+          "inputTokens": 37020,
+          "outputTokens": 428,
+          "cachedInputTokens": 25427,
+          "cacheWriteTokens": 11575,
+          "reasoningTokens": null
+        },
+        "trustedActionPublished": false,
+        "businessRecordsCreated": 0,
+        "configuredModelAndTierMatched": true
+      },
+      {
+        "label": "b2",
+        "requestId": "37adf901-5a48-4cb1-a7d8-73d1bc6a8614",
+        "measuredModelSteps": 8,
+        "confirmedCostMicrousd": 17209,
+        "newHeldMicrousd": 0,
+        "httpStatusCounts": {
+          "200": 8
+        },
+        "completeTokenCorrelation": true,
+        "toolAttempts": {
+          "discover_capabilities": 1,
+          "describe_assistant_scope": 1,
+          "read_supplied_document": 1,
+          "search_material_catalog": 1,
+          "find_receivals": 1,
+          "find_suppliers": 1,
+          "prepare_pending_receivals": 1
+        },
+        "toolOutcomes": {
+          "ok": 7
+        },
+        "reasonCounts": {
+          "stopReasons": {
+            "completed": 1,
+            "invalid-final": 1
+          }
+        },
+        "tokenTotals": {
+          "inputTokens": 53441,
+          "outputTokens": 669,
+          "cachedInputTokens": 44112,
+          "cacheWriteTokens": 9305,
+          "reasoningTokens": null
+        },
+        "trustedActionPublished": false,
+        "businessRecordsCreated": 0,
+        "configuredModelAndTierMatched": true
+      }
+    ],
+    "proposalOutcome": "Both genuine attempts failed preparation/publication; no review/PDF/password/Proposal created. First run new names were masked; second observed prepare_proposal_draft twice with invalid decimal and unproven quote-rate errors. Offending argument not retained.",
+    "invoiceOutcome": "First attempt completed six tools but stopped at round-limit. Retry completed seven tools including find_suppliers; final publication rejected with read-final-question. No card or Pending record.",
+    "b2PrecisePublicationRejections": {
+      "read-final-question": 1,
+      "read-final-missing-evidence": 0,
+      "read-final-non-fact-claim": 0,
+      "read-final-workflow-wording": 0,
+      "read-final-workflow-permission": 0,
+      "read-final-empty-answer": 0,
+      "read-final-too-long": 0
+    },
+    "finalAbsenceVerification": {
+      "passed": true,
+      "checkedAt": "2026-11-02T20:31:25.101174+00:00",
+      "operationalAcceptancePassed": false,
+      "meaning": "No action or business execution occurred; completed:true in the private source receipt denotes completion of the absence check only",
+      "newActions": 0,
+      "newProposals": 0,
+      "newPendingReceivals": 0,
+      "stockUnchanged": true,
+      "inventoryTransactionsUnchanged": true,
+      "rolesAndProposalAccessUnchanged": true
+    },
+    "passwordPreviewCommittedReceiptAndNavigationReached": false,
+    "invoiceSource": {
+      "normalSignedInPdfUpload": true,
+      "technicalAttestation": "Explicit deterministic human-verified synthetic transcription; not OCR/vision",
+      "sourceId": "c9cc8e49-ea16-4a26-b142-ffb237a76d1d",
+      "businessCreationByAttestation": false,
+      "disposition": "Private uploaded original and technical transcription preserved; no committed draft binding or automatic deletion"
+    },
+    "diagnosticsCaveat": "B2 helper annotation still namesd1a9dc as current source; actual deployment/Edge receipts prove B2 useda0a629/Edge60. The diagnostic module itself is byte-identical91e/d1. Constant annotations are not deployment proof.",
+    "legacyFirstRequestReasonsUnavailable": true,
+    "visibleFallback": "I could not complete this full request right now. You can still ask one direct Job count, status, schedule or labor question at a time, or retry the full briefing later.",
+    "visibleFallbackIsDeterministic": true
+  },
+  "ui": {
+    "actualHostedBrowser": true,
+    "desktopPanelWidth": 460,
+    "desktopViewport": [
+      1280,
+      900
+    ],
+    "expandedWorkspace": [
+      1120,
+      852
+    ],
+    "mobileViewport": [
+      390,
+      844
+    ],
+    "mobileHorizontalOverflow": false,
+    "syntheticProposalAndB2HistoryRestoredAfterClosure": true,
+    "messagingInboxOpenedAndClosed": true,
+    "privateMessageContentsRead": false,
+    "dmGroupSendRegressionPerformed": false,
+    "viewportRestored": true,
+    "reviewTabMarkedDeliverable": true,
+    "screenUse": "One brief native file-picker screenshot; no active capture retained",
+    "failedInvoiceRoundLimitDurableRetryUnverified": true
+  },
+  "validation": {
+    "unchangedMandatoryProofHolds": 0,
+    "webpackBuildPassed": true,
+    "typeScriptPassed": true,
+    "targetedEslintPassed": true,
+    "buildArtifacts": 288,
+    "exportedPages": 25,
+    "matchedEdgeModuleCount": 55,
+    "servedAssetCount": 99,
+    "focusedGateGroups": 18,
+    "focusedProposalGroups": 22,
+    "focusedDiagnosticGroups": 9,
+    "acceptedIsolatedAuthCanonicalTransactionReplayRollbackEvidenceReused": true,
+    "priorLocalConversationPlanningScripted": true,
+    "thisAcceptanceGenuineTerra": true,
+    "hostedPasswordCanonicalBusinessPersistenceNotReached": true,
+    "noNewBroadTestCampaign": true,
+    "focusedHostedSessionGroups": 7
+  },
+  "accounting": {
+    "additionalAuthorizedMicrousd": 500000,
+    "perRequestCeilingMicrousd": 250000,
+    "measuredModelSteps": 22,
+    "confirmedCostMicrousd": 57364,
+    "conservativelyAccountedNewMicrousd": 57364,
+    "newHeldMicrousd": 0,
+    "tokens": {
+      "inputTokens": 131286,
+      "outputTokens": 2121,
+      "cachedInputTokens": 97784,
+      "cacheWriteTokens": 33436,
+      "reasoningTokens": null
+    },
+    "allMeasuredHttp200ModelAndTierMatched": true,
+    "allRequiredTokenRowsComplete": true,
+    "original127RowsPreserved": true,
+    "original127Hash": "01dbc7dfbc09b4d21315b4ca37375c88",
+    "finalUsageRows": 149,
+    "finalUsageHash": "da6e62ff474188c51f36da8bdf508d0b",
+    "historicalHoldsMicrousd": 142953,
+    "legacyUnresolvedMicrousd": 18723,
+    "remainingFiniteHeadroomMicrousd": 442636,
+    "headroomEnabled": false,
+    "originalExpiry": "2026-11-02T20:50:05.552604+00:00",
+    "finalPolicyEnabled": false,
+    "finalPolicyVersion": 9,
+    "capsAndOriginalExpiryPreserved": true,
+    "refundResetOrRecurringAllowance": false
+  },
+  "closure": {
+    "closedAt": "2026-11-02T20:31:18.682429+00:00",
+    "reviewedOperationsEnabled": false,
+    "reviewedActionsEnabled": false,
+    "acceptanceEnabled": false,
+    "legacyPilotEnabled": false,
+    "legacyExecutionEnabled": false,
+    "employeeEnrollment": 0,
+    "proposalDatabaseControl": false,
+    "receivalDatabaseControl": false,
+    "ordinaryProductionSpendAuthorized": false,
+    "preparationSpendAuthorized": false,
+    "oldCanaryFundingAndWindow": false,
+    "paidPolicyEnabled": false,
+    "activePermits": 0,
+    "activeOldGrants": 0,
+    "stockFingerprint": "d674637c213397c6f5c1f3c726594f73",
+    "inventoryTransactions": 102
+  },
+  "decision": {
+    "recommendation": "Revise before Production",
+    "readyForProduction": false,
+    "nextStep": "Product reviews the real Proposal validation/publication failures and Pending final-answer rejection before authorizing a narrow correction or any renewed finite acceptance. Do not weaken validation or repeat a broad campaign.",
+    "manualReview": "TenDev browser tab preserved as Deliverable; global panel/history remains inspectable. Operational pilot and funding are closed; a new real operational retry needs separate authorization.",
+    "stopForProductReview": true
+  }
+}
