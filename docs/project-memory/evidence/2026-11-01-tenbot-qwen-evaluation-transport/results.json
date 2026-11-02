@@ -1,0 +1,329 @@
+{
+  "status": "blocked-before-inference",
+  "acceptedApplicationSource": "16ccb2fdac836f8a9b1cb57177e0af775d0e0840",
+  "productionUnchanged": "e71bd981a583e0a4e706f9953c6cc1fcc4d576e1",
+  "sourceIsolation": "Plain accepted-source archive; reviewed evaluation-infrastructure overlays only; no Git worktree/branch",
+  "transportSourceHashes": {
+    "scripts/support/tenbot-ai-pilot.mjs": "649911881b8ef1c8cda823b4fcccd5385b5f40a7ac94c5adaba909a8f8ddb161",
+    "scripts/tenbot-ai/worker.ts": "c70df57eb9b6def3e05dccbddd6904874e8c0dc2d69cb836dfbd60dfb71c1638",
+    "scripts/evaluate-tenbot-qwen-tools-live.mts": "9af048bc820912bdcd829d12d1357e19213e840e55dd1082bc2b8f91099a3f5c",
+    "scripts/verify-tenbot-pilot-agent-transport.mts": "78bf2ada986ad6a684d5ceddd80113f08b8e2a55d8a36cbbfcb89c5a839b50b1",
+    "scripts/verify-tenbot-pilot-provider.mts": "d793091b7bbc7b93ebe3500876617d8eac0efa0cc7d4fb1f0e67a12980a0bf66"
+  },
+  "freePreflight": {
+    "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+    "plan": "Workers Free",
+    "freePlanConfirmedAt": "2026-11-02T03:31:32.518Z",
+    "checkedAt": "2026-11-02T03:31:35.271Z",
+    "reportedNeurons": 106.2225399017334,
+    "reportedRequests": 17,
+    "nominalRemainingNeurons": 9893.777460098267,
+    "caps": {
+      "sharedDayLimit": 300,
+      "sharedMonthLimit": 6000,
+      "perAccountMinuteLimit": 6,
+      "dailyNeuronLimit": 8000,
+      "monthlyNeuronLimit": 240000,
+      "freeDailyNeurons": 10000,
+      "neuronHeadroom": 2000,
+      "totalDay": 300,
+      "perMinute": 6,
+      "monthlyUsd": 0
+    }
+  },
+  "actualAuthorization": {
+    "fixture": "jltgxcfiprocydhbrahz",
+    "existingSyntheticEmployee": true,
+    "passwordSignInHttp": 200,
+    "verifiedUserHttp": 200,
+    "readOperationalData": true,
+    "authorizedJobSearchComplete": true,
+    "authorizedProductionOverviewComplete": true,
+    "noNewRecordsOrPermissions": true
+  },
+  "actualTransport": {
+    "type": "wrangler-remote-ai-binding",
+    "setupCompleted": true,
+    "disposed": true,
+    "unattendedHttpBridgeStarted": false,
+    "inferenceAuthenticationVerified": false
+  },
+  "stop": {
+    "phase": "agent",
+    "turn": 0,
+    "code": "request-budget-unavailable",
+    "method": "POST",
+    "endpoint": "/rest/v1/rpc/tenbot_reserve_usage",
+    "httpStatus": 404,
+    "compatibleSignature": "public.tenbot_reserve_usage(uuid,text,numeric)",
+    "responseBodyRetained": false,
+    "interpretation": "Compatible quota RPC was unavailable through isolated PostgREST. Historical fixture bootstrap explicitly excludes Qwen legacy metering; no current schema-catalog introspection or retry performed."
+  },
+  "historicalFixtureOmission": "No Qwen meter legacy implementation; unused old overloads omitted",
+  "metrics": {
+    "modelCalls": 0,
+    "modelSelectedReadCalls": 0,
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "additionalNeurons": 0,
+    "actualUsd": 0,
+    "firstAttemptElapsedMs": 7450,
+    "modelLatencyMs": null,
+    "accuracy": null,
+    "comparisonCompleted": false
+  },
+  "offlineValidation": {
+    "riskTier": 2,
+    "transportGroups": 12,
+    "providerGroups": 10,
+    "adjacentBindingPrivacyCases": 81,
+    "scriptedAiOnly": true,
+    "externalRequestsInOfflineTests": 0,
+    "targetedStrictTypeScript": "PASS",
+    "targetedEslint": "PASS",
+    "diffCheck": "PASS",
+    "reusedEvidence": "Accepted70focused/adjacentgroups; no application-source changes or new application build/browser campaign"
+  },
+  "boundaries": {
+    "disposed": true,
+    "modelCalls": 0,
+    "chargedOrReservedNeurons": 0,
+    "grantActivations": 0,
+    "enrollmentChanges": 0,
+    "operationalWrites": 0,
+    "fixtureSetupWrites": 0,
+    "providerConfigurationChanges": 0
+  },
+  "events": [
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "POST",
+      "path": "/auth/v1/token",
+      "status": 200,
+      "durationMs": 1212
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "GET",
+      "path": "/auth/v1/user",
+      "status": 200,
+      "durationMs": 86
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 524
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 154
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 197
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "GET",
+      "path": "/rest/v1/production_rework_cycles",
+      "status": 200,
+      "durationMs": 84
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 71
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 103
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 76
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 119
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "GET",
+      "path": "/rest/v1/production_rework_cycles",
+      "status": 200,
+      "durationMs": 107
+    },
+    {
+      "kind": "caller",
+      "phase": "preflight",
+      "turn": -1,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 72
+    },
+    {
+      "kind": "caller",
+      "phase": "deterministic-control",
+      "turn": 0,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 68
+    },
+    {
+      "kind": "caller",
+      "phase": "deterministic-control",
+      "turn": 0,
+      "method": "GET",
+      "path": "/rest/v1/jobs",
+      "status": 200,
+      "durationMs": 119
+    },
+    {
+      "kind": "caller",
+      "phase": "deterministic-control",
+      "turn": 0,
+      "method": "GET",
+      "path": "/rest/v1/production_rework_cycles",
+      "status": 200,
+      "durationMs": 77
+    },
+    {
+      "kind": "caller",
+      "phase": "deterministic-control",
+      "turn": 0,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 71
+    },
+    {
+      "kind": "caller",
+      "phase": "agent",
+      "turn": 0,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 74
+    },
+    {
+      "kind": "caller",
+      "phase": "agent",
+      "turn": 0,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 85
+    },
+    {
+      "kind": "caller",
+      "phase": "agent",
+      "turn": 0,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 80
+    },
+    {
+      "kind": "caller",
+      "phase": "agent",
+      "turn": 0,
+      "method": "POST",
+      "path": "/rest/v1/rpc/has_app_capability",
+      "status": 200,
+      "durationMs": 70
+    },
+    {
+      "kind": "meter",
+      "phase": "agent",
+      "turn": 0,
+      "method": "POST",
+      "path": "/rest/v1/rpc/tenbot_reserve_usage",
+      "status": 404,
+      "durationMs": 112
+    },
+    {
+      "turn": 0,
+      "kind": "agent-diagnostic",
+      "stage": "model",
+      "tool": null,
+      "outcome": "error",
+      "durationMs": 186,
+      "reasonCode": "request-budget-unavailable"
+    },
+    {
+      "turn": 0,
+      "kind": "agent-diagnostic",
+      "stage": "stop",
+      "tool": null,
+      "outcome": "stopped",
+      "durationMs": 0,
+      "reasonCode": "request-budget-unavailable"
+    }
+  ],
+  "privateEvidence": "/private/tmp/tenops-tenbot-qwen-tools-live-UF78qB",
+  "nextAction": "Product approval required to install only omitted canonical Qwen quota prerequisites in existing isolated fixture, preserving all records/history/caps; no new migration authored/applied here.",
+  "executedInfrastructureHashes": {
+    "scripts/support/tenbot-ai-pilot.mjs": "649911881b8ef1c8cda823b4fcccd5385b5f40a7ac94c5adaba909a8f8ddb161",
+    "scripts/tenbot-ai/worker.ts": "c70df57eb9b6def3e05dccbddd6904874e8c0dc2d69cb836dfbd60dfb71c1638",
+    "scripts/evaluate-tenbot-qwen-tools-live.mts": "2b738537660b13db4960adfd49bdc54c93447e205aa7187e546c8fccde492e5a",
+    "scripts/verify-tenbot-pilot-agent-transport.mts": "78bf2ada986ad6a684d5ceddd80113f08b8e2a55d8a36cbbfcb89c5a839b50b1",
+    "scripts/verify-tenbot-pilot-provider.mts": "d793091b7bbc7b93ebe3500876617d8eac0efa0cc7d4fb1f0e67a12980a0bf66"
+  },
+  "applicationModulePins": {
+    "tenbot-agent.ts": "f127eedc748afb81a953fd0c15603ccae30c66ddb58ece370f9ba774e576cf98",
+    "tenbot-agent-session.ts": "16bdfc1401ef8336f5011b3122be7e045d39a599f2d239bb97db1ea15ad5c367",
+    "tenbot-qwen-agent.ts": "5b94998cbc47e0e4f4879ae4418e74d0fbb539de7b0d7342f49d86806b320138",
+    "tenbot-agent-operations.ts": "6c2b95c2e47a8cd7b3c7ff65947a30ed3bc2c4bb766dd220e442db9ad78f22c8",
+    "tenbot-job-routing.ts": "98d4d02ea068cfd4e829beabc04361dcdee3c7d4af6837513ba59f2ff956a384",
+    "tenbot-job-tools.ts": "5ab6a975b2295403cd712bf98db00f925896915f77c14be513ef608722a7dbea"
+  },
+  "deterministicBaselinePins": {
+    "tenbot-job-routing.ts": "66a865ed7ecbe695966158ca322c3b26b7327aed70692433d49e2f92eb2df59d",
+    "tenbot-job-session.ts": "718205cdbd37b07c23ee467cfab61160464093b1aeb73b4a06728bfb39c6ad35",
+    "tenbot-conversation-context.ts": "209ec2c0ffea93b5891c65ea3a29efc4d7301c335fb9dd7df7ae29489790e077"
+  },
+  "postStopHarnessChange": "Retain safe error codes, partial control/read traces and diagnostic stop reason; typechecked/linted only, no live retry."
+}

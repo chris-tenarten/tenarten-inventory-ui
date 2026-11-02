@@ -3,8 +3,10 @@ import {readFileSync,writeFileSync,mkdirSync,appendFileSync,readdirSync,existsSy
 import {randomBytes,randomUUID} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {inferenceRequest} from '../../supabase/functions/_shared/tenbot-core.ts';
 import {allowedModels,defaultModel,isAllowedModel,measuredUsage,reserveForRequest,usagePolicy} from '../../supabase/functions/_shared/tenbot-models.ts';
+import {worker,validPilotInput} from '../tenbot-ai/worker.ts';
 export const pilotDirectory='/private/tmp/tenops-tenbot-review/ai-pilot';
 export const pilotAccount='1c3296a9dced221746eb605be66df0f3';
 export const pilotModel=defaultModel;
@@ -130,31 +132,40 @@ export function prepareBindingConfig(){
  return path.join(pilotDirectory,'wrangler.jsonc');
 }
 let pilotActive=false;
-export function pilotProvider({model=pilotModel}={}){
+export function pilotProvider({model=pilotModel,dispatch,directory=pilotDirectory,allowance=accountAllowance,deadlineMs=25000}={}){
  if(!isAllowedModel(model))throw Error('Model not allowed');
- const bridge=JSON.parse(readFileSync(path.join(pilotDirectory,'bridge.json'),'utf8'));
+ if(!Number.isSafeInteger(deadlineMs)||deadlineMs<1||deadlineMs>25000)throw Error('Invalid pilot deadline');
  const measurements=new WeakMap();
  return {name:'Cloudflare Workers AI remote binding',
   reserveEstimate(input){measurements.delete(input);return reserveForRequest(model,inferenceRequest(guideOnlyInput(input),model));},
   usage(input){return measurements.get(input)??null;},
-  async infer(input){
+  async infer(input,signal){
   measurements.delete(input);
   if(pilotActive)throw Error('One pilot request at a time');
   pilotActive=true;
   let allowanceReservation=null;
   try{
    const safe=guideOnlyInput(input),reservation=reserveForRequest(model,inferenceRequest(safe,model));
-   const ready=JSON.parse(readFileSync(path.join(pilotDirectory,'ready.json'),'utf8'));
+   const ready=JSON.parse(readFileSync(path.join(directory,'ready.json'),'utf8'));
    if(ready.plan!=='Workers Free'||!freshConfirmation(ready.freePlanConfirmedAt)||!ready.availableModels?.includes(model))throw Error('Free-only model verification unavailable or expired');
-   allowanceReservation=await accountAllowance.reserve(model,reservation.neurons);
-   const started=Date.now();const response=await fetch(bridge.url+'/infer',{method:'POST',headers:{'Content-Type':'application/json','x-tenbot-pilot-key':bridge.key,'x-tenbot-model':model},body:JSON.stringify(safe),signal:AbortSignal.timeout(25000)});
-   if(!response.ok)throw Error('Remote binding unavailable');
-   const text=await response.text();if(text.length>16000)throw Error('Oversized binding result');const value=JSON.parse(text);
+   allowanceReservation=await allowance.reserve(model,reservation.neurons);
+   signal?.throwIfAborted();
+   const started=Date.now(),deadline=signal?AbortSignal.any([signal,AbortSignal.timeout(deadlineMs)]):AbortSignal.timeout(deadlineMs);
+   let value;
+   if(dispatch)value=await withDeadline(dispatch(safe,model,deadline),deadline);
+   else{
+    // Legacy consumers may still use the authenticated local bridge. The
+    // owned in-process evaluation path never reads or creates its credential.
+    const bridge=JSON.parse(readFileSync(path.join(directory,'bridge.json'),'utf8'));
+    const response=await fetch(bridge.url+'/infer',{method:'POST',headers:{'Content-Type':'application/json','x-tenbot-pilot-key':bridge.key,'x-tenbot-model':model},body:JSON.stringify(safe),signal:deadline});
+    if(!response.ok)throw Error('Remote binding unavailable (HTTP '+response.status+')');
+    const text=await response.text();if(Buffer.byteLength(text)>16000)throw Error('Oversized binding result');value=JSON.parse(text);
+   }
    const metering=measuredUsage(model,value.usage);if(metering)measurements.set(input,metering);
-   appendFileSync(path.join(pilotDirectory,'usage.jsonl'),JSON.stringify({at:new Date().toISOString(),model,durationMs:Date.now()-started,usage:value.usage||{},estimatedNeurons:metering?.estimatedNeurons??null,reservedNeurons:reservation.neurons})+'\n',{mode:0o600});
+   appendFileSync(path.join(directory,'usage.jsonl'),JSON.stringify({at:new Date().toISOString(),model,durationMs:Date.now()-started,usage:value.usage||{},estimatedNeurons:metering?.estimatedNeurons??null,reservedNeurons:reservation.neurons})+'\n',{mode:0o600});
    return value.output;
   }finally{
-   try{if(allowanceReservation)await accountAllowance.settle(allowanceReservation.id,measurements.get(input)??null);}
+   try{if(allowanceReservation)await allowance.settle(allowanceReservation.id,measurements.get(input)??null);}
    finally{pilotActive=false;}
   }
  }};
@@ -163,7 +174,53 @@ export function pilotProvider({model=pilotModel}={}){
 // caller-replayed turns or independently retrieved business records.
 export function guideOnlyInput(input){
  if(input.draft)throw Error('Feature drafts remain employee-written in this pilot');
- if(typeof input.question!=='string'||!input.question.trim()||input.question.length>1200||!Array.isArray(input.context)||input.context.length>2||input.context.some(item=>typeof item!=='string'||item.length>1200))throw Error('Invalid assistant input');
- if(input.operational&&(input.context.length||input.excerpts.length||!Array.isArray(input.operational.facts)||input.operational.facts.length>40||JSON.stringify(input.operational).length>8000))throw Error('Invalid operational evidence');
- return {question:input.question,context:input.context,draft:false,excerpts:input.excerpts,...(input.operational?{operational:input.operational}:{})};
+ if(input.operational&&(!Array.isArray(input.context)||input.context.length||!Array.isArray(input.excerpts)||input.excerpts.length||!Array.isArray(input.operational.facts)||input.operational.facts.length>40||JSON.stringify(input.operational).length>8000))throw Error('Invalid operational evidence');
+ if(!validPilotInput(input))throw Error('Invalid assistant input');
+ return {question:input.question,context:input.context,draft:false,excerpts:input.excerpts,...(input.operational?{operational:input.operational}:{}),...(input.agent?{agent:input.agent}:{})};
+}
+
+function withDeadline(promise,signal){
+ signal.throwIfAborted();
+ return new Promise((resolve,reject)=>{
+  const abort=()=>reject(Error('Pilot remote binding deadline exceeded'));
+  signal.addEventListener('abort',abort,{once:true});
+  Promise.resolve(promise).then(resolve,reject).finally(()=>signal.removeEventListener('abort',abort));
+ });
+}
+
+// Supported Wrangler Node API, with an owned remote AI binding and explicit
+// disposal. This opens no unattended HTTP inference bridge and loads no env
+// files. The existing OAuth session, Free verification and both meters remain
+// authoritative; no Worker deployment, token creation or paid activation.
+export async function openPilotProvider({model=pilotModel}={}){
+ if(!isAllowedModel(model))throw Error('Model not allowed');
+ const ready=JSON.parse(readFileSync(path.join(pilotDirectory,'ready.json'),'utf8'));
+ if(ready.plan!=='Workers Free'||!freshConfirmation(ready.freePlanConfirmedAt)||!ready.availableModels?.includes(model))throw Error('Free-only model verification unavailable or expired');
+ // reserve() refreshes stale account telemetry before each dispatch. A stale
+ // cache alone must not block opening a binding that has not spent anything.
+ process.env.WRANGLER_SEND_METRICS='false';
+ const wranglerApi=await import(pathToFileURL(path.join(path.dirname(path.dirname(existingWrangler())),'wrangler-dist/cli.js')).href);
+ const setup=wranglerApi.getPlatformProxy({configPath:path.resolve('scripts/tenbot-ai/wrangler.jsonc'),remoteBindings:true,persist:false,envFiles:[]});
+ let expired=false,proxy;
+ try{proxy=await withDeadline(setup,AbortSignal.timeout(30000));}
+ catch{expired=true;void setup.then(value=>value.dispose()).catch(()=>{});throw Error('Pilot remote binding setup unavailable or timed out');}
+ let disposed=false,poisoned=false;
+ const dispose=async()=>{if(disposed)return;disposed=true;await withDeadline(proxy.dispose(),AbortSignal.timeout(5000));};
+ const key=randomBytes(32).toString('hex');
+ const provider=pilotProvider({model,async dispatch(input,selected,signal){
+  if(expired||disposed||poisoned)throw Error('Pilot remote binding closed');
+  const request=new Request('http://127.0.0.1/infer',{method:'POST',headers:{'Content-Type':'application/json','x-tenbot-pilot-key':key,'x-tenbot-model':selected},body:JSON.stringify(input)});
+  try{
+   // Reuse exactly the same authenticated worker admission and output bounds,
+   // invoking its handler in-process rather than over an unmanaged HTTP port.
+   const response=await withDeadline(worker.fetch(request,{AI:proxy.env.AI,TENBOT_PILOT_BRIDGE_KEY:key}),signal);
+   if(!response.ok)throw Error('Pilot remote inference unavailable (HTTP '+response.status+')');
+   const text=await response.text();if(Buffer.byteLength(text)>16000)throw Error('Oversized binding result');return JSON.parse(text);
+  }catch(error){
+   // A timed-out backend may still be completing. Never dispatch another call
+   // through that session; the allowance journal retains the uncertain bound.
+   poisoned=true;throw error;
+  }
+ }});
+ return {provider,dispose,transport:'wrangler-remote-ai-binding'};
 }

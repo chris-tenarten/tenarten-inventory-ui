@@ -93,3 +93,5 @@ The [October31 consolidated TenBot release readiness](project-memory/2026-10-30-
 - [Consolidated TenBot Production preparation](project-memory/2026-11-01-tenbot-consolidated-production-preparation.md): candidate `e71bd981a583e0a4e706f9953c6cc1fcc4d576e1` on deployed01c0; accepted Messaging/persistent history/Job Intelligence/direct answers, explicit Production history-origin integration, no canary controls. Original proof zero holds/build277 pass; no migration or deployment.
 
 - [Consolidated TenBot Production release](project-memory/2026-11-01-tenbot-consolidated-production-release.md): TenOps `e71bd981` / `eb191ab7-6e40-4275-b0a1-c616044b89a5`, shared Edge41/JWT ON; persistent history/Messaging/Job Intelligence/direct answers released.35 assets/41 modules/access-boundary/health pass; no genuine employee smoke, no renewed spending, all operational writes OFF.
+
+- [Qwen evaluation transport correction and quota blocker — November 1, 2026](project-memory/2026-11-01-tenbot-qwen-evaluation-transport.md).
