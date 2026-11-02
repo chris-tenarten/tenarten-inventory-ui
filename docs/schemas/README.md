@@ -1,0 +1,65 @@
+# Technical inventory: schema, services and TenBot capabilities
+
+This is the lookup entry point for existing technical contracts, not a second schema specification. **Source review: November 2, 2026, America/Chicago**, root `dev` at `b5f7f66bfe924a2876834d0e698decf206eff9bb`; unrelated dirty work was preserved. No hosted query was run for this inventory. Reinspect relevant paths and release evidence before using a claim as current.
+
+> Before proposing new database structures, services, or agent tools, first consult the existing technical inventory. If its freshness or completeness is uncertain, ask Codex to inspect the current source and deployed schema, then recommend the smallest change that reuses existing functionality.
+
+## Schema sources and freshness
+
+| Need | Reuse | Verification boundary |
+| --- | --- | --- |
+| Tables, columns, types, defaults, constraints, foreign keys, enums, indexes and RPC definitions in source | [Append-only migrations](../../supabase/migrations/) and affected application callers | Repository contracts at the inspected revision; includes superseded/unapplied work and cannot reconstruct every older hosted object. Never apply the directory as an inventory refresh. |
+| Current physical metadata | [Read-only inventory query](../../supabase/inspection/technical_inventory_readonly.sql) | Query is supplied but **not executed by this pass**. It derives metadata from PostgreSQL catalogs, without business rows or routine bodies. An authorized execution supplies the actual target/time/scope. |
+| Domain meaning | [Jobs](JOBS.md), [Inventory](INVENTORY.md), [Purchasing](PURCHASING.md), [Operational reporting](OPERATIONAL_REPORTING.md), [Attachments](ATTACHMENTS.md), [Conceptual data model](../architecture/DATA_MODEL.md) | Focused/conceptual references, not exhaustive physical schemas or fresh hosted attestations. Some retain historical fields/wording. |
+| Retained shared hosted metadata | [October 30 scoped snapshot](../project-memory/evidence/2026-10-30-tenbot-receival-readiness/shared-schema-metadata.json) | `checkedAt=2026-10-30T15:08:37.394Z`; ten selected tables and selected routines, including columns/constraints/FKs/indexes/RLS/triggers. No operational rows/mutations. No complete enum or migration inventory. |
+| Migration/deployment state | Exact owning [release receipts](../project-memory/CURRENT_STATE.md), notably the [November 2 TenDev release](../project-memory/2026-11-02-tenbot-conversational-tendev-release.md) | Scope-specific dated evidence. Fixture metadata and applied-migration files are not proof of Production state. Current State's old opening needs reconciliation. |
+
+No complete current physical-schema capture or generated `Database` TypeScript model was found during this review. `src/lib/supabase.ts` uses an unparameterized client. Do not invent a typed-schema generator or mistake the knowledge generator for one.
+
+The retained October 30 shared snapshot covers `app_role_capabilities`, `app_users`, `inventory_items`, `inventory_transactions`, `jobs`, `pending_receivals`, both Vendor Catalog tables, `vendors`, and `storage.objects`, plus selected routines. Adjacent `fixture-*` metadata belongs to an isolated test environment and must not be relabeled as hosted application schema.
+
+For a refresh, use the existing authorized metadata/SQL access path, identify the exact project/database and environment, and execute only the needed catalog sections in the read-only query. Record capture time, repository/release revision, inspected schemas/objects and omissions in the existing task receipt. Keep metadata out of the bootstrap; retain selected sanitized output only where the owning workstream already keeps evidence. Inspect actual grants/RLS/Storage/Realtime separately when the change depends on them. Other inspection scripts may read operational rows or perform cleanup; this is not permission to run them wholesale.
+
+## Existing services and business operations
+
+This is a **source-derived navigation inventory** at the review boundary above, not a claim that every operation is deployed, exposed to TenBot or authorized for the current employee. Inspect the exported implementation, caller, persistence contract and relevant release receipt before extending it.
+
+| Domain / supported source contracts | Owning implementation |
+| --- | --- |
+| Production Job identity, lifecycle/Rework, scheduling, updates and files | [production/jobs.ts](../../src/modules/production/jobs.ts); [schedule contract](../../src/modules/production/schedule-batch-contract.ts) |
+| Inventory reads; manual stock, reservation, receiving and undo operations | [retrieval.ts](../../src/modules/inventory/retrieval.ts); [Inventory workspace](../../src/app/inventory/page.tsx), which still owns direct table/RPC callers |
+| Invoice prepared-draft get/prepare/approve/revoke/execute contracts | [invoice-receival-service.ts](../../src/modules/inventory/invoice-receival-service.ts); execution remains separately host/DB-gated |
+| Vendors, catalog, Purchase Orders, issuance and receival projection | [purchasing/queries.ts](../../src/modules/purchasing/queries.ts), [mutations.ts](../../src/modules/purchasing/mutations.ts) |
+| Proposal drafts, issuance/revisions, estimate conversion and document generation | [proposals/queries.ts](../../src/modules/proposals/queries.ts), [estimate-to-proposal.ts](../../src/modules/proposals/estimate-to-proposal.ts); embedded-text extraction is not proof of a screenshot agent |
+| Samples; Intake/Bid planning | [samples/queries.ts](../../src/modules/samples/queries.ts), [pre-production/queries.ts](../../src/modules/pre-production/queries.ts), [planning-data.ts](../../src/modules/pre-production/planning-data.ts) |
+| Labor and material reporting | [manpower.ts](../../src/modules/manpower/manpower.ts), [material-usage/actions.ts](../../src/modules/material-usage/actions.ts) |
+| Private tasks/Messaging; Transmittals | [my-work/queries.ts](../../src/modules/my-work/queries.ts), [transmittals/queries.ts](../../src/modules/transmittals/queries.ts), [mutations.ts](../../src/modules/transmittals/mutations.ts) |
+
+Discover HTTP entry points under [Supabase functions](../../supabase/functions/) (`*/index.ts`) and [Next API routes](../../src/app/api/) (`*/route.ts`). Many operations call Supabase tables/RPCs directly, so an endpoint list alone is incomplete. Permission vocabulary lives in [client RBAC](../../src/lib/rbac.ts), [server auth](../../src/lib/server-auth.ts) and [Edge RBAC](../../supabase/functions/_shared/rbac.ts); effective hosted grants and current account access need their own verification.
+
+Reuse the existing [knowledge manifest](../../scripts/tenbot-knowledge/manifest.mjs) for module/workflow routes, permissions, service/source paths and release pins; [architecture facets](../../scripts/tenbot-knowledge/architecture.mjs) classify relationships, prerequisites, effects, approvals and limitations. Their [generated snapshot](../../supabase/functions/_shared/tenbot-knowledge-snapshot.ts) retains source hashes/provenance. These are release-pinned guidance, not a full schema export, fresh hosted attestation or execution registry. Manifest/facets were last changed at `b11b757` (October 29); the generated snapshot at `8295bd0` (October 30), with per-module verification pins spanning October 27–29. Recheck those dates when refreshing.
+
+## What TenBot can actually call
+
+Separate four questions: **does the application operation exist; is it registered as an agent tool; is it enabled/authorized; is that boundary deployed?** A knowledge record or capability label answers neither execution nor rollout authority.
+
+| Layer | Source and observed scope |
+| --- | --- |
+| Tool definitions | [tenbot-agent-operations.ts](../../supabase/functions/_shared/tenbot-agent-operations.ts): five Job reads, `find_jobs`, `get_job_summary`, `get_job_planning`, `get_job_labor_summary`, `get_production_overview`; also workflow-knowledge search and assistant-scope reads |
+| Actual session composition and discovery | [tenbot-agent-session.ts](../../supabase/functions/_shared/tenbot-agent-session.ts), [tenbot-agent.ts](../../supabase/functions/_shared/tenbot-agent.ts); runtime discovery is bounded to assembled tools |
+| Caller-authorized execution | [tenbot-job-tools.ts](../../supabase/functions/_shared/tenbot-job-tools.ts), [tenbot-job-session.ts](../../supabase/functions/_shared/tenbot-job-session.ts) |
+| Conditional invoice read/prepare tools | [tenbot-invoice.ts](../../supabase/functions/_shared/tenbot-invoice.ts): `read_invoice`, `search_catalog`, `check_receival_duplicates`, `prepare_pending_receivals`, subject to session gates; these are not execution tools |
+| Hosted rollout/provider/write controls | [tenbot entry point](../../supabase/functions/tenbot/index.ts), [hosted adapter](../../supabase/functions/_shared/tenbot-hosted.ts); inspect exact deployed revision and settings, not only local defaults |
+
+The November 2 receipt records TenDev `27816509`, Production Pages `e71bd981`, shared Edge43, model-directed reads gated to TenDev, ordinary Terra spending OFF and preparation/agent writes OFF. Thus ordinary application Proposal/stock/receival services do not imply available agent writes. The separate local workspace `5cb71fb` has an unwired feature-request adapter; persistence/reporting remain planned. See the [continuity handoff](../project-memory/2026-11-02-chatgpt-context-transfer.md) for acceptance failures and ownership.
+
+## Maintenance contract
+
+The Codex owner of a schema, service, API or TenBot capability change updates the relevant technical reference **in the same implementation/release work**:
+
+1. Update the owning domain/service contract and this lookup map only where its pointers, exposure or verification limits change. Generate/query physical detail from source/catalogs rather than manually copying the full schema.
+2. Record exact source revision, environment, timestamp, inspected scope, applied/unapplied migration boundary and validation limits in the existing scoped receipt. Distinguish application availability, agent registration, enabled configuration and observed deployment.
+3. For affected TenBot knowledge, follow the [existing synchronization contract](../project-memory/2026-10-29-tenbot-architecture-knowledge.md): review semantic/release impact, use existing `tenbot:knowledge:review-release`, `tenbot:knowledge` and `verify:tenbot-knowledge` commands when appropriate to the approved boundary. Do not advance pins to local HEAD or regenerate unrelated knowledge simply to refresh this index.
+4. Have the active owner update Current State and the documentation index as needed. Preserve concurrent dirty files, dated receipts, privacy and release authority. No database, scheduler or automation service is added for inventory upkeep.
+
+When ChatGPT needs detail, ask Codex: “At the current repository and named deployment boundary, locate the existing operation/schema/tool in `docs/schemas/README.md`; inspect its current source and, within authorized access, refresh the relevant deployed metadata. Report the source/time/scope and drift, then propose the smallest reuse-based change.” Missing access or incomplete evidence stays explicitly unverified.
