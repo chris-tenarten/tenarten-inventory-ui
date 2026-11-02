@@ -1,0 +1,38 @@
+{
+  "reason": "Scoped server-only acceptance gate supersedes exact hosted/index source-byte bindings; original accepted and historical release claims are preserved.",
+  "baseline": "278165095eb000b69610f903424e951ce320acdb",
+  "implementation": "2d1d127ec33e6e1a78bdc2f11df5321c8170f60d",
+  "replaced": [
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/tenbot/index.ts",
+      "blob": "917c85d1a2938537eb293839b4b352e1823a7db0",
+      "sha256": "7e3a4da16f0bb0f89093f66bf5e009226f02101647a4efda7cbcc5a5e3ff45c8",
+      "reviewedCandidate": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
+      "scope": "tendev-preparation",
+      "acceptedAuthorityRevision": "b5f7f66bfe924a2876834d0e698decf206eff9bb",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-simplification-tendev-source-proof.md",
+        "revision": "4e5c48fb53e0f6c7334d8b72121f8be3a0ae0ae2",
+        "heading": "## Accepted candidate source review — TenDev read simplification, November 2, 2026"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "blob": "f9958952617c1fee086ac4d3ccfb3962c257ecc4",
+      "sha256": "1b63cdd33529e1b9d44c1bdc5647e9ce7987a74206af864a7c7201ac14fadfe2",
+      "reviewedCandidate": "e6aea980898a17ae74476d067039d0ceabab6727",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-simplification-tendev-source-proof.md",
+        "revision": "e6aea980898a17ae74476d067039d0ceabab6727",
+        "heading": "## Candidate technical source review — exact combined hosted integration"
+      }
+    }
+  ]
+}
