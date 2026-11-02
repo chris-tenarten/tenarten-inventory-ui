@@ -1,0 +1,364 @@
+{
+  "passed": true,
+  "groups": 8,
+  "checks": [
+    "Fresh and persisted named/legacy-pronoun searches cannot override an explicit count request",
+    "A self-contained population request resets implicit archive/status scope while explicit selectors still apply",
+    "Genuine referential or elliptical search continuations preserve their scope instead of inventing a global filtered count",
+    "Count -> list -> status refinement -> schedule retains current references and can return to a new direct count",
+    "An explicit count does not inherit ambiguity from a previous multi-Job detail set",
+    "Successful primary quantitative output leads with the exact authorized answer even when generated prose explains semantics",
+    "Unavailable/incomplete results and missing numeric fields never become invented totals or scope-only prose; a real zero remains zero",
+    "Current authorization changes still deny publication rather than returning a previously read count"
+  ],
+  "examples": [
+    {
+      "priorQuery": null,
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "priorQuery": null,
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "priorQuery": null,
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "priorQuery": "Context",
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "priorQuery": "Context",
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "priorQuery": "Context",
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "priorQuery": "that Job",
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "priorQuery": "that Job",
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "priorQuery": "that Job",
+      "message": "There are 8 Jobs currently in Production.\nCurrent Jobs you can access; archived Jobs excluded.",
+      "calls": [
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        },
+        {
+          "name": "get_production_overview",
+          "args": {
+            "statuses": [
+              "in_production"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "actualCode": true,
+  "syntheticDatabaseAndAuth": true,
+  "actualDatabase": false,
+  "actualInference": false,
+  "hostedRequests": 0,
+  "operationalWrites": 0
+}

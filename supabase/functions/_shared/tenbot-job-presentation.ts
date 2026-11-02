@@ -28,7 +28,7 @@ export function presentJobResult(result:JobToolResult,question='',maxCharacters=
    }else if(quantity(field)!==null){
     lines.push(`There ${field===1?'is':'are'} ${quantity(field)} ${field===1?label.replace(/Jobs/,'Job'):label}.`);
     if(/\bby status\b/.test(q))for(const[k,n]of Object.entries(c.by_status))if(quantity(n)!==null&&labels[k])lines.push(`• ${labels[k]}: ${quantity(n)}`);
-   }
+   }else lines.push('The current authorized Job count is unavailable. I cannot establish an exact total.');
    lines.push(result.filters.include_archived===true?'Includes archived Jobs you can access.':'Current Jobs you can access; archived Jobs excluded.');
   }else lines.push('The Production results are incomplete. I cannot give an exact Job count.');
  }else if(result.tool==='find_jobs'){

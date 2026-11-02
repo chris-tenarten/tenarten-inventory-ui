@@ -1,0 +1,65 @@
+{
+  "actualCode": true,
+  "syntheticAuthAndRecords": true,
+  "actualEmployeeTrace": false,
+  "actualInference": false,
+  "hostedRequests": 0,
+  "scenarios": [
+    {
+      "priorQuery": "Context",
+      "context": {
+        "version": 1,
+        "subject": "Production",
+        "operation": "find_jobs",
+        "resultType": "collection",
+        "references": [],
+        "selection": {
+          "query": "Context",
+          "includeArchived": false,
+          "statuses": [],
+          "startDate": null,
+          "endDate": null
+        },
+        "sources": [],
+        "awaitingClarification": false,
+        "updatedAt": "2026-10-31T18:00:00.000Z",
+        "expiresAt": "2026-10-31T18:30:00.000Z"
+      },
+      "question": "How many Jobs are currently In Production?",
+      "message": "The overview counts lifecycle and archive populations, not a prior name/customer search. I can list those matches, or give a status count across your visible Jobs.",
+      "mode": "assistant",
+      "fallback": true,
+      "toolCalls": [],
+      "openAiTransportCalls": 0,
+      "syntheticQwenTransportCalls": 0
+    },
+    {
+      "priorQuery": "that Job",
+      "context": {
+        "version": 1,
+        "subject": "Production",
+        "operation": "find_jobs",
+        "resultType": "collection",
+        "references": [],
+        "selection": {
+          "query": "that Job",
+          "includeArchived": false,
+          "statuses": [],
+          "startDate": null,
+          "endDate": null
+        },
+        "sources": [],
+        "awaitingClarification": false,
+        "updatedAt": "2026-10-31T18:00:00.000Z",
+        "expiresAt": "2026-10-31T18:30:00.000Z"
+      },
+      "question": "How many Jobs are currently In Production?",
+      "message": "The overview counts lifecycle and archive populations, not a prior name/customer search. I can list those matches, or give a status count across your visible Jobs.",
+      "mode": "assistant",
+      "fallback": true,
+      "toolCalls": [],
+      "openAiTransportCalls": 0,
+      "syntheticQwenTransportCalls": 0
+    }
+  ]
+}

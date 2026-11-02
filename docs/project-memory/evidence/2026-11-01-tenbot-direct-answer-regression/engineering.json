@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "tier": 2,
+  "testingLevel": 2,
+  "typescript": true,
+  "targetedLintNoIgnore": true,
+  "productionBuild": true,
+  "independentReadOnlyDiffReview": "job_read_routing",
+  "blockingFindings": 0,
+  "reusedDatabaseEvidence": true,
+  "newDatabaseOrModelCalls": 0
+}

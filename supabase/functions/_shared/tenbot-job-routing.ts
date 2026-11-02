@@ -79,7 +79,11 @@ function isJobPopulationRefinement(q:string):boolean{
  const connectors=new Set(['what','about','how','many','are','is','which','ones','jobs','production','marked','status','statuses','show','list','find','search','enumerate','the','and','or','please','currently','those','them','in','on','now','any','all','include','including','exclude','excluding','with','without']);
  return words.every(word=>connectors.has(word));
 }
-export const isJobFollowupReference=(q:string)=>(/\b(?:it|its|that|those|these|they|them|ones|other)\b/i.test(q)||isJobPopulationRefinement(q))&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
+const jobReferenceWords=/\b(?:it|its|that|those|these|they|them|their|ones|other|same)\b/i;
+/** Explicit population questions establish their own scope. Canonical status
+ * words alone do not make them references to a prior name/customer search. */
+function explicitJobPopulationRequest(q:string){const scope=q.replace(/\b(?:jobs|projects)\s+that\b/gi,'Jobs');return /\b(?:jobs|projects|production (?:overview|count)|shop overview)\b/i.test(q)&&(listOperation.test(q)||countOperation.test(q))&&!jobReferenceWords.test(scope);}
+export const isJobFollowupReference=(q:string)=>!explicitJobPopulationRequest(q)&&(jobReferenceWords.test(q)||isJobPopulationRefinement(q))&&!/["“]/.test(q)&&!/\bjob\s+#?\s*[A-Za-z0-9._/-]*\d/i.test(q);
 
 /** Explicit canonical context is a lookup seed, never evidence or authorization. */
 export function resolveJobIntent(question:string,context?:JobContext|null,now=new Date()):JobIntent|null{
