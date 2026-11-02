@@ -1861,22 +1861,6 @@
     "classification": "candidate-source",
     "authority": "product-accepted",
     "kind": "runtime",
-    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
-    "blob": "22f2e3881bf4f72c552a4690ee274568b9b97d92",
-    "sha256": "20592e1a3ac60f0ff3ff16de7ef8fa5f87b620950d8e4b1d25cf0d4fffb10a00",
-    "acceptedAuthorityRevision": "28005dc70d086a2a68830165c4f299ba51bc63ba",
-    "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-    "scope": "tendev-preparation",
-    "receipt": {
-      "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
-      "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
-      "heading": "## Accepted candidate source review \u2014 integrated TenBot actions"
-    }
-  },
-  {
-    "classification": "candidate-source",
-    "authority": "product-accepted",
-    "kind": "runtime",
     "path": "supabase/functions/_shared/tenbot-business-operations.ts",
     "blob": "9197db1cc627de03c4f68f36dac3a703c8a7b800",
     "sha256": "aa293d61ad4d980629184ebf17f608faecfe62012d3b41f42ef967fbe5c11259",
@@ -2340,6 +2324,21 @@
       "path": "docs/project-memory/2026-11-02-tenbot-bounded-diagnostics-source-proof.md",
       "revision": "917626449571142790e5516986b60bfdad6adf68",
       "heading": "## Candidate technical source review \u2014 closed Proposal diagnostics and current tool names"
+    }
+  },
+  {
+    "classification": "candidate-source",
+    "authority": "technical-review",
+    "kind": "runtime",
+    "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+    "blob": "12e09e761e032981ac1d5bd413890b8ddb8518e1",
+    "sha256": "7d2bb8ec3f2fdbb65c7bc43420c7a905e8bd9681e83c5e16e0d606f21b698b3b",
+    "reviewedCandidate": "4eef1d9cd05a674b7e916b9f74855e79a065caa9",
+    "scope": "tendev-preparation",
+    "receipt": {
+      "path": "docs/project-memory/2026-11-02-tenbot-reviewed-round-limit-source-proof.md",
+      "revision": "4eef1d9cd05a674b7e916b9f74855e79a065caa9",
+      "heading": "## Candidate technical source review \u2014 bounded reviewed-operation completion"
     }
   }
 ]
