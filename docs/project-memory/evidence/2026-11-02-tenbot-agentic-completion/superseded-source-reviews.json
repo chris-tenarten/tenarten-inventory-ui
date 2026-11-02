@@ -1,0 +1,83 @@
+{
+  "parentCandidate": "a0a629d81f25b372c326248ca85f6d21e2eeb467",
+  "reviewedCorrection": "5f32795c66cf230b4d001485a3097be5e802376e",
+  "reason": "Bind the five reviewed correction modules exactly to root5f32795; preserve historical proofs and all frontend/public/configuration, model, financial and migration contracts.",
+  "replaced": [
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-read-investigation.ts",
+      "blob": "e4ca199a21b1cd94eb273cd3c3584b0a639aec53",
+      "sha256": "3c709d195cd52b9c658efa39f79401b91be7cb65d04a11baa3bbd507f1151646",
+      "reviewedCandidate": "23feb9381dbc7b132286c28474be1ce3fc88225d",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-terra-publication-source-proof.md",
+        "revision": "23feb9381dbc7b132286c28474be1ce3fc88225d",
+        "heading": "## Candidate technical source review \u2014 Terra read-final contract alignment"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "product-accepted",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-hosted.ts",
+      "blob": "2a7d1a626a4b25719de9f1643a1e83dddf4d4853",
+      "sha256": "982a95b3657db6c084e56178c7537e8c07ece3d189f98c15b71ab1d79feefa34",
+      "acceptedAuthorityRevision": "28005dc70d086a2a68830165c4f299ba51bc63ba",
+      "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
+        "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+        "heading": "## Accepted candidate source review \u2014 integrated TenBot actions"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/tenbot/index.ts",
+      "blob": "f063802c767cc5cd26e71e014e7e4c5282e918da",
+      "sha256": "b967de54eb4941532081fcfc2a99b22a5a8bb021d805408e450f13367c9e9971",
+      "reviewedCandidate": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-workspace-staging-source-proof.md",
+        "revision": "74bcd966c54f8d8a108161960bf56cf93d1ad939",
+        "heading": "## Candidate technical source review \u2014 finite designated acceptance gate"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-proposal-operations.ts",
+      "blob": "5432aa24622a1de34a38bacb93cb6e5ba50ce229",
+      "sha256": "4532b51b398611f0cabe3d59a9624afbb8b1f33f827f6a5cc2990e1905d4a52e",
+      "reviewedCandidate": "917626449571142790e5516986b60bfdad6adf68",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-bounded-diagnostics-source-proof.md",
+        "revision": "917626449571142790e5516986b60bfdad6adf68",
+        "heading": "## Candidate technical source review \u2014 closed Proposal diagnostics and current tool names"
+      }
+    },
+    {
+      "classification": "candidate-source",
+      "authority": "technical-review",
+      "kind": "runtime",
+      "path": "supabase/functions/_shared/tenbot-agent-session.ts",
+      "blob": "12e09e761e032981ac1d5bd413890b8ddb8518e1",
+      "sha256": "7d2bb8ec3f2fdbb65c7bc43420c7a905e8bd9681e83c5e16e0d606f21b698b3b",
+      "reviewedCandidate": "4eef1d9cd05a674b7e916b9f74855e79a065caa9",
+      "scope": "tendev-preparation",
+      "receipt": {
+        "path": "docs/project-memory/2026-11-02-tenbot-reviewed-round-limit-source-proof.md",
+        "revision": "4eef1d9cd05a674b7e916b9f74855e79a065caa9",
+        "heading": "## Candidate technical source review \u2014 bounded reviewed-operation completion"
+      }
+    }
+  ]
+}

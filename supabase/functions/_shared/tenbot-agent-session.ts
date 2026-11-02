@@ -43,7 +43,7 @@ import {operationalReceipt,operationalHistoryMeta,restoreOperationalHistory,type
 import {resolveJobIntent,resolveExactJobReference,completeJobLookup,buildJobEvidence,renderJobEvidence,explicitJobReferences} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
-import {modelScopeFacts,publishModelReadAnswer,MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from './tenbot-read-investigation.ts';
+import {modelScopeFacts,publishModelReadAnswer,publishPreparedReview,reviewedOperationRecovery,MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from './tenbot-read-investigation.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
 import {isSimpleJobRead} from './tenbot-read-routing.ts';
@@ -365,22 +365,30 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }});
    const workflowPermissions=new Set<string>();
    if(modelDirected&&knowledgeProofs.size)for(const capability of requiredInferencePermissions(agentKnowledgeEntries().filter(entry=>knowledgeProofs.has(entry.id))))if(await can(capability)){workflowPermissions.add(capability);knowledgeGrants.add(capability);}
-   const modelMessage=modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions,terraReads?reason=>emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:reason}):undefined):null;
+   const recovery=operations&&result&&!directRead?reviewedOperationRecovery(result,operations.tools):null;
+   // The existing registered publisher owns preparation validation, freshness,
+   // immutable intent and real references. Model clarification wording cannot
+   // turn an authorized prepared review into a read-only answer or a receipt.
+   const actionCards=operations&&result?.status==='completed'&&result.proposals.length?await operations.publish(result,id,supersedes):[];
+   if(actionCards.length)unpublishedActions={operations:operations!,cards:actionCards};
+   const preparedMessage=actionCards.length?publishPreparedReview(actionCards):null;
+   if(actionCards.length&&!preparedMessage)throw new TenbotError('The proposed changes could not be published safely. Nothing has been saved.',503);
+   const modelMessage=preparedMessage??(modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions,terraReads?reason=>emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:reason}):undefined):null);
    if(modelDirected&&result?.status==='completed'&&!modelMessage){
     result.status='provider-unavailable';result.reason='invalid-final';result.final=null;result.evidence=[];result.proposals=[];
     emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:'invalid-final'});
    }
-   if(deps.readOnlyHosted&&(directRead||result?.status==='provider-unavailable'||result?.status==='limit'&&result.reason==='cost-limit')){
-    if(!deps.fallback)throw new HostedAgentUnavailable(id,result?.reason??'provider-unavailable');
+   const operationFailed=Boolean(recovery&&result?.status!=='completed');
+   if(deps.readOnlyHosted&&(directRead||result?.status==='provider-unavailable'||result?.status==='limit'&&result.reason==='cost-limit'||operationFailed)){
+    if(!operationFailed&&!deps.fallback)throw new HostedAgentUnavailable(id,result?.reason??'provider-unavailable');
     const fallbackProofs=session.guidance.flatMap(t=>t.sources);
     const history=session.guidance.length?['Conversation context:\n'+session.guidance.map(t=>`Employee: ${t.question}\nTenBot: ${t.answer}`).join('\n')]:[];
-    fallbackAttempted=true;
+    fallbackAttempted=!operationFailed;
     const usedFallback=!directRead;
-    const fallback=await deps.fallback({...body,conversationId:id},{execute:job.execute,authorizeHistory:deps.jobTools(owner).authorizeHistory},session.context,history);
-    // The canonical legacy handler appended exactly one turn and advanced the
-    // shared conversation revision under our existing claim. Never reclaim or
-    // guess another caller's revision; a stale commit fails its original CAS.
-    if(lease)lease={...lease,revision:lease.revision+1};
+    const fallback=operationFailed?{mode:responseMode,message:recovery!,sources:[]}:await deps.fallback!({...body,conversationId:id},{execute:job.execute,authorizeHistory:deps.jobTools(owner).authorizeHistory},session.context,history);
+    // Only the canonical legacy handler appended a turn and advanced the shared
+    // revision under our claim. Local recovery commits its original revision.
+    if(lease&&!operationFailed)lease={...lease,revision:lease.revision+1};
     if(!record(fallback)||typeof fallback.message!=='string'||!Array.isArray(fallback.sources))throw new TenbotError('Invalid fallback answer.',503);
     const sourceProofs:KnowledgeProof[]=[];let sourceReviewFailed=false;
     if(!job.reads().length&&!fallback.operational)for(const source of fallback.sources){
@@ -407,11 +415,11 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     if(followup?.kind==='jobs'&&(!record(fallback.operational)||fallback.operational.complete!==true))session.context=null;
     const savedOperational=operationalEnabled&&!workflow?await operationalReceipt(job.reads(),question,String(fallback.message),createdAt,now(),await scopeDigest(owner),fallbackProofs):null;
     if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
-    if(!await job.fresh()||!await can('readOperationalData'))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
-    const archive=persistent?employeeDisplay(job.reads(),{id:historyTurnId??crypto.randomUUID(),question,message,createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:workflow?sourceProofs:fallbackProofs,contentScope:workflow?'workflow':'operational-history'}):undefined;
+    if(!await job.fresh()||!await can('readOperationalData')||operationFailed&&!await operations!.fresh())throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    const archive=persistent?employeeDisplay(job.reads(),{id:historyTurnId??crypto.randomUUID(),question,message,createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:workflow?sourceProofs:fallbackProofs,contentScope:workflow?'workflow':'operational-history',...(operationFailed?{operationAccess:operations!.access()}:{})}):undefined;
     if(persistent&&!archive)throw new TenbotError('This answer could not be saved safely. Please retry.',503);
     if(lease){await deps.sessionStore!.commit(lease,storedState(session),true,archive??undefined);committed=true;}
-    if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await job.fresh()||!await modelContextCurrent())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await job.fresh()||!await modelContextCurrent()||operationFailed&&!await operations!.fresh())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
     if(persistent&&archive&&archivePage){
      const scope=await scopeDigest(owner),rows=[...archivePage.turns,archive].slice(-20);let turns:Awaited<ReturnType<typeof restoreEmployeePage>>=[];
      if(!await publicationAllowed(async()=>{turns=await restoreEmployeePage(rows,deps.jobTools(owner),scope,id,now(),p=>sourceIsCurrent(p,owner));return await can('readOperationalData')&&await scopeDigest(owner)===scope&&await modelContextCurrent();}))throw new TenbotError('Private history could not be reauthorized. Please retry.',503);
@@ -465,8 +473,6 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const message=modelDirected?(modelMessage??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No answer was published.':'The read-only investigation could not verify an answer. Please clarify the Job or try again.')):followup?.kind==='clarify'||followup?.kind==='blocked'?followup.message:queryBrief??exactBrief??(followup?.kind==='search'?(job.scoped()?.message??'The authorized Job list was not retrieved. I cannot establish a matching count or enumerate those Jobs. Please retry the list.'):(countBrief??quantitativeBrief??result.final?.answer??(result.reason==='authorization-denied'?'Your access or the underlying records changed. No experimental answer or draft was published.':'The experimental investigation stopped safely. No database changes were made. Try a narrower request.')));
    const answeredAt=new Date(now()).toISOString(),contentScope=knowledgeOnly?'workflow':scopeOnly?'scope':'volatile';
    const operationUsed=Boolean(operations&&result.evidence.some(item=>operations.tools.some(tool=>tool.name===item.tool)));
-   const actionCards=operationUsed&&result.status==='completed'?await operations!.publish(result,id,supersedes):[];
-   if(actionCards.length)unpublishedActions={operations:operations!,cards:actionCards};
    let historyTurnId:string|undefined;
    if(contentScope!=='volatile'){
     historyTurnId=crypto.randomUUID();

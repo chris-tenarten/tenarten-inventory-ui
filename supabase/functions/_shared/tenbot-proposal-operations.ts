@@ -73,10 +73,22 @@ function decimal(value:string,places:number,integerDigits:number){
  if(!new RegExp(`^\\d{1,${integerDigits}}(?:\\.\\d{1,${places}})?$`).test(value)||!Number.isFinite(Number(value)))fail('proposal_invalid_decimal');
  return value;
 }
+function sourceDecimal(value:string,places:number,integerDigits:number,currency=false){
+ // Evidence is checked against the original display string before this
+ // formatting-only conversion. Canonical amounts retain the existing bounds.
+ const display=currency?value.trim().replace(/^\$\s*/,''):value.trim();
+ if(!/^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test(display))fail('proposal_invalid_decimal');
+ const canonical=display.replace(/,/g,'');
+ return decimal(canonical,places,integerDigits);
+}
 function quoteRateEvidence(source:string,value:string){
- const escaped=value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const escaped=value.trim().replace(/^\$\s*/,'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
  const priceLabel='(?:quote(?:d)?(?:\\s+(?:unit\\s+)?(?:price|rate))?|customer\\s+(?:unit\\s+)?(?:price|rate)|sell(?:ing)?\\s+(?:price|rate)|proposal\\s+(?:price|rate))';
- return new RegExp('\\b'+priceLabel+'\\s*(?:(?:is|of|at)\\s*)?[:=]?\\s*\\$?\\s*'+escaped+'(?!\\d|\\.\\d)','i').test(source);
+ if(new RegExp('\\b'+priceLabel+'\\s*(?:(?:is|of|at)\\s*)?[:=]?\\s*\\$?\\s*'+escaped+'(?!\\d|\\.\\d)','i').test(source))return true;
+ // Ordinary explicit unit-quote wording may put literal specifications before
+ // the price. Do not cross sentences or derive a quote from purchase costs.
+ const unitQuote=new RegExp('\\bquote(?:d)?\\b.{1,500}?\\bat\\s*\\$?\\s*'+escaped+'(?!\\d|\\.\\d)\\s*(?:each\\b|apiece\\b|per\\s+[a-z][a-z0-9./-]{0,24}\\b)','i');
+ return source.split(/[!?;\n]|\.(?!\d)/).some(clause=>clause.length<=600&&!/\b(?:catalog|purchase|cost|wholesale|not|never|unquoted|unknown|unapproved)\b|\bdon['’]t\b/i.test(clause)&&unitQuote.test(clause));
 }
 function currentDate(now:Date){
  if(!Number.isFinite(now.getTime()))fail('tool-failed');
@@ -161,7 +173,7 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
    return {data:json({status:'ok',customer:item,answer_facts:[{id:name+'.identity',kind:'observed',text:`The saved customer is ${item.company.name}${item.contact?`, with contact ${item.contact.name}`:''}.`}],limitations:['These are current directory details. Copying them into a draft does not link future directory edits to the document.']})};
   });
  const prepare=operation('prepare_proposal_draft',
-  'Prepare a new standalone customer Proposal for review without saving or issuing it. Supply header/line values only when copied from the host-provided employee/document source_ref. Saved customer/contact details are fetched through existing authorized RPCs. Never use catalog purchase costs as customer quote rates: a rate requires explicit employee quote/price evidence. Missing quantity/rate/specifications stay unknown. No Job, Bid, document number, revision or persistence identity is accepted. Returns a separate host-owned proposed action and preview descriptor; password-confirmed persistence is handled outside the model.',
+  'Prepare a standalone customer Proposal review without saving or issuing it. Every field value is a string copied from a host-provided employee/document source_ref. Quantity, rate and tax_rate require nonnegative decimal strings: quantity up to 4 decimal places, rate 2, tax_rate 5; correctly grouped thousands and a rate dollar prefix are accepted. Copy dimensions/specifications literally, including units or fractions. Omit unknown fields instead of supplying zero or unknown text; an incomplete draft remains reviewable, with no priced PDF until quantities/rates are known. A rate requires explicit customer quote/price evidence, such as quote unit price or quote the described items at an amount each; catalog purchase costs cannot supply it. Saved customer/contact details use authorized RPCs. No Job, Bid, document number, revision or persistence identity is accepted. Returns a host-owned review; existing-account password confirmation and persistence are separate.',
   prepareSchema,'prepare',async(args,context)=>{
    const companyId=args.customer_company_id as string|null,contactId=args.customer_contact_id as string|null;
    if(companyId!==null&&!uuid.test(companyId)||contactId!==null&&(!uuid.test(contactId)||companyId===null))fail('proposal_invalid_identity');
@@ -204,11 +216,12 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
     if(header.customer_name&&normalize(header.customer_name.value)!==normalize(saved.company.name))fail('proposal_invalid_identity');
    }
    for(const [path,evidence]of Object.entries(header)){
+    let value=evidence.value;
     if(path==='tax_rate'){
-     decimal(evidence.value,5,3);if(Number(evidence.value)>100)fail('proposal_invalid_decimal');proposal.tax_enabled=true;
+     value=sourceDecimal(evidence.value,5,3);if(Number(value)>100)fail('proposal_invalid_decimal');proposal.tax_enabled=true;
     }
     if(path==='proposal_date'&&(!/^\d{4}-\d{2}-\d{2}$/.test(evidence.value)||!Number.isFinite(Date.parse(evidence.value+'T12:00:00Z'))||new Date(evidence.value+'T12:00:00Z').toISOString().slice(0,10)!==evidence.value))fail();
-    proposal[path]=evidence.value;
+    proposal[path]=value;
    }
    const issues:ReviewIssue[]=[],reviewFields:ReviewField[]=[];
    const headerLabels:Record<string,string>={proposal_date:'Proposal date',customer_name:'Customer',customer_street:'Customer street',customer_city:'Customer city',customer_state:'Customer state',customer_postal_code:'Customer postal code',customer_contact_name:'Customer contact',customer_office_phone:'Office phone',customer_mobile_phone:'Mobile phone',customer_email:'Customer email',project_name:'Project',project_number:'Project number',project_location:'Project location',side_mark:'Side mark',sales_rep:'Sales representative',terms:'Payment terms',valid_days:'Valid for days',requested_delivery:'Requested delivery',fob:'FOB',destination_zip:'Destination ZIP',tax_county:'Tax county',tax_enabled:'Apply sales tax',tax_rate:'Sales tax percent',submitted_by_name:'Submitted by',submitted_by_phone:'Sender phone',submitted_by_email:'Sender email',notes:'Notes',disclaimer_snapshot:'Standard disclaimer',freight_estimate:'Freight estimate',preliminary_drawings_attached:'Preliminary drawings attached',crating_included:'Crating included',cut_tickets_included:'Cut tickets included',field_dimensioning_excluded:'Field dimensioning excluded'};
@@ -219,14 +232,15 @@ export function createProposalOperations(deps:ProposalOperationDependencies):Age
     const supplied=await fields(input.fields,lineLimits,`lines.${index}.`),lineType=String(input.line_type);
     const line:Record<string,JsonValue>={line_type:lineType,item_number:'',description:'',ref:'',color_plate:'',quantity:null,unit:'',length:'',width:'',height_thickness:'',cft:'',lf:'',estimated_weight:'',rate:null,source_metadata:{},display_order:index};
     for(const [path,evidence]of Object.entries(supplied)){
-     if(path==='quantity')decimal(evidence.value,4,10);
+     let value=evidence.value;
+     if(path==='quantity')value=sourceDecimal(evidence.value,4,10);
      if(path==='rate'){
-      decimal(evidence.value,2,12);
+      value=sourceDecimal(evidence.value,2,12,true);
       const source=resolvedSources.get(evidence.source_ref)!;
       // Purchase/catalog costs never authorize a customer-facing quoted rate.
       if(!quoteRateEvidence(source,evidence.value))fail('proposal_quote_rate_unproven');
      }
-     line[path]=evidence.value;
+     line[path]=value;
     }
     const metadata:Record<string,JsonValue>={};for(const [path,evidence]of Object.entries(supplied))metadata[path]=json(evidence);
     line.source_metadata={tenbot_source_evidence:metadata};

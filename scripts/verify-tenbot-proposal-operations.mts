@@ -16,11 +16,11 @@ const company={id:companyId,name:'Synthetic Construction',phone:'214-555-0100',e
 const contact={id:contactId,company_id:companyId,name:'Synthetic Buyer',phone:'214-555-0101',email:'buyer@example.invalid',title:'Buyer',updated_at:'2026-11-02T12:00:00Z',notes:'PRIVATE CONTACT NOTES'};
 const sources=[{id:'employee:current',text:'Customer Synthetic Construction. Project Atrium Steps. Quantity 12 ea. Description white terrazzo tread. Quote unit price $125.50. Requested delivery 2026-12-10. Length 48 inches.'},{id:'spec:page1',text:'White terrazzo tread: Qty 12 ea. Length 48 inches. COLOR PLATE A26-TEST.'},{id:'catalog:offer',text:'white terrazzo tread catalog purchase cost $88. Quote rate $125.50.'}];
 const readRpcs=new Set(['has_app_capability','has_proposal_access','search_production_customers','get_production_customer','search_production_contacts','get_production_contact']);
-type MockOptions={operational?:boolean;proposal?:boolean;result?:(name:string,args:Record<string,JsonValue>)=>unknown;revokeAfterRead?:boolean;fail?:boolean};
+type MockOptions={operational?:boolean;proposal?:boolean;sources?:typeof sources;result?:(name:string,args:Record<string,JsonValue>)=>unknown;revokeAfterRead?:boolean;fail?:boolean};
 function fixture(options:MockOptions={}){
  const calls:Array<{name:string;args:Record<string,JsonValue>}>=[];
  let revoked=false;
- const deps:ProposalOperationDependencies={callerId:owner,sources,now:()=>new Date('2026-11-02T01:00:00Z'),async rpc(name,args){
+ const deps:ProposalOperationDependencies={callerId:owner,sources:options.sources??sources,now:()=>new Date('2026-11-02T01:00:00Z'),async rpc(name,args){
   assert(readRpcs.has(name),'No mutation RPC is permitted');calls.push({name,args});
   if(options.fail)return {data:null,error:{message:'PRIVATE raw SQL detail'}};
   if(name==='has_app_capability')return {data:options.operational!==false&&!revoked};
@@ -218,17 +218,50 @@ await check('Proposal failures retain only fixed categories while every validati
   assert(f.calls.every(call=>readRpcs.has(call.name)));
  }
 });
-await check('recorded 430-character question with manually derived canonical arguments isolates the unchanged quote guard',async()=>{
+await check('recorded 430-character question with manually derived arguments prepares its explicit ordinary unit quote',async()=>{
  // The live model arguments were not retained. These are manually derived
- // canonical arguments, so this classifies only this reproduction, not the live failure.
+ // arguments, so this proves this reproduction, not the exact live failure cause.
  const question="Prepare a Proposal draft for Synthetic TenDev Acceptance Customer, for the Synthetic Lobby Review project. Quote two white terrazzo treads, each 48 by 12 by 2 inches, at $12.50 each. We do not have the customer's address or contact details yet, and freight has not been quoted. Leave those unknown and do not link a Production Job. Show me the review and preview before saving anything. This is approved synthetic acceptance data.";
  assert.equal(question.length,430);
  const copied=(path:string,value:string)=>evidence(path,value,'employee');
  const manualArguments:Record<string,JsonValue>={customer_company_id:null,customer_contact_id:null,fields:[copied('customer_name','Synthetic TenDev Acceptance Customer'),copied('project_name','Synthetic Lobby Review')],lines:[{line_type:'product',fields:[copied('description','white terrazzo treads'),copied('quantity','2'),copied('unit','each'),copied('length','48'),copied('width','12'),copied('height_thickness','2'),copied('rate','12.50')]}]};
- const f=fixture(),tools=createProposalOperations({...f.deps,sources:[{id:'employee',text:question}]}),prepare=tools.at(-1)!;
- assert(validateStrictSchema(manualArguments,prepare.parameters));
- await assert.rejects(()=>prepare.execute(manualArguments,{callerId:owner,signal:new AbortController().signal}),error=>error instanceof AgentToolError&&error.code==='proposal_quote_rate_unproven');
- assert(f.calls.every(call=>['has_app_capability','has_proposal_access'].includes(call.name)));
+ for(const rate of ['12.50','$12.50']){
+  const input=structuredClone(manualArguments);((input.lines as Array<Record<string,JsonValue>>)[0].fields as Array<Record<string,JsonValue>>).find(field=>field.path==='rate')!.value=rate;
+  const f=fixture({sources:[{id:'employee',text:question}]});assert(validateStrictSchema(input,f.tools.at(-1)!.parameters));
+  const {action}=await proposed(f,input),line=lines(action)[0];
+  assert.equal(header(action).customer_name,'Synthetic TenDev Acceptance Customer');assert.equal(header(action).project_name,'Synthetic Lobby Review');
+  assert.deepEqual([line.quantity,line.unit,line.length,line.width,line.height_thickness,line.rate],['2','each','48','12','2','12.50']);
+  assert.equal((line.source_metadata as {tenbot_source_evidence:Record<string,{value:string}>}).tenbot_source_evidence.rate.value,rate);
+  assert.equal(header(action).customer_street,'');assert.equal(header(action).customer_email,'');assert.equal(header(action).freight_estimate,null);
+  assert(!Object.hasOwn(header(action),'job_id'));assert.equal(buildProposalPdfModel(buildProposalPreview(action.parameters)).total,25);
+  assert(f.calls.every(call=>['has_app_capability','has_proposal_access'].includes(call.name)));
+ }
+});
+await check('explicit display-number formatting normalizes only amounts and retains original evidence and literal dimensions',async()=>{
+ const f=fixture({sources:[{id:'employee',text:'white terrazzo tread. Quantity 1,000.25 ea. Quote unit price $1,234.50. Length 1 1/2 inches. Tax rate 8.25000.'}]}),copy=(path:string,value:string)=>evidence(path,value,'employee');
+ const input:Record<string,JsonValue>={customer_company_id:null,customer_contact_id:null,fields:[copy('tax_rate',' 8.25000 ')],lines:[{line_type:'product',fields:[copy('description','white terrazzo tread'),copy('quantity',' 1,000.25 '),copy('unit','ea'),copy('rate',' $1,234.50 '),copy('length','1 1/2 inches')]}]};
+ const {action}=await proposed(f,input),line=lines(action)[0];
+ assert.equal(line.quantity,'1000.25');assert.equal(line.rate,'1234.50');assert.equal(line.length,'1 1/2 inches');assert.equal(header(action).tax_rate,'8.25000');
+ assert.equal((line.source_metadata as {tenbot_source_evidence:Record<string,{value:string}>}).tenbot_source_evidence.quantity.value,' 1,000.25 ');
+ assert.equal((line.source_metadata as {tenbot_source_evidence:Record<string,{value:string}>}).tenbot_source_evidence.rate.value,' $1,234.50 ');
+ assert(action.review.fields.some(field=>field.path==='p_lines.0.rate'&&field.value==='1234.50'));
+ assert.throws(()=>buildProposalPreview({...action.parameters,p_lines:[{...line,rate:'$1,234.50'}]}),'Preview still requires canonical decimal amounts.');
+});
+await check('source-backed malformed groups, exponents, negatives and excess precision remain invalid amounts',async()=>{
+ for(const [path,value]of [['quantity','1,00'],['quantity','1e1'],['quantity','-2'],['quantity','2.00000'],['rate','$12,50'],['rate','$1,00.00'],['rate','1e2'],['rate','-12.50'],['rate','12.500']] as const){
+  const f=fixture({sources:[{id:'employee',text:`Quantity ${value} ea. Quote unit price ${value}.`}]}),input=request();
+  input.customer_company_id=null;input.customer_contact_id=null;input.fields=[];input.lines=[{line_type:'product',fields:[evidence(path,value,'employee')]}];
+  await assert.rejects(()=>proposed(f,input),error=>error instanceof AgentToolError&&error.code==='proposal_invalid_decimal');
+ }
+});
+await check('ordinary quote wording cannot promote purchase costs, cross sentences, negate intent or invent unknown prices',async()=>{
+ for(const text of ['Catalog purchase cost $12.50.','Quote white terrazzo treads using catalog purchase cost at $12.50 each.','Quote white terrazzo treads. A different item is at $12.50 each.','Do not quote white terrazzo treads at $12.50 each.','Quote white terrazzo treads at $12.50; the price is unknown.']){
+  const f=fixture({sources:[{id:'employee',text}]}),input=request();input.customer_company_id=null;input.customer_contact_id=null;input.fields=[];input.lines=[{line_type:'product',fields:[evidence('rate','12.50','employee')]}];
+  await assert.rejects(()=>proposed(f,input),error=>error instanceof AgentToolError&&error.code==='proposal_quote_rate_unproven');
+ }
+ const f=fixture({sources:[{id:'employee',text:'white terrazzo treads: quantity 2 each. Customer quote price unknown.'}]}),input=request();
+ input.customer_company_id=null;input.customer_contact_id=null;input.fields=[];input.lines=[{line_type:'product',fields:[evidence('description','white terrazzo treads','employee'),evidence('quantity','2','employee'),evidence('unit','each','employee')]}];
+ const {action,result}=await proposed(f,input);assert.equal(lines(action)[0].rate,null);assert.equal(action.review.preview,undefined);assert(action.review.issues.some(issue=>issue.code==='missing_quote_rate'&&!issue.blocking));assert.equal((result.data as Record<string,JsonValue>).can_save_incomplete_draft,true);
 });
 await check('every currently assembled reusable operation name survives the closed diagnostic projection',()=>{
  for(const tool of combinedFixture().registry().tools){
