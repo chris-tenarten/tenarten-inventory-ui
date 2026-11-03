@@ -4,7 +4,7 @@ const stages = new Set(['authorization', 'extraction', 'source-persistence', 'mo
 const outcomes = new Set(['ok', 'error', 'stopped']);
 const tools = new Set([
   'discover_capabilities', 'describe_assistant_scope', 'search_workflow_knowledge',
-  'find_jobs', 'get_job_summary', 'get_job_planning', 'get_job_labor_summary', 'get_production_overview', 'get_labor_analytics',
+  'find_jobs', 'get_job_summary', 'get_job_planning', 'get_job_labor_summary', 'get_production_overview', 'get_labor_analytics', 'get_job_activity',
   'read_invoice', 'search_catalog', 'check_receival_duplicates', 'prepare_pending_receivals',
   'read_supplied_document', 'search_material_catalog', 'find_receivals', 'find_suppliers', 'get_order',
   'search_customers', 'get_customer', 'search_contacts', 'get_contact', 'prepare_proposal_draft',
@@ -24,7 +24,7 @@ const reasons = new Set([
   'context-limit', 'invalid-input', 'invalid-context', 'invalid-limits', 'invalid-registry', 'deadline',
   'invalid-provider-step', 'invalid-final', 'unknown-evidence', 'missing-workflow-evidence', 'empty-provider-step',
   'read-final-question', 'read-final-missing-evidence', 'read-final-non-fact-claim', 'read-final-workflow-wording',
-  'read-final-workflow-permission', 'read-final-empty-answer', 'read-final-too-long',
+  'read-final-workflow-permission', 'read-final-empty-answer', 'read-final-too-long','read-final-narrative',
   'call-limit', 'invalid-call', 'result-limit', 'round-limit', 'error-limit',
   'model-not-allowed', 'invalid-output-budget', 'oversized-response', 'empty-response', 'provider-timeout',
   'incomplete-provider-response', 'invalid-provider-response', 'incomplete-function-call', 'invalid-function-call',

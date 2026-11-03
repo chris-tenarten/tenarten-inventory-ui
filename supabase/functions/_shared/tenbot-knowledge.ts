@@ -19,6 +19,9 @@ export type CapabilityEntry = {
  permission:string; additionalPermissions?:string[]; route:string|null; path:string;
  guidance:string; source:string; evidence:string; sourceFiles:string[]; examples:string[];
  architecture?:KnowledgeArchitecture;
+ /** Maintained projections of this workflow, never employee-question routes.
+  * Dependencies keep material restrictions attached to the selected step. */
+ workflowFacts?:{id:string;text:string;role?:'statement'|'qualification';requires?:string[]}[];
  capabilityAvailability?:{application:'released'|'partial'|'unverified';assistant:'guidance-only'|'read-if-registered'};
  // Maintenance-only: never spread these bindings into employee/model responses.
  relatedRecordIds?:string[]; toolNames?:string[]; recordDigest?:string;
@@ -1358,6 +1361,14 @@ const authoredRegistry:CapabilityEntry[] = [
   "route": "/my-work",
   "path": "My Work → What needs to get done? → Share → Add task",
   "guidance": "Employees with operational access and business-write permission can create My Work tasks. In My Work, enter a title in What needs to get done?. Optionally add Notes, Due, Estimated time, a Job or attachments. Leave Share as Keep private for a task private to you, or select another user to create a Shared Task between you and that person. Choose Add task. Only the creator may change sharing later. Shared Tasks are visible to their participants, not every employee; administrative authority does not grant routine access to private task contents.",
+  "workflowFacts": [
+   {"id":"share_new","text":"In My Work, enter a title in What needs to get done?, choose a colleague in Share, then choose Add task. This creates a task shared between you and that person."},
+   {"id":"assignment","text":"Choosing someone in Share also assigns the task to them. Sharing and assignment use that same selector."},
+   {"id":"change_person","text":"Open the task’s details, choose the person in Share with, then choose Save task.","requires":["creator_only"]},
+   {"id":"creator_only","text":"Only the task’s creator can change who it is shared with.","role":"qualification"},
+   {"id":"keep_private","text":"Leave Share as Keep private to keep the task private to you."},
+   {"id":"participants","text":"Shared tasks are visible only to their participants."}
+  ],
   "source": "My Work task guide · deployed application",
   "evidence": "docs/project-memory/2026-10-27-intake-graduation-material-intelligence.md",
   "sourceFiles": [

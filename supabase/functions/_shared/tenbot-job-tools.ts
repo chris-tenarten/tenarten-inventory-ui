@@ -389,10 +389,14 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- exact existing dashboard calculation via caller-only adapter.
 import {executeLaborReport} from '../../../src/modules/manpower/labor-report.ts';
-export function createTenbotJobTools(caller: JobToolCaller, options: { now?: () => Date; deadlineMs?: number } = {}) {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {createJobActivityReader} from './tenbot-job-activity.ts';
+export function createTenbotJobTools(caller: JobToolCaller, options: { now?: () => Date; deadlineMs?: number; ownerId?:string } = {}) {
   const deadlineMs = options.deadlineMs ?? 4000;
   if (!Number.isSafeInteger(deadlineMs) || deadlineMs < 1 || deadlineMs > 10000) throw new Error('Invalid operational tool deadline.');
   return {
+    ...(options.ownerId?{activity:createJobActivityReader(caller,options.ownerId,deadlineMs)}:{}),
     laborReport(args:Record<string,unknown>,signal?:AbortSignal){return executeLaborReport(caller,args,{now:options.now,signal,deadlineMs,async hasCapability(capability){
       const r=await caller.rpc('has_app_capability',{p_capability:capability});if(r.error||r.data!==true)return false;
       // A selected Job with no labor is not interchangeable with a hidden or

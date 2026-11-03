@@ -105,7 +105,7 @@ Deno.serve(async(request:Request)=>{
   config:{...openAI,normalEmployeeAuthorized:employeeModeAuthorized,modelDirectedReads,reviewedOperationsEnabled:Deno.env.get('TENBOT_REVIEWED_OPERATIONS_ENABLED')==='true'&&reviewedAuthorized()},reviewedCaller:caller,actionSessionId,acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
   onDiagnostic:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_acceptance',{requestId,...safeInvestigationDiagnostic(event)});}:undefined,
   onResponseMetadata:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_provider',{requestId,...safeOpenAIResponseMetadata(event)});}:undefined,
-  caller:async(n,a)=>await caller.rpc(n,a),service:async(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?await service.rpc(n,a):{data:null,error:{message:'Metering action unavailable'}},qwen:provider,jobTools:createTenbotJobTools(caller)});
+  caller:async(n,a)=>await caller.rpc(n,a),service:async(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?await service.rpc(n,a):{data:null,error:{message:'Metering action unavailable'}},qwen:provider,jobTools:createTenbotJobTools(caller,{ownerId:data.user.id})});
  const result=await hosted(body);
  if(body.action==='status'&&preparation.enabled){if(hostedInvoicePreparationEnabled(preparation,data.user.id,origin)){const allowed=await caller.rpc('can_prepare_invoice_receival',{});if(!allowed.error&&allowed.data===true)return reply({...result,receivalPilotAvailable:true});}return reply(result);}
  if(body.action==='status'&&hostedReceivalPilotEnabled(pilot,data.user.id,origin)){

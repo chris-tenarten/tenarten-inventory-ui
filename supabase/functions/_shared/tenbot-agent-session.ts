@@ -16,6 +16,15 @@ import {createTenbotAgentJobTools,createTenbotAgentKnowledgeTools,createTenbotAg
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Edge extension.
 import {createTenbotAgentLaborTools} from './tenbot-agent-labor.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {createTenbotAgentActivityTools,isJobActivityProof} from './tenbot-agent-activity.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {workflowProofId,workflowProofEntryId,workflowProofValue} from './tenbot-workflow-facts.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {NARRATIVE_FINAL_SCHEMA,NARRATIVE_INSTRUCTIONS,UPDATE_DISCLOSURE_INSTRUCTIONS,adaptNarrativeFinal,type NarrativeRegistry} from './tenbot-narrative.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {createTenbotInvoiceTools,type TenbotInvoiceDocument,type TenbotInvoiceReader,type InvoiceConfirmation} from './tenbot-invoice.ts';
@@ -118,8 +127,10 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
   finally{if(timer!==undefined)clearTimeout(timer);}
  };
  const sourceIsCurrent=async(proof:KnowledgeProof,owner:string)=>{
-  const entry=agentKnowledgeEntries().find(item=>item.id===proof.id);
-  if(!entry||entry.status!=='deployed'||await sourceDigest(knowledgeProofValue(entry),snapshot)!==proof.digest)return false;
+  if(isJobActivityProof(proof.id))return await deps.can(owner,'readOperationalData')&&await deps.jobTools(owner).activity?.sourceCurrent(proof)===true;
+  const facetId=workflowProofEntryId(proof.id),entry=agentKnowledgeEntries().find(item=>item.id===(facetId??proof.id));
+  if(!entry||entry.status!=='deployed')return false;
+  try{if(await sourceDigest(facetId!==null?workflowProofValue(entry):knowledgeProofValue(entry),snapshot)!==proof.digest)return false;}catch{return false;}
   const permissions=new Set<string>();
   for(const capability of [entry.permission,...entry.additionalPermissions??[]])if(await deps.can(owner,capability))permissions.add(capability);
   return hasGuidePermission(entry,permissions);
@@ -127,7 +138,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  // Registry descriptors and hard limits are host data, not a Job/catalog read.
  // The same proof is bound to every retained display turn and checked on load.
  const scopeDigest=async(owner:string)=>{
-  const tools=[...createTenbotAgentJobTools(deps.jobTools(owner)).tools,...createTenbotAgentLaborTools(deps.jobTools(owner)).tools,...createTenbotAgentKnowledgeTools(capability=>deps.can(owner,capability))];
+  const tools=[...createTenbotAgentJobTools(deps.jobTools(owner)).tools,...createTenbotAgentLaborTools(deps.jobTools(owner)).tools,...createTenbotAgentActivityTools(deps.jobTools(owner)).tools,...createTenbotAgentKnowledgeTools(capability=>deps.can(owner,capability))];
   const scope=createTenbotAgentScopeTool(tools);
   return sourceDigest(canonicalHistoryScope((await scope.execute({}, {callerId:owner,signal:new AbortController().signal})).data),'tenbot-agent-display-scope.v1');
  };
@@ -250,7 +261,8 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const explicitReferences=modelDirected?explicitJobReferences(question):[];
    const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?{intent:followup,question}:undefined,modelDirected?{question,context:session.context,references:explicitReferences}:undefined);
    const labor=createTenbotAgentLaborTools(deps.jobTools(owner),job.recordBinding);
-   const readsFresh=async()=>await job.fresh()&&await labor.fresh();
+   const activity=createTenbotAgentActivityTools(deps.jobTools(owner),job.recordBinding,()=>12-new Set([...session!.guidance.flatMap(t=>t.sources),...knowledgeProofs.values()].map(p=>p.id)).size,question);
+   const readsFresh=async()=>await job.fresh()&&await labor.fresh()&&await activity.fresh();
    const mayPrepareNow=()=>deps.canPrepareInvoice?deps.canPrepareInvoice(owner):(async()=>await can('writeBusinessData')&&await can('adjustInventory'))();
    const mayPrepare=!deps.readOnlyHosted&&await mayPrepareNow();
    const sourceReader=deps.readOnlyHosted?undefined:deps.invoice?.reader(owner),invoiceReads=new Map<string,string>();let inconsistentInvoice=false;
@@ -263,6 +275,8 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }
    const knowledgeGrants=new Set<string>(),knowledgeProofs=new Map<string,KnowledgeProof>();
    const proofIsCurrent=async(proof:KnowledgeProof)=>{
+    if(isJobActivityProof(proof.id))return sourceIsCurrent(proof,owner);
+    if(workflowProofEntryId(proof.id)!==null)return sourceIsCurrent(proof,owner);
     const entry=agentKnowledgeEntries().find(item=>item.id===proof.id);
     if(!entry||!await sourceIsCurrent(proof,owner))return false;
     const permissions=new Set<string>();
@@ -296,7 +310,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     }
     return true;
    };
-   const knowledge=createTenbotAgentKnowledgeTools(can,()=>[...job.tools,...labor.tools,...invoice.filter(tool=>tool.kind==='read'||mayPrepare),...operations?.tools??[]]);
+   const knowledge=createTenbotAgentKnowledgeTools(can,()=>[...job.tools,...labor.tools,...activity.tools,...invoice.filter(tool=>tool.kind==='read'||mayPrepare),...operations?.tools??[]],entries=>new Set([...session!.guidance.flatMap(t=>t.sources).map(p=>p.id),...knowledgeProofs.keys(),...activity.proofs().map(p=>p.id),...entries.flatMap(e=>[e.id,...(e.workflowFacts?.length?[workflowProofId(e)]:[])])]).size<=12);
    for(const tool of knowledge){
     const execute=tool.execute;tool.execute=async(args,context)=>{
      const value=await execute(args,context);
@@ -309,28 +323,34 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
         knowledgeGrants.add(capability);
        }
        knowledgeProofs.set(source.id,{id:source.id,digest:await sourceDigest(knowledgeProofValue(entry,source),value.data.snapshot)});
+       if(entry.workflowFacts?.length)knowledgeProofs.set(workflowProofId(entry),{id:workflowProofId(entry),digest:await sourceDigest(workflowProofValue(entry),value.data.snapshot)});
       }
      }
      return value;
     };
    }
-   const tools=[...job.tools,...labor.tools,...knowledge,...invoice.filter(tool=>tool.kind==='read'||mayPrepare),...operations?.tools??[]];
+   const tools=[...job.tools,...labor.tools,...activity.tools,...knowledge,...invoice.filter(tool=>tool.kind==='read'||mayPrepare),...operations?.tools??[]];
    const scopeTool=createTenbotAgentScopeTool(tools);
    if(modelDirected){const execute=scopeTool.execute;scopeTool.execute=async(args,context)=>{const value=await execute(args,context);return {data:json({...record(value.data)?value.data:{},...(operations?{limitation:'Only registered authorized reads and preparation are available to the model. Prepared changes require separate exact account-password confirmation; a review is not a saved business record.'}:{}),answer_facts:[...modelScopeFacts(value.data),...(operations?[{id:'review_confirmation',text:'Prepared changes require your review and separate account-password confirmation. Preparing a review does not save a business record.'}]:[])]})};};}
    tools.push(scopeTool);
    const provider=deps.provider(scenario as AgentDemoScenario);
-   const terraReads=modelDirected&&provider.model==='gpt-6.1-terra';
+   const terraReads=modelDirected&&provider.model==='gpt-6.1-terra',readModelRounds=6;
+   let narrativeFinalAllowed=false;const narrativeClaims:NarrativeRegistry=new Map();
    const modelSteps:{calls:AgentStep['calls'];final?:JsonValue;usage:AgentStep['usage'];durationMs:number}[]=[];
    const measured:AgentProvider={name:provider.name,model:provider.model,async step(request){
     const operationLoaded=Boolean(operations&&request.tools.some(tool=>operations.tools.some(operation=>operation.name===tool.name)));
-    const start=now(),step=await provider.step(modelDirected?{...request,maxOutputTokens:operationLoaded?request.maxOutputTokens:Math.min(request.maxOutputTokens,640),instructions:request.instructions+'\n'+MODEL_READ_INSTRUCTIONS+(terraReads?'\n'+TERRA_READ_FINAL_INSTRUCTIONS:'')+(operations?'\nEmployee-provided text uses source_ref employee. Supplied private document selectors: '+JSON.stringify(operationDocuments)+'. These selectors grant no access. Discover and compose the registered read/preparation operations. Preparation returns an unsaved review; account-password confirmation occurs separately outside the model. Never claim a business action completed.':'')}:request);
+    const prepareLoaded=request.tools.some(t=>tools.some(x=>x.name===t.name&&x.kind==='prepare'));
+    const narrativeAllowed=modelDirected&&!session!.invoiceAttached&&!operationLoaded&&!prepareLoaded&&activity.contentAvailable();
+    const finalizeRead=modelDirected&&deps.readOnlyHosted&&!operations&&modelSteps.length===readModelRounds-1;
+    const start=now(),step=await provider.step(modelDirected?{...request,...(narrativeAllowed?{finalSchema:NARRATIVE_FINAL_SCHEMA}:{}),...(finalizeRead?{tools:[]}:{}),maxOutputTokens:operationLoaded?request.maxOutputTokens:Math.min(request.maxOutputTokens,640),instructions:request.instructions+'\n'+MODEL_READ_INSTRUCTIONS+'\n'+UPDATE_DISCLOSURE_INSTRUCTIONS+(finalizeRead?'\nThis is the final permitted read-only reasoning round. No further tools are available. Return the structured final answer using current issued facts. Answer every supported part; preserve incompleteness, attribution and access limitations. If necessary ask a focused clarification. Do not invent missing evidence, call more tools or repeat discovery.':'')+(terraReads?'\n'+TERRA_READ_FINAL_INSTRUCTIONS:'')+(narrativeAllowed?'\n'+NARRATIVE_INSTRUCTIONS:'')+(operations?'\nEmployee-provided text uses source_ref employee. Supplied private document selectors: '+JSON.stringify(operationDocuments)+'. These selectors grant no access. Discover and compose the registered read/preparation operations. Preparation returns an unsaved review; account-password confirmation occurs separately outside the model. Never claim a business action completed.':'')}:request);
+    if(step.final!==undefined){narrativeFinalAllowed=narrativeAllowed;if(narrativeAllowed)step.final=adaptNarrativeFinal(step.final,narrativeClaims);}
     modelSteps.push({calls:step.calls,...(step.final===undefined?{}:{final:json(step.final)}),usage:step.usage,durationMs:now()-start});
     return step;
    }};
    const before=now();
    const retainedContext=session.questions.slice(-3).map(previous=>{
     const turn=[...session!.guidance].reverse().find(item=>item.question===previous);
-    return {question:previous,answer:turn?'Prior assistant workflow guidance, retained only as conversation context. Re-fetch current knowledge and cite newly issued evidence IDs before giving guidance: '+turn.answer:'Previous live answer omitted. Reauthorize and reread all operational facts. Canonical lookup seeds: '+session!.jobIds.join(', ')};
+    return {question:previous,answer:turn?'Prior assistant guidance or question, retained as context only, never current evidence or permission. Reauthorize and requery before answering: '+turn.answer:'Previous live answer omitted. Reauthorize and reread all operational facts. Canonical lookup seeds: '+session!.jobIds.join(', ')};
    });
    if(session.context)retainedContext.push({question:'Current conversation subject',answer:conversationContextHint(session.context)});
    if(modelDirected&&explicitReferences.length)retainedContext.push({question:'Explicit employee resource references',answer:JSON.stringify(explicitReferences)+'. These references override prior Job IDs. Resolve each through current exact lookup evidence before reading its detail tools. A reference is not a grant of access.'});
@@ -342,7 +362,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(followup?.kind==='job'&&'jobId' in followup.reference||followup?.kind==='jobs'){const ids=followup.kind==='jobs'?followup.references:['jobId' in followup.reference?followup.reference.jobId:''];retainedContext.push({question:'Current requested Job operation',answer:JSON.stringify({tool:followup.tool,job_ids:ids,args:followup.args})+'. These canonical references were reauthorized as lookup seeds, not facts. Discover and call the requested existing exact-Job tool for each reference; do not search pronouns or carry collection filters into an exact read. Re-fetch current fields; unavailable results and unsaved fields are different from no matching records.'});}
    if(session.invoiceAttached&&deps.invoice)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:(deps.invoice.document.extraction?'Actual OpenAI image preprocessing produced this transcription. Check read_invoice extraction provenance and compare it against the original image. ':'Synthetic text fixture only. ')+'Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
    const failureCodes:string[]=[];
-   const result=directRead?null:await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic(event){if(event.outcome==='error'||event.outcome==='stopped'){failureCodes.push(event.reasonCode);if(failureCodes.length>8)failureCodes.shift();}return deps.onDiagnostic?.(event);},...(deps.readOnlyHosted?{limits:modelDirected?{maxDurationMs:75000,maxRounds:operations?8:6,maxCalls:10,maxOutputTokens:operations?1800:640}:{maxDurationMs:75000}}:{}),async authorize(check){
+   const result=directRead?null:await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic(event){if(event.outcome==='error'||event.outcome==='stopped'){failureCodes.push(event.reasonCode);if(failureCodes.length>8)failureCodes.shift();}return deps.onDiagnostic?.(event);},...(deps.readOnlyHosted?{limits:modelDirected?{maxDurationMs:75000,maxRounds:operations?8:readModelRounds,maxCalls:10,maxOutputTokens:operations?1800:640}:{maxDurationMs:75000}}:{}),async authorize(check){
     if(!await can('readOperationalData'))return false;
     // Do not retransmit retained guidance after a grant/version changes mid-turn.
     if(check.phase==='before_model'){
@@ -379,7 +399,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const preparedMessage=actionCards.length?publishPreparedReview(actionCards):null;
    if(actionCards.length&&!preparedMessage)throw new TenbotError('The proposed changes could not be published safely. Nothing has been saved.',503);
    const requestedRecordIds=requestsJobRecordDetails(question)?detailJobIds(directIntent):[];
-   const modelMessage=preparedMessage??(modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions,reason=>{failureCodes.push(reason);if(terraReads)emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:reason});},requestedRecordIds.length?{jobIds:requestedRecordIds}:undefined):null);
+   const modelMessage=preparedMessage??(modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions,reason=>{failureCodes.push(reason);if(terraReads)emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:reason});},requestedRecordIds.length?{jobIds:requestedRecordIds}:undefined,{allowJobUpdateNarratives:narrativeFinalAllowed&&!result.proposals.length,narrativeClaims}):null);
    if(modelDirected&&result?.status==='completed'&&!modelMessage){
     result.status='provider-unavailable';result.reason='invalid-final';result.final=null;result.evidence=[];result.proposals=[];
     emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:'invalid-final'});
@@ -444,17 +464,18 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    // continuation is retained as model context. Private display receipts are separate.
    // The new prose can depend on every old source that reached this model, not
    // only the newly cited source. Preserve transitive provenance or discard it.
-   const ancestry=new Map([...session.guidance.flatMap(turn=>turn.sources),...knowledgeProofs.values()].map(proof=>[proof.id+':'+proof.digest,proof]));
+   const ancestry=new Map([...session.guidance.flatMap(turn=>turn.sources),...knowledgeProofs.values(),...activity.proofs()].map(proof=>[proof.id+':'+proof.digest,proof]));
    const knowledgeOnly=result.status==='completed'&&result.final!==null&&!session.invoiceAttached&&result.proposals.length===0&&knowledgeProofs.size>0&&ancestry.size<=12&&result.evidence.length>0&&result.evidence.every(item=>item.tool==='search_workflow_knowledge')&&result.trace.every(item=>item.event!=='tool'||item.name==='discover_capabilities'||item.name==='search_workflow_knowledge');
    const scopeOnly=result.status==='completed'&&result.final!==null&&!session.invoiceAttached&&result.proposals.length===0&&ancestry.size<=12&&result.evidence.length>0&&result.evidence.every(item=>item.tool==='describe_assistant_scope')&&result.trace.every(item=>item.event!=='tool'||item.name==='discover_capabilities'||item.name==='describe_assistant_scope')&&result.final.questions.length===0&&result.final.observations.length===1&&result.final.observations[0].text===result.final.answer&&result.final.inferences.length===0&&result.final.recommendations.length===0&&result.final.completed_actions.length===0;
    if(!session.invoiceAttached&&result.status==='completed'){
     if(knowledgeOnly){const entry=agentKnowledgeEntries().find(x=>x.id===[...knowledgeProofs.keys()][0]);session.context=workflowConversationContext(entry?.modules[0]??'TenOps',[...ancestry.values()],Boolean(result.final?.questions.length),now());}
     else if(scopeOnly)session.context={...workflowConversationContext('TenOps',[],false,now()),operation:'scope',resultType:'scope'};
-    else session.context=contextFromReads(job.reads(),question,now(),session.context,followup??undefined)??(!job.reads().length&&result.final?.questions.length&&session.context?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);
+    else session.context=contextFromReads(job.reads(),question,now(),session.context,followup??undefined)??activity.context(priorContext,now())??(!job.reads().length&&result.final?.questions.length&&session.context?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);
    }
    if(followup?.kind==='search'&&!job.scoped())session.context=priorContext;
    if(pendingContext)session.context=pendingContext;
-   session.guidance=knowledgeOnly?[...session.guidance,{question,answer:result.final!.answer,sources:[...ancestry.values()]}].slice(-3):[];
+   const awarenessQuestionOnly=result.status==='completed'&&result.final!==null&&!session.invoiceAttached&&!result.proposals.length&&ancestry.size<=12&&!activity.contentAvailable()&&activity.reads().some(r=>r.result.data?.source==='updates')&&result.final.questions.length>0;
+   session.guidance=knowledgeOnly?[...session.guidance,{question,answer:modelMessage??result.final!.answer,sources:[...ancestry.values()]}].slice(-3):awarenessQuestionOnly?[...session.guidance,{question,answer:result.final!.questions.join(' '),sources:[...ancestry.values()]}].slice(-3):[];
    // IDs are lookup seeds only; future requests receive no retained facts/prose.
    session.jobIds=[...new Set(result.evidence.flatMap(item=>{
     if(!record(item.data)||!record(item.data.data))return [];
@@ -488,7 +509,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }
    const savedOperational=operationalEnabled&&deps.readOnlyHosted&&contentScope==='volatile'&&result.status==='completed'?await operationalReceipt(job.reads(),question,message,createdAt,now(),await scopeDigest(owner),[...ancestry.values()]):null;
    if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
-   const archive=persistent&&result.status==='completed'?employeeDisplay([...job.reads(),...labor.reads()],{id:historyTurnId??crypto.randomUUID(),question,message:message.slice(0,2400),createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:[...ancestry.values()],contentScope:contentScope==='volatile'?'operational-history':contentScope,...(operationUsed?{operationAccess:operations!.access()}:{}),...(actionCards.length?{actionReferences:actionCards.map(card=>card.reference)}:{})}):undefined;
+   const archive=persistent&&result.status==='completed'?employeeDisplay([...job.reads(),...labor.reads(),...activity.reads()],{id:historyTurnId??crypto.randomUUID(),question,message:message.slice(0,2400),createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:[...ancestry.values()],contentScope:contentScope==='volatile'?'operational-history':contentScope,...(operationUsed?{operationAccess:operations!.access()}:{}),...(actionCards.length?{actionReferences:actionCards.map(card=>card.reference)}:{})}):undefined;
    if(persistent&&result.status==='completed'&&!archive)throw new TenbotError('This answer could not be saved safely. Please retry.',503);
    if(lease){await deps.sessionStore!.commit(lease,storedState(session),true,archive??undefined);committed=true;}
    if(deps.readOnlyHosted&&!await publicationAllowed(async()=>{

@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Edge/Node shared
 // @ts-ignore -- explicit Edge extension
 import type {JobToolResult,JobFacts,JobFindData,JobOverviewData,JobLaborData} from './tenbot-job-tools.ts';
-export type ReadAnswerFact={id:string;text:string;kind?:string;composition?:{role:'statement'|'qualification';requires:string[];key?:string;exclusive?:string}};
+export type ReadAnswerFact={id:string;text:string;kind?:string;workflowSourceId?:string;composition?:{role:'statement'|'qualification';requires:string[];key?:string;exclusive?:string}};
 export const statement=(id:string,text:string,requires:string[]=[],kind='detail'):ReadAnswerFact=>({id,text,kind,composition:{role:'statement',requires}});
 export const qualification=(id:string,key:string,text:string,exclusive?:string):ReadAnswerFact=>({id,text,kind:'limitation',composition:{role:'qualification',requires:[],key,...(exclusive?{exclusive}:{})}});
 export const businessLabel=(s:string)=>s.replace(/[\u0000-\u001f\u007f]/g,' ').replace(/\s+/g,' ').trim();
@@ -83,6 +83,15 @@ export function jobCompositionFacts(result:JobToolResult,legacy:ReadAnswerFact[]
   const selected=Array.isArray(result.filters.statuses)?result.filters.statuses.map(s=>statusLabels[String(s)]).filter(Boolean):[];
   const population=q('brief_population',`population:${JSON.stringify(result.filters)}`,`${selected.length?'Statuses: '+selected.join(', ')+'. ':'All Job statuses. '}${result.filters.include_archived===true?'Includes archived Jobs.':'Archived Jobs excluded.'}${result.filters.schedule==='unscheduled'?' Unscheduled means a start or finish date is missing.':result.filters.schedule==='scheduled'?' Scheduled means both saved dates exist.':''}`);
   const bounds=complete?[]:[q('brief_list_bounds',`list-bounds:${JSON.stringify(result.filters)}`,'More matches may exist outside these results.')];
+  // Identity and current status are record facts, not enumeration claims.
+  // Population/list bounds remain attached to match/count facts only.
+  for(const [i,j] of d.jobs.entries()){
+   const base:string[]=[];
+   if(j.archived)base.push(q(`brief_subject_archived_${i+1}`,`archived:${j.job_id}`,`${ref(j)} is archived.`));
+   if(j.effective.lifecycle==='rework')base.push(q(`brief_subject_rework_${i+1}`,`rework:${j.job_id}`,`This is Rework${j.effective.sequence_number===null?'':' '+j.effective.sequence_number}; the original Job is ${statusLabels[j.original.status]??'of unknown status'}.`));
+   add('subject_'+(i+1),`${ref(j)}.`,base,'identity');
+   add('record_status_'+(i+1),`${ref(j)} is ${statusLabels[j.effective.status]??'of unknown status'}.`,base,'status');
+  }
   for(const [i,j] of d.jobs.entries())add('match_'+(i+1),`${ref(j)} — ${statusLabels[j.effective.status]??'Unknown status'}${j.effective.lifecycle==='rework'?' (Rework)':''}${j.archived?' (archived)':''}; ${j.effective.planned_start&&j.effective.planned_end?'scheduled':'unscheduled'}.`,[population,...bounds],'identity');
   if(!d.jobs.length&&complete)add('no_matches','No matching Jobs were found.',[population],'limitation');
  }else if(result.tool==='get_production_overview'&&result.complete&&result.status==='ok'){

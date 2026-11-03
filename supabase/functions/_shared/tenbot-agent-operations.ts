@@ -59,6 +59,12 @@ import type {ConversationContext} from './tenbot-conversation-context.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
 import {modelReadFacts} from './tenbot-read-investigation.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {workflowFacts} from './tenbot-workflow-facts.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import {appendCompositionFacts} from './tenbot-read-composition.ts';
 function comparable(result:JobToolResult){return JSON.stringify({data:result.data,status:result.status,complete:result.complete,truncated:result.truncated,unknowns:result.unknowns,filters:result.filters});}
 export type ModelJobSelection={question:string;context:ConversationContext|null;references:string[]};
 const canonicalUuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -169,7 +175,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
 }
 
 /** Published workflow knowledge is a separate channel from current operational data. */
-export function createTenbotAgentKnowledgeTools(can:Capability,registeredTools:()=>readonly Pick<AgentTool,'name'|'kind'>[]=()=>[]):AgentTool[]{
+export function createTenbotAgentKnowledgeTools(can:Capability,registeredTools:()=>readonly Pick<AgentTool,'name'|'kind'>[]=()=>[],fitsSources:(entries:CapabilityEntry[])=>boolean=()=>true):AgentTool[]{
  return [{name:'search_workflow_knowledge',kind:'read',description:'Search published workflow and structured architecture knowledge, including bounded related records. Returns at most four permitted sources within a byte limit. Facts distinguish repository contracts, Product conventions and released-source rules; none establish current operational evidence. capability_links names only tools registered in this session. Application services remain guidance-only unless separately exposed.',parameters:object({query:{type:'string',minLength:2,maxLength:160}}),async execute(args){
   const checks=new Map<string,Promise<boolean>>();
   const allowed=async(entry:CapabilityEntry)=>{
@@ -180,7 +186,18 @@ export function createTenbotAgentKnowledgeTools(can:Capability,registeredTools:(
    }
    return hasGuidePermission(entry,permissions);
   };
-  return {data:json(await searchPublishedKnowledge(String(args.query),agentKnowledgeEntries(),allowed,registeredTools()))};
+  const result=await searchPublishedKnowledge(String(args.query),agentKnowledgeEntries(),allowed,registeredTools());
+  // Caller-owned history has one existing proof ceiling across all evidence.
+  // Keep complete primary source bundles; never drop only their restrictions.
+  while(result.sources.length&&!fitsSources(result.sources.map(s=>agentKnowledgeEntries().find(e=>e.id===s.id)!))){result.sources.pop();result.context_limited=true;}
+  result.capability_links=result.capability_links.filter(link=>result.sources.some(s=>s.id===link.source_id));
+  // Reuse the reviewed guide itself as a selectable current fact. The host
+  // still validates its source identity, release proof and action permissions.
+  const legacy=result.sources.flatMap((s,i)=>s.guidance.length<=1400?[{id:'workflow_'+(i+1),kind:'workflow',text:s.guidance}]:[]);
+  while(legacy.length&&new TextEncoder().encode(JSON.stringify({...result,answer_facts:legacy})).length>23000)legacy.pop();
+  const extra=result.sources.flatMap((s,i)=>{const entry=agentKnowledgeEntries().find(e=>e.id===s.id);return entry?workflowFacts(entry,i+1):[];});
+  const answer_facts=appendCompositionFacts(result,legacy,extra);
+  return {data:json({...result,answer_facts})};
  }}];
 }
 

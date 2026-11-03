@@ -15,7 +15,10 @@ const present=(result:JobToolResult,evidence:JobEvidence,question='')=>presentJo
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Edge extension.
 import type {LaborReportResult} from '../../../src/modules/manpower/labor-report.ts';
-export type JobTools={authorizeHistory?(ids:string[]):Promise<'authorized'|'denied'|'unavailable'>;execute(name:TenbotJobToolName,args:Record<string,unknown>):Promise<JobToolResult>;laborReport?(args:Record<string,unknown>,signal?:AbortSignal):Promise<LaborReportResult>};
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension
+import type {JobActivityReader} from './tenbot-job-activity.ts';
+export type JobTools={activity?:JobActivityReader;authorizeHistory?(ids:string[]):Promise<'authorized'|'denied'|'unavailable'>;execute(name:TenbotJobToolName,args:Record<string,unknown>):Promise<JobToolResult>;laborReport?(args:Record<string,unknown>,signal?:AbortSignal):Promise<LaborReportResult>};
 export const LIVE_QUESTION='[Live Production lookup]';
 const marker='tenbot-job-context.v1:';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
