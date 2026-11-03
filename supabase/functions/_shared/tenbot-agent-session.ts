@@ -13,6 +13,9 @@ import {emitInvestigationDiagnostic,type InvestigationDiagnosticSink} from './te
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {createTenbotAgentJobTools,createTenbotAgentKnowledgeTools,createTenbotAgentScopeTool} from './tenbot-agent-operations.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- explicit Edge extension.
+import {createTenbotAgentLaborTools} from './tenbot-agent-labor.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extensions for Edge compatibility.
 import {createTenbotInvoiceTools,type TenbotInvoiceDocument,type TenbotInvoiceReader,type InvoiceConfirmation} from './tenbot-invoice.ts';
@@ -124,7 +127,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
  // Registry descriptors and hard limits are host data, not a Job/catalog read.
  // The same proof is bound to every retained display turn and checked on load.
  const scopeDigest=async(owner:string)=>{
-  const tools=[...createTenbotAgentJobTools(deps.jobTools(owner)).tools,...createTenbotAgentKnowledgeTools(capability=>deps.can(owner,capability))];
+  const tools=[...createTenbotAgentJobTools(deps.jobTools(owner)).tools,...createTenbotAgentLaborTools(deps.jobTools(owner)).tools,...createTenbotAgentKnowledgeTools(capability=>deps.can(owner,capability))];
   const scope=createTenbotAgentScopeTool(tools);
   return sourceDigest(canonicalHistoryScope((await scope.execute({}, {callerId:owner,signal:new AbortController().signal})).data),'tenbot-agent-display-scope.v1');
  };
@@ -246,6 +249,8 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const pendingContext=followup?.kind==='clarify'&&priorContext?{...priorContext,...(followup.operation?{operation:followup.operation}:{}),resultType:'clarification' as const,awaitingClarification:true,selection:{...priorContext.selection,...(followup.operation==='get_job_labor_summary'&&typeof followup.args?.start_date==='string'&&typeof followup.args?.end_date==='string'?{startDate:followup.args.start_date,endDate:followup.args.end_date}:{})}}:null;
    const explicitReferences=modelDirected?explicitJobReferences(question):[];
    const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?{intent:followup,question}:undefined,modelDirected?{question,context:session.context,references:explicitReferences}:undefined);
+   const labor=createTenbotAgentLaborTools(deps.jobTools(owner),job.recordBinding);
+   const readsFresh=async()=>await job.fresh()&&await labor.fresh();
    const mayPrepareNow=()=>deps.canPrepareInvoice?deps.canPrepareInvoice(owner):(async()=>await can('writeBusinessData')&&await can('adjustInventory'))();
    const mayPrepare=!deps.readOnlyHosted&&await mayPrepareNow();
    const sourceReader=deps.readOnlyHosted?undefined:deps.invoice?.reader(owner),invoiceReads=new Map<string,string>();let inconsistentInvoice=false;
@@ -291,7 +296,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     }
     return true;
    };
-   const knowledge=createTenbotAgentKnowledgeTools(can,()=>[...job.tools,...invoice.filter(tool=>tool.kind==='read'||mayPrepare),...operations?.tools??[]]);
+   const knowledge=createTenbotAgentKnowledgeTools(can,()=>[...job.tools,...labor.tools,...invoice.filter(tool=>tool.kind==='read'||mayPrepare),...operations?.tools??[]]);
    for(const tool of knowledge){
     const execute=tool.execute;tool.execute=async(args,context)=>{
      const value=await execute(args,context);
@@ -309,9 +314,9 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
      return value;
     };
    }
-   const tools=[...job.tools,...knowledge,...invoice.filter(tool=>tool.kind==='read'||mayPrepare),...operations?.tools??[]];
+   const tools=[...job.tools,...labor.tools,...knowledge,...invoice.filter(tool=>tool.kind==='read'||mayPrepare),...operations?.tools??[]];
    const scopeTool=createTenbotAgentScopeTool(tools);
-   if(modelDirected){const execute=scopeTool.execute;scopeTool.execute=async(args,context)=>{const value=await execute(args,context);return {data:json({...record(value.data)?value.data:{},...(operations?{limitation:'Only registered authorized reads and preparation are available to the model. Prepared changes require separate exact account-password confirmation; a review is not a saved business record.'}:{}),answer_facts:[...modelScopeFacts(value.data),...(operations?[{id:'review_confirmation',text:'Prepared changes require your review and separate account-password confirmation. Preparing a review does not save a business record.'},{id:'operation_evidence_limits',text:'The registered tools read saved records and supplied documents. They do not establish future staffing capacity, physical readiness, or a completion forecast.'}]:[])]})};};}
+   if(modelDirected){const execute=scopeTool.execute;scopeTool.execute=async(args,context)=>{const value=await execute(args,context);return {data:json({...record(value.data)?value.data:{},...(operations?{limitation:'Only registered authorized reads and preparation are available to the model. Prepared changes require separate exact account-password confirmation; a review is not a saved business record.'}:{}),answer_facts:[...modelScopeFacts(value.data),...(operations?[{id:'review_confirmation',text:'Prepared changes require your review and separate account-password confirmation. Preparing a review does not save a business record.'}]:[])]})};};}
    tools.push(scopeTool);
    const provider=deps.provider(scenario as AgentDemoScenario);
    const terraReads=modelDirected&&provider.model==='gpt-6.1-terra';
@@ -343,7 +348,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     if(check.phase==='before_model'){
      const proofs=new Map([...session!.guidance.flatMap(turn=>turn.sources),...(modelDirected?[...knowledgeProofs.values()]:[])].map(proof=>[proof.id+':'+proof.digest,proof]));
      for(const proof of proofs.values())if(!await proofIsCurrent(proof))return false;
-     if(modelDirected&&!await job.fresh())return false;
+     if(modelDirected&&!await readsFresh())return false;
      if(!await modelContextCurrent())return false;
      if(operations&&!await operations.fresh())return false;
     }
@@ -356,7 +361,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
      const proofs=new Map([...knowledgeProofs.values(),...session!.guidance.flatMap(turn=>turn.sources)].map(proof=>[proof.id+':'+proof.digest,proof]));
      for(const proof of proofs.values())if(!await proofIsCurrent(proof))return false;
      if(prepared&&!await mayPrepareNow())return false;
-     if(!await job.fresh())return false;
+     if(!await readsFresh())return false;
      const deadline=new AbortController(),timer=setTimeout(()=>deadline.abort(),4000);
      try{for(const [query,previous] of invoiceReads){if(!sourceReader)return false;const fresh=query?await sourceReader.searchCatalog(query,deadline.signal):await sourceReader.readReceivals(deadline.signal);if(JSON.stringify(fresh)!==previous)return false;}}catch{return false;}finally{clearTimeout(timer);deadline.abort();}
      if(!await can('readOperationalData')||prepared&&!await mayPrepareNow())return false;
@@ -417,11 +422,11 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     if(followup?.kind==='jobs'&&(!record(fallback.operational)||fallback.operational.complete!==true))session.context=null;
     const savedOperational=operationalEnabled&&!workflow?await operationalReceipt(job.reads(),question,String(fallback.message),createdAt,now(),await scopeDigest(owner),fallbackProofs):null;
     if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
-    if(!await job.fresh()||!await can('readOperationalData')||recoveredFailure&&!await operations!.fresh())throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
-    const archive=persistent?employeeDisplay(job.reads(),{id:historyTurnId??crypto.randomUUID(),question,message,createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:workflow?sourceProofs:fallbackProofs,contentScope:workflow?'workflow':'operational-history',...(recoveredFailure?{operationAccess:operations!.access()}:{})}):undefined;
+    if(!await readsFresh()||!await can('readOperationalData')||recoveredFailure&&!await operations!.fresh())throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    const archive=persistent?employeeDisplay([...job.reads(),...labor.reads()],{id:historyTurnId??crypto.randomUUID(),question,message,createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:workflow?sourceProofs:fallbackProofs,contentScope:workflow?'workflow':'operational-history',...(recoveredFailure?{operationAccess:operations!.access()}:{})}):undefined;
     if(persistent&&!archive)throw new TenbotError('This answer could not be saved safely. Please retry.',503);
     if(lease){await deps.sessionStore!.commit(lease,storedState(session),true,archive??undefined);committed=true;}
-    if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await job.fresh()||!await modelContextCurrent()||recoveredFailure&&!await operations!.fresh())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await readsFresh()||!await modelContextCurrent()||recoveredFailure&&!await operations!.fresh())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
     if(persistent&&archive&&archivePage){
      const scope=await scopeDigest(owner),rows=[...archivePage.turns,archive].slice(-20);let turns:Awaited<ReturnType<typeof restoreEmployeePage>>=[];
      if(!await publicationAllowed(async()=>{turns=await restoreEmployeePage(rows,deps.jobTools(owner),scope,id,now(),p=>sourceIsCurrent(p,owner));return await can('readOperationalData')&&await scopeDigest(owner)===scope&&await modelContextCurrent();}))throw new TenbotError('Private history could not be reauthorized. Please retry.',503);
@@ -483,11 +488,11 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    }
    const savedOperational=operationalEnabled&&deps.readOnlyHosted&&contentScope==='volatile'&&result.status==='completed'?await operationalReceipt(job.reads(),question,message,createdAt,now(),await scopeDigest(owner),[...ancestry.values()]):null;
    if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
-   const archive=persistent&&result.status==='completed'?employeeDisplay(job.reads(),{id:historyTurnId??crypto.randomUUID(),question,message:message.slice(0,2400),createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:[...ancestry.values()],contentScope:contentScope==='volatile'?'operational-history':contentScope,...(operationUsed?{operationAccess:operations!.access()}:{}),...(actionCards.length?{actionReferences:actionCards.map(card=>card.reference)}:{})}):undefined;
+   const archive=persistent&&result.status==='completed'?employeeDisplay([...job.reads(),...labor.reads()],{id:historyTurnId??crypto.randomUUID(),question,message:message.slice(0,2400),createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:[...ancestry.values()],contentScope:contentScope==='volatile'?'operational-history':contentScope,...(operationUsed?{operationAccess:operations!.access()}:{}),...(actionCards.length?{actionReferences:actionCards.map(card=>card.reference)}:{})}):undefined;
    if(persistent&&result.status==='completed'&&!archive)throw new TenbotError('This answer could not be saved safely. Please retry.',503);
    if(lease){await deps.sessionStore!.commit(lease,storedState(session),true,archive??undefined);committed=true;}
    if(deps.readOnlyHosted&&!await publicationAllowed(async()=>{
-    if(!await can('readOperationalData')||!await job.fresh()||!await modelContextCurrent())return false;
+    if(!await can('readOperationalData')||!await readsFresh()||!await modelContextCurrent())return false;
     if(operations&&!await operations.fresh())return false;
     for(const capability of knowledgeGrants)if(!await can(capability))return false;
     for(const proof of ancestry.values())if(!await proofIsCurrent(proof))return false;

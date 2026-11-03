@@ -71,6 +71,11 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
  const ambiguous=Boolean(selection&&(ambiguousJobReference(selection.question)||!explicit.length&&seeds.length>1&&/\b(?:it|its|that|this)\b/i.test(selection.question)&&!/\b(?:those|these|their|them|both)\b/i.test(selection.question)));
  const boundIds=new Set<string>((explicit.length?explicit.filter(id=>canonicalUuid.test(id)):ambiguous?[]:seeds).map(id=>id.toLowerCase()));
  const selectedIds=new Set<string>();
+ const allowRecordRead=(id:string)=>{
+  const key=id.toLowerCase();
+  if(ambiguous||!boundIds.has(key)||!selectedIds.has(key)&&selectedIds.size>=4)return false;
+  selectedIds.add(key);return true;
+ };
  let namedLookupStarted=false;
  let requested:{name:TenbotJobToolName;args:Record<string,unknown>}|null=null;
  let inconsistent=false,scoped:PreparedJobRequest|undefined;
@@ -110,8 +115,8 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
    }else{
     requested={name:spec.name,args:canonical};
     const id=String(canonical.job_id).toLowerCase();canonical.job_id=id;
-    if(ambiguous||!boundIds.has(id)||!selectedIds.has(id)&&selectedIds.size>=4)throw new AgentToolError('invalid-arguments');
-    selectedIds.add(id);result=await execute(spec.name,canonical);
+    if(!allowRecordRead(id))throw new AgentToolError('invalid-arguments');
+    result=await execute(spec.name,canonical);
    }
    const {accessRefs:_refs,...published}=result;void _refs;
    return {data:json({...published,answer_facts:modelReadFacts(result)})};
@@ -153,7 +158,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
   }else result=await execute(spec.name,canonical);
   const {accessRefs:_references,...modelResult}=result;void _references;return {data:json(modelResult)};
  }}));
- return {tools,execute,scoped:()=>scoped,requested:()=>requested?structuredClone(requested):null,reads:()=>structuredClone([...reads.values()]),async fresh(){
+ return {tools,execute,recordBinding:{allowRead:(id:string|null)=>id?allowRecordRead(id):explicit.length===0,bindReport:(ids:string[])=>{if(!explicit.length&&!ambiguous)for(const id of ids)if(canonicalUuid.test(id))boundIds.add(id.toLowerCase());}},scoped:()=>scoped,requested:()=>requested?structuredClone(requested):null,reads:()=>structuredClone([...reads.values()]),async fresh(){
   if(inconsistent)return false;
   for(const read of reads.values()){
    const current=await jobTools.execute(read.name,read.args);

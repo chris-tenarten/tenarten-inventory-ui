@@ -92,7 +92,7 @@ await check('Population and scope caveats cannot substitute for same-record deta
  const data={...found,answer_facts:facts} as unknown as JsonValue,bad=publication('find_jobs',data,[identity.text,population.text]);
  assert.equal(publishModelReadAnswer(bad,'When is the delivery date?',undefined,new Set(),undefined,{jobIds:[id]}),null);
  assert(publishModelReadAnswer(bad,'Which Job number matches?'));
- const scopeFacts=modelScopeFacts({execution:false,capabilities:[{name:'find_jobs'}]}),scopeFact=scopeFacts.find(x=>x.id==='read_evidence_limits')!,scope=publication('describe_assistant_scope',{answer_facts:scopeFacts} as unknown as JsonValue,[scopeFact.text]);
+ const scopeFacts=modelScopeFacts({execution:false,capabilities:[{name:'find_jobs'}]}),scopeFact=scopeFacts.find(x=>x.id==='registered_capabilities')!,scope=publication('describe_assistant_scope',{answer_facts:scopeFacts} as unknown as JsonValue,[scopeFact.text]);
  assert.equal(publishModelReadAnswer(scope,'When is the delivery date?',undefined,new Set(),undefined,{jobIds:[id]}),null);assert(publishModelReadAnswer(scope,'What information can you read?'));
  f.tables.jobs[0].requested_delivery_date=null;const detail=await f.jobTools.execute('get_job_summary',{job_id:id}),recordFacts=modelReadFacts(detail),recordData={...detail,answer_facts:recordFacts} as unknown as JsonValue;
  for(const factId of ['job_requested_delivery_missing','job_date_limits']){const selected=recordFacts.find(x=>x.id===factId)!;assert(selected);const good=publication('get_job_summary',recordData,[selected.text]);assert(publishModelReadAnswer(good,'Which dates can be verified for this Job?',undefined,new Set(),undefined,{jobIds:[id]}));}

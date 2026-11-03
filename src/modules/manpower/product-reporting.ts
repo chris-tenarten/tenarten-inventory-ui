@@ -1,4 +1,4 @@
-import type { ManpowerEntry, ManpowerReference } from './types';
+import type { ManpowerEntry, ManpowerReference } from './types.ts';
 
 export type ProductReference = Pick<ManpowerReference, 'id' | 'display_name' | 'is_active'>;
 export type ProductLaborEntry = Pick<ManpowerEntry, 'am_hours' | 'pm_hours' | 'product_category_id' | 'task_id'> & { task: { display_name: string } };

@@ -1,5 +1,7 @@
-import type { ManpowerEntry, ManpowerReference } from './types';
-import { entryHundredths, productKey, productLabel, UNCATEGORIZED } from './product-reporting';
+import type { ManpowerEntry, ManpowerReference } from './types.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- direct Edge/Node shared source
+// @ts-ignore -- explicit Edge extension.
+import { entryHundredths, productKey, productLabel, UNCATEGORIZED } from './product-reporting.ts';
 
 export const LABOR_PERIODS = [30, 90, 'year'] as const;
 export type LaborPeriodDays = typeof LABOR_PERIODS[number];
@@ -60,7 +62,10 @@ export function laborColorValue(slot: string) {
 }
 
 /** One pass over complete authoritative entries; all accounting uses integer hundredths. */
-export function aggregateLabor(entries: ManpowerEntry[], categories: ManpowerReference[], tasks: ManpowerReference[], period: LaborPeriod, jobId: string | null) {
+export type LaborAnalyticsEntry = Pick<ManpowerEntry, 'id' | 'work_date' | 'am_hours' | 'pm_hours' | 'product_category_id' | 'task_id' | 'job_id'> & {
+  task: { display_name: string }; job: { job_number: string | null; name: string } | null;
+};
+export function aggregateLabor<T extends LaborAnalyticsEntry>(entries: T[], categories: ManpowerReference[], tasks: ManpowerReference[], period: LaborPeriod, jobId: string | null) {
   const monthly = period.days === 'year';
   const requestedPeriod = period;
   if (monthly) {
@@ -77,7 +82,7 @@ export function aggregateLabor(entries: ManpowerEntry[], categories: ManpowerRef
   type Bucket = { id: string; label: string; units: number; products: Map<string, LaborSlice> };
   const jobs = new Map<string, Bucket>(), taskBuckets = new Map<string, Bucket>(), weeks = new Map<string, Bucket>();
   const jobTasks = new Map<string, Map<string, Map<string, LaborSlice>>>();
-  const scopedEntries: ManpowerEntry[] = [];
+  const scopedEntries: T[] = [];
   let total = 0, categorized = 0, unlinked = 0, latest: string | null = null;
   for (let key = bucketStart(period.start); key <= period.end; key = bucketNext(key)) weeks.set(key, { id: key, label: laborDateLabel(key), units: 0, products: new Map() });
   const add = (map: Map<string, LaborSlice>, id: string, label: string, units: number) => {

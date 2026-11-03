@@ -4,9 +4,6 @@
 import type {KnowledgeProof} from './tenbot-agent-history-store.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node
 // @ts-ignore -- explicit Edge extension
-import type {ContextRead} from './tenbot-conversation-context.ts';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node
-// @ts-ignore -- explicit Edge extension
 import type {JobTools} from './tenbot-job-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- Edge/Node source
 // @ts-ignore -- explicit Edge extension
@@ -22,7 +19,7 @@ export function employeeDisplayValid(x:unknown):x is EmployeeDisplay{
  if(x.operationAccess!==undefined&&(!object(x.operationAccess)||Object.keys(x.operationAccess).sort().join(',')!=='documentIds,proposalAccess'||typeof x.operationAccess.proposalAccess!=='boolean'||!Array.isArray(x.operationAccess.documentIds)||x.operationAccess.documentIds.length>8||x.operationAccess.documentIds.some(id=>typeof id!=='string'||!uuid.test(id))))return false;
  return x.sources.every(p=>object(p)&&Object.keys(p).sort().join(',')==='digest,id'&&typeof p.id==='string'&&p.id.length>0&&p.id.length<=160&&typeof p.digest==='string'&&/^[a-f0-9]{64}$/.test(p.digest));
 }
-export function employeeDisplay(reads:ContextRead[],value:Omit<EmployeeDisplay,'jobIds'>):EmployeeDisplay|null{
+export function employeeDisplay(reads:readonly {result:{data:unknown;accessRefs?:string[]}}[],value:Omit<EmployeeDisplay,'jobIds'>):EmployeeDisplay|null{
  // A real executor supplies the complete checked identity set, including the
  // count population. Missing coverage never silently becomes an empty set.
  if(reads.some(r=>r.result.data!==null&&!Array.isArray(r.result.accessRefs)))return null;

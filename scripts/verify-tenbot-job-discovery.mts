@@ -56,6 +56,22 @@ if(before){
  for(const q of ['What is the Job status right now?','Show the active job','Which jobs are unscheduled?','Show status for Job ""','What is the job number for our project on Lincoln Road for Drexel?'])assert.deepEqual(explicitJobReferences(q),[]);
  assert.deepEqual(explicitJobReferences('Show status for Job "Right Now"'),['Right Now']);
  checks.push('Generic names before/after Job/project resolve without capturing request prose or temporal suffixes');
+ for(const q of [
+  'Which product have we spent the most hours of labor on, and which job was it for?',
+  'Which Job contributed the most hours to that product category, and how do its other product categories compare?',
+  'Which job was it for?', 'What project consumed the most labor?', 'Whose Job generated the most hours?'
+ ]){
+  assert.deepEqual(explicitJobReferences(q),[]);
+  const intent=resolveJobIntent(q);assert(!(intent?.kind==='job'&&'query' in intent.reference),JSON.stringify({q,intent}));
+ }
+ for(const [q,expected] of [
+  ['Which Job 25-1121 has the most recorded labor?','25-1121'],
+  ['Which Job "Cedar Bay" has recorded labor?','Cedar Bay'],
+  ['Which Job named Cedar Bay is scheduled?','Cedar Bay'],
+  ['Show status for Job Lincoln Road – Drexel','Lincoln Road – Drexel'],
+  [`Show status for Job ${uuid(1)}`,uuid(1)]
+ ])assert.deepEqual(explicitJobReferences(q),[expected]);
+ checks.push('Interrogative Job noun phrases retain their objective without inventing predicate names in either reference extractor or legacy routing; explicit identity syntax and specific descriptions remain authoritative');
  for(const q of [question,'what is going on with the cedar bay project right now?','Show status for Job 25-1121']){
   const f=fixture(),r=registry(f,q),query=explicitJobReferences(q)[0];await tool(r,'find_jobs').execute(find(query),ctx);await tool(r,'get_job_planning').execute({job_id:f.tables.jobs[0].id},ctx);
  }

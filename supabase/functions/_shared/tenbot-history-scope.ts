@@ -2,6 +2,9 @@
  * remain current for discovery; history binds the same read authority. This
  * exact bridge changes no tool identity/kind, hard boundary, source proof or RLS.
  * Unknown future descriptors are deliberately not normalized. */
+// Approved additive descriptor pin. Deliberately independent of the live tool:
+// a later source/authority change requires an explicit compatibility review.
+const additiveLabor={name:'get_labor_analytics',kind:'read',description:'Reuse Manpower Reporting Analytics for historical recorded labor: ranked Product Categories, canonical Jobs, category-to-Job contributions and same-Job comparisons. Product means Manpower Product Category, not a SKU/fabrication item. Categories may span Jobs and unlinked work. period is "30" (default), "90" or "year" (trailing calendar year), inclusive work dates; never claim an all-time maximum. Empty job_id selects all authorized Jobs/unlinked work, including archives and original/Rework. Empty product_category_id selects all categories; use current report IDs or __uncategorized__ for missing attribution. Category selection narrows rankings, while overall totals retain all-product scope. limit1–5 bounds output, not source completeness. Disclose counts/has_more, ties and missing attribution. For follow-ups, re-read the earlier report objective/period to resolve current category/Job IDs, then compose report or existing Job reads; old answers are not evidence. Incomplete reads establish no ranking or zero.'};
 const bridges=[
   {
     "name": "find_jobs",
@@ -19,7 +22,15 @@ const bridges=[
 export function canonicalHistoryScope(value:unknown):unknown {
  if(!value||typeof value!=='object'||Array.isArray(value))return value;
  const scope=value as Record<string,unknown>;if(!Array.isArray(scope.capabilities))return value;
- return {...scope,capabilities:scope.capabilities.map(item=>{
+ return {...scope,capabilities:scope.capabilities.filter(item=>{
+  // This exact additive read reuses readOperationalData and current caller RLS.
+  // It grants no new authority to prior turns. Their source/Job authorization
+  // remains mandatory; Analytics turns also retain every contributing Job ID.
+  // Unknown descriptions, kinds and tools still change the scope digest.
+  if(!item||typeof item!=='object'||Array.isArray(item))return true;
+  const c=item as Record<string,unknown>;
+  return !(Object.keys(c).sort().join(',')==='description,kind,name'&&c.name===additiveLabor.name&&c.kind===additiveLabor.kind&&c.description===additiveLabor.description);
+ }).map(item=>{
   if(!item||typeof item!=='object'||Array.isArray(item))return item;const capability=item as Record<string,unknown>;
   const bridge=bridges.find(b=>capability.name===b.name&&capability.kind==='read'&&(capability.description===b.current||capability.description===b.schedule));
   return bridge?{...capability,description:bridge.legacy}:item;

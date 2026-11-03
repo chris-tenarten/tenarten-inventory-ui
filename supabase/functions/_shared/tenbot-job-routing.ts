@@ -23,6 +23,10 @@ export function detailJobIds(intent:JobIntent|null|undefined):string[]{return in
 const detailOperation=(question:string):JobDetailTool=>/\b(?:labor|labour|manpower|hours?)\b/i.test(question)?'get_job_labor_summary':/\b(?:scheduled?|unscheduled|planning|planned|dates?|next|completion|finish)\b/i.test(question)?'get_job_planning':'get_job_summary';
 const normalized=(value:string)=>value.trim().replace(/\s+/g,' ').toLocaleLowerCase('en-US');
 const trimReference=(value:string)=>value.trim().replace(/^[#\s:]+|[?.!,;\s]+$/g,'').replace(/^(?:the\s+)?(?:job|project)\s+(?:number\s+)?#?\s*/i,'').replace(/["“”'‘’]$/,'').trim();
+// In an interrogative noun phrase ("which Job ..."), the words after the
+// noun are the question's predicate, not a supplied name. Explicit identity
+// syntax (numbers, quotes or named/called) is handled independently.
+const interrogativeJobNoun=(question:string,index:number)=>/\b(?:what|which|whose)\s+$/i.test(question.slice(0,index));
 /** Resource identity only: this does not select an operation or authorize a
  * record. Explicit identities must be freshly resolved before context is used. */
 export function explicitJobReferences(question:string):string[]{
@@ -37,17 +41,18 @@ export function explicitJobReferences(question:string):string[]{
  // boundaries alone are not Job identities.
  const bareNumber=question.trim().match(/^#?((?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*)(?=\s|[?!,:;]|$)/)?.[1];
  if(bareNumber&&!/^\d{4}-\d{2}-\d{2}$/.test(bareNumber)&&/[A-Za-z/-]/.test(bareNumber))add(bareNumber);
- const generic=/^(?:number|status|production|planning|active|scheduled?|unscheduled|ready|readiness|tomorrow|today|yesterday|right|now|currently|current|latest|doing|going|what|whats|what's|how|tell|give|compare|our|my|your|the|a|an|all|any|in|on|but|is|has|have|with|at|to|from|and|for|needs?|whose|where|do|does|that|this|same|other|one|test)$/i;
+ const generic=/^(?:number|status|production|planning|active|scheduled?|unscheduled|ready|readiness|tomorrow|today|yesterday|right|now|currently|current|latest|doing|going|what|whats|what's|which|when|why|how|tell|give|compare|our|my|your|the|a|an|all|any|in|on|but|is|has|have|was|were|with|at|to|from|and|for|needs?|whose|where|do|does|it|its|they|their|them|that|this|same|other|one|test)$/i;
  const temporal=(value:string)=>value.replace(/\s+(?:right\s+now|at\s+the\s+moment|currently|today|tomorrow|yesterday|this\s+(?:week|month|year))\b.*$/i,'');
  // Names also precede the business noun ("the Cedar Bay project"). Strip
  // surrounding request prose, never promote a temporal suffix to identity.
  for(const match of outsideQuotes.matchAll(/\b(?:job|project)\b/gi)){
   const prefix=outsideQuotes.slice(0,match.index).split(/[?!;:\n]/).at(-1)!.trim();
-  const candidate=trimReference(temporal(prefix.replace(/^.*\b(?:with|about|for|of|regarding|check|show|find)\s+(?:me\s+)?/i,'').replace(/^(?:(?:how|what)(?:['’]s|\s+is)|whats)\s+/i,'').replace(/^the\s+/i,'')));
+  const candidate=trimReference(temporal(prefix.replace(/^.*\b(?:with|about|for|of|on|at|regarding|check|show|find)\s+(?:me\s+)?/i,'').replace(/^(?:(?:how|what)(?:['’]s|\s+is)|whats)\s+/i,'').replace(/^the\s+/i,'')));
   if(candidate&&!generic.test(candidate.split(/\s+/)[0])&&!/\b(?:job|project|and|or)\b/i.test(candidate))add(candidate);
  }
- for(const match of outsideQuotes.matchAll(/(?=\b(?:job|project)\s+(?:(?:named|called)\s+)?([^?!.;:\n"“”]+))/gi)){
-  const candidate=trimReference(temporal(match[1].split(/\s+(?:is|has|have|was|were|does|do|with|from|between|during|today|tomorrow|this|last|next|for|and|but|in|on|to)\b|[,]|['’]s\s+/i)[0]));
+ for(const match of outsideQuotes.matchAll(/(?=\b(?:job|project)\s+(?:(named|called)\s+)?([^?!.;:\n"“”]+))/gi)){
+  if(!match[1]&&interrogativeJobNoun(outsideQuotes,match.index!))continue;
+  const candidate=trimReference(temporal(match[2].split(/\s+(?:is|has|have|was|were|does|do|with|from|between|during|today|tomorrow|this|last|next|for|and|but|in|on|to)\b|[,]|['’]s\s+/i)[0]));
   const extendsNumber=[...refs.values()].some(ref=>/\d/.test(ref)&&normalized(candidate).startsWith(normalized(ref)+' '));
   if(candidate&&!extendsNumber&&!generic.test(candidate.split(/\s+/)[0])&&!refs.has(normalized(candidate)))add(candidate);
  }
@@ -223,9 +228,11 @@ export function resolveJobIntent(question:string,context?:JobContext|null,now=ne
  // Quotes are the least ambiguous way to preserve a multiword Job name.
  const quoted=q.match(/["“]([^"”\n]{1,120})["”]/)?.[1];
  const numbered=q.match(/\bjob\s+(?:number\s+)?#?\s*((?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*)\b/i)?.[1];
- const afterJob=q.match(/\b(?:jobs?|projects?)\s+(?:named\s+|called\s+|for\s+)?(.+?)(?=\s+(?:for|from|between|during|this|last|today|has|is|with|over|in|and)\b|[?!;]|$)/i)?.[1];
+ const afterJobMatch=q.match(/\b(?:jobs?|projects?)\s+(?:(named|called)\s+|for\s+)?(.+?)(?=\s+(?:for|from|between|during|this|last|today|has|is|with|over|in|and)\b|[?!;]|$)/i);
+ const interrogative=afterJobMatch&&!afterJobMatch[1]&&interrogativeJobNoun(q,afterJobMatch.index!);
+ const afterJob=interrogative?undefined:afterJobMatch?.[2];
  const forTarget=q.match(/\b(?:for|about|of)\s+(?:(?:the\s+)?(?:job|project)\s+)?(.+?)(?=\s+(?:from|between|during|this|last|today|over|and)\b|[?!;]|$)/i)?.[1];
- const candidate=explicitIdentity??trimReference(quoted||numbered||afterJob||forTarget||'');
+ const candidate=explicitIdentity??trimReference(quoted||numbered||afterJob||(!interrogative&&forTarget)||'');
  // A canonical owner-scoped seed resolves ordinary qualitative follow-ups;
  // descriptive words before “that Job” are not another project name. Multiple
  // Job references still require an explicit selection rather than a guess.

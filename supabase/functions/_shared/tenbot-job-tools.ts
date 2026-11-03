@@ -386,10 +386,20 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
 /** One abort signal and deadline cover capability checks, all bounded pages and
  * final reauthorization together. The SDK cancels in-flight REST requests;
  * the race also bounds transports that do not implement cancellation. */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
+// @ts-ignore -- exact existing dashboard calculation via caller-only adapter.
+import {executeLaborReport} from '../../../src/modules/manpower/labor-report.ts';
 export function createTenbotJobTools(caller: JobToolCaller, options: { now?: () => Date; deadlineMs?: number } = {}) {
   const deadlineMs = options.deadlineMs ?? 4000;
   if (!Number.isSafeInteger(deadlineMs) || deadlineMs < 1 || deadlineMs > 10000) throw new Error('Invalid operational tool deadline.');
   return {
+    laborReport(args:Record<string,unknown>,signal?:AbortSignal){return executeLaborReport(caller,args,{now:options.now,signal,deadlineMs,async hasCapability(capability){
+      const r=await caller.rpc('has_app_capability',{p_capability:capability});if(r.error||r.data!==true)return false;
+      // A selected Job with no labor is not interchangeable with a hidden or
+      // nonexistent Job. Reuse current canonical access before/after the read.
+      if(args.job_id){const access=await caller.rpc('tenbot_authorize_history_jobs',{p_ids:[args.job_id]});return !access.error&&access.data===true;}
+      return true;
+    }});},
     async authorizeHistory(ids:string[]):Promise<'authorized'|'denied'|'unavailable'>{
       if(ids.length>1000||ids.some(id=>!isUuid(id)))return 'denied';
       try{const request=caller.rpc('tenbot_authorize_history_jobs',{p_ids:ids}) as ReturnType<JobToolCaller['rpc']>&{abortSignal?:(s:AbortSignal)=>ReturnType<JobToolCaller['rpc']>};const signal=AbortSignal.timeout(deadlineMs);const r=await Promise.race([Promise.resolve(request.abortSignal?request.abortSignal(signal):request),new Promise<never>((_,reject)=>signal.addEventListener('abort',()=>reject(new Unavailable()),{once:true}))]);return r.error?'unavailable':r.data===true?'authorized':'denied';}catch{return 'unavailable';}
