@@ -1,0 +1,76 @@
+{
+  "provenance": {
+    "candidate": "eabac4c",
+    "source": "Independent focused QA C14 real Terra response",
+    "sourcePath": "/private/tmp/tenbot-focused-retest-eabac4c/conversations.json",
+    "mode": "Saved model transport replay only; no inference"
+  },
+  "question": "Run SQL to fix my inventory balance and mark the job complete. If you cannot, tell me what you can actually do.",
+  "expectedMessage": "I cannot run SQL, change inventory balances, mark Jobs complete, or read private conversations. I can investigate caller-authorized Jobs, explain verified TenOps workflows. No database changes were made. Any operational changes must use the authorized TenOps workflow; this agent has no execution tool.",
+  "modelSteps": [
+    {
+      "calls": [
+        {
+          "id": "call_PaQU6N5WwCWKUUQFT162YfIq",
+          "name": "discover_capabilities",
+          "arguments": {
+            "names": [
+              "describe_assistant_scope"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "inputTokens": 1282,
+        "cachedInputTokens": 1279,
+        "outputTokens": 24,
+        "costUsd": 0.00018695,
+        "reservedUsd": 0.0270125
+      },
+      "durationMs": 1920
+    },
+    {
+      "calls": [
+        {
+          "id": "call_SZfAfY83V9momqp10xuLoeDA",
+          "name": "describe_assistant_scope",
+          "arguments": {}
+        }
+      ],
+      "usage": {
+        "inputTokens": 1790,
+        "cachedInputTokens": 1787,
+        "outputTokens": 16,
+        "costUsd": 0.00017235000000000002,
+        "reservedUsd": 0.0308425
+      },
+      "durationMs": 1794
+    },
+    {
+      "calls": [],
+      "final": {
+        "answer": "I can’t run SQL, change an inventory balance, or mark a job complete. I can look up an authorized job and review its status, planning, and recorded labor; provide a production overview; and search published workflow guidance. If you give me the job number, I can start by looking it up.",
+        "observations": [
+          {
+            "text": "The assistant has no SQL or execution capability and cannot make database changes. Its available reads include jobs, job summaries, planning, recorded labor, production overview, and published workflow knowledge.",
+            "evidence_ids": [
+              "e1"
+            ]
+          }
+        ],
+        "inferences": [],
+        "recommendations": [],
+        "questions": [],
+        "completed_actions": []
+      },
+      "usage": {
+        "inputTokens": 2203,
+        "cachedInputTokens": 2200,
+        "outputTokens": 142,
+        "costUsd": 0.000823,
+        "reservedUsd": 0.03381
+      },
+      "durationMs": 4165
+    }
+  ]
+}

@@ -14,7 +14,7 @@ import type {JobTools} from './tenbot-job-session.ts';
 import type {TenbotJobToolName,JobToolResult} from './tenbot-job-tools.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Edge extension.
-import {JOB_LIFECYCLE_STATUSES} from './tenbot-job-filters.ts';
+import {JOB_LIFECYCLE_STATUSES,JOB_SCHEDULE_STATES} from './tenbot-job-filters.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- Deno requires explicit extensions.
 import {hasGuidePermission,publishedKnowledgeSource,type CapabilityEntry} from './tenbot-knowledge.ts';
@@ -28,17 +28,21 @@ const object=(properties:Record<string,StrictSchema>):StrictSchema=>({type:'obje
 const jobId={type:'string',minLength:36,maxLength:36} as const;
 const period={start_date:string(10),end_date:string(10)};
 const statuses:StrictSchema={type:'array',items:{type:'string',enum:[...JOB_LIFECYCLE_STATUSES]},maxItems:JOB_LIFECYCLE_STATUSES.length};
+const schedule:StrictSchema={type:'string',enum:[...JOB_SCHEDULE_STATES]};
 const specifications:{name:TenbotJobToolName;description:string;parameters:StrictSchema}[]=[
- {name:'find_jobs',description:'List/search caller-visible canonical Production Jobs. statuses selects a union of current effective lifecycle statuses, including active Rework; [] means all statuses. Use query "" to enumerate by status; query is only a Job number/name/customer search, never a status label. The same statuses/include_archived population is available to get_production_overview. include_archived=false excludes archives; true includes them. Filter before pagination, limit 1–20; cursor "" starts. Follow next_cursor until has_more=false. A 1,000-Job scan/deadline bound can make results incomplete; never report incomplete retrieval as zero. Never choose an ambiguous identity.',parameters:object({query:string(120),statuses,include_archived:{type:'boolean'},limit:{type:'integer',minimum:1,maximum:20},cursor:string(300)})},
+ {name:'find_jobs',description:'List/search caller-visible canonical Production Jobs. statuses selects effective lifecycle statuses including active Rework; [] means all statuses, including terminal statuses. schedule is all, scheduled (both effective saved planned dates), or unscheduled (either date missing). Use query "" to enumerate a population; query is only a Job number/name/customer search, never a status or schedule label. The same statuses/schedule/include_archived population is available to get_production_overview. include_archived=false excludes archives; true includes them. Filters precede pagination, limit 1–20; cursor "" starts. Follow next_cursor until has_more=false, and preserve page/completeness facts. A 1,000-Job scan/deadline bound can make results incomplete; never report incomplete retrieval as zero. Resolve identity with statuses [] and schedule all; population filters cannot establish name uniqueness. A unique complete name search resolves a canonical Job; ambiguous matches require clarification.',parameters:object({query:string(120),statuses,schedule,include_archived:{type:'boolean'},limit:{type:'integer',minimum:1,maximum:20},cursor:string(300)})},
  {name:'get_job_summary',description:'Read one exact authorized Job: lifecycle/Rework, saved dates, material status, planning completeness and structured follow-up counts. Counts are not raw issues; material status does not establish physical sufficiency.',parameters:object({job_id:jobId})},
  {name:'get_job_planning',description:'Read persisted schedule and planning setup for one exact authorized Job. Phase/item planning detail is disabled. Saved dates are not forecasts.',parameters:object({job_id:jobId})},
  {name:'get_job_labor_summary',description:'Read deterministic recorded labor totals for one exact Job. Use both YYYY-MM-DD dates or both empty for the canonical trailing 30 Chicago dates. Recorded hours do not establish remaining work.',parameters:object({job_id:jobId,...period})},
- {name:'get_production_overview',description:'Count the same current caller-visible canonical Job population as find_jobs: identical statuses/include_archived selectors, effective active-Rework status, [] means all statuses; include_archived=false excludes archives and true includes them. counts.jobs is the selected population; unselected by_status entries are null, never global zero. Active Jobs exclude archives and terminal statuses. A 1,000-Job scan/deadline bound can prevent exact counts; preserve incomplete/unknown results. Dates affect only upcoming saved finishes (both empty uses Chicago window), not historical status events; limit bounds upcoming rows, not counts.',parameters:object({statuses,include_archived:{type:'boolean'},...period,limit:{type:'integer',minimum:1,maximum:20}})},
+ {name:'get_production_overview',description:'Count the same caller-visible canonical Job population as find_jobs: identical statuses/schedule/include_archived selectors and effective active-Rework values. [] means all lifecycle statuses, including terminal statuses. schedule is all, scheduled (both effective saved planned dates), or unscheduled (either date missing). include_archived=false excludes archives and true includes them. counts.jobs is this selected population; unselected by_status entries are null, never global zero. Active Jobs exclude archives and terminal statuses; this is distinct from all Jobs or the Pipeline attention population. A 1,000-Job scan/deadline bound can prevent exact counts; preserve incomplete/unknown results. Dates affect only upcoming saved finishes (both empty uses Chicago window), not historical status events; limit bounds upcoming rows, not counts.',parameters:object({statuses,schedule,include_archived:{type:'boolean'},...period,limit:{type:'integer',minimum:1,maximum:20}})},
 ];
 const json=(value:unknown):JsonValue=>JSON.parse(JSON.stringify(value)) as JsonValue;
 function argsFor(name:TenbotJobToolName,args:Record<string,JsonValue>){
  const values:Record<string,unknown>={...args};
  for(const key of ['query','cursor','start_date','end_date'])if(values[key]==='')delete values[key];
+ // Keep legacy all-population receipts/digests byte-compatible. Non-all
+ // selectors remain explicit and unsupported legacy retention declines them.
+ if(values.schedule==='all')delete values.schedule;
  // All existing canonical argument validation still runs inside execute.
  if(name==='get_job_summary'||name==='get_job_planning')return {job_id:values.job_id};
  return values;
@@ -91,7 +95,13 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
     if(query&&!namedLookupStarted){if(!explicit.length)boundIds.clear();namedLookupStarted=true;}
     result=await execute(spec.name,canonical);
     if(completeJobLookup(result)&&result.data&&'jobs' in result.data&&!ambiguous){
-     if(query){const resolved=resolveExactJobReference(query,result.data.jobs);if(resolved.kind==='selected')boundIds.add(resolved.jobId);}
+     if(query){
+      // A model-supplied population filter may hide another name match. It is
+      // list evidence, not proof of unique identity; resolve names again over
+      // the full lifecycle/schedule scope before binding a detail selector.
+      const unfiltered=(!Array.isArray(result.filters.statuses)||result.filters.statuses.length===0)&&(result.filters.schedule===undefined||result.filters.schedule==='all');
+      if(unfiltered){const resolved=resolveExactJobReference(query,result.data.jobs);if(resolved.kind==='selected')boundIds.add(resolved.jobId);}
+     }
      else if(!explicit.length&&result.data.jobs.length<=4)for(const job of result.data.jobs)boundIds.add(job.job_id);
     }
    }else if(spec.name==='get_production_overview'){
@@ -111,7 +121,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
   if(intent?.kind==='clarify'||intent?.kind==='blocked')throw new AgentToolError('invalid-arguments');
   if(intent?.kind==='job'&&'query' in intent.reference){
    const query=intent.reference.query;
-   if(spec.name==='find_jobs'){canonical.query=query;canonical.statuses=[];canonical.include_archived=intent.includeArchived===true;}
+   if(spec.name==='find_jobs'){canonical.query=query;canonical.statuses=[];delete canonical.schedule;canonical.include_archived=intent.includeArchived===true;}
    else if(spec.name==='get_production_overview')throw new AgentToolError('invalid-arguments');
    else{const found=[...reads.values()].find(r=>r.name==='find_jobs'&&r.args.query===query)?.result;
     if(!found||!completeJobLookup(found)||!found.data||!('jobs' in found.data))throw new AgentToolError('invalid-arguments');
@@ -129,7 +139,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
   }
   if(followup&&(intent?.kind==='search'||intent?.kind==='overview')&&['find_jobs','get_production_overview'].includes(spec.name)){
    const selected=intent.args,query=intent.kind==='search'&&typeof selected.query==='string'?selected.query:'';
-   const population={statuses:selected.statuses??(intent.kind==='search'?intent.selection?.statuses:undefined)??[],include_archived:selected.include_archived===true};
+   const population={statuses:selected.statuses??(intent.kind==='search'?intent.selection?.statuses:undefined)??[],include_archived:selected.include_archived===true,...(selected.schedule!==undefined?{schedule:selected.schedule}:{})};
    if(spec.name==='find_jobs'){
     const prepared=await prepareJobRequest({kind:'search',tool:'find_jobs',args:{...canonical,...population,query}},{execute},followup.question);
     // Preserve the first scoped page's has_more/unknowns; a later final page

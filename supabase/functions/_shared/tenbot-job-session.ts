@@ -26,7 +26,12 @@ export function retainedJobIntent(turns:{question:string;answer:string}[]):JobIn
  }catch{}
  return null;
 }
-export function jobHistoryMarker(intent:JobIntent|null):string{return marker+JSON.stringify(intent?.kind==='job'&&'jobId' in intent.reference||intent?.kind==='overview'||intent?.kind==='jobs'?intent:null);}
+export function jobHistoryMarker(intent:JobIntent|null):string{
+ // Do not make the older marker a parallel persistence format for a selector
+ // the deployed typed context cannot retain.
+ const unrepresentable=intent&&'args' in intent&&intent.args?.schedule!==undefined&&intent.args.schedule!=='all';
+ return marker+JSON.stringify(!unrepresentable&&(intent?.kind==='job'&&'jobId' in intent.reference||intent?.kind==='overview'||intent?.kind==='jobs')?intent:null);
+}
 export function withoutLiveHistory(turns:{question:string;answer:string}[]){return turns.filter(turn=>turn.question!==LIVE_QUESTION&&!turn.answer.startsWith(marker));}
 export type PreparedJobRequest={intent:JobIntent|null;result:JobToolResult|null;results?:JobToolResult[];evidence:JobEvidence|null;message:string;choices?:{job_id:string;reference:string}[]};
 export async function prepareJobRequest(intent:JobIntent,tools:JobTools,question=''):Promise<PreparedJobRequest>{

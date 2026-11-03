@@ -58,11 +58,19 @@ export function requestedJobStatuses(question:string):string[]{
 function collectionReferences(result:JobToolResult):string[]{
  const data:unknown=result.data;
  if(result.tool!=='find_jobs'||result.status!=='ok'||!result.complete||result.truncated||Number(result.filters.cursor??0)!==0||!object(data)||data.has_more!==false||data.next_cursor!==null||!Array.isArray(data.jobs)||data.jobs.length>4)return [];
+ // Named results narrowed by a generated lifecycle filter cannot establish
+ // name uniqueness or seed a later detail read that skips fresh resolution.
+ if(result.filters.query&&Array.isArray(result.filters.statuses)&&result.filters.statuses.length)return [];
  const ids=data.jobs.map(j=>object(j)&&typeof j.job_id==='string'&&uuid.test(j.job_id)?j.job_id:null);
  return ids.every((id):id is string=>id!==null)&&new Set(ids).size===ids.length?ids:[];
 }
 const detailTools=['get_job_summary','get_job_planning','get_job_labor_summary'];
 export function contextFromReads(reads:ContextRead[],question:string,now:number,previous:ConversationContext|null=null,requested?:JobIntent):ConversationContext|null{
+ // The deployed SQL context is exactly five selector fields. A schedule
+ // population cannot be represented there: clear it instead of retaining a
+ // falsely unfiltered collection. Prior employee questions remain separately
+ // owner-authorized context for a fresh model-selected lookup after reload.
+ if(reads.some(r=>[r.args.schedule,r.result.filters.schedule].some(s=>s!==undefined&&s!=='all')))return null;
  // A partial batch must not turn its last successful record into the group's
  // focus, or retain IDs from a denied/missing detail operation.
  if(reads.some(r=>detailTools.includes(r.name)&&(r.result.status!=='ok'||!r.result.complete||!resultJobId(r.result))))return null;
@@ -74,11 +82,15 @@ export function contextFromReads(reads:ContextRead[],question:string,now:number,
  if(references.length>4)return null;
  const pending=requested?.kind==='job'&&last.name==='find_jobs';
  const f=last.result.filters,a=last.args,periodArgs=pending?requested.args:a,period=typeof periodArgs.start_date==='string'&&periodArgs.start_date&&typeof periodArgs.end_date==='string'&&periodArgs.end_date?{startDate:periodArgs.start_date,endDate:periodArgs.end_date}:last.name==='get_job_labor_summary'&&typeof f.start_date==='string'&&typeof f.end_date==='string'?{startDate:f.start_date,endDate:f.end_date}:{startDate:null,endDate:null};
- const value:ConversationContext={version:1,subject:isDetail||pending?'Job':'Production',operation:pending?requested.tool:last.name,resultType:pending?'clarification':isDetail?'record':last.name==='get_production_overview'?'count':'collection',references,selection:{query:isDetail?'':typeof f.query==='string'?f.query:typeof a.query==='string'?a.query:'',includeArchived:f.include_archived===undefined?a.include_archived===true:f.include_archived===true,statuses:isDetail?[]:f.statuses===undefined?requestedJobStatuses(question):parseJobStatuses(f.statuses)??[],...period},sources:[],awaitingClarification:pending,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
+ // A complete unique named lookup has established a canonical subject, not
+ // an instruction to repeat the previous search for every new objective.
+ const namedRecord=last.name==='find_jobs'&&references.length===1&&typeof f.query==='string'&&f.query.trim().length>0;
+ const record=isDetail||namedRecord;
+ const value:ConversationContext={version:1,subject:record||pending?'Job':'Production',operation:pending?requested.tool:last.name,resultType:pending?'clarification':record?'record':last.name==='get_production_overview'?'count':'collection',references,selection:{query:record?'':typeof f.query==='string'?f.query:typeof a.query==='string'?a.query:'',includeArchived:f.include_archived===undefined?a.include_archived===true:f.include_archived===true,statuses:record?[]:f.statuses===undefined?requestedJobStatuses(question):parseJobStatuses(f.statuses)??[],...period},sources:[],awaitingClarification:pending,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
  if(value.subject==='Job'&&previous?.subject==='Job'&&JSON.stringify(previous.references)===JSON.stringify(references)&&!value.selection.startDate&&last.name!=='get_job_labor_summary'){
   value.selection.startDate=previous.selection.startDate;value.selection.endDate=previous.selection.endDate;
  }
- if(last.name==='find_jobs'&&previous?.subject==='Production'&&f.statuses===undefined&&!value.selection.statuses.length)value.selection.statuses=[...previous.selection.statuses];
+ if(!record&&last.name==='find_jobs'&&previous?.subject==='Production'&&f.statuses===undefined&&!value.selection.statuses.length)value.selection.statuses=[...previous.selection.statuses];
  // Overview dates bound upcoming completions, never the current count population.
  if(last.name==='get_production_overview'&&!/\b(?:upcoming|finish|finishing|due|completion dates?)\b/i.test(question)){value.selection.startDate=null;value.selection.endDate=null;}
  return validConversationContext(value)?value:null;
@@ -86,4 +98,4 @@ export function contextFromReads(reads:ContextRead[],question:string,now:number,
 export function workflowConversationContext(subject:string,sources:ConversationContext['sources'],clarify:boolean,now:number):ConversationContext{
  return {version:1,subject:subjects.find(x=>x.toLowerCase()===subject.toLowerCase())??'TenOps',operation:'guidance',resultType:clarify?'clarification':'guidance',references:[],selection:{query:'',includeArchived:false,statuses:[],startDate:null,endDate:null},sources:structuredClone(sources),awaitingClarification:clarify,updatedAt:new Date(now).toISOString(),expiresAt:new Date(now+CONTEXT_TTL_MS).toISOString()};
 }
-export function conversationContextHint(context:ConversationContext){const {subject,operation,resultType,references,selection,awaitingClarification}=context;return 'Conversation subject and lookup selectors only (not current facts or permission): '+JSON.stringify({subject,operation,resultType,references,selection,awaitingClarification})+'. Requery current tools before answering operational follow-ups. Do not treat the prior count, statuses or hours as known. References identify only previously resolved canonical Jobs, never authorization. A complete small collection may retain up to four IDs while its subject stays Production. A singular reference requires exactly one current ID; explicit plural detail requests may use the whole retained set. Partial/paginated collections do not imply a unique Job. A pending clarification retains only the requested operation and period until an exact Job selection is authorized. Never invent Bid/material relationships: no Bid or live Inventory read tool is available. Verified prior workflow dialogue describes the walkthrough step, not a completed database action.';}
+export function conversationContextHint(context:ConversationContext){const {subject,operation,resultType,references,selection,awaitingClarification}=context;return 'Conversation subject and lookup selectors only (not current facts or permission): '+JSON.stringify({subject,operation,resultType,references,selection,awaitingClarification})+'. The latest employee question determines the objective. operation and resultType describe the previous turn, not which tool or facts to repeat now. Preserve a resolved Job subject while choosing and querying current tools for the new objective. Do not treat the prior count, statuses or hours as known. References identify only previously resolved canonical Jobs, never authorization. A complete small collection may retain up to four IDs while its subject stays Production. A singular reference requires exactly one current ID; explicit plural detail requests may use the whole retained set. Partial/paginated collections do not imply a unique Job. A pending clarification retains only the requested operation and period until an exact Job selection is authorized. Never invent Bid/material relationships: no Bid or live Inventory read tool is available. Verified prior workflow dialogue describes the walkthrough step, not a completed database action.';}
