@@ -4,7 +4,7 @@ const stages = new Set(['authorization', 'extraction', 'source-persistence', 'mo
 const outcomes = new Set(['ok', 'error', 'stopped']);
 const tools = new Set([
   'discover_capabilities', 'describe_assistant_scope', 'search_workflow_knowledge',
-  'find_jobs', 'get_job_summary', 'get_job_planning', 'get_job_labor_summary', 'get_production_overview',
+  'find_jobs', 'get_job_summary', 'get_job_planning', 'get_job_labor_summary', 'get_production_overview', 'get_labor_analytics',
   'read_invoice', 'search_catalog', 'check_receival_duplicates', 'prepare_pending_receivals',
   'read_supplied_document', 'search_material_catalog', 'find_receivals', 'find_suppliers', 'get_order',
   'search_customers', 'get_customer', 'search_contacts', 'get_contact', 'prepare_proposal_draft',
