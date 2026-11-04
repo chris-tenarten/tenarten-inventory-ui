@@ -76,15 +76,16 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
  const reads=new Map<string,{name:TenbotJobToolName;args:Record<string,unknown>;result:JobToolResult}>();
  const explicit=selection?[...new Set([...literalJobReferences(selection.question),...selection.references.filter(id=>canonicalUuid.test(id))])]:[],seeds=selection?.context?.references??[];
  const ambiguous=Boolean(selection&&(ambiguousJobReference(selection.question)||!explicit.length&&seeds.length>1&&/\b(?:it|its|that|this)\b/i.test(selection.question)&&!/\b(?:those|these|their|them|both)\b/i.test(selection.question)));
- const recordScoped=explicit.length>0||Boolean(selection?.references.length);
+ const recordScoped=explicit.length>0;
  const boundIds=new Set<string>((explicit.length?explicit.filter(id=>canonicalUuid.test(id)):ambiguous?[]:seeds).map(id=>id.toLowerCase()));
  const selectedIds=new Set<string>();
  const allowRecordRead=(id:string)=>{
   const key=id.toLowerCase();
-  if(ambiguous||!boundIds.has(key)||!selectedIds.has(key)&&selectedIds.size>=4)return false;
+  if(!boundIds.has(key)||!selectedIds.has(key)&&selectedIds.size>=4)return false;
   selectedIds.add(key);return true;
  };
  let namedLookupStarted=false;
+ let unresolvedReason=ambiguous?'job-identity-ambiguous':'job-identity-unresolved';
  let requested:{name:TenbotJobToolName;args:Record<string,unknown>}|null=null;
  let inconsistent=false,scoped:PreparedJobRequest|undefined;
  const execute:JobTools['execute']=async(name,canonical)=>{
@@ -101,29 +102,31 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
   if(selection){
    if(spec.name==='find_jobs'){
     const query=String(canonical.query??'');
-    if(explicit.length&&!explicit.some(ref=>resourceKey(ref)===resourceKey(query)))throw new AgentToolError('invalid-arguments');
+    if(explicit.length&&!explicit.some(ref=>resourceKey(ref)===resourceKey(query)))throw new AgentToolError('job-reference-mismatch');
     // A new named investigation supersedes prior-only context even when the
     // resource extractor could not recognize that employee wording. A failed
     // or ambiguous new lookup must not silently reopen the previous Job.
     if(query&&!namedLookupStarted){if(!explicit.length)boundIds.clear();namedLookupStarted=true;}
     result=await execute(spec.name,canonical);
-    if(completeJobLookup(result)&&result.data&&'jobs' in result.data&&!ambiguous){
+    unresolvedReason=completeJobLookup(result)?'job-identity-unresolved':'evidence-incomplete';
+    if(completeJobLookup(result)&&result.data&&'jobs' in result.data){
      if(query){
       // A model-supplied population filter may hide another name match. It is
       // list evidence, not proof of unique identity; resolve names again over
       // the full lifecycle/schedule scope before binding a detail selector.
       const unfiltered=(!Array.isArray(result.filters.statuses)||result.filters.statuses.length===0)&&(result.filters.schedule===undefined||result.filters.schedule==='all');
-      if(unfiltered){const resolved=resolveExactJobReference(query,result.data.jobs);if(resolved.kind==='selected')boundIds.add(resolved.jobId);}
+      if(unfiltered){const resolved=resolveExactJobReference(query,result.data.jobs);if(resolved.kind==='selected')boundIds.add(resolved.jobId);else if(resolved.kind==='choose')unresolvedReason='job-identity-ambiguous';}
      }
-     else if(!explicit.length&&result.data.jobs.length<=4)for(const job of result.data.jobs)boundIds.add(job.job_id);
+     else if(!explicit.length&&!ambiguous&&result.data.jobs.length<=4)for(const job of result.data.jobs)boundIds.add(job.job_id);
     }
    }else if(spec.name==='get_production_overview'){
-    if(recordScoped||namedLookupStarted)throw new AgentToolError('invalid-arguments');
+    // A population operation owns its own validated scope and caller access.
+    // Resolving one Job does not prohibit a separate shop-wide objective.
     result=await execute(spec.name,canonical);
    }else{
-    requested={name:spec.name,args:canonical};
     const id=String(canonical.job_id).toLowerCase();canonical.job_id=id;
-    if(!allowRecordRead(id))throw new AgentToolError('invalid-arguments');
+    if(!allowRecordRead(id))throw new AgentToolError(unresolvedReason);
+    requested={name:spec.name,args:canonical};
     result=await execute(spec.name,canonical);
    }
    const {accessRefs:_refs,...published}=result;void _refs;
@@ -166,7 +169,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
   }else result=await execute(spec.name,canonical);
   const {accessRefs:_references,...modelResult}=result;void _references;return {data:json(modelResult)};
  }}));
- return {tools,execute,recordBinding:{allowRead:(id:string|null)=>id?allowRecordRead(id):!recordScoped&&!namedLookupStarted,bindReport:(ids:string[])=>{if(!recordScoped&&!namedLookupStarted&&!ambiguous)for(const id of ids)if(canonicalUuid.test(id))boundIds.add(id.toLowerCase());}},scoped:()=>scoped,requested:()=>requested?structuredClone(requested):null,reads:()=>structuredClone([...reads.values()]),async fresh(){
+ return {tools,execute,recordBinding:{allowRead:(id:string|null)=>id?allowRecordRead(id):true,bindReport:(ids:string[])=>{if(!recordScoped&&!namedLookupStarted&&!ambiguous)for(const id of ids)if(canonicalUuid.test(id))boundIds.add(id.toLowerCase());}},scoped:()=>scoped,requested:()=>requested?structuredClone(requested):null,reads:()=>structuredClone([...reads.values()]),async fresh(){
   if(inconsistent)return false;
   for(const read of reads.values()){
    const current=await jobTools.execute(read.name,read.args);

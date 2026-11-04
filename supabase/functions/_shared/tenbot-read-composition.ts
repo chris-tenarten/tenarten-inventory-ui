@@ -77,6 +77,8 @@ export function jobCompositionFacts(result:JobToolResult,legacy:ReadAnswerFact[]
     const recorded=q('brief_recorded','recorded-hours','Unreported work and remaining effort are unknown.');
     add('labor',`${identity} has ${hourValue(d.total_hours)} of recorded labor.`,[...base,period,recorded],'labor');
     if(d.original_or_unclassified_hours!==null)add('labor_original',`${identity}: Original or unclassified labor accounts for ${hourValue(d.original_or_unclassified_hours)}.`,[...base,period,recorded],'labor');
+    // Reuse the report's verified measurement; an empty array alone is no proof.
+    if(legacy.some(f=>f.id==='labor_linked_rework'))add('labor_linked_rework',`${identity} has 0 recorded hours linked to Rework.`,[...base,period,recorded],'labor');
     for(const [i,rework] of d.reworks.slice(0,8).entries())add('labor_rework_'+(i+1),`${identity}: Rework${rework.sequence_number===null?'':' '+rework.sequence_number} accounts for ${hourValue(rework.hours)}.`,[...base,period,recorded],'labor');
    }
   }

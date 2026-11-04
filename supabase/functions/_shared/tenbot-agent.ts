@@ -33,6 +33,7 @@ export type AgentResult = {
   trace: AgentTrace[]; usage: AgentUsage; reason?: string;
 };
 export type AuthorizationCheck = { phase: 'start' | 'before_model' | 'after_model' | 'before_tool' | 'after_tool' | 'publish'; tool?: string };
+export type ReadFinalValidation = { accepted: true } | { accepted: false; reasonCode: string };
 export type AgentLimits = { maxRounds: number; maxCalls: number; maxCallsPerRound: number; maxErrors: number; maxResultBytes: number; maxSessionBytes: number; maxDurationMs: number; maxOutputTokens: number; maxCostUsd: number };
 const HARD_LIMITS: AgentLimits = { maxRounds: 16, maxCalls: 14, maxCallsPerRound: 4, maxErrors: 3, maxResultBytes: 24000, maxSessionBytes: 160000, maxDurationMs: 90000, maxOutputTokens: 3000, maxCostUsd: 0.25 };
 const forbiddenKeys = new Set(['__proto__', 'prototype', 'constructor']);
@@ -92,6 +93,12 @@ const utf8 = new TextEncoder();
 function byteLength(value: unknown) { return utf8.encode(JSON.stringify(value)).byteLength; }
 function safeUsage(value: AgentUsage) { return isJsonValue(value) && ['inputTokens', 'cachedInputTokens', 'outputTokens', 'costUsd', 'reservedUsd'].every(key => typeof value[key as keyof AgentUsage] === 'number' && value[key as keyof AgentUsage] >= 0) && Number.isSafeInteger(value.inputTokens) && Number.isSafeInteger(value.outputTokens) && Number.isSafeInteger(value.cachedInputTokens) && value.cachedInputTokens <= value.inputTokens; }
 function clone<T>(value: T): T { return JSON.parse(JSON.stringify(value)) as T; }
+const correctableReadFinalReasons = new Set(['read-final-question', 'read-final-unjustified-clarification', 'read-final-missing-evidence', 'read-final-non-fact-claim', 'read-final-workflow-wording', 'read-final-empty-answer', 'read-final-too-long']);
+function argumentFailure(args: Record<string, JsonValue>, schema: StrictSchema): string {
+  if (schema.required?.some(key => !Object.hasOwn(args, key))) return 'missing-required-input';
+  if (Object.entries(schema.properties ?? {}).some(([key, field]) => Object.hasOwn(args, key) && field.enum && !field.enum.some(value => JSON.stringify(value) === JSON.stringify(args[key])))) return 'unsupported-option';
+  return 'invalid-arguments';
+}
 class Stop extends Error { constructor(public status: AgentResult['status'], public code: string) { super(code); } }
 async function withinDeadline<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
   if (signal.aborted) throw new Stop('limit', 'deadline');
@@ -101,10 +108,12 @@ async function withinDeadline<T>(promise: Promise<T>, signal: AbortSignal): Prom
   });
 }
 /** Input accepts no provider-native history. Only the server may supply owner-scoped text context. */
-export async function runTenbotAgent(input: { question: string; serverContext?: { question: string; answer: string }[] }, options: { callerId: string; provider: AgentProvider; tools: AgentTool[]; authorize(check: AuthorizationCheck): Promise<boolean>; limits?: Partial<AgentLimits>; onDiagnostic?: InvestigationDiagnosticSink }): Promise<AgentResult> {
+export async function runTenbotAgent(input: { question: string; serverContext?: { question: string; answer: string }[] }, options: { callerId: string; provider: AgentProvider; tools: AgentTool[]; authorize(check: AuthorizationCheck): Promise<boolean>; limits?: Partial<AgentLimits>; onDiagnostic?: InvestigationDiagnosticSink; validateReadFinal?(candidate: AgentResult): ReadFinalValidation }): Promise<AgentResult> {
   const result: AgentResult = { status: 'blocked', final: null, evidence: [], proposals: [], trace: [], usage: emptyUsage() };
   const limits = { ...HARD_LIMITS, ...options.limits };
   let round = 0; let calls = 0; let errors = 0; let retries = 0; let bytes = 0;
+  let correctingReadFinal = false, preparationAttempted = false;
+  const deadlineAt = Date.now() + limits.maxDurationMs;
   const controller = new AbortController(); const timer = setTimeout(() => controller.abort(), limits.maxDurationMs);
   function stop(status: AgentResult['status'], code: string): never { throw new Stop(status, code); }
   const diagnostic = (stage: 'authorization'|'model'|'tool'|'stop', tool: string|null, outcome: 'ok'|'error'|'stopped', durationMs: number, reasonCode: string) => emitInvestigationDiagnostic(options.onDiagnostic, {stage,tool,outcome,durationMs,reasonCode});
@@ -139,7 +148,7 @@ export async function runTenbotAgent(input: { question: string; serverContext?: 
         result.usage.costUsd -= inFlightReservation; result.usage.reservedUsd -= inFlightReservation; inFlightReservation = 0; addUsage(usage);
       };
       try {
-        step = await withinDeadline(options.provider.step({ instructions: system, history: clone(history), tools: [discover, ...[...loaded].map(name => { const tool = registry.get(name)!; return { name: tool.name, description: tool.description, parameters: clone(tool.parameters) }; })], finalSchema: clone(AGENT_FINAL_SCHEMA), signal: controller.signal, maxOutputTokens: limits.maxOutputTokens, remainingUsd: Math.max(0, limits.maxCostUsd - result.usage.costUsd), onReserve }), controller.signal);
+        step = await withinDeadline(options.provider.step({ instructions: system, history: clone(history), tools: correctingReadFinal ? [] : [discover, ...[...loaded].map(name => { const tool = registry.get(name)!; return { name: tool.name, description: tool.description, parameters: clone(tool.parameters) }; })], finalSchema: clone(AGENT_FINAL_SCHEMA), signal: controller.signal, maxOutputTokens: limits.maxOutputTokens, remainingUsd: Math.max(0, limits.maxCostUsd - result.usage.costUsd), onReserve }), controller.signal);
       } catch (error) {
         if (error instanceof Stop && error.code !== 'deadline') throw error;
         const failure = error instanceof AgentStepError ? error : new AgentStepError('provider-error');
@@ -147,12 +156,14 @@ export async function runTenbotAgent(input: { question: string; serverContext?: 
         result.trace.push({ event: 'model', round, outcome: failure.code, durationMs: Date.now() - started, usage: failure.usage });
         diagnostic('model',null,'error',Date.now()-started,failure.code);
         if (controller.signal.aborted) stop('limit', 'deadline');
-        if (failure.retryable && retries++ < 1 && ++errors < limits.maxErrors) continue;
+        if (!correctingReadFinal && failure.retryable && retries++ < 1 && ++errors < limits.maxErrors) continue;
         stop('provider-unavailable', failure.code);
       }
       settleUsage(step.usage); result.trace.push({ event: 'model', round, outcome: 'received', durationMs: Date.now() - started, usage: step.usage }); diagnostic('model',null,'ok',Date.now()-started,'received'); await authorize('after_model');
       if (!isJsonValue(step.continuation) || !Array.isArray(step.continuation) || byteLength(step.continuation) > limits.maxResultBytes || !Array.isArray(step.calls) || step.calls.length > limits.maxCallsPerRound || (step.calls.length > 0 && step.final !== undefined)) stop('provider-unavailable', 'invalid-provider-step');
       history.push({ kind: 'provider', items: clone(step.continuation) }); checkBytes(step.continuation);
+      // The single final correction cannot execute or rediscover any tool.
+      if (correctingReadFinal && step.calls.length) stop('provider-unavailable', 'invalid-final');
       if (step.final !== undefined) {
         if (!validateStrictSchema(step.final, AGENT_FINAL_SCHEMA)) stop('provider-unavailable', 'invalid-final');
         let final = step.final as AgentFinal; const evidence = new Set(result.evidence.map(item => item.id));
@@ -175,6 +186,20 @@ export async function runTenbotAgent(input: { question: string; serverContext?: 
             final={answer,observations:[{text:answer,evidence_ids:[scope.id]}],inferences:[],recommendations:[],questions:[],completed_actions:[]};
           }else if (!clarificationOnly && (claims.length === 0 || claims.some(claim => claim.evidence_ids.length === 0 || claim.evidence_ids.some(id => !currentKnowledge.has(id))))) stop('provider-unavailable', 'missing-workflow-evidence');
         }
+        // Revalidate the full selection and ephemeral clarification proof. An
+        // unchanged rejected selection fails again; no third final is allowed.
+        if (options.validateReadFinal) {
+          const verdict = options.validateReadFinal(clone({ ...result, status: 'completed', final }));
+          if (!verdict || verdict.accepted !== true) {
+            const reason = verdict && verdict.accepted === false ? verdict.reasonCode : 'invalid-final';
+            if (correctingReadFinal || preparationAttempted || result.proposals.length || !result.evidence.length || !correctableReadFinalReasons.has(reason) || round >= limits.maxRounds || calls >= limits.maxCalls || errors >= limits.maxErrors || controller.signal.aborted || Date.now() >= deadlineAt || result.usage.reservedUsd > 0 || result.usage.costUsd >= limits.maxCostUsd) stop('provider-unavailable', 'invalid-final');
+            await authorize('publish');
+            correctingReadFinal = true;
+            const feedback = { kind: 'user' as const, content: JSON.stringify({ host_read_final_rejection: reason, instruction: 'Correct the previous read-only final once using only existing current-turn evidence. The employee objective is unchanged. No tools or preparations may run. Select valid facts or a grounded clarification, preserve required qualifications, and do not repeat the rejected selection. Original time, round and spending limits still apply.' }) };
+            checkBytes(feedback); history.push(feedback);
+            continue;
+          }
+        }
         await authorize('publish'); result.final = clone(final); result.status = 'completed'; diagnostic('stop',null,'ok',0,'completed'); return result;
       }
       if (!step.calls.length) stop('provider-unavailable', 'empty-provider-step');
@@ -182,6 +207,7 @@ export async function runTenbotAgent(input: { question: string; serverContext?: 
         if (controller.signal.aborted) stop('limit', 'deadline'); if (++calls > limits.maxCalls) stop('limit', 'call-limit');
         if (!call || Object.keys(call).some(key => !['id', 'name', 'arguments'].includes(key)) || typeof call.id !== 'string' || !/^[a-zA-Z0-9_-]{1,100}$/.test(call.id) || issuedCalls.has(call.id) || typeof call.name !== 'string' || !namePattern.test(call.name) || !isJsonValue(call.arguments) || byteLength(call.arguments) > limits.maxResultBytes) stop('provider-unavailable', 'invalid-call'); issuedCalls.add(call.id);
         const toolStarted = Date.now(); let output: JsonValue; const tool = registry.get(call.name);
+        if (tool?.kind === 'prepare') preparationAttempted = true;
         await authorize('before_tool', call.name);
         try {
           if (call.name === discover.name) {
@@ -192,7 +218,7 @@ export async function runTenbotAgent(input: { question: string; serverContext?: 
             output = { registry: catalog, loaded: names.map(name => { const entry = registry.get(name)!; return { name: entry.name, description: entry.description, parameters: entry.parameters as JsonValue }; }) };
           } else {
             if (!tool || !loaded.has(call.name)) throw new AgentToolError('capability-not-discovered');
-            if (!validateStrictSchema(call.arguments, tool.parameters)) throw new AgentToolError('invalid-arguments');
+            if (!validateStrictSchema(call.arguments, tool.parameters)) throw new AgentToolError(argumentFailure(call.arguments, tool.parameters));
             const value = await withinDeadline(tool.execute(clone(call.arguments), { callerId: options.callerId, signal: controller.signal }), controller.signal);
             if (!isJsonValue(value) || Object.keys(value).some(key => !['data', 'proposal'].includes(key)) || !Object.hasOwn(value, 'data') || (tool.resultSchema && !validateStrictSchema(value.data, tool.resultSchema)) || (value.proposal !== undefined && tool.kind !== 'prepare') || byteLength(value) > limits.maxResultBytes) throw new AgentToolError('invalid-tool-result');
             await authorize('after_tool', call.name);
@@ -206,9 +232,11 @@ export async function runTenbotAgent(input: { question: string; serverContext?: 
           if (error instanceof Stop) throw error;
           result.trace.push({ event: 'tool', round, name: call.name, outcome: 'error', durationMs: Date.now() - toolStarted });
           diagnostic('tool',call.name,'error',Date.now()-toolStarted,error instanceof AgentToolError?error.code:'tool-failed');
+          if (error instanceof AgentToolError && error.code === 'invalid-tool-result') stop('blocked', 'invalid-tool-result');
+          if (error instanceof AgentToolError && error.code === 'invoice_session_not_authorized') stop('blocked', 'authorization-denied');
           if (++errors >= limits.maxErrors) stop('limit', 'error-limit');
           // No exception text or database/provider errors cross into model context or telemetry.
-          output = { error: 'capability_failed', tool: call.name, guidance: 'Check discovered schema, authorization and required information. Ask a targeted question if unavailable.' };
+          output = { error: 'capability_failed', tool: call.name, reason_code: error instanceof AgentToolError ? error.code : 'tool-failed', guidance: 'Use the finite reason and discovered schema to choose a safe alternative or revise missing input. Do not repeat unchanged failed arguments or infer a denied record exists. Ask a grounded clarification only for information the employee can supply.' };
         }
         const serialized = JSON.stringify(output); if (utf8.encode(serialized).byteLength > limits.maxResultBytes) stop('limit', 'result-limit');
         checkBytes(output); history.push({ kind: 'tool_result', callId: call.id, name: call.name, output: serialized });

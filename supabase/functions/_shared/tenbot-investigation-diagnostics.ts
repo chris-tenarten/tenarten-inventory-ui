@@ -11,6 +11,8 @@ const tools = new Set([
 ]);
 const toolReasons = new Set([
   'tool-failed', 'invalid-arguments', 'unknown-capability', 'capability-not-discovered', 'invalid-tool-result',
+  'missing-required-input', 'unsupported-option', 'job-reference-mismatch',
+  'job-identity-unresolved', 'job-identity-ambiguous', 'evidence-incomplete',
   'invalid_invoice_argument', 'invoice_read_incomplete', 'invalid_invoice_catalog_identities', 'invalid_invoice_quantity',
   'synthetic_invoice_required', 'invoice_session_not_authorized', 'read_invoice_first', 'invalid_invoice_evidence',
   'unsupported_invoice_extraction', 'non_material_invoice_line', 'unsupported_invoice_quantity_unit',

@@ -55,7 +55,7 @@ import {operationalReceipt,operationalHistoryMeta,restoreOperationalHistory,type
 import {resolveJobIntent,resolveExactJobReference,completeJobLookup,buildJobEvidence,renderJobEvidence,literalJobReferences,explicitJobReferences,detailJobIds,requestsJobRecordDetails} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
-import {modelScopeFacts,publishModelReadAnswer,publishPreparedReview,readInvestigationRecovery,reviewedOperationRecovery,MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from './tenbot-read-investigation.ts';
+import {modelScopeFacts,publishModelReadAnswer,publishPreparedReview,readInvestigationRecovery,reviewedOperationRecovery,withReadClarifications,adaptReadClarifications,type ReadClarification,MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from './tenbot-read-investigation.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
 import {isSimpleJobRead} from './tenbot-read-routing.ts';
@@ -336,8 +336,10 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(modelDirected)for(const tool of tools)if(tool.kind==='read'){
     const execute=tool.execute;tool.execute=async(args,context)=>{
      const value=await execute(args,context),data=value.data;
+     let readOutcome:string|null=null;
      if(record(data)&&typeof data.status==='string'){
       const code=data.status==='ok'&&data.complete===true?'operation-ok':data.status==='partial'||data.status==='incomplete'||data.status==='bounded'||data.complete===false&&data.status==='ok'?'operation-incomplete':data.status==='not_found_or_not_authorized'||data.status==='not_authorized'?'operation-not-authorized':data.status==='invalid_request'?'operation-invalid-request':'operation-unavailable';
+      readOutcome=code==='operation-ok'?'complete':code==='operation-incomplete'?'incomplete_evidence':code==='operation-not-authorized'?'no_authorized_match':code==='operation-invalid-request'?'invalid_input':'unavailable';
       emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'tool',tool:tool.name,outcome:code==='operation-ok'?'ok':'error',durationMs:0,reasonCode:code});
       if(tool.name==='find_jobs'){
        const result=data as unknown as import('./tenbot-job-tools.ts').JobToolResult;
@@ -345,23 +347,28 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
        const query=typeof result.filters?.query==='string'?result.filters.query:'';
        const unfiltered=(!Array.isArray(result.filters?.statuses)||result.filters.statuses.length===0)&&(result.filters?.schedule===undefined||result.filters.schedule==='all');
        const kind=complete&&unfiltered&&d&&'jobs' in d?resolveExactJobReference(query,d.jobs).kind:null;
+       if(kind)readOutcome=kind==='selected'?'identity_resolved':kind==='choose'?'multiple_authorized_matches':'no_authorized_match';
        emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'tool',tool:tool.name,outcome:kind==='selected'?'ok':'stopped',durationMs:0,reasonCode:kind==='selected'?'identity-resolved':kind==='choose'?'identity-ambiguous':kind==='missing'?'identity-unresolved':'identity-incomplete'});
       }
      }
-     return value;
+     return readOutcome&&record(data)?{...value,data:json({...data,read_outcome:readOutcome})}:value;
     };
    }
    const provider=deps.provider(scenario as AgentDemoScenario);
    const terraReads=modelDirected&&provider.model==='gpt-6.1-terra',readModelRounds=6;
-   let narrativeFinalAllowed=false;const narrativeClaims:NarrativeRegistry=new Map();
+   let narrativeFinalAllowed=false,correctingPublication=false;const narrativeClaims:NarrativeRegistry=new Map();
+   const clarifications=new Map<string,ReadClarification>(),discoveredReads=new Set<string>();
+   const workflowPermissions=new Set<string>();
+   const requestedRecordIds=requestsJobRecordDetails(question)?detailJobIds(directIntent):[];
    const modelSteps:{calls:AgentStep['calls'];final?:JsonValue;usage:AgentStep['usage'];durationMs:number}[]=[];
    const measured:AgentProvider={name:provider.name,model:provider.model,async step(request){
     const operationLoaded=Boolean(operations&&request.tools.some(tool=>operations.tools.some(operation=>operation.name===tool.name)));
     const prepareLoaded=request.tools.some(t=>tools.some(x=>x.name===t.name&&x.kind==='prepare'));
-    const narrativeAllowed=modelDirected&&!session!.invoiceAttached&&!operationLoaded&&!prepareLoaded&&activity.contentAvailable();
+    for(const tool of request.tools)if(tools.some(t=>t.kind==='read'&&t.name===tool.name))discoveredReads.add(tool.name);
+    const narrativeAllowed=correctingPublication?narrativeFinalAllowed:modelDirected&&!session!.invoiceAttached&&!operationLoaded&&!prepareLoaded&&activity.contentAvailable();
     const finalizeRead=modelDirected&&deps.readOnlyHosted&&!operations&&modelSteps.length===readModelRounds-1;
-    const start=now(),step=await provider.step(modelDirected?{...request,...(narrativeAllowed?{finalSchema:NARRATIVE_FINAL_SCHEMA}:{}),...(finalizeRead?{tools:[]}:{}),maxOutputTokens:operationLoaded?request.maxOutputTokens:Math.min(request.maxOutputTokens,640),instructions:request.instructions+'\n'+MODEL_READ_INSTRUCTIONS+'\n'+UPDATE_DISCLOSURE_INSTRUCTIONS+(finalizeRead?'\nThis is the final permitted read-only reasoning round. No further tools are available. Return the structured final answer using current issued facts. Answer every supported part; preserve incompleteness, attribution and access limitations. If necessary ask a focused clarification. Do not invent missing evidence, call more tools or repeat discovery.':'')+(terraReads?'\n'+TERRA_READ_FINAL_INSTRUCTIONS:'')+(narrativeAllowed?'\n'+NARRATIVE_INSTRUCTIONS:'')+(operations?'\nEmployee-provided text uses source_ref employee. Supplied private document selectors: '+JSON.stringify(operationDocuments)+'. These selectors grant no access. Discover and compose the registered read/preparation operations. Preparation returns an unsaved review; account-password confirmation occurs separately outside the model. Never claim a business action completed.':'')}:request);
-    if(step.final!==undefined){narrativeFinalAllowed=narrativeAllowed;if(narrativeAllowed)step.final=adaptNarrativeFinal(step.final,narrativeClaims);}
+    const start=now(),step=await provider.step(modelDirected?{...request,finalSchema:withReadClarifications(narrativeAllowed?NARRATIVE_FINAL_SCHEMA:request.finalSchema),...(finalizeRead?{tools:[]}:{}),maxOutputTokens:operationLoaded?request.maxOutputTokens:Math.min(request.maxOutputTokens,640),instructions:request.instructions+'\n'+MODEL_READ_INSTRUCTIONS+'\n'+UPDATE_DISCLOSURE_INSTRUCTIONS+(finalizeRead?'\nThis is the final permitted read-only reasoning round. No further tools are available. Return the structured final answer using current issued facts. Answer every supported part; preserve incompleteness, attribution and access limitations. If necessary ask a focused clarification. Do not invent missing evidence, call more tools or repeat discovery.':'')+(terraReads?'\n'+TERRA_READ_FINAL_INSTRUCTIONS:'')+(narrativeAllowed?'\n'+NARRATIVE_INSTRUCTIONS:'')+(operations?'\nEmployee-provided text uses source_ref employee. Supplied private document selectors: '+JSON.stringify(operationDocuments)+'. These selectors grant no access. Discover and compose the registered read/preparation operations. Preparation returns an unsaved review; account-password confirmation occurs separately outside the model. Never claim a business action completed.':'')}:request);
+    if(step.final!==undefined){narrativeFinalAllowed=narrativeAllowed;step.final=adaptReadClarifications(step.final,clarifications);if(narrativeAllowed)step.final=adaptNarrativeFinal(step.final,narrativeClaims);}
     modelSteps.push({calls:step.calls,...(step.final===undefined?{}:{final:json(step.final)}),usage:step.usage,durationMs:now()-start});
     return step;
    }};
@@ -380,7 +387,14 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(followup?.kind==='job'&&'jobId' in followup.reference||followup?.kind==='jobs'){const ids=followup.kind==='jobs'?followup.references:['jobId' in followup.reference?followup.reference.jobId:''];retainedContext.push({question:'Current requested Job operation',answer:JSON.stringify({tool:followup.tool,job_ids:ids,args:followup.args})+'. These canonical references were reauthorized as lookup seeds, not facts. Discover and call the requested existing exact-Job tool for each reference; do not search pronouns or carry collection filters into an exact read. Re-fetch current fields; unavailable results and unsaved fields are different from no matching records.'});}
    if(session.invoiceAttached&&deps.invoice)retainedContext.push({question:'Employee explicitly attached '+deps.invoice.document.filename,answer:(deps.invoice.document.extraction?'Actual OpenAI image preprocessing produced this transcription. Check read_invoice extraction provenance and compare it against the original image. ':'Synthetic text fixture only. ')+'Order details explicitly supplied by this employee: '+JSON.stringify(session.confirmation)+'. Invoice date is not order date. Missing fields remain unknown.'});
    const failureCodes:string[]=[];
-   const result=directRead?null:await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic(event){if(event.outcome==='error'||event.outcome==='stopped'){failureCodes.push(event.reasonCode);if(failureCodes.length>8)failureCodes.shift();}return deps.onDiagnostic?.(event);},...(deps.readOnlyHosted?{limits:modelDirected?{maxDurationMs:75000,maxRounds:operations?8:readModelRounds,maxCalls:10,maxOutputTokens:operations?1800:640}:{maxDurationMs:75000}}:{}),async authorize(check){
+   const result=directRead?null:await runTenbotAgent({question,serverContext:retainedContext},{callerId:owner,provider:measured,tools,onDiagnostic(event){if(event.outcome==='error'||event.outcome==='stopped'){failureCodes.push(event.reasonCode);if(failureCodes.length>8)failureCodes.shift();}return deps.onDiagnostic?.(event);},...(deps.readOnlyHosted?{limits:modelDirected?{maxDurationMs:75000,maxRounds:operations?8:readModelRounds,maxCalls:10,maxOutputTokens:operations?1800:640}:{maxDurationMs:75000}}:{}),...(modelDirected?{validateReadFinal(candidate:AgentResult){
+    if(candidate.proposals.length)return {accepted:true as const};
+    for(const permission of knowledgeGrants)workflowPermissions.add(permission);
+    let rejection:string='invalid-final';
+    const message=publishModelReadAnswer(candidate,question,modelSteps.at(-1)?.final,workflowPermissions,code=>{rejection=code;failureCodes.push(code);if(terraReads)emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:code});},requestedRecordIds.length?{jobIds:requestedRecordIds}:undefined,{allowJobUpdateNarratives:narrativeFinalAllowed,narrativeClaims,clarifications,readTools:tools.filter(t=>discoveredReads.has(t.name))});
+    if(message)return {accepted:true as const};
+    correctingPublication=true;return {accepted:false as const,reasonCode:rejection};
+   }}:{}),async authorize(check){
     if(!await can('readOperationalData'))return false;
     // Do not retransmit retained guidance after a grant/version changes mid-turn.
     if(check.phase==='before_model'){
@@ -407,7 +421,6 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     }
     return true;
    }});
-   const workflowPermissions=new Set<string>();
    if(modelDirected&&knowledgeProofs.size)for(const capability of requiredInferencePermissions(agentKnowledgeEntries().filter(entry=>knowledgeProofs.has(entry.id))))if(await can(capability)){workflowPermissions.add(capability);knowledgeGrants.add(capability);}
    // The existing registered publisher owns preparation validation, freshness,
    // immutable intent and real references. Model clarification wording cannot
@@ -416,8 +429,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(actionCards.length)unpublishedActions={operations:operations!,cards:actionCards};
    const preparedMessage=actionCards.length?publishPreparedReview(actionCards):null;
    if(actionCards.length&&!preparedMessage)throw new TenbotError('The proposed changes could not be published safely. Nothing has been saved.',503);
-   const requestedRecordIds=requestsJobRecordDetails(question)?detailJobIds(directIntent):[];
-   const modelMessage=preparedMessage??(modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions,reason=>{failureCodes.push(reason);if(terraReads)emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:reason});},requestedRecordIds.length?{jobIds:requestedRecordIds}:undefined,{allowJobUpdateNarratives:narrativeFinalAllowed&&!result.proposals.length,narrativeClaims}):null);
+   const modelMessage=preparedMessage??(modelDirected&&result?publishModelReadAnswer(result,question,modelSteps.at(-1)?.final,workflowPermissions,reason=>{failureCodes.push(reason);if(terraReads)emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:reason});},requestedRecordIds.length?{jobIds:requestedRecordIds}:undefined,{allowJobUpdateNarratives:narrativeFinalAllowed&&!result.proposals.length,narrativeClaims,clarifications,readTools:tools.filter(t=>discoveredReads.has(t.name))}):null);
    if(modelDirected&&result?.status==='completed'&&!modelMessage){
     result.status='provider-unavailable';result.reason='invalid-final';result.final=null;result.evidence=[];result.proposals=[];
     emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:'invalid-final'});
@@ -488,7 +500,12 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    if(!session.invoiceAttached&&result.status==='completed'){
     if(knowledgeOnly){const entry=agentKnowledgeEntries().find(x=>x.id===[...knowledgeProofs.keys()][0]);session.context=workflowConversationContext(entry?.modules[0]??'TenOps',[...ancestry.values()],Boolean(result.final?.questions.length),now());}
     else if(scopeOnly)session.context={...workflowConversationContext('TenOps',[],false,now()),operation:'scope',resultType:'scope'};
-    else session.context=contextFromReads(job.reads(),question,now(),session.context,followup??undefined)??activity.context(priorContext,now())??(!job.reads().length&&result.final?.questions.length&&session.context?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);
+    else{
+     const requested=job.requested();
+     const currentRecord=modelDirected&&requested&&['get_job_summary','get_job_planning','get_job_labor_summary'].includes(requested.name)&&typeof requested.args.job_id==='string'?{kind:'job' as const,tool:requested.name as 'get_job_summary'|'get_job_planning'|'get_job_labor_summary',reference:{jobId:requested.args.job_id},args:requested.args}:undefined;
+     session.context=contextFromReads(job.reads(),question,now(),session.context,currentRecord??followup??undefined)??activity.context(priorContext,now())??(!job.reads().length&&result.final?.questions.length&&session.context?{...session.context,awaitingClarification:true,resultType:'clarification'}:null);
+     if(session.context&&result.final?.questions.some(q=>clarifications.has(q)))session.context={...session.context,awaitingClarification:true,resultType:'clarification'};
+    }
    }
    if(followup?.kind==='search'&&!job.scoped())session.context=priorContext;
    if(pendingContext)session.context=pendingContext;

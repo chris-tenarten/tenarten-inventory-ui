@@ -335,6 +335,14 @@ export function buildJobEvidence(result:JobToolResult):JobEvidence{
   if(total!==null)add('labor_total','labor',data.scope==='all_recorded'?`Recorded labor: ${total} hours across all recorded work dates, including Original and Rework.`:`Recorded labor: ${total} hours for ${start} through ${end}.`,['Recorded','labor','hours','through']);
   if(entries!==null)add('labor_entries','count',`Recorded labor entries in this reporting period: ${entries}.`,['Recorded','labor','entries','period']);
   const originalHours=hours(data.original_or_unclassified_hours);if(originalHours!==null)add('labor_original','labor',`Original or unclassified lifecycle labor: ${originalHours} hours.`,['Original','unclassified','labor','hours']);
+  // Zero is a complete measurement, never an inference from an empty page.
+  // Null attribution belongs to Original/Legacy Unclassified; it does not
+  // establish that no physical Rework occurred.
+  const verifiedZeroRework=result.status==='ok'&&result.complete===true&&result.truncated===false&&uuid.test(String(job.job_id))&&total!==null&&entries!==null&&
+   data.total_hours===data.original_or_unclassified_hours&&(data.entry_count!==0||data.total_hours===0)&&
+   (data.scope==='all_recorded'?period.start_date===null&&period.end_date===null:data.scope===undefined&&validDate(start)&&validDate(end)&&start<=end)&&
+   Array.isArray(data.reworks)&&data.reworks.every(value=>{const row=object(value);return row.hours===0&&uuid.test(String(row.rework_cycle_id))&&count(row.entry_count)!==null&&row.entry_count!==0;});
+  if(verifiedZeroRework)add('labor_linked_rework','labor',`Recorded labor linked to Rework: 0 hours${data.scope==='all_recorded'?' across all recorded work dates':` for ${start} through ${end}`}.`,['Recorded','labor','linked','Rework','hours']);
   if(Array.isArray(data.reworks))for(const [i,value] of data.reworks.slice(0,8).entries()){const row=object(value),quantity=hours(row.hours),sequence=count(row.sequence_number);if(quantity!==null)add(`labor_rework_${i+1}`,'labor',`Recorded Rework${sequence===null?'':` ${sequence}`} labor: ${quantity} hours.`,['Recorded','Rework','labor','hours']);}
   if(data.latest_work_date)add('labor_latest','labor',`Latest recorded labor work date in this reporting period: ${clean(data.latest_work_date,10)}.`,['Latest','recorded','labor','date','period']);
   if(Array.isArray(data.daily))for(const [i,value] of data.daily.slice(-8).entries()){const row=object(value),quantity=hours(row.hours);if(quantity!==null)add(`labor_day_${i+1}`,'labor',`Recorded labor on ${clean(row.date,10)}: ${quantity} hours.`,['Recorded','labor','hours']);}
