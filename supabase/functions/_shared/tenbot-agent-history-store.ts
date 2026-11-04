@@ -6,6 +6,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Deno/Node source
 // @ts-ignore -- explicit extension for Edge compatibility.
 import {TenbotError} from './tenbot-core.ts';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
+// @ts-ignore -- explicit Edge extension.
+import {emitInvestigationDiagnostic,type InvestigationDiagnosticSink} from './tenbot-investigation-diagnostics.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension required by Deno.
 import {validConversationContext,type ConversationContext} from './tenbot-conversation-context.ts';
@@ -49,7 +52,7 @@ export function validateStoredAgentState(value:unknown):value is StoredAgentStat
   return record(answer)&&keys(answer,['conversationId','mode','contentScope','message','sources','snapshot','summary','suggestionAllowed','notices'])&&typeof answer.conversationId==='string'&&uuid.test(answer.conversationId)&&['agent-experiment','assistant'].includes(String(answer.mode))&&['workflow','scope'].includes(String(answer.contentScope))&&text(answer.message,2400)&&empty(answer.sources)&&record(answer.snapshot)&&keys(answer.snapshot,['revision','verifiedAt'])&&text(answer.snapshot.revision,100)&&timestamp(answer.snapshot.verifiedAt)&&answer.summary===null&&answer.suggestionAllowed===false&&empty(answer.notices)&&(answer.contentScope!=='workflow'||turn.sources.length>0);
  });
 }
-export function createTenbotAgentHistoryStore(caller:AgentHistoryRpc,service:AgentHistoryRpc,options:{persistent?:boolean}={}):AgentSessionStore{
+export function createTenbotAgentHistoryStore(caller:AgentHistoryRpc,service:AgentHistoryRpc,options:{persistent?:boolean;onDiagnostic?:InvestigationDiagnosticSink}={}):AgentSessionStore{
  const call=async(rpc:AgentHistoryRpc,name:string,args:Record<string,unknown>)=>{const result=await rpc(name,args);if(result.error)throw new TenbotError('Conversation storage is unavailable. Please retry later.',503);return result.data;};
  return {
   persistent:options.persistent===true,
@@ -68,21 +71,28 @@ export function createTenbotAgentHistoryStore(caller:AgentHistoryRpc,service:Age
     if(record(data)&&data.reason==='limit')throw new TenbotError('TenBot conversation limit reached.',429);
     throw new TenbotError('Conversation unavailable. Reopen TenBot and retry.',403);
    }
-   if(data.ownerId!==owner||typeof data.id!=='string'||!uuid.test(data.id)||id!==undefined&&data.id!==id||typeof data.claim!=='string'||!uuid.test(data.claim)||!Number.isSafeInteger(data.revision)||Number(data.revision)<0||!timestamp(data.expiresAt))throw new TenbotError('Conversation storage is unavailable.',503);
+   if(data.ownerId!==owner||typeof data.id!=='string'||!uuid.test(data.id)||id!==undefined&&data.id!==id||typeof data.claim!=='string'||!uuid.test(data.claim)||!Number.isSafeInteger(data.revision)||Number(data.revision)<0||!timestamp(data.expiresAt)){emitInvestigationDiagnostic(options.onDiagnostic,{stage:'source-persistence',tool:null,outcome:'error',durationMs:0,reasonCode:'conversation-claim-invalid'});throw new TenbotError('Conversation storage is unavailable.',503);}
    try{
     // The public caller RPC returns metadata only. Raw stored prose must not be
     // obtainable by bypassing the Edge source/grant revalidation below it.
     const state=await call(service,'tenbot_agent_load',{p_user:owner,p_conversation_id:data.id,p_claim:data.claim,p_revision:data.revision});
-    if(!validateStoredAgentState(state)||state.display.some(turn=>turn.answer.conversationId!==data.id))throw new TenbotError('Conversation storage is unavailable.',503);
+    if(!validateStoredAgentState(state)||state.display.some(turn=>turn.answer.conversationId!==data.id)){emitInvestigationDiagnostic(options.onDiagnostic,{stage:'source-persistence',tool:null,outcome:'error',durationMs:0,reasonCode:'conversation-load-invalid'});throw new TenbotError('Conversation storage is unavailable.',503);}
     return {id:data.id,owner,revision:Number(data.revision),claim:data.claim,expiresAt:Date.parse(String(data.expiresAt)),state:structuredClone(state)};
    }catch(error){
     await call(caller,'tenbot_agent_release',{p_conversation_id:data.id,p_claim:data.claim,p_revision:data.revision});throw error;
    }
   },
   async commit(lease,state,renew,turn){
-   if(!validateStoredAgentState(state)||state.display.some(turn=>turn.answer.conversationId!==lease.id))throw new TenbotError('Conversation storage rejected the update.',503);
-   const data=await call(service,options.persistent?'tenbot_employee_commit':'tenbot_agent_commit',{p_user:lease.owner,p_conversation_id:lease.id,p_claim:lease.claim,p_revision:lease.revision,p_state:state,p_renew:renew,...(options.persistent?{p_turn:turn??null}:{})});
-   if(data!==true)throw new TenbotError('Conversation changed or access expired. Reopen TenBot and retry.',409);
+   const event=(reasonCode:string,outcome:'ok'|'error',durationMs=0)=>emitInvestigationDiagnostic(options.onDiagnostic,{stage:'source-persistence',tool:null,outcome,durationMs,reasonCode});
+   if(!validateStoredAgentState(state)||state.display.some(turn=>turn.answer.conversationId!==lease.id)){event('conversation-state-invalid','error');throw new TenbotError('Conversation storage rejected the update.',503);}
+   // A finite shape observation, not a claim about the hosted rejection cause.
+   // Never log the context, field values, Job IDs, lease or employee answer.
+   if(state.context?.selection.laborScope!==undefined)event('conversation-context-extended','ok');
+   event('conversation-commit-started','ok');const started=Date.now();let data:unknown;
+   try{data=await call(service,options.persistent?'tenbot_employee_commit':'tenbot_agent_commit',{p_user:lease.owner,p_conversation_id:lease.id,p_claim:lease.claim,p_revision:lease.revision,p_state:state,p_renew:renew,...(options.persistent?{p_turn:turn??null}:{})});}
+   catch(error){event('conversation-storage-unavailable','error',Date.now()-started);throw error;}
+   if(data!==true){event('conversation-commit-rejected','error',Date.now()-started);throw new TenbotError('Conversation changed or access expired. Reopen TenBot and retry.',409);}
+   event('conversation-commit-completed','ok',Date.now()-started);
   },
   async release(lease){if(await call(caller,'tenbot_agent_release',{p_conversation_id:lease.id,p_claim:lease.claim,p_revision:lease.revision})!==true)throw new TenbotError('Conversation release is unavailable. Please retry later.',503);},
   async clear(owner,id){

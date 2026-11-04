@@ -38,7 +38,7 @@ export function presentJobResult(result:JobToolResult,question='',maxCharacters=
  }else if(result.tool==='get_job_labor_summary'){
   const d=result.data as JobLaborData,total=quantity(d.total_hours);
   lines.push(total!==null&&result.status==='ok'&&result.complete?`${reference(d.job)} has ${total} ${d.total_hours===1?'hour':'hours'} of recorded labor.`:`An exact labor total is unavailable for ${reference(d.job)}.`);
-  lines.push(`Reporting period: ${date(d.period.start_date)}–${date(d.period.end_date)} (work dates).`);
+  lines.push(d.scope==='all_recorded'?'All recorded work dates; includes Original and Rework and every Product Category/Uncategorized.':`Reporting period: ${date(d.period.start_date!)}–${date(d.period.end_date!)} (work dates).`);
   if(total!==null&&result.status==='ok'&&result.complete){
    if(d.entry_count!==null)lines.push(`${quantity(d.entry_count)} saved Manpower ${d.entry_count===1?'entry':'entries'}${d.latest_work_date?`; latest work date ${date(d.latest_work_date)}`:''}.`);
    if(/\b(?:break|original|rework|daily|per day)\b/.test(q)){

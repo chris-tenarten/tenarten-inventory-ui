@@ -71,7 +71,7 @@ export function createHostedTenbot(options:{owner:string;origin:string;config:Ho
  const actionRpc=(rpc:HostedRpc)=>({async rpc(name:string,args:Record<string,unknown>){const result=await rpc(name,args);return {data:result.data,error:result.error?{code:typeof result.error==='object'&&'code' in result.error&&typeof result.error.code==='string'?result.error.code:'unavailable'}:null};}});
  const defaultHandler=(body:Record<string,unknown>)=>handleTenbot(body,owner,caller,service,qwen,undefined,jobTools);
  const expires=Date.parse(config.keyExpiresAt);
- const historyStore=createTenbotAgentHistoryStore(caller,service,{persistent:config.persistentHistory??(options.origin==='https://tenops.pages.dev'||options.origin==='https://tendev.pages.dev'||options.origin==='http://localhost:3000')});
+ const historyStore=createTenbotAgentHistoryStore(caller,service,{onDiagnostic:options.onDiagnostic,persistent:config.persistentHistory??(options.origin==='https://tenops.pages.dev'||options.origin==='https://tendev.pages.dev'||options.origin==='http://localhost:3000')});
  const operationsEnabled=enabled&&terraAuthorized()&&config.reviewedOperationsEnabled===true&&config.modelDirectedReads===true&&['https://tendev.pages.dev','https://tenops.pages.dev'].includes(options.origin)&&historyStore.persistent===true&&Boolean(options.reviewedCaller)&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(options.actionSessionId??'');
  const sessions=enabled?createTenbotAgentSessions({
   can:(_owner,capability)=>_owner===owner?can(capability):Promise.resolve(false),

@@ -73,9 +73,11 @@ export function jobCompositionFacts(result:JobToolResult,legacy:ReadAnswerFact[]
   if(result.tool==='get_job_labor_summary'){
    const d=result.data as JobLaborData;
    if(result.complete&&result.status==='ok'&&d.total_hours!==null){
-    const period=q('brief_period',`labor-period:${d.period.start_date}:${d.period.end_date}`,`Recorded hours, ${businessDate(d.period.start_date)} through ${businessDate(d.period.end_date)}.`,'labor-period');
+    const period=q('brief_period',`labor-period:${d.period.start_date}:${d.period.end_date}`,d.scope==='all_recorded'?'All recorded work dates; includes Original and Rework labor across every Product Category and Uncategorized.':`Recorded hours, ${businessDate(d.period.start_date!)} through ${businessDate(d.period.end_date!)}.`,'labor-period');
     const recorded=q('brief_recorded','recorded-hours','Unreported work and remaining effort are unknown.');
     add('labor',`${identity} has ${hourValue(d.total_hours)} of recorded labor.`,[...base,period,recorded],'labor');
+    if(d.original_or_unclassified_hours!==null)add('labor_original',`${identity}: Original or unclassified labor accounts for ${hourValue(d.original_or_unclassified_hours)}.`,[...base,period,recorded],'labor');
+    for(const [i,rework] of d.reworks.slice(0,8).entries())add('labor_rework_'+(i+1),`${identity}: Rework${rework.sequence_number===null?'':' '+rework.sequence_number} accounts for ${hourValue(rework.hours)}.`,[...base,period,recorded],'labor');
    }
   }
  }else if(result.tool==='find_jobs'){

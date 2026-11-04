@@ -33,7 +33,7 @@ const specifications:{name:TenbotJobToolName;description:string;parameters:Stric
  {name:'find_jobs',description:'List/search caller-visible canonical Production Jobs. statuses selects effective lifecycle statuses including active Rework; [] means all statuses, including terminal statuses. schedule is all, scheduled (both effective saved planned dates), or unscheduled (either date missing). Use query "" to enumerate a population; query is only a Job number/name/customer search, never a status or schedule label. The same statuses/schedule/include_archived population is available to get_production_overview. include_archived=false excludes archives; true includes them. Filters precede pagination, limit 1–20; cursor "" starts. Follow next_cursor until has_more=false, and preserve page/completeness facts. A 1,000-Job scan/deadline bound can make results incomplete; never report incomplete retrieval as zero. Resolve identity with statuses [] and schedule all; population filters cannot establish name uniqueness. A unique complete name search resolves a canonical Job; ambiguous matches require clarification.',parameters:object({query:string(120),statuses,schedule,include_archived:{type:'boolean'},limit:{type:'integer',minimum:1,maximum:20},cursor:string(300)})},
  {name:'get_job_summary',description:'Read one exact authorized Job: lifecycle/Rework, saved dates, material status, planning completeness and structured follow-up counts. Counts are not raw issues; material status does not establish physical sufficiency.',parameters:object({job_id:jobId})},
  {name:'get_job_planning',description:'Read persisted schedule and planning setup for one exact authorized Job. Phase/item planning detail is disabled. Saved dates are not forecasts.',parameters:object({job_id:jobId})},
- {name:'get_job_labor_summary',description:'Read deterministic recorded labor totals for one exact Job. Use both YYYY-MM-DD dates or both empty for the canonical trailing 30 Chicago dates. Recorded hours do not establish remaining work.',parameters:object({job_id:jobId,...period})},
+ {name:'get_job_labor_summary',description:'Read authoritative recorded labor for one resolved canonical Job, including Original and Rework and all Product Categories/Uncategorized. scope all_recorded retrieves every authorized saved work date; both dates must be empty. Use it for lifetime/to-date totals. scope period uses both YYYY-MM-DD dates or both empty for trailing 30 Chicago dates. Never present a bounded period as all-recorded. Complete counted retrieval is required; incomplete reads establish no total or zero. Recorded hours do not establish unreported work or remaining effort.',parameters:object({job_id:jobId,...period,scope:{type:'string',enum:['period','all_recorded']}})},
  {name:'get_production_overview',description:'Count the same caller-visible canonical Job population as find_jobs: identical statuses/schedule/include_archived selectors and effective active-Rework values. [] means all lifecycle statuses, including terminal statuses. schedule is all, scheduled (both effective saved planned dates), or unscheduled (either date missing). include_archived=false excludes archives and true includes them. counts.jobs is this selected population; unselected by_status entries are null, never global zero. Active Jobs exclude archives and terminal statuses; this is distinct from all Jobs or the Pipeline attention population. A 1,000-Job scan/deadline bound can prevent exact counts; preserve incomplete/unknown results. Dates affect only upcoming saved finishes (both empty uses Chicago window), not historical status events; limit bounds upcoming rows, not counts.',parameters:object({statuses,schedule,include_archived:{type:'boolean'},...period,limit:{type:'integer',minimum:1,maximum:20}})},
 ];
 const json=(value:unknown):JsonValue=>JSON.parse(JSON.stringify(value)) as JsonValue;
@@ -43,6 +43,7 @@ function argsFor(name:TenbotJobToolName,args:Record<string,JsonValue>){
  // Keep legacy all-population receipts/digests byte-compatible. Non-all
  // selectors remain explicit and unsupported legacy retention declines them.
  if(values.schedule==='all')delete values.schedule;
+ if(name==='get_job_labor_summary'&&values.scope==='period')delete values.scope;
  // All existing canonical argument validation still runs inside execute.
  if(name==='get_job_summary'||name==='get_job_planning')return {job_id:values.job_id};
  return values;
@@ -52,7 +53,7 @@ function argsFor(name:TenbotJobToolName,args:Record<string,JsonValue>){
 import {prepareJobRequest,type PreparedJobRequest} from './tenbot-job-session.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension for Deno.
-import {resolveExactJobReference,completeJobLookup,ambiguousJobReference,type JobIntent} from './tenbot-job-routing.ts';
+import {resolveExactJobReference,completeJobLookup,ambiguousJobReference,literalJobReferences,type JobIntent} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
 import type {ConversationContext} from './tenbot-conversation-context.ts';
@@ -73,8 +74,9 @@ const resourceKey=(value:string)=>value.trim().replace(/\s+/g,' ').toLocaleLower
 /** Reuses the five real authorized executors; freshness is a caller check, never model policy. */
 export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:JobIntent;question:string},selection?:ModelJobSelection){
  const reads=new Map<string,{name:TenbotJobToolName;args:Record<string,unknown>;result:JobToolResult}>();
- const explicit=selection?.references??[],seeds=selection?.context?.references??[];
+ const explicit=selection?[...new Set([...literalJobReferences(selection.question),...selection.references.filter(id=>canonicalUuid.test(id))])]:[],seeds=selection?.context?.references??[];
  const ambiguous=Boolean(selection&&(ambiguousJobReference(selection.question)||!explicit.length&&seeds.length>1&&/\b(?:it|its|that|this)\b/i.test(selection.question)&&!/\b(?:those|these|their|them|both)\b/i.test(selection.question)));
+ const recordScoped=explicit.length>0||Boolean(selection?.references.length);
  const boundIds=new Set<string>((explicit.length?explicit.filter(id=>canonicalUuid.test(id)):ambiguous?[]:seeds).map(id=>id.toLowerCase()));
  const selectedIds=new Set<string>();
  const allowRecordRead=(id:string)=>{
@@ -116,7 +118,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
      else if(!explicit.length&&result.data.jobs.length<=4)for(const job of result.data.jobs)boundIds.add(job.job_id);
     }
    }else if(spec.name==='get_production_overview'){
-    if(explicit.length)throw new AgentToolError('invalid-arguments');
+    if(recordScoped||namedLookupStarted)throw new AgentToolError('invalid-arguments');
     result=await execute(spec.name,canonical);
    }else{
     requested={name:spec.name,args:canonical};
@@ -164,7 +166,7 @@ export function createTenbotAgentJobTools(jobTools:JobTools,followup?:{intent:Jo
   }else result=await execute(spec.name,canonical);
   const {accessRefs:_references,...modelResult}=result;void _references;return {data:json(modelResult)};
  }}));
- return {tools,execute,recordBinding:{allowRead:(id:string|null)=>id?allowRecordRead(id):explicit.length===0,bindReport:(ids:string[])=>{if(!explicit.length&&!ambiguous)for(const id of ids)if(canonicalUuid.test(id))boundIds.add(id.toLowerCase());}},scoped:()=>scoped,requested:()=>requested?structuredClone(requested):null,reads:()=>structuredClone([...reads.values()]),async fresh(){
+ return {tools,execute,recordBinding:{allowRead:(id:string|null)=>id?allowRecordRead(id):!recordScoped&&!namedLookupStarted,bindReport:(ids:string[])=>{if(!recordScoped&&!namedLookupStarted&&!ambiguous)for(const id of ids)if(canonicalUuid.test(id))boundIds.add(id.toLowerCase());}},scoped:()=>scoped,requested:()=>requested?structuredClone(requested):null,reads:()=>structuredClone([...reads.values()]),async fresh(){
   if(inconsistent)return false;
   for(const read of reads.values()){
    const current=await jobTools.execute(read.name,read.args);

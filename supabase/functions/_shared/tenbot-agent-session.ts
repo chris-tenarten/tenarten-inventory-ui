@@ -52,10 +52,10 @@ import {contextFromReads,currentConversationContext,conversationContextHint,work
 import {operationalReceipt,operationalHistoryMeta,restoreOperationalHistory,type OperationalReceipt} from './tenbot-operational-history.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit extension for Deno.
-import {resolveJobIntent,resolveExactJobReference,completeJobLookup,buildJobEvidence,renderJobEvidence,explicitJobReferences,detailJobIds,requestsJobRecordDetails} from './tenbot-job-routing.ts';
+import {resolveJobIntent,resolveExactJobReference,completeJobLookup,buildJobEvidence,renderJobEvidence,literalJobReferences,explicitJobReferences,detailJobIds,requestsJobRecordDetails} from './tenbot-job-routing.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
-import {modelScopeFacts,publishModelReadAnswer,publishPreparedReview,reviewedOperationRecovery,MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from './tenbot-read-investigation.ts';
+import {modelScopeFacts,publishModelReadAnswer,publishPreparedReview,readInvestigationRecovery,reviewedOperationRecovery,MODEL_READ_INSTRUCTIONS,TERRA_READ_FINAL_INSTRUCTIONS} from './tenbot-read-investigation.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node
 // @ts-ignore -- explicit Edge extension
 import {isSimpleJobRead} from './tenbot-read-routing.ts';
@@ -258,8 +258,8 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const directRead=Boolean(directIntent&&['overview','search'].includes(directIntent.kind)&&isSimpleJobRead(question,directIntent));
    const followup=deps.readOnlyHosted&&!modelDirected?resolveJobIntent(question,{jobId:session.context?.references.length===1?session.context.references[0]:'',continuity:session.context??undefined},new Date(now())):null;
    const pendingContext=followup?.kind==='clarify'&&priorContext?{...priorContext,...(followup.operation?{operation:followup.operation}:{}),resultType:'clarification' as const,awaitingClarification:true,selection:{...priorContext.selection,...(followup.operation==='get_job_labor_summary'&&typeof followup.args?.start_date==='string'&&typeof followup.args?.end_date==='string'?{startDate:followup.args.start_date,endDate:followup.args.end_date}:{})}}:null;
-   const explicitReferences=modelDirected?explicitJobReferences(question):[];
-   const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?{intent:followup,question}:undefined,modelDirected?{question,context:session.context,references:explicitReferences}:undefined);
+   const explicitReferences=modelDirected?literalJobReferences(question):[];
+   const job=createTenbotAgentJobTools(deps.jobTools(owner),followup?{intent:followup,question}:undefined,modelDirected?{question,context:session.context,references:explicitJobReferences(question)}:undefined);
    const labor=createTenbotAgentLaborTools(deps.jobTools(owner),job.recordBinding);
    const activity=createTenbotAgentActivityTools(deps.jobTools(owner),job.recordBinding,()=>12-new Set([...session!.guidance.flatMap(t=>t.sources),...knowledgeProofs.values()].map(p=>p.id)).size,question);
    const readsFresh=async()=>await job.fresh()&&await labor.fresh()&&await activity.fresh();
@@ -333,6 +333,24 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
    const scopeTool=createTenbotAgentScopeTool(tools);
    if(modelDirected){const execute=scopeTool.execute;scopeTool.execute=async(args,context)=>{const value=await execute(args,context);return {data:json({...record(value.data)?value.data:{},...(operations?{limitation:'Only registered authorized reads and preparation are available to the model. Prepared changes require separate exact account-password confirmation; a review is not a saved business record.'}:{}),answer_facts:[...modelScopeFacts(value.data),...(operations?[{id:'review_confirmation',text:'Prepared changes require your review and separate account-password confirmation. Preparing a review does not save a business record.'}]:[])]})};};}
    tools.push(scopeTool);
+   if(modelDirected)for(const tool of tools)if(tool.kind==='read'){
+    const execute=tool.execute;tool.execute=async(args,context)=>{
+     const value=await execute(args,context),data=value.data;
+     if(record(data)&&typeof data.status==='string'){
+      const code=data.status==='ok'&&data.complete===true?'operation-ok':data.status==='partial'||data.status==='incomplete'||data.status==='bounded'||data.complete===false&&data.status==='ok'?'operation-incomplete':data.status==='not_found_or_not_authorized'||data.status==='not_authorized'?'operation-not-authorized':data.status==='invalid_request'?'operation-invalid-request':'operation-unavailable';
+      emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'tool',tool:tool.name,outcome:code==='operation-ok'?'ok':'error',durationMs:0,reasonCode:code});
+      if(tool.name==='find_jobs'){
+       const result=data as unknown as import('./tenbot-job-tools.ts').JobToolResult;
+       const complete=completeJobLookup(result),d=result.data;
+       const query=typeof result.filters?.query==='string'?result.filters.query:'';
+       const unfiltered=(!Array.isArray(result.filters?.statuses)||result.filters.statuses.length===0)&&(result.filters?.schedule===undefined||result.filters.schedule==='all');
+       const kind=complete&&unfiltered&&d&&'jobs' in d?resolveExactJobReference(query,d.jobs).kind:null;
+       emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'tool',tool:tool.name,outcome:kind==='selected'?'ok':'stopped',durationMs:0,reasonCode:kind==='selected'?'identity-resolved':kind==='choose'?'identity-ambiguous':kind==='missing'?'identity-unresolved':'identity-incomplete'});
+      }
+     }
+     return value;
+    };
+   }
    const provider=deps.provider(scenario as AgentDemoScenario);
    const terraReads=modelDirected&&provider.model==='gpt-6.1-terra',readModelRounds=6;
    let narrativeFinalAllowed=false;const narrativeClaims:NarrativeRegistry=new Map();
@@ -404,7 +422,7 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     result.status='provider-unavailable';result.reason='invalid-final';result.final=null;result.evidence=[];result.proposals=[];
     emitInvestigationDiagnostic(deps.onDiagnostic,{stage:'stop',tool:null,outcome:'stopped',durationMs:0,reasonCode:'invalid-final'});
    }
-   const recovery=operations&&result&&!directRead&&result.status!=='completed'?reviewedOperationRecovery(result,operations.tools,{reads:job.reads().map(read=>read.result),reasonCodes:failureCodes}):null;
+   const recovery=modelDirected&&result&&!directRead&&result.status!=='completed'?(operations?reviewedOperationRecovery(result,operations.tools,{reads:job.reads().map(read=>read.result),reasonCodes:failureCodes}):readInvestigationRecovery(result,{reads:job.reads().map(read=>read.result),reasonCodes:failureCodes})):null;
    const recoveredFailure=Boolean(recovery);
    if(deps.readOnlyHosted&&(directRead||result?.status==='provider-unavailable'||result?.status==='limit'&&result.reason==='cost-limit'||recoveredFailure)){
     if(!recoveredFailure&&!deps.fallback)throw new HostedAgentUnavailable(id,result?.reason??'provider-unavailable');
@@ -442,11 +460,11 @@ export function createTenbotAgentSessions(deps:AgentSessionDependencies){
     if(followup?.kind==='jobs'&&(!record(fallback.operational)||fallback.operational.complete!==true))session.context=null;
     const savedOperational=operationalEnabled&&!workflow?await operationalReceipt(job.reads(),question,String(fallback.message),createdAt,now(),await scopeDigest(owner),fallbackProofs):null;
     if(savedOperational){session.operational=[...session.operational.filter(t=>Date.parse(t.expiresAt)>now()),savedOperational].slice(-4);historyTurnId=savedOperational.id;}
-    if(!await readsFresh()||!await can('readOperationalData')||recoveredFailure&&!await operations!.fresh())throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
-    const archive=persistent?employeeDisplay([...job.reads(),...labor.reads()],{id:historyTurnId??crypto.randomUUID(),question,message,createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:workflow?sourceProofs:fallbackProofs,contentScope:workflow?'workflow':'operational-history',...(recoveredFailure?{operationAccess:operations!.access()}:{})}):undefined;
+    if(!await readsFresh()||!await can('readOperationalData')||recoveredFailure&&operations&&!await operations.fresh())throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    const archive=persistent?employeeDisplay([...job.reads(),...labor.reads()],{id:historyTurnId??crypto.randomUUID(),question,message,createdAt,answeredAt,scopeDigest:await scopeDigest(owner),sources:workflow?sourceProofs:fallbackProofs,contentScope:workflow?'workflow':'operational-history',...(recoveredFailure&&operations?{operationAccess:operations.access()}:{})}):undefined;
     if(persistent&&!archive)throw new TenbotError('This answer could not be saved safely. Please retry.',503);
     if(lease){await deps.sessionStore!.commit(lease,storedState(session),true,archive??undefined);committed=true;}
-    if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await readsFresh()||!await modelContextCurrent()||recoveredFailure&&!await operations!.fresh())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
+    if(!await publicationAllowed(async()=>{if(!await can('readOperationalData')||!await readsFresh()||!await modelContextCurrent()||recoveredFailure&&operations&&!await operations.fresh())return false;for(const p of sourceProofs)if(!await sourceIsCurrent(p,owner))return false;for(const t of session!.guidance)for(const p of t.sources)if(!await sourceIsCurrent(p,owner))return false;return deps.can(owner,'readOperationalData');}))throw new TenbotError('Your access or the underlying records changed. No answer was published.',403);
     if(persistent&&archive&&archivePage){
      const scope=await scopeDigest(owner),rows=[...archivePage.turns,archive].slice(-20);let turns:Awaited<ReturnType<typeof restoreEmployeePage>>=[];
      if(!await publicationAllowed(async()=>{turns=await restoreEmployeePage(rows,deps.jobTools(owner),scope,id,now(),p=>sourceIsCurrent(p,owner));return await can('readOperationalData')&&await scopeDigest(owner)===scope&&await modelContextCurrent();}))throw new TenbotError('Private history could not be reauthorized. Please retry.',503);

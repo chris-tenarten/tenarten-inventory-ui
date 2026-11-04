@@ -29,7 +29,7 @@ const trimReference=(value:string)=>value.trim().replace(/^[#\s:]+|[?.!,;\s]+$/g
 const interrogativeJobNoun=(question:string,index:number)=>/\b(?:what|which|whose)\s+$/i.test(question.slice(0,index));
 /** Resource identity only: this does not select an operation or authorize a
  * record. Explicit identities must be freshly resolved before context is used. */
-export function explicitJobReferences(question:string):string[]{
+export function explicitJobReferences(question:string,literalOnly=false):string[]{
  if(typeof question!=='string'||question.length>1200)return [];
  const refs=new Map<string,string>(),add=(value:string,literal=false)=>{const ref=literal?value.trim():trimReference(value);if(ref&&ref.length<=120&&!/[\u0000-\u001f\u007f]/.test(ref))refs.set(normalized(ref),ref);};
  const outsideQuotes=question.replace(/["“][^"”\n]*["”]/g,value=>' '.repeat(value.length));
@@ -41,6 +41,7 @@ export function explicitJobReferences(question:string):string[]{
  // boundaries alone are not Job identities.
  const bareNumber=question.trim().match(/^#?((?=[A-Za-z0-9._/-]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*)(?=\s|[?!,:;]|$)/)?.[1];
  if(bareNumber&&!/^\d{4}-\d{2}-\d{2}$/.test(bareNumber)&&/[A-Za-z/-]/.test(bareNumber))add(bareNumber);
+ if(literalOnly)return [...refs.values()];
  const generic=/^(?:number|status|production|planning|active|scheduled?|unscheduled|ready|readiness|tomorrow|today|yesterday|right|now|currently|current|latest|doing|going|what|whats|what's|which|when|why|how|tell|give|compare|our|my|your|the|a|an|all|any|in|on|but|is|has|have|was|were|with|at|to|from|and|for|needs?|whose|where|do|does|it|its|they|their|them|that|this|same|other|one|test)$/i;
  const temporal=(value:string)=>value.replace(/\s+(?:right\s+now|at\s+the\s+moment|currently|today|tomorrow|yesterday|this\s+(?:week|month|year))\b.*$/i,'');
  // Names also precede the business noun ("the Cedar Bay project"). Strip
@@ -58,6 +59,9 @@ export function explicitJobReferences(question:string):string[]{
  }
  return [...refs.values()];
 }
+/** Only literal identifiers may constrain a model-selected lookup. Inferred
+ * noun phrases remain useful to the legacy router, never identity whitelists. */
+export const literalJobReferences=(question:string)=>explicitJobReferences(question,true);
 export function explicitJobReference(question:string):string|null{const refs=explicitJobReferences(question);return refs.length===1?refs[0]:null;}
 export function ambiguousJobReference(question:string):boolean{
  if(/\b(?:other|another|different|first|second|last)\s+(?:one|job|project)\b/i.test(question)&&!explicitJobReferences(question).length)return true;
@@ -328,12 +332,13 @@ export function buildJobEvidence(result:JobToolResult):JobEvidence{
  }
  if(result.tool==='get_job_labor_summary'){
   const period=object(data.period),start=clean(period.start_date,10),end=clean(period.end_date,10),total=hours(data.total_hours),entries=count(data.entry_count);
-  if(total!==null)add('labor_total','labor',`Recorded labor: ${total} hours for ${start} through ${end}.`,['Recorded','labor','hours','through']);
+  if(total!==null)add('labor_total','labor',data.scope==='all_recorded'?`Recorded labor: ${total} hours across all recorded work dates, including Original and Rework.`:`Recorded labor: ${total} hours for ${start} through ${end}.`,['Recorded','labor','hours','through']);
   if(entries!==null)add('labor_entries','count',`Recorded labor entries in this reporting period: ${entries}.`,['Recorded','labor','entries','period']);
   const originalHours=hours(data.original_or_unclassified_hours);if(originalHours!==null)add('labor_original','labor',`Original or unclassified lifecycle labor: ${originalHours} hours.`,['Original','unclassified','labor','hours']);
   if(Array.isArray(data.reworks))for(const [i,value] of data.reworks.slice(0,8).entries()){const row=object(value),quantity=hours(row.hours),sequence=count(row.sequence_number);if(quantity!==null)add(`labor_rework_${i+1}`,'labor',`Recorded Rework${sequence===null?'':` ${sequence}`} labor: ${quantity} hours.`,['Recorded','Rework','labor','hours']);}
   if(data.latest_work_date)add('labor_latest','labor',`Latest recorded labor work date in this reporting period: ${clean(data.latest_work_date,10)}.`,['Latest','recorded','labor','date','period']);
   if(Array.isArray(data.daily))for(const [i,value] of data.daily.slice(-8).entries()){const row=object(value),quantity=hours(row.hours);if(quantity!==null)add(`labor_day_${i+1}`,'labor',`Recorded labor on ${clean(row.date,10)}: ${quantity} hours.`,['Recorded','labor','hours']);}
+  if(data.scope==='all_recorded')add('labor_all_recorded_scope','limitation','All recorded work dates; includes Original and Rework labor across every Product Category and Uncategorized.',['All recorded','Original','Rework']);
   add('labor_limit','limitation','Recorded hours reflect saved Manpower entries; unrecorded work and future labor are unknown.',['Recorded hours','saved','entries','unknown']);
  }
  if(result.tool==='get_production_overview'){

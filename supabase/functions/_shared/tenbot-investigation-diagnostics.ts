@@ -20,7 +20,7 @@ const toolReasons = new Set([
   'proposal_value_not_literal_source', 'proposal_invalid_decimal', 'proposal_quote_rate_unproven',
 ]);
 const reasons = new Set([
-  ...toolReasons, 'ok', 'received', 'completed', 'runtime-error', 'authorization-denied', 'invalid-usage', 'cost-limit',
+  ...toolReasons, 'conversation-claim-invalid','conversation-load-invalid','conversation-state-invalid','conversation-context-extended','conversation-commit-started','conversation-commit-rejected','conversation-commit-completed','conversation-storage-unavailable', 'operation-ok','operation-incomplete','operation-unavailable','operation-invalid-request','operation-not-authorized','identity-resolved','identity-ambiguous','identity-unresolved','identity-incomplete','read-final-unjustified-clarification', 'ok', 'received', 'completed', 'runtime-error', 'authorization-denied', 'invalid-usage', 'cost-limit',
   'context-limit', 'invalid-input', 'invalid-context', 'invalid-limits', 'invalid-registry', 'deadline',
   'invalid-provider-step', 'invalid-final', 'unknown-evidence', 'missing-workflow-evidence', 'empty-provider-step',
   'read-final-question', 'read-final-missing-evidence', 'read-final-non-fact-claim', 'read-final-workflow-wording',
@@ -68,4 +68,13 @@ export function safeInvestigationDiagnostic(event: InvestigationDiagnostic): Inv
 export function emitInvestigationDiagnostic(sink: InvestigationDiagnosticSink | undefined, event: InvestigationDiagnostic): void {
   if (!sink) return;
   try { Promise.resolve(sink(safeInvestigationDiagnostic(event))).catch(() => {}); } catch { /* diagnostic delivery is best-effort */ }
+}
+
+/** Private verification error envelope only. The caller still owns auth/status
+ * and its ordinary employee error message. No exception or provider body enters
+ * this projection; a malformed correlation value is discarded. */
+export function safeVerificationFailureDiagnostics(requestId:unknown,events:unknown):{requestId:string|null;diagnostics:InvestigationDiagnostic[]}{
+ const id=typeof requestId==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId)?requestId:null;
+ const diagnostics=Array.isArray(events)?events.slice(-128).flatMap(event=>event&&typeof event==='object'&&!Array.isArray(event)?[safeInvestigationDiagnostic(event as InvestigationDiagnostic)]:[]):[];
+ return {requestId:id,diagnostics};
 }

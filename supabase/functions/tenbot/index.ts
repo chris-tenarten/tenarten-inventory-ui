@@ -100,10 +100,10 @@ Deno.serve(async(request:Request)=>{
  }
  // The separate, expiring Product allowance cannot fund the legacy receival
  // runtime above, an employee-selected provider, or a Production-origin call.
- const requestId=acceptanceAuthorized()?crypto.randomUUID():undefined;
+ const requestId=body.action==='ask'&&(employeeModeAuthorized||acceptanceAuthorized())?crypto.randomUUID():undefined;
  const hosted=createHostedTenbot({owner:data.user.id,origin,
   config:{...openAI,normalEmployeeAuthorized:employeeModeAuthorized,modelDirectedReads,reviewedOperationsEnabled:Deno.env.get('TENBOT_REVIEWED_OPERATIONS_ENABLED')==='true'&&reviewedAuthorized()},reviewedCaller:caller,actionSessionId,acceptanceSpendingAuthorized:acceptanceAuthorized,requestId,
-  onDiagnostic:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_acceptance',{requestId,...safeInvestigationDiagnostic(event)});}:undefined,
+  onDiagnostic:requestId?event=>{if(employeeModeAuthorized||acceptanceAuthorized())console.info(acceptanceAuthorized()?'tenbot_terra_acceptance':'tenbot_investigation',{requestId,...safeInvestigationDiagnostic(event)});}:undefined,
   onResponseMetadata:requestId?event=>{if(acceptanceAuthorized())console.info('tenbot_terra_provider',{requestId,...safeOpenAIResponseMetadata(event)});}:undefined,
   caller:async(n,a)=>await caller.rpc(n,a),service:async(n,a)=>TENBOT_HOSTED_SERVICE_RPCS.has(n)?await service.rpc(n,a):{data:null,error:{message:'Metering action unavailable'}},qwen:provider,jobTools:createTenbotJobTools(caller,{ownerId:data.user.id})});
  const result=await hosted(body);

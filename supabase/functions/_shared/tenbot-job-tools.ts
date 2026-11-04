@@ -1,5 +1,5 @@
 import { ACTIVE_PRODUCTION_STATUSES, ADMIN_ONLY_PRODUCTION_FIXTURE_ID, applyProductionLifecycle, getJobReadiness, isActiveProductionRework } from './production-job-facts.mjs';
-import { entryHundredths } from './labor-hours.mjs';
+import { entryHundredths, laborHours, type LaborHoursInput } from './labor-hours.mjs';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment -- shared Edge/Node source
 // @ts-ignore -- explicit Edge extension.
 import {JOB_LIFECYCLE_STATUSES,parseJobStatuses,parseJobSchedule,matchesJobPopulation} from './tenbot-job-filters.ts';
@@ -41,7 +41,7 @@ export type JobSourceReference = { relation: 'jobs' | 'production_rework_cycles'
 export type JobFindData = { jobs: JobFacts[]; match: 'exact' | 'search' | 'browse'; has_more: boolean; next_cursor: string | null };
 export type JobSummaryData = { job: JobFacts; counts: { rework_cycles: number | null; active_rework_cycles: number | null; open_follow_ups: number | null } };
 export type JobPlanningData = { job: JobFacts; phases: { availability: 'disabled'; reason: string }; schedule_is_persisted: true };
-export type JobLaborData = { job: JobFacts; period: { start_date: string; end_date: string }; total_hours: number | null; entry_count: number | null; original_or_unclassified_hours: number | null; reworks: { rework_cycle_id: string; sequence_number: number | null; hours: number; entry_count: number }[]; daily: { date: string; hours: number }[]; latest_work_date: string | null };
+export type JobLaborData = { job: JobFacts; period: { start_date: string | null; end_date: string | null }; scope?: 'all_recorded'; total_hours: number | null; entry_count: number | null; original_or_unclassified_hours: number | null; reworks: { rework_cycle_id: string; sequence_number: number | null; hours: number; entry_count: number }[]; daily: { date: string; hours: number }[]; latest_work_date: string | null };
 export type JobOverviewData = { counts: { jobs: number | null; active_jobs: number | null; by_status: Record<string, number | null>; scheduled: number | null; unscheduled: number | null }; upcoming: { job_id: string; reference: string; planned_end: string; lifecycle: 'original' | 'rework' }[]; has_more_upcoming: boolean };
 export type JobToolData = JobFindData | JobSummaryData | JobPlanningData | JobLaborData | JobOverviewData;
 export type JobToolResult = {
@@ -285,10 +285,12 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
           return result;
         }
         if (!['get_job_summary', 'get_job_planning', 'get_job_labor_summary'].includes(tool)) throw new InvalidInput();
-        strictKeys(args, tool === 'get_job_labor_summary' ? ['job_id', 'start_date', 'end_date'] : ['job_id']);
+        strictKeys(args, tool === 'get_job_labor_summary' ? ['job_id', 'start_date', 'end_date', 'scope'] : ['job_id']);
         if (!isUuid(args.job_id)) throw new InvalidInput();
-        const range = tool === 'get_job_labor_summary' ? period(args, today) : null;
-        result.filters = { job_id: args.job_id, ...(range ?? {}), lifecycle: 'effective_with_original_preserved' };
+        const allRecorded=tool==='get_job_labor_summary'&&args.scope==='all_recorded';
+        if(tool==='get_job_labor_summary'&&(args.scope!==undefined&&!['period','all_recorded'].includes(String(args.scope))||allRecorded&&(args.start_date!==undefined||args.end_date!==undefined)))throw new InvalidInput();
+        const range = tool === 'get_job_labor_summary' ? allRecorded?{start_date:null,end_date:null}:period(args, today) : null;
+        result.filters = { job_id: args.job_id, ...(allRecorded?{scope:'all_recorded'}:range ?? {}), lifecycle: 'effective_with_original_preserved' };
         const loaded = await loadJob(args.job_id);
         if (!loaded) { result.status = 'not_found_or_not_authorized'; result.complete = false; return result; }
         const job = loaded.job;
@@ -316,18 +318,21 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
         }
         const window = range!;
         result.units = { total_hours: 'hours', original_or_unclassified_hours: 'hours', reworks: 'hours', daily: 'hours', entry_count: 'recorded_entries', dates: 'calendar_date' };
-        const data: JobLaborData = { job, period: window, total_hours: null, entry_count: null, original_or_unclassified_hours: null, reworks: [], daily: [], latest_work_date: null };
+        const data: JobLaborData = { job, period: window, ...(allRecorded?{scope:'all_recorded' as const}:{}), total_hours: null, entry_count: null, original_or_unclassified_hours: null, reworks: [], daily: [], latest_work_date: null };
         result.data = data;
         result.sources.push({ relation: 'manpower_entries', job_id: job.job_id, observed_at: observed });
         let labor: { rows: unknown[]; complete: boolean };
         try {
-          labor = await scan(() => caller.from('manpower_entries').select(LABOR_COLUMNS, { count: 'exact' }).eq('job_id', job.job_id).gte('work_date', window.start_date).lte('work_date', window.end_date), TENBOT_JOB_TOOL_LIMITS.labor_entries);
+          labor = await scan(() => {
+            const q=caller.from('manpower_entries').select(LABOR_COLUMNS, { count: 'exact' }).eq('job_id', job.job_id);
+            return allRecorded?q:q.gte('work_date', window.start_date!).lte('work_date', window.end_date!);
+          }, TENBOT_JOB_TOOL_LIMITS.labor_entries);
         } catch { partial('The recorded labor period is unavailable; the verified Job facts remain available.'); return result; }
         if (!labor.complete) { partial('The bounded labor period is incomplete; exact labor totals are unavailable.', true); return result; }
         const daily = new Map<string, number>(), reworks = new Map<string, { units: number; count: number }>();
         let total = 0, original = 0;
         for (const value of labor.rows) {
-          if (!object(value) || value.job_id !== job.job_id || !date(value.work_date) || value.work_date < window.start_date || value.work_date > window.end_date || !(value.rework_cycle_id === null || isUuid(value.rework_cycle_id)) || ![value.am_hours, value.pm_hours].every(v => (typeof v === 'number' || typeof v === 'string' && /^\d+(?:\.\d+)?$/.test(v)) && Number.isFinite(Number(v)) && Number(v) >= 0)) { partial('A recorded labor entry is incomplete or invalid; exact labor totals are unavailable.'); data.latest_work_date = null; return result; }
+          if (!object(value) || value.job_id !== job.job_id || !date(value.work_date) || !allRecorded&&(value.work_date < window.start_date! || value.work_date > window.end_date!) || !(value.rework_cycle_id === null || isUuid(value.rework_cycle_id)) || ![value.am_hours, value.pm_hours].every(v => (typeof v === 'number' || typeof v === 'string' && /^\d+(?:\.\d+)?$/.test(v)) && Number.isFinite(Number(v)) && Number(v) >= 0)) { partial('A recorded labor entry is incomplete or invalid; exact labor totals are unavailable.'); data.latest_work_date = null; return result; }
           const units = entryHundredths({ am_hours: value.am_hours as number | string | null, pm_hours: value.pm_hours as number | string | null });
           if (!Number.isSafeInteger(units) || !Number.isSafeInteger(total + units)) throw new Unavailable();
           total += units;
@@ -347,9 +352,9 @@ function createJobToolRunner(caller: JobDataReader, options: { now?: () => Date 
             for (const value of cycles.rows) { const cycle = cycleRow(value); if (cycle.job_id !== job.job_id || !scope.includes(cycle.id)) throw new Unavailable(); sequences.set(cycle.id, cycle.sequence_number); }
           } catch { partial('Some recorded Rework sequence labels are unavailable.'); }
         }
-        data.total_hours = total / 100; data.entry_count = labor.rows.length; data.original_or_unclassified_hours = original / 100;
+        data.total_hours = laborHours(labor.rows as LaborHoursInput[]); data.entry_count = labor.rows.length; data.original_or_unclassified_hours = original / 100;
         data.reworks = cycleIds.map(id => { const item = reworks.get(id)!; return { rework_cycle_id: id, sequence_number: sequences.get(id) ?? null, hours: item.units / 100, entry_count: item.count }; }).sort((a, b) => (a.sequence_number ?? Infinity) - (b.sequence_number ?? Infinity) || a.rework_cycle_id.localeCompare(b.rework_cycle_id));
-        for (let key = window.start_date; key <= window.end_date; key = shiftDate(key, 1)) data.daily.push({ date: key, hours: (daily.get(key) ?? 0) / 100 });
+        for (let key = window.start_date; key !== null && key <= window.end_date!; key = shiftDate(key, 1)) data.daily.push({ date: key, hours: (daily.get(key) ?? 0) / 100 });
         if (cycleIds.some(id => !sequences.has(id))) { if (!result.unknowns.includes('Some recorded Rework sequence labels are unavailable.')) partial('Some recorded Rework sequence labels are unavailable.'); }
         if (allCycleIds.length > cycleIds.length) { result.truncated = true; result.unknowns.push('The Rework breakdown shows at most 20 lifecycles; complete period totals include the omitted lifecycles.'); }
         result.unknowns.push('These are recorded hours in the stated work-date period, not proof of all labor worked, a remaining-hours estimate or a forecast. Null Rework attribution is Original Production / Legacy Unclassified.');
