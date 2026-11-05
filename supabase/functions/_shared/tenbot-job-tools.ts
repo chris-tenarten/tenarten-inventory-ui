@@ -35,6 +35,9 @@ export type JobFacts = JobIdentity & {
   original: { status: string; planned_start: string | null; planned_end: string | null; updated_at: string };
   effective: { lifecycle: 'original' | 'rework'; rework_cycle_id: string | null; sequence_number: number | null; status: string; planned_start: string | null; planned_end: string | null; updated_at: string };
   material_status: string; requested_delivery_date: string | null;
+  /** Saved whole-Job estimate, not a Rework estimate or remaining effort.
+   * Optional only for older internal fact snapshots; current reads always set it. */
+  estimated_man_hours?: number | null;
   readiness: { state: 'ready' | 'needs_planning' | 'not_scheduled'; label: string; missing_fields: string[] };
 };
 export type JobSourceReference = { relation: 'jobs' | 'production_rework_cycles' | 'job_updates' | 'manpower_entries'; job_id?: string; record_id?: string; record_updated_at?: string; observed_at: string };
@@ -100,7 +103,7 @@ function facts(job: JobRow, cycle: Cycle | null): JobFacts {
     reference: [job.job_number?.trim(), job.name.trim()].filter(Boolean).join(' — ') || 'Unnamed Production Job', archived: job.archived_at !== null,
     original: { status: job.production_status, planned_start: job.planned_start, planned_end: job.planned_end, updated_at: job.updated_at },
     effective: { lifecycle: cycle ? 'rework' : 'original', rework_cycle_id: cycle?.id ?? null, sequence_number: cycle?.sequence_number ?? null, status: effective.production_status, planned_start: effective.planned_start, planned_end: effective.planned_end, updated_at: effective.updated_at },
-    material_status: job.material_status, requested_delivery_date: job.requested_delivery_date,
+    material_status: job.material_status, requested_delivery_date: job.requested_delivery_date, estimated_man_hours: job.estimated_man_hours,
     readiness: { state: readiness.state, label: readiness.label, missing_fields: readiness.missingFields },
   };
 }

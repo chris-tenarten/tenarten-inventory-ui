@@ -29,6 +29,16 @@ export function validOperationalReceipt(x:unknown):x is OperationalReceipt{
  });
 }
 export async function operationalDigest(result:ContextRead['result']){const bytes=new TextEncoder().encode(JSON.stringify({data:result.data,status:result.status,complete:result.complete,truncated:result.truncated,unknowns:result.unknowns,filters:result.filters}));return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),x=>x.toString(16).padStart(2,'0')).join('');}
+/** Old receipts could not publish an estimate: their exact Job projection
+ * lacked only this field. Keep new receipt digests unchanged and value-bound;
+ * permit the exact old projection only while every other current fact matches. */
+async function compatibleReadDigests(result:ContextRead['result']){
+ const current=await operationalDigest(result),previous=structuredClone(result);
+ const jobs=previous.data&&'job'in previous.data?[previous.data.job]:previous.data&&'jobs'in previous.data?previous.data.jobs:[];
+ if(!jobs.some(job=>Object.hasOwn(job,'estimated_man_hours')))return [current];
+ for(const job of jobs)delete job.estimated_man_hours;
+ return [current,await operationalDigest(previous)];
+}
 export async function operationalReceipt(reads:ContextRead[],question:string,message:string,createdAt:string,now:number,scopeDigest:string,sources:OperationalReceipt['sources']=[]):Promise<OperationalReceipt|null>{
  if(!reads.length||reads.length>4||reads.some(r=>r.result.status!=='ok'||!r.result.complete))return null;
  const value={id:crypto.randomUUID(),question,message:message.slice(0,2400),createdAt,answeredAt:new Date(now).toISOString(),expiresAt:new Date(now+OPERATIONAL_HISTORY_TTL).toISOString(),scopeDigest,sources:structuredClone(sources),reads:await Promise.all(reads.map(async r=>({name:r.name,args:structuredClone(r.args),digest:await operationalDigest(r.result)})))};
@@ -38,7 +48,7 @@ export const operationalHistoryMeta=(r:OperationalReceipt,now:number,historical=
 /** At most sixteen distinct existing read calls (four receipts × four reads) per hydration, with request-local
  * deduplication only. Neither receipt prose nor digests reach model prompts. */
 export async function restoreOperationalHistory(rows:OperationalReceipt[],tools:JobTools,now:number,scope:string,conversationId:string,mode:string,sourceCurrent:(proof:{id:string;digest:string})=>Promise<boolean>){
- const cache=new Map<string,Promise<{digest:string|null;retryable:boolean}>>(),kept:OperationalReceipt[]=[],retained:OperationalReceipt[]=[],turns=[];
+ const cache=new Map<string,Promise<{digests:string[];retryable:boolean}>>(),kept:OperationalReceipt[]=[],retained:OperationalReceipt[]=[],turns=[];
  // Newest first, but every valid receipt fits the strict four-by-four bound.
  for(const r of rows.slice(-4).reverse()){
   let reason:'expired'|'access-or-evidence-changed'|'temporarily-unavailable'|null=null;
@@ -49,10 +59,10 @@ export async function restoreOperationalHistory(rows:OperationalReceipt[],tools:
    const key=JSON.stringify([read.name,read.args]);
    if(!cache.has(key)){
     if(cache.size>=16){reason='temporarily-unavailable';break;}
-    cache.set(key,(async()=>{try{const result=await tools.execute(read.name,read.args);return {digest:result.status==='ok'&&result.complete?await operationalDigest(result):null,retryable:result.status==='unavailable'||result.status==='partial'};}catch{return {digest:null,retryable:true};}})());
+    cache.set(key,(async()=>{try{const result=await tools.execute(read.name,read.args);return {digests:result.status==='ok'&&result.complete?await compatibleReadDigests(result):[],retryable:result.status==='unavailable'||result.status==='partial'};}catch{return {digests:[],retryable:true};}})());
    }
    const checked=await cache.get(key)!;
-   if(checked.digest!==read.digest){reason=checked.retryable?'temporarily-unavailable':'access-or-evidence-changed';break;}
+   if(!checked.digests.includes(read.digest)){reason=checked.retryable?'temporarily-unavailable':'access-or-evidence-changed';break;}
   }
   if(!reason)for(const proof of r.sources)if(!await sourceCurrent(proof)){reason='access-or-evidence-changed';break;}
   if(!reason)kept.push(r);

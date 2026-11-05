@@ -58,6 +58,13 @@ export function jobCompositionFacts(result:JobToolResult,legacy:ReadAnswerFact[]
   if(j.archived)base.push(q('brief_archived','archived:'+j.job_id,`${identity} is archived.`));
   if(j.effective.lifecycle==='rework')base.push(q('brief_rework','rework:'+j.job_id,`This is Rework${j.effective.sequence_number===null?'':' '+j.effective.sequence_number}; the original Job is ${statusLabels[j.original.status]??'of unknown status'}.`));
   add('status',`${identity} is ${statusLabels[j.effective.status]??'of unknown status'}.`,base,'status');
+  // The Pipeline displays this same saved jobs field; it is not derived from
+  // recorded labor or the effective Rework lifecycle. Absent legacy metadata
+  // is not evidence of a missing estimate, and null is never a verified zero.
+  const estimate=typeof j.estimated_man_hours==='number'&&Number.isFinite(j.estimated_man_hours)&&j.estimated_man_hours>=0?j.estimated_man_hours:null;
+  const estimateScope=j.effective.lifecycle==='rework'?[q('brief_estimate_scope','whole-job-estimate:'+j.job_id,'This is the estimate for the whole Job, not a separate Rework estimate.')]:[];
+  if(estimate!==null)add('labor_estimate',`${identity} has a saved labor estimate of ${hourValue(estimate)}.`,[...base,...estimateScope],'labor');
+  else if(j.estimated_man_hours===null)add('labor_estimate_missing',`No labor estimate is saved for ${identity}.`,base,'labor');
   const dateLimit=q('brief_saved_dates','saved-date-targets','Planned and requested dates are targets; actual completion and delivery dates are unavailable.');
   if(j.effective.planned_start&&j.effective.planned_end)add('schedule',`${identity} has a saved schedule of ${businessDate(j.effective.planned_start)} through ${businessDate(j.effective.planned_end)}.`,[...base,dateLimit],'schedule');
   else add('schedule',`${identity} has no complete saved start-and-finish schedule.`,base,'schedule');
@@ -76,6 +83,16 @@ export function jobCompositionFacts(result:JobToolResult,legacy:ReadAnswerFact[]
     const period=q('brief_period',`labor-period:${d.period.start_date}:${d.period.end_date}`,d.scope==='all_recorded'?'All recorded work dates; includes Original and Rework labor across every Product Category and Uncategorized.':`Recorded hours, ${businessDate(d.period.start_date!)} through ${businessDate(d.period.end_date!)}.`,'labor-period');
     const recorded=q('brief_recorded','recorded-hours','Unreported work and remaining effort are unknown.');
     add('labor',`${identity} has ${hourValue(d.total_hours)} of recorded labor.`,[...base,period,recorded],'labor');
+    // Compare a whole-Job estimate only against a complete all-recorded read.
+    // This is host-issued subtraction at the existing hundredth-hour display
+    // precision, never model arithmetic or a forecast of remaining work.
+    if(!result.truncated&&d.scope==='all_recorded'&&d.period.start_date===null&&d.period.end_date===null&&estimate!==null&&Number.isFinite(d.total_hours)&&d.total_hours>=0&&Number.isSafeInteger(d.entry_count)&&Number(d.entry_count)>=0){
+     const estimatedUnits=Math.round(estimate*100),recordedUnits=Math.round(d.total_hours*100),difference=estimatedUnits-recordedUnits;
+     if(Number.isSafeInteger(estimatedUnits)&&Number.isSafeInteger(recordedUnits)&&Number.isSafeInteger(difference)){
+      const limit=q('brief_labor_comparison_limit','labor-estimate-comparison','The difference does not establish remaining work, completion or final labor.');
+      add('labor_comparison',`${identity} has ${hourValue(d.total_hours)} of recorded labor against a saved estimate of ${hourValue(estimate)}; recorded hours ${difference===0?'match the estimate':`are ${hourValue(Math.abs(difference)/100)} ${difference>0?'below':'above'} the estimate`}.`,[...base,...estimateScope,period,limit],'labor');
+     }
+    }
     if(d.original_or_unclassified_hours!==null)add('labor_original',`${identity}: Original or unclassified labor accounts for ${hourValue(d.original_or_unclassified_hours)}.`,[...base,period,recorded],'labor');
     // Reuse the report's verified measurement; an empty array alone is no proof.
     if(legacy.some(f=>f.id==='labor_linked_rework'))add('labor_linked_rework',`${identity} has 0 recorded hours linked to Rework.`,[...base,period,recorded],'labor');
