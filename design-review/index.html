@@ -1,0 +1,28 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark"><meta name="description" content="TenOps isolated UI modernization review. Synthetic data, no backend connection.">
+<title>TenOps · Design review</title>
+<meta id="review-application-name" name="application-name" content="TenOps"><meta id="review-apple-title" name="apple-mobile-web-app-title" content="TenOps"><meta id="review-theme-color" name="theme-color" content="#eef1f4">
+<link id="review-favicon" rel="icon" sizes="192x192" href="/tenops-gold-app-icon-192.png"><link id="review-apple-icon" rel="apple-touch-icon" href="/tenops-gold-apple-touch-icon.png"><link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#workspace">Skip to workspace</a>
+<header class="reviewbar" aria-label="Design review controls">
+<div class="review-title"><b>TenOps</b><span>DESIGN LAB</span><span class="lab-badge">Synthetic data</span></div>
+<div class="direction-switch" role="group" aria-label="Design direction"><button data-direction="a">A <span>Refined Enterprise</span></button><button data-direction="b">B <span>Modern Operations</span></button><button data-direction="c">C <span>Industrial Premium</span></button><button data-direction="baseline" title="Source-style reconstruction, not a live application screenshot">Before</button></div>
+<div class="review-options"><button id="theme-toggle" aria-label="Switch to dark mode">Dark</button><button id="viewport-toggle" aria-pressed="false">Mobile</button><label class="branding-control">Environment<select id="brand-environment" aria-label="Branding environment"><option value="production">Production</option><option value="tendev">TenDev</option></select></label><label class="fixture-control">Role fixture<select id="nav-fixture" aria-label="Synthetic navigation role"><option value="member">Member</option><option value="lead">Lead</option><option value="guest">Guest</option><option value="readonly">Member · Read only</option><option value="locked">Signed out / locked</option></select></label><button id="review-notes">Review guide</button></div>
+<p class="prototype-context" role="note">Synthetic prototype · changes reset on reload · no backend connection</p>
+</header>
+<div class="preview-caption" id="preview-caption"></div>
+<div id="stage"><div id="app" data-direction="b" data-theme="light"></div></div>
+<dialog id="inspector" aria-labelledby="inspector-title"></dialog>
+<dialog id="utility" aria-labelledby="utility-title"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/branding-config.js" defer></script>
+<script src="/branding.js" defer></script>
+<script src="/icons.js" defer></script>
+<script src="/navigation.js" defer></script>
+<script src="/app.js" defer></script>
+</body></html>
