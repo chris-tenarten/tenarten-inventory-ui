@@ -1,0 +1,352 @@
+"use client";
+
+import type { Session, User } from "@supabase/supabase-js";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { supabase,actionSessionStorage } from "@/lib/supabase";
+import type {ActionSessionSnapshot} from './auth-action-session';
+import { releasePushDevice, setPushAccount, suspendPushAccount } from "@/lib/web-push";
+import { BRANDING } from "@/lib/dev-branding.mjs";
+import {
+  type AppRole,
+  type Capability,
+  isAppRole,
+  RBAC_MODE,
+  roleHasCapability,
+  accountHasCapability,
+  READ_CAPABILITIES,
+} from "@/lib/rbac";
+
+export type AppUserProfile = {
+  userId: string;
+  displayName: string;
+  role: AppRole;
+  isActive: boolean;
+  readOnly: boolean;
+  messagingWrite: boolean;
+  productionBlendManage: boolean;
+  sampleLabelsGenerate: boolean;
+  jobUpdatesPost?: boolean;
+};
+
+export type AccountAccessStatus = "pending" | "allowed" | "denied" | "failed";
+
+type AuthContextValue = {
+  accessStatus: AccountAccessStatus;
+  ready: boolean;
+  session: Session | null;
+  user: User | null;
+  profile: AppUserProfile | null;
+  profileError: string;
+  requiresPasswordSetup: boolean;
+  isAuthenticated: boolean;
+  accessAllowed: boolean;
+  can(capability: Capability): boolean;
+  signIn(email: string, password: string): Promise<void>;
+  signOut(): Promise<void>;
+  requestAccountSetup(email: string): Promise<void>;
+  requestPasswordReset(email: string): Promise<void>;
+  updatePassword(password: string): Promise<void>;
+  refreshProfile(): Promise<void>;
+  actionSessionSnapshot():ActionSessionSnapshot|null;
+  installActionSession(session:{access_token:string;refresh_token:string},expected:ActionSessionSnapshot):Promise<void>;
+};
+
+const AuthContext = createContext<AuthContextValue | null>(null);
+const SESSION_RESTORE_TIMEOUT_MS = 20_000;
+const PROFILE_VERIFY_TIMEOUT_MS = 15_000;
+
+function normalizeProfile(value: unknown): AppUserProfile | null {
+  const row = Array.isArray(value) ? value[0] : value;
+  if (!row || typeof row !== "object") return null;
+  const source = row as Record<string, unknown>;
+  const role = source.role;
+  if (!isAppRole(role) || typeof source.user_id !== "string") return null;
+  return {
+    userId: source.user_id,
+    displayName: typeof source.display_name === "string" ? source.display_name : "TenOps user",
+    role,
+    isActive: source.is_active === true,
+    readOnly: source.read_only === true,
+    messagingWrite: source.messaging_write === true,
+    productionBlendManage: source.production_blend_manage === true,
+    sampleLabelsGenerate: source.sample_labels_generate === true,
+    jobUpdatesPost: source.job_updates_post === true,
+  };
+}
+
+// Supabase's JWT session_id identifies a login across access-token rotation.
+// This is only a continuity discriminator; the current profile RPC remains the
+// authority. Missing/unreadable claims never carry access to a different token.
+function sameAuthSession(previous: Session | null, next: Session | null): boolean {
+  if (!previous || !next || previous.user.id !== next.user.id) return false;
+  if (previous.access_token && previous.access_token === next.access_token) return true;
+  const identity = (session: Session): string | null => {
+    try {
+      const payload = JSON.parse(atob(session.access_token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+      return payload.sub === session.user.id && typeof payload.session_id === "string" && payload.session_id.length > 0 ? payload.session_id : null;
+    } catch { return null; }
+  };
+  const previousId = identity(previous);
+  return previousId !== null && previousId === identity(next);
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [ready, setReady] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<AppUserProfile | null>(null);
+  const [profileError, setProfileError] = useState("");
+  const [requiresPasswordSetup, setRequiresPasswordSetup] = useState(false);
+
+  const [accessStatus, setAccessStatus] = useState<AccountAccessStatus>("pending");
+  const currentSession = useRef<Session | null>(null);
+  const verifiedSession = useRef<Session | null>(null);
+  const generation = useRef(0);
+  const mounted = useRef(false);
+  const actionAccess=useRef({profile,accessStatus,requiresPasswordSetup});
+  actionAccess.current={profile,accessStatus,requiresPasswordSetup};
+  const profileRequest = useRef<{ request: number; controller: AbortController; timer: number } | null>(null);
+
+  const cancelProfileRequest = useCallback(() => {
+    const pending = profileRequest.current;
+    profileRequest.current = null;
+    if (!pending) return;
+    window.clearTimeout(pending.timer);
+    pending.controller.abort();
+  }, []);
+
+  const expireResolution = useCallback((request: number, phase: "session" | "profile") => {
+    if (!mounted.current || generation.current !== request) return;
+    // SDK initialization cannot be aborted through getSession. Invalidate this
+    // application request before cancellation so its late result has no access.
+    generation.current++;
+    cancelProfileRequest();
+    if (phase === "session") {
+      currentSession.current = null;
+      setSession(null);
+    }
+    verifiedSession.current = null;
+    suspendPushAccount();
+    setProfile(null);
+    setProfileError(phase === "session"
+      ? "Unable to restore your TenOps session in time. Check your connection, then refresh and retry."
+      : "Unable to verify your TenOps account access in time. Check your connection, then refresh and retry.");
+    setAccessStatus("failed");
+    setReady(true);
+  }, [cancelProfileRequest]);
+
+  const loadProfile = useCallback(async (nextSession: Session, request: number) => {
+    const current = () => mounted.current && generation.current === request && currentSession.current === nextSession;
+    if (!current()) return;
+    cancelProfileRequest();
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => expireResolution(request, "profile"), PROFILE_VERIFY_TIMEOUT_MS);
+    profileRequest.current = { request, controller, timer };
+    const finish = () => {
+      if (profileRequest.current?.request !== request) return;
+      window.clearTimeout(profileRequest.current.timer);
+      profileRequest.current = null;
+    };
+    try {
+      const { data, error } = await supabase.rpc("get_my_app_access").abortSignal(controller.signal);
+      // Welcome notifications are independent of access verification. Their
+      // latency must not consume the profile deadline after access is known.
+      finish();
+      if (!current()) return;
+      if (error) throw error;
+      const nextProfile = normalizeProfile(data);
+      if (nextProfile && nextProfile.userId !== nextSession.user.id) {
+        throw new Error("The returned account profile does not match the authenticated account.");
+      }
+      const allowed = Boolean(nextProfile?.isActive && (RBAC_MODE === "compatibility" || !BRANDING.showDeveloperArtwork || roleHasCapability(nextProfile.role, "accessDevelopmentEnvironment")));
+      setPushAccount(allowed ? nextProfile!.userId : null);
+      verifiedSession.current = allowed ? nextSession : null;
+      setProfile(nextProfile);
+      setProfileError("");
+      setAccessStatus(allowed ? "allowed" : "denied");
+      if (allowed && nextProfile && !nextProfile.readOnly && current()) {
+        // Notification failure is independent of account-access verification.
+        try {
+          const { error: welcomeError } = await supabase.rpc("ensure_my_welcome_notification");
+          if (current() && !welcomeError) window.dispatchEvent(new Event("tenops:notifications-changed"));
+        } catch { /* Keep the successfully verified access decision. */ }
+      }
+    } catch (cause) {
+      if (!current()) return;
+      suspendPushAccount();
+      verifiedSession.current = null;
+      setProfile(null);
+      const detail = cause && typeof cause === "object" && "message" in cause && typeof cause.message === "string" ? cause.message : "Please refresh and retry.";
+      setProfileError(`Unable to verify your TenOps account access. ${detail}`);
+      setAccessStatus("failed");
+    } finally {
+      finish();
+    }
+  }, [cancelProfileRequest, expireResolution]);
+
+  // Invalidate old requests immediately, before deferring any authenticated RPC.
+  const beginResolution = useCallback((nextSession: Session | null, continuing = false, preservePendingPushSession = false, revokePush = false) => {
+    cancelProfileRequest();
+    if (revokePush || !nextSession || (currentSession.current && currentSession.current.user.id !== nextSession.user.id)) setPushAccount(null);
+    else if (!continuing && !preservePendingPushSession) suspendPushAccount();
+    const request = ++generation.current;
+    currentSession.current = nextSession;
+    setSession(nextSession);
+    if (!continuing) {
+      verifiedSession.current = null;
+      setProfile(null);
+      setProfileError("");
+      setAccessStatus(nextSession ? "pending" : "denied");
+    }
+    setReady(true);
+    return request;
+  }, [cancelProfileRequest]);
+
+  useEffect(() => {
+    mounted.current = true;
+    let initialAuthSnapshotReceived = false;
+    let authChangeProfileTimer: number | null = null;
+    const bootstrap = generation.current;
+    let bootstrapTimer: number | null = window.setTimeout(() => expireResolution(bootstrap, "session"), SESSION_RESTORE_TIMEOUT_MS);
+    const finishBootstrap = () => {
+      if (bootstrapTimer !== null) window.clearTimeout(bootstrapTimer);
+      bootstrapTimer = null;
+    };
+    void supabase.auth.getSession().then(async ({ data, error }) => {
+      finishBootstrap();
+      if (!mounted.current || generation.current !== bootstrap) return;
+      if (error) throw error;
+      const accountFlow = new URLSearchParams(window.location.search).get("account");
+      setRequiresPasswordSetup((accountFlow === "setup" || accountFlow === "recovery") && Boolean(data.session));
+      const request = beginResolution(data.session);
+      if (data.session) await loadProfile(data.session, request);
+    }).catch(() => {
+      finishBootstrap();
+      if (!mounted.current || generation.current !== bootstrap) return;
+      setProfile(null);
+      suspendPushAccount();
+      setProfileError("Unable to restore your TenOps session. Please refresh and retry.");
+      setAccessStatus("failed");
+      setReady(true);
+    });
+    const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (event === "INITIAL_SESSION") { initialAuthSnapshotReceived = true; return; }
+      // Deduplicate only an already accepted bootstrap snapshot. A different
+      // identity/session event must invalidate bootstrap even before INITIAL_SESSION.
+      if (event === "SIGNED_IN" && !initialAuthSnapshotReceived && currentSession.current?.user.id === nextSession?.user.id && currentSession.current?.access_token === nextSession?.access_token) return;
+      finishBootstrap();
+      const accountFlow = new URLSearchParams(window.location.search).get("account");
+      const callbackFlow = accountFlow === "setup" || accountFlow === "recovery";
+      setRequiresPasswordSetup(Boolean(nextSession) && (event === "PASSWORD_RECOVERY" || callbackFlow));
+      const continuing = !callbackFlow && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && sameAuthSession(verifiedSession.current, nextSession);
+      // A same-login refresh can arrive while bootstrap is still verifying the
+      // profile. Keep its device binding, without carrying any access decision.
+      // Password flows, new logins and different identities still invalidate it.
+      const preservePendingPushSession = !callbackFlow && !verifiedSession.current
+        && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED")
+        && sameAuthSession(currentSession.current, nextSession);
+      const request = beginResolution(nextSession, continuing, preservePendingPushSession, callbackFlow || event === "PASSWORD_RECOVERY");
+      // Supabase holds its auth-token lock while this callback runs.
+      if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
+      authChangeProfileTimer = window.setTimeout(() => {
+        if (nextSession) void loadProfile(nextSession, request);
+      }, 0);
+    });
+    return () => {
+      mounted.current = false;
+      // This is a generation counter, not a DOM ref: invalidate all current work.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      generation.current++;
+      finishBootstrap();
+      cancelProfileRequest();
+      if (authChangeProfileTimer !== null) window.clearTimeout(authChangeProfileTimer);
+      data.subscription.unsubscribe();
+    };
+  }, [beginResolution, cancelProfileRequest, expireResolution, loadProfile]);
+
+  const refreshProfile = useCallback(async () => {
+    const nextSession = currentSession.current;
+    // Keep this callback stable across continued-session events, otherwise
+    // Samples' mount/revalidation effect runs again on every refocus/rotation.
+    const request = sameAuthSession(verifiedSession.current, nextSession)
+      ? ++generation.current
+      : beginResolution(nextSession);
+    if (nextSession) await loadProfile(nextSession, request);
+  }, [beginResolution, loadProfile]);
+  const can = useCallback((capability: Capability) => {
+    if (!session) return RBAC_MODE === "compatibility" && READ_CAPABILITIES.includes(capability);
+    if (accessStatus !== "allowed" || !profile?.isActive || profile.userId !== session.user.id) return false;
+    return accountHasCapability(profile.role, capability, profile.readOnly, profile.messagingWrite, profile.productionBlendManage, profile.sampleLabelsGenerate, profile.jobUpdatesPost);
+  }, [accessStatus, profile, session]);
+
+  const actionSessionSnapshot=useCallback(()=>{
+    const current=currentSession.current,access=actionAccess.current;
+    if(!mounted.current||!current||verifiedSession.current?.access_token!==current.access_token||access.accessStatus!=='allowed'||access.requiresPasswordSetup||!access.profile?.isActive||access.profile.userId!==current.user.id)return null;
+    return {ownerId:current.user.id,accessToken:current.access_token,contextKey:JSON.stringify({generation:generation.current,profile:access.profile})};
+  },[]);
+  const installActionSession=useCallback(async(next:{access_token:string;refresh_token:string},expected:ActionSessionSnapshot)=>{
+    const guard=actionSessionStorage.guard(next.access_token,expected,actionSessionSnapshot);
+    try{
+      const {data,error}=await supabase.auth.setSession(next);
+      if(error||!guard.saved()||data.session?.user.id!==expected.ownerId||data.session.access_token!==next.access_token)throw Error('Your sign-in changed. Reopen TenBot to check the saved result.');
+      // Normal SIGNED_IN handling invalidates access and rechecks the profile.
+      // This method never carries the old permission decision to the new login.
+    }finally{guard.release();}
+  },[actionSessionSnapshot]);
+
+  const value = useMemo<AuthContextValue>(() => ({
+    ready,
+    accessStatus,
+    session,
+    user: session?.user ?? null,
+    profile,
+    profileError,
+    requiresPasswordSetup,
+    isAuthenticated: Boolean(session),
+    accessAllowed: accessStatus === "allowed",
+    can,
+    async signIn(email, password) {
+      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (error) throw error;
+    },
+    async signOut() {
+      await releasePushDevice();
+      const current=await supabase.auth.getSession();
+      const finish=actionSessionStorage.allowSignOut(current.data.session?.access_token??'');
+      try{const { error } = await supabase.auth.signOut();if(error)throw error;}finally{finish();}
+    },
+    async requestAccountSetup(email) {
+      const emailRedirectTo = `${window.location.origin}/?account=setup`;
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: email.trim(),
+        options: { emailRedirectTo },
+      });
+      if (error) throw error;
+    },
+    async requestPasswordReset(email) {
+      const redirectTo = `${window.location.origin}/?account=recovery`;
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
+      if (error) throw error;
+    },
+    async updatePassword(password) {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      await releasePushDevice();
+      const current=await supabase.auth.getSession();
+      const finish=actionSessionStorage.allowSignOut(current.data.session?.access_token??'');
+      try{const {error:signOutError}=await supabase.auth.signOut({scope:"local"});if(signOutError)throw signOutError;}finally{finish();}
+      setRequiresPasswordSetup(false);
+      window.history.replaceState({}, "", window.location.pathname);
+    },
+    refreshProfile,
+    actionSessionSnapshot,installActionSession,
+  }), [accessStatus, can, profile, profileError, ready, refreshProfile, requiresPasswordSetup, session,actionSessionSnapshot,installActionSession]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const value = useContext(AuthContext);
+  if (!value) throw new Error("useAuth must be used within AuthProvider");
+  return value;
+}

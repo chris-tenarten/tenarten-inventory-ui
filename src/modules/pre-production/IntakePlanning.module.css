@@ -1,0 +1,7 @@
+.todayLine {
+  border-color: var(--color-blue-500, #3b82f6);
+}
+
+:global(html[data-appearance='dark']) .todayLine {
+  border-color: var(--color-red-400, #f87171);
+}

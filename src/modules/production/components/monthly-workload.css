@@ -1,0 +1,295 @@
+.monthly-workload-calendar {
+  height: auto;
+}
+
+/* Density changes week geometry only; every view uses the same item renderer. */
+[data-monthly-workload] {
+  --monthly-workload-week-min: 84px;
+  --monthly-workload-week-ratio: 16 / 1;
+}
+[data-monthly-workload][data-workload-density="compact"] {
+  --monthly-workload-week-min: 56px;
+  --monthly-workload-week-ratio: 24 / 1;
+}
+[data-monthly-workload][data-workload-density="expanded"] {
+  --monthly-workload-week-min: 112px;
+  --monthly-workload-week-ratio: 10.5 / 1;
+}
+
+.monthly-workload-nav {
+  display: inline-flex;
+  min-width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border-default, #cbd5e1);
+  border-radius: 2px;
+  color: var(--text-secondary, #475569);
+}
+
+.monthly-workload-nav:hover {
+  background: var(--surface-secondary, #f1f5f9);
+}
+
+.monthly-workload-nav:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+/* Layout and hierarchy use app theme tokens; Production owns all status colors. */
+[data-monthly-workload] {
+  --monthly-workload-grid-line: var(--text-secondary);
+}
+
+html[data-appearance="dark"] [data-monthly-workload] {
+  --monthly-workload-grid-line: var(--border-strong);
+}
+
+[data-monthly-workload] .monthly-workload-month-label {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 20px;
+}
+
+[data-monthly-workload] .monthly-workload-weekdays {
+  border-bottom: 1px solid var(--monthly-workload-grid-line);
+  box-shadow: inset 0 -1px 0 var(--monthly-workload-grid-line);
+  background: var(--surface-secondary);
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 16px;
+}
+
+[data-monthly-workload] .monthly-workload-week {
+  min-height: var(--monthly-workload-week-min);
+  border-bottom: 1px solid var(--monthly-workload-grid-line);
+}
+
+[data-monthly-workload] .monthly-workload-week::after {
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: var(--monthly-workload-grid-line);
+  content: '';
+  pointer-events: none;
+}
+
+[data-monthly-workload] .monthly-workload-week:last-child {
+  border-bottom: 0;
+}
+
+[data-monthly-workload] .monthly-workload-day {
+  --monthly-workload-column-shadow: inset -1px 0 0 var(--monthly-workload-grid-line);
+  border-right: 1px solid var(--monthly-workload-grid-line);
+  box-shadow: var(--monthly-workload-column-shadow);
+  background: var(--surface-primary);
+}
+
+[data-monthly-workload] .monthly-workload-day:last-child {
+  --monthly-workload-column-shadow: inset 0 0 transparent;
+  border-right: 0;
+}
+
+[data-monthly-workload] .monthly-workload-day[data-weekend="true"] {
+  background: color-mix(in srgb, var(--surface-primary) 65%, var(--surface-secondary));
+}
+
+[data-monthly-workload] .monthly-workload-day[data-outside-month="true"] {
+  background: var(--surface-secondary);
+}
+
+[data-monthly-workload] .monthly-workload-day-number {
+  min-width: 20px;
+  height: 20px;
+  margin: 2px 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+[data-monthly-workload] [data-outside-month="true"] .monthly-workload-day-number {
+  color: var(--text-muted);
+}
+
+[data-monthly-workload] .monthly-workload-today {
+  background: color-mix(in srgb, var(--semantic-info-foreground) 5%, var(--surface-primary));
+  box-shadow: var(--monthly-workload-column-shadow), inset 0 0 0 1px color-mix(in srgb, var(--semantic-info-foreground) 12%, transparent);
+}
+
+[data-monthly-workload] .monthly-workload-today::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--semantic-info-foreground);
+  content: '';
+  pointer-events: none;
+}
+
+[data-monthly-workload] .monthly-workload-day-number[aria-current="date"] {
+  border-radius: 50%;
+  border: 2px solid var(--semantic-info-foreground);
+  background: var(--surface-selected);
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--surface-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+html[data-appearance="dark"] [data-monthly-workload] .monthly-workload-day-number[aria-current="date"] {
+  background: var(--semantic-info-foreground);
+  color: var(--surface-page);
+}
+
+[data-monthly-workload] .monthly-workload-bar,
+[data-monthly-workload] .monthly-workload-swatch {
+  border-width: 1px;
+  border-style: solid;
+}
+
+[data-monthly-workload] .monthly-workload-swatch {
+  position: relative;
+}
+
+[data-monthly-workload] .monthly-workload-label {
+  position: relative;
+  z-index: 1;
+  /* Back only the text footprint so dark gridlines cannot reduce label contrast. */
+  background: color-mix(in srgb, var(--production-status-surface) calc(var(--production-status-overlay-opacity) * 100%), var(--surface-primary));
+}
+
+[data-monthly-workload] .monthly-workload-bar {
+  box-sizing: border-box;
+  height: 25px;
+  border-radius: 4px;
+  padding: 3px 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 17px;
+  cursor: pointer;
+}
+
+[data-monthly-workload] .monthly-workload-bar[data-continues-before="true"] {
+  border-left-style: dashed;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+[data-monthly-workload] .monthly-workload-bar[data-continues-after="true"] {
+  border-right-style: dashed;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+[data-monthly-workload] .monthly-workload-pause {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 4px;
+  vertical-align: -1px;
+  color: currentColor;
+  pointer-events: none;
+}
+
+[data-monthly-workload] .monthly-workload-bar:hover {
+  z-index: 2;
+  border-color: var(--semantic-info-foreground);
+  box-shadow: 0 0 0 1px var(--semantic-info-foreground);
+}
+
+[data-monthly-workload] .monthly-workload-bar:focus-visible {
+  z-index: 3;
+  outline: 2px solid var(--semantic-info-foreground);
+  outline-offset: 1px;
+}
+
+@media (min-width: 768px) {
+  [data-monthly-workload][data-workload-density="compact"] {
+    --monthly-workload-week-min: 60px;
+  }
+  [data-monthly-workload] .monthly-workload-week {
+    /* Expanded preserves the accepted 1.5:1 day-cell proportions. */
+    aspect-ratio: var(--monthly-workload-week-ratio);
+  }
+}
+
+/* Tasks are single-day checklist items, separate from Production status bars. */
+[data-monthly-workload] .monthly-workload-contents {
+  display: inline-flex;
+  border: 1px solid var(--border-default);
+  border-radius: 3px;
+  overflow: hidden;
+}
+[data-monthly-workload] .monthly-workload-contents button {
+  min-height: 28px;
+  padding: 0 8px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 600;
+}
+[data-monthly-workload] .monthly-workload-contents button[aria-pressed="true"] {
+  background: var(--surface-selected);
+  color: var(--text-inverse, #fff);
+}
+[data-monthly-workload] .monthly-workload-contents button:focus-visible {
+  outline: 2px solid var(--semantic-info-foreground);
+  outline-offset: -2px;
+}
+[data-monthly-workload] .monthly-workload-task {
+  box-sizing: border-box;
+  height: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px dashed var(--text-muted);
+  border-radius: 4px;
+  padding: 3px 5px;
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 17px;
+}
+[data-monthly-workload] .monthly-workload-task svg { width: 12px; height: 12px; flex-shrink: 0; }
+[data-monthly-workload] .monthly-workload-task span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+[data-monthly-workload] [data-task-state="overdue"] { color: var(--semantic-error-foreground, var(--color-red-700)); }
+[data-monthly-workload] [data-task-state="completed"] { color: var(--text-secondary); }
+[data-monthly-workload] .monthly-workload-task[data-task-state="completed"] span,
+[data-monthly-workload] [data-task-state="completed"] .monthly-workload-task-title { text-decoration: line-through; }
+[data-monthly-workload] .monthly-workload-task:hover { border-style: solid; border-color: var(--semantic-info-foreground); }
+[data-monthly-workload] .monthly-workload-task:focus-visible { outline: 2px solid var(--semantic-info-foreground); outline-offset: 1px; z-index: 3; }
+[data-monthly-workload] .monthly-workload-task-summary { border-top: 1px solid var(--border-default); padding: 5px 8px; color: var(--text-secondary); font-size: 11px; }
+[data-monthly-workload] .monthly-workload-task-summary a { text-decoration: underline; text-underline-offset: 2px; }
+html[data-appearance="dark"] [data-monthly-workload] .monthly-workload-contents button[aria-pressed="true"] { color: var(--text-primary); }
+
+[data-monthly-workload] [data-task-state="today"] { color: var(--semantic-warning-foreground, var(--color-amber-700)); }
+
+[data-monthly-workload] .monthly-workload-task-icon { display: flex; flex-shrink: 0; }
+
+/* Both mode gives tasks their own row; Job spans never consume this space. */
+[data-workload-task-band="true"] .monthly-workload-week {
+  min-width: 0;
+  aspect-ratio: auto;
+  min-height: 0;
+}
+[data-workload-task-band="true"] .monthly-workload-job-space {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--monthly-workload-week-min);
+  margin-bottom: 29px;
+}
+[data-workload-task-band="true"] .monthly-workload-week::before {
+  position: absolute;
+  inset: auto 0 32px;
+  border-top: 1px dashed var(--border-strong);
+  content: '';
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  [data-workload-task-band="true"] .monthly-workload-job-space { aspect-ratio: var(--monthly-workload-week-ratio); }
+}

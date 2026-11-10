@@ -1,0 +1,10 @@
+.badge {
+  border-color: #78709b;
+  background: #f2eff9;
+  color: #554477;
+}
+:global(html[data-appearance="dark"]) .badge {
+  border-color: #8d7cae;
+  background: #30283e;
+  color: #d6c7ed;
+}

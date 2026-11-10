@@ -1,0 +1,113 @@
+{
+  "kind": "public frontend development profile; independent root history",
+  "prepared_date": "2026-11-10",
+  "source_frontend_commit": "301a6bd1b34698a212c1e5652b424ed4a62c7ce1",
+  "accepted_source": "fb0725a526e43aead89d0ca0345eb8534f406a0a",
+  "original_frontend_src_tree": "ec1d3e751830b8b7bf6d6c189165dab7d50098c9",
+  "branch": "cross-device/frontend-20261110",
+  "source_counts": {
+    "src": 386,
+    "frontend_shared_helpers": 20,
+    "public_assets": 17
+  },
+  "publication_adjustments": [
+    {
+      "path": "src/modules/production/production-personnel.ts",
+      "reason": "Generic development personnel choice keys/labels; comparison/ordering functions unchanged."
+    },
+    {
+      "path": "src/modules/transmittals/JobTransmittalPanel.tsx",
+      "reason": "Generic development sender options; manual Other entry retained."
+    },
+    {
+      "path": "src/modules/transmittals/defaults.ts",
+      "reason": "Blank public development sender identity/contact defaults."
+    },
+    {
+      "path": "src/modules/purchasing/defaults.ts",
+      "reason": "Blank public development shipping/contact/authorized-person defaults."
+    },
+    {
+      "path": "src/app/inventory/page.tsx",
+      "reason": "Generic development personnel choices, placeholders and synthetic test-user sentinel."
+    },
+    {
+      "path": "src/app/transactions/page.tsx",
+      "reason": "Generic name-entry placeholder only."
+    },
+    {
+      "path": "src/modules/tenbot/capability-requests/CapabilityRequestCard.tsx",
+      "reason": "Generic reviewer prose; adapters/permission checks untouched."
+    },
+    {
+      "path": "src/modules/tenbot/prepared-draft-resume.ts",
+      "reason": "Blank development canary proposal defaults; saved-value precedence/guard unchanged."
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-access.ts",
+      "reason": "Synthetic development account/catalog/document sentinels; real hosted canary projections fail closed."
+    },
+    {
+      "path": "src/modules/inventory/tenbot-canary-execution.ts",
+      "reason": "Synthetic development source/evidence/preview metadata; no canary activation or authority."
+    },
+    {
+      "path": "src/components/DevBranding.tsx",
+      "reason": "Replace personalized name-tag asset reference with existing generic development branding."
+    },
+    {
+      "path": "src/modules/samples/color-plate-label.ts",
+      "reason": "Generic development company-contact template text; document calculation/rendering unchanged."
+    },
+    {
+      "path": "src/modules/purchasing/PurchaseOrderDocument.tsx",
+      "reason": "Generic development company-contact template text; issuance/calculation/rendering logic unchanged."
+    },
+    {
+      "path": "src/modules/pre-production/curated-demo.ts",
+      "reason": "Synthetic development-only curated-demo badge identifiers; actual curated record identities removed. No authorization/conversion logic changes."
+    },
+    {
+      "path": "supabase/functions/_shared/production-job-facts.mjs",
+      "reason": "Private fixture identifier moved to named local frontend config, validated as UUID; absent/invalid value becomes empty. No record value committed."
+    },
+    {
+      "path": "src/modules/production/fixture-visibility.ts",
+      "reason": "Admin visibility preserved; nonadmin sees no jobs when private fixture config absent/invalid, otherwise original fixture filter remains."
+    }
+  ],
+  "semantic_differences": [
+    "Employee-specific dropdown defaults/keys and contact template/default text become generic or blank for public development.",
+    "Canary metadata is synthetic and rejects real hosted projections; no canary activation.",
+    "Personalized decorative name-tag reference uses existing generic artwork.",
+    "Accepted Calendar, My Work, Messaging preference and Job Sharing behavior logic remains unchanged.",
+    "Curated demo badges reference synthetic development identities instead of actual shared records.",
+    "Nonadmin Production job visibility fails closed until NEXT_PUBLIC_ADMIN_ONLY_PRODUCTION_FIXTURE_ID is privately supplied and valid; admin behavior and configured filter are unchanged."
+  ],
+  "package_scripts": [
+    "dev",
+    "build",
+    "lint"
+  ],
+  "dependency_graph": "unchanged from accepted source",
+  "excluded": [
+    "Git ancestry/history/objects",
+    "credentials and environment values",
+    "employee/customer records and live identifiers",
+    "private evaluation evidence and historical project-memory",
+    "personalized artwork",
+    "vendor CSV/PDF datasets",
+    "tests and fixture collections",
+    "backend runtime and migrations",
+    "portable TenBot v81 reference",
+    "server-generated knowledge",
+    "release and operational tooling",
+    "backups/dependencies/generated outputs",
+    "hosting configuration and CI workflows"
+  ],
+  "tenbot_v81_backend_deployable": false,
+  "backend_note": "Frontend shared helper source only; no complete backend runtime included",
+  "nonadmin_fixture_configuration_name": "NEXT_PUBLIC_ADMIN_ONLY_PRODUCTION_FIXTURE_ID",
+  "nonadmin_missing_configuration_behavior": "empty Production Job lists; admin unchanged",
+  "setup": "README.md"
+}

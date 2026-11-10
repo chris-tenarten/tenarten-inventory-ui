@@ -1,0 +1,721 @@
+import { loadScopedRows } from '@/lib/scoped-rows';
+import { loadCompleteRows } from '@/lib/complete-rows';
+import { loadCompleteLabor } from '../manpower/pagination';
+import { supabase } from '../../lib/supabase';
+import { operationalFirstName } from '../../lib/identity-presentation';
+
+import type {
+  JobAttachment,
+  JobDocumentType,
+  JobUpdate,
+  NewProductionJob,
+  ProductionJob,
+  ProductionReworkCycle,
+  ReworkReasonCategory,
+} from './types';
+import {
+  summarizeJobUpdates,
+  type JobUpdateSummary,
+} from './job-update-summary';
+
+export { EMPTY_JOB_UPDATE_SUMMARY, type JobUpdateSummary } from './job-update-summary';
+import { productionValuesEqual } from './update-normalization';
+import type { ProductionScheduleBatchRpcArgs, ProductionScheduleBatchSuccess } from './schedule-batch-contract';
+import { isActiveProductionRework } from './rework';
+import { applyProductionLifecycle } from '../../../supabase/functions/_shared/production-job-facts.mjs';
+import { summarizeLaborLifecycles, type JobLaborLifecycleSummary } from './labor-lifecycle';
+import { canonicalJobNumber,findJobNumberConflict,isJobNumberUniqueViolation,jobNumberConflictMessage } from './job-identifiers';
+
+const JOB_COLUMNS = [
+  'id',
+  'name',
+  'customer',
+  'contact_details:production_job_contacts(customer_company_id,customer_contact_id,customer_contact_snapshot)',
+  'job_number',
+  'estimate_number',
+  'work_order_number',
+  'contract_value',
+  'deposit_date',
+  'color_plate_number',
+  'sample_submitted_date',
+  'approval_date',
+  'resin_po',
+  'chip_po',
+  'estimated_man_hours',
+  'estimated_calendar_days',
+  'requested_delivery_date',
+  'planned_start',
+  'planned_end',
+  'production_status',
+  'material_status',
+  'priority',
+  'progress_percent',
+  'owner_name',
+  'remarks',
+  'archived_at',
+  'created_at',
+  'updated_at',
+].join(',');
+
+const CONTACT_FIELDS = ['customer_company_id', 'customer_contact_id', 'customer_contact_snapshot'] as const;
+function hydrateProject(row: unknown): ProductionJob {
+  const { contact_details, ...job } = row as ProductionJob & { contact_details?: Partial<ProductionJob> | null };
+  return { ...job, customer_company_id: null, customer_contact_id: null, customer_contact_snapshot: null, ...contact_details };
+}
+function splitProject(input: object) {
+  const job = { ...input } as Record<string, unknown>;
+  const contact: Record<string, unknown> = {};
+  for (const key of CONTACT_FIELDS) { if (key in job) contact[key] = job[key]; delete job[key]; }
+  return { job, contact };
+}
+
+const JOB_LIST_COLUMNS = JOB_COLUMNS.replace('contact_details:production_job_contacts(customer_company_id,customer_contact_id,customer_contact_snapshot),', '');
+
+const ATTACHMENT_COLUMNS = [
+  'id',
+  'job_id',
+  'file_name',
+  'storage_path',
+  'mime_type',
+  'size_bytes',
+  'document_type',
+  'uploaded_by',
+  'job_update_id',
+  'job_update_attachment_role',
+  'created_at',
+].join(',');
+
+const JOB_UPDATE_COLUMNS = [
+  'id',
+  'job_id',
+  'author_name',
+  'author_user_id',
+  'body',
+  'requires_follow_up',
+  'follow_up_assignee_name',
+  'follow_up_assignee_user_id',
+  'resolved_at',
+  'resolved_by_name',
+  'resolved_by_user_id',
+  'resolution_message',
+  'edited_at',
+  'created_at',
+].join(',');
+
+const ACTIVE_REWORK_COLUMNS = [
+  'id',
+  'job_id',
+  'sequence_number',
+  'reason_category',
+  'scope_details',
+  'intake_date',
+  'production_status',
+  'planned_start',
+  'planned_end',
+  'created_by',
+  'completed_at',
+  'completed_by',
+  'created_at',
+  'updated_at',
+].join(',');
+
+export type ProductionJobUpdate = Partial<
+  Pick<
+    ProductionJob,
+    | 'name'
+    | 'customer'
+    | 'customer_company_id'
+    | 'customer_contact_id'
+    | 'customer_contact_snapshot'
+    | 'job_number'
+    | 'estimate_number'
+    | 'work_order_number'
+    | 'contract_value'
+    | 'deposit_date'
+    | 'color_plate_number'
+    | 'sample_submitted_date'
+    | 'approval_date'
+    | 'estimated_man_hours'
+    | 'estimated_calendar_days'
+    | 'requested_delivery_date'
+    | 'production_status'
+    | 'material_status'
+    | 'remarks'
+  >
+>;
+
+export async function loadProductionJobs(includeArchived = false): Promise<ProductionJob[]> {
+  const page = (from: number, to: number) => { let query = supabase
+    .from('jobs')
+    .select(JOB_LIST_COLUMNS, { count: 'exact' })
+    .order('planned_start', { ascending: true, nullsFirst: false })
+    .order('created_at', { ascending: false }).order('id').range(from,to);
+  if (!includeArchived) query = query.is('archived_at', null);
+  return query.returns<ProductionJob[]>(); };
+  const [data, reworks] = await Promise.all([
+    loadCompleteRows(page),
+    loadCompleteRows((from,to)=>supabase.from('production_rework_cycles').select(ACTIVE_REWORK_COLUMNS, { count: 'exact' }).not('production_status', 'in', '(complete,cancelled)').order('sequence_number', { ascending: false }).order('id').range(from,to).returns<ProductionReworkCycle[]>()),
+  ]);
+  const activeByJob = new Map<string, ProductionReworkCycle>();
+  for (const cycle of reworks as unknown as ProductionReworkCycle[]) {
+    if (isActiveProductionRework(cycle) && !activeByJob.has(cycle.job_id)) {
+      activeByJob.set(cycle.job_id, cycle);
+    }
+  }
+  return ((data ?? []) as unknown as ProductionJob[]).map((row) => {
+    const job = hydrateProject(row);
+    const cycle = activeByJob.get(job.id);
+    return applyProductionLifecycle(job, cycle ?? null);
+  });
+}
+
+/** Read-only Intake schedule projection; full editable Jobs retain their own loader. */
+export type ProductionScheduleJob = Pick<ProductionJob,
+  'id' | 'name' | 'job_number' | 'production_status' | 'planned_start' | 'planned_end' | 'lifecycle_key'> & {
+  rework_cycle?: Pick<ProductionReworkCycle, 'id'> | null;
+};
+export async function loadProductionScheduleJobs(): Promise<ProductionScheduleJob[]> {
+  type ScheduleCycle = Pick<ProductionReworkCycle, 'id' | 'job_id' | 'production_status' | 'planned_start' | 'planned_end' | 'sequence_number'>;
+  const [jobs, cycles] = await Promise.all([
+    loadCompleteRows((from, to) => supabase.from('jobs')
+      .select('id,name,job_number,production_status,planned_start,planned_end', { count: 'exact' })
+      .is('archived_at', null).order('planned_start', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: false }).order('id').range(from, to).returns<ProductionScheduleJob[]>()),
+    loadCompleteRows((from, to) => supabase.from('production_rework_cycles')
+      .select('id,job_id,sequence_number,production_status,planned_start,planned_end', { count: 'exact' })
+      .not('production_status', 'in', '(complete,cancelled)').order('sequence_number', { ascending: false })
+      .order('id').range(from, to).returns<ScheduleCycle[]>()),
+  ]);
+  const active = new Map<string, ScheduleCycle>();
+  for (const cycle of cycles) if (isActiveProductionRework(cycle) && !active.has(cycle.job_id)) active.set(cycle.job_id, cycle);
+  return jobs.map(job => {
+    const cycle = active.get(job.id);
+    const effective = applyProductionLifecycle(job, cycle ?? null);
+    return { ...effective, rework_cycle: cycle ? { id: cycle.id } : null };
+  });
+}
+
+export async function loadProductionReworkCycles(jobId: string): Promise<ProductionReworkCycle[]> {
+  const { data, error } = await supabase.from('production_rework_cycles').select('*').eq('job_id', jobId).order('sequence_number', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as ProductionReworkCycle[];
+}
+
+export async function createProductionRework(input: {
+  jobId: string;
+  reasonCategory: ReworkReasonCategory;
+  scopeDetails: string;
+  intakeDate: string;
+  createdBy: string | null;
+}): Promise<ProductionReworkCycle> {
+  const { data, error } = await supabase.rpc('create_production_rework', {
+    p_job_id: input.jobId,
+    p_reason_category: input.reasonCategory,
+    p_scope_details: input.scopeDetails,
+    p_intake_date: input.intakeDate,
+    p_created_by: input.createdBy,
+  });
+  if (error) throw error;
+  return data as ProductionReworkCycle;
+}
+
+export async function saveProductionReworkScheduleBatch(args: {
+  p_proposals: Array<{ rework_cycle_id: string; original_planned_start: string | null; original_planned_end: string | null; original_updated_at: string; proposed_planned_start: string | null; proposed_planned_end: string | null; change_source: string }>;
+  p_changed_by: string;
+  p_change_note: string | null;
+  p_batch_id: string;
+}) {
+  const { data, error } = await supabase.rpc('save_production_rework_schedule_batch', args);
+  if (error) throw error;
+  return data as { updated_count: number; updated_reworks: ProductionReworkCycle[] };
+}
+
+export async function saveProductionReworkMixedScheduleBatch(args: {
+  p_job_proposals: unknown[];
+  p_phase_proposals: unknown[];
+  p_rework_proposals: unknown[];
+  p_changed_by: string;
+  p_change_note: string | null;
+  p_batch_id: string;
+}) {
+  const { data, error } = await supabase.rpc('save_production_rework_mixed_schedule_batch', args);
+  if (error) throw error;
+  return data as { updated_count: number; updated_jobs: import('./schedule-batch-contract').ProductionScheduleBatchUpdatedJob[]; updated_phases: import('@/modules/planning/types').PlanningPhase[]; updated_reworks: ProductionReworkCycle[] };
+}
+
+export async function updateProductionReworkStatus(cycleId: string, status: ProductionJob['production_status'], expectedUpdatedAt: string, actorName: string | null) {
+  const { data, error } = await supabase.rpc('update_production_rework_status', {
+    p_rework_cycle_id: cycleId,
+    p_production_status: status,
+    p_expected_updated_at: expectedUpdatedAt,
+    p_actor_name: actorName,
+  });
+  if (error) throw error;
+  return data as ProductionReworkCycle;
+}
+
+export type ProductionIntegrationSummary = { actualHours: number; laborEntryCount: number; materialReportDates: string[] };
+export async function loadProductionJobLaborLifecycleSummary(jobId: string): Promise<JobLaborLifecycleSummary> {
+  const data = await loadCompleteLabor((from, to) => supabase
+    .from('manpower_entries')
+    .select('id,job_id,rework_cycle_id,am_hours,pm_hours,rework_cycle:production_rework_cycles!manpower_entries_rework_matches_job_fkey(id,sequence_number)', { count: 'exact' })
+    .eq('job_id', jobId).order('id').range(from, to));
+  return summarizeLaborLifecycles(data ?? []).get(jobId) ?? {
+    jobId,
+    totalHours: 0,
+    entryCount: 0,
+    originalOrUnclassifiedHours: 0,
+    originalOrUnclassifiedEntryCount: 0,
+    reworks: [],
+  };
+}
+export async function loadJobUpdateSummaries(jobIds?:string[]): Promise<Record<string, JobUpdateSummary>> {
+  if(jobIds?.length===0)return {};
+  const loadUnseen=async()=>{
+    const session=await supabase.auth.getSession();
+    if(session.error)throw session.error;
+    if(!session.data.session)return [] as Array<{id:string;job_id:string}>;
+    return loadScopedRows(jobIds,async(scope,from,to)=>{
+      let query=supabase.rpc('list_my_unseen_job_update_jobs',{}, {count:'exact'}).order('job_id').range(from,to);
+      if(scope)query=query.in('job_id',scope);
+      const result=await query;
+      // Preserve the released compatibility behavior for older backends only.
+      if(result.error?.code==='PGRST202')return {data:[],error:null,count:0};
+      return {...result,data:result.data?.map((row:{job_id:string})=>({...row,id:row.job_id}))??null};
+    });
+  };
+  const [data,unseen]=await Promise.all([
+    loadScopedRows(jobIds,(scope,from,to)=>{
+      let query=supabase.from('job_updates').select('id,job_id,created_at,requires_follow_up,resolved_at,follow_up_assignee_name',{count:'exact'}).order('id').range(from,to);
+      if(scope)query=query.in('job_id',scope);
+      return query;
+    }),loadUnseen(),
+  ]);
+  const unseenJobIds=new Set(unseen.map(row=>row.job_id));
+  const grouped:Record<string,typeof data>={};
+  for(const row of data)(grouped[row.job_id]??=[]).push(row);
+  return Object.fromEntries(Object.entries(grouped).map(([jobId,rows])=>[jobId,{...summarizeJobUpdates(rows),hasUnseenActivity:unseenJobIds.has(jobId)}]));
+}
+
+export async function markJobUpdatesSeen(jobId: string) {
+  const { error } = await supabase.rpc('mark_my_job_updates_seen', { p_job_id: jobId });
+  if (error && error.code !== 'PGRST202') throw error;
+}
+
+export async function loadProductionIntegrationSummaries(jobIds: string[]): Promise<Record<string, ProductionIntegrationSummary>> {
+  const ids = [...new Set(jobIds)];
+  const summaries: Record<string, ProductionIntegrationSummary> = {};
+  // Bounded URL scopes; preserve lifetime hours, including all Rework cycles.
+  for (let offset = 0; offset < ids.length; offset += 200) {
+    const scope = ids.slice(offset, offset + 200);
+    const [labor, materials] = await Promise.all([
+      loadCompleteRows((from, to) => supabase.from('manpower_entries')
+        .select('id,job_id,am_hours,pm_hours', { count: 'exact' }).in('job_id', scope).order('id').range(from, to)),
+      loadCompleteRows((from, to) => supabase.from('material_usage_reports')
+        .select('id,job_id,report_date', { count: 'exact' }).in('job_id', scope).order('id').range(from, to)),
+    ]);
+    for (const row of labor) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].actualHours += Number(row.am_hours ?? 0) + Number(row.pm_hours ?? 0); summaries[id].laborEntryCount += 1; }
+    for (const row of materials) { const id = String(row.job_id); summaries[id] ??= { actualHours: 0, laborEntryCount: 0, materialReportDates: [] }; summaries[id].materialReportDates.push(String(row.report_date)); }
+  }
+  return summaries;
+}
+
+export async function archiveProductionJob(job: ProductionJob): Promise<ProductionJob> {
+  if (job.rework_cycle) throw new Error('Complete or cancel the active Rework before archiving this Production Job.');
+  if (!['complete', 'shipped', 'cancelled'].includes(job.production_status)) throw new Error('Only Complete, Shipped, or Cancelled jobs can be archived.');
+  const archivedAt = new Date().toISOString();
+  const { data, error } = await supabase.from('jobs').update({ archived_at: archivedAt }).eq('id', job.id).is('archived_at', null).select(JOB_COLUMNS).single();
+  if (error) throw error;
+  await supabase.from('job_activity').insert({ job_id: job.id, event_type: 'job_archived', summary: `Job archived: ${job.name}`, metadata: { archived_at: archivedAt } });
+  return hydrateProject(data);
+}
+
+export async function restoreProductionJob(job: ProductionJob): Promise<ProductionJob> {
+  if (!job.archived_at) throw new Error('Only archived jobs can be restored.');
+  const { data, error } = await supabase.from('jobs').update({ archived_at: null }).eq('id', job.id).not('archived_at', 'is', null).select(JOB_COLUMNS).single();
+  if (error) throw error;
+  const { error: activityError } = await supabase.from('job_activity').insert({ job_id: job.id, event_type: 'job_restored', summary: `Job restored: ${job.name}`, metadata: { previous_archived_at: job.archived_at } });
+  if (activityError) console.error('Job restored, but activity logging failed:', activityError);
+  return hydrateProject(data);
+}
+
+async function loadJobNumberConflict(jobNumber:string|null|undefined,excludeJobId?:string){
+  if(!jobNumber)return null;
+  const{data,error}=await supabase.from('jobs').select('id,name,job_number').not('job_number','is',null);
+  if(error)throw error;
+  return findJobNumberConflict((data??[]) as Array<Pick<ProductionJob,'id'|'name'|'job_number'>>,jobNumber,excludeJobId);
+}
+
+export async function createProductionJob(
+  input: NewProductionJob,
+): Promise<ProductionJob> {
+  if (input.planned_start || input.planned_end) {
+    throw new Error('Initial planned dates must use the guarded Production schedule workflow.');
+  }
+  const canonicalInput={...input,job_number:canonicalJobNumber(input.job_number)};
+  const conflict=await loadJobNumberConflict(canonicalInput.job_number);
+  if(conflict)throw new Error(jobNumberConflictMessage(canonicalInput.job_number,conflict));
+  const { job, contact } = splitProject(canonicalInput);
+  const { data, error } = await supabase.rpc('save_production_project', {
+    p_job_id: null,
+    p_job: { ...job, production_status: 'not_started', material_status: 'unknown', priority: 'normal',
+      progress_percent: 0, owner_name: null, contract_value: null, resin_po: null, chip_po: null },
+    p_contact: contact, p_save_contact: Object.keys(contact).length > 0,
+  });
+
+  if(error){if(isJobNumberUniqueViolation(error))throw new Error(jobNumberConflictMessage(canonicalInput.job_number));throw error;}
+
+  const createdJob = await loadProductionJob(String(data));
+  if (!createdJob) throw new Error('Created Project unavailable.');
+
+  const { error: activityError } = await supabase.from('job_activity').insert({
+    job_id: createdJob.id,
+    event_type: 'job_created',
+    summary: `Job created: ${createdJob.name}`,
+    metadata: {
+      customer: createdJob.customer,
+      job_number: createdJob.job_number,
+      planned_start: createdJob.planned_start,
+      planned_end: createdJob.planned_end,
+    },
+  });
+
+  if (activityError) {
+    console.error('Job created, but activity logging failed:', activityError);
+  }
+
+  return createdJob;
+}
+
+export async function updateProductionJob(
+  currentJob: ProductionJob,
+  changes: ProductionJobUpdate,
+): Promise<ProductionJob> {
+  if (currentJob.rework_cycle && changes.production_status) {
+    if (Object.keys(changes).length > 1) {
+      throw new Error('Save job-detail changes separately before changing the Rework Production status.');
+    }
+    const status = changes.production_status;
+    const updatedCycle = await updateProductionReworkStatus(currentJob.rework_cycle.id, status, currentJob.rework_cycle.updated_at, null);
+    return { ...currentJob, production_status: updatedCycle.production_status, updated_at: updatedCycle.updated_at, rework_cycle: updatedCycle };
+  }
+  const canonicalChanges={...changes,...('job_number'in changes?{job_number:canonicalJobNumber(changes.job_number)}:{})};
+  const effectiveChanges = Object.fromEntries(
+    Object.entries(canonicalChanges).filter(([field, value]) => (
+      !productionValuesEqual(field as keyof ProductionJob, currentJob[field as keyof ProductionJob], value)
+    )),
+  ) as ProductionJobUpdate;
+  const changedFields = Object.keys(effectiveChanges) as Array<keyof ProductionJobUpdate>;
+  if (changedFields.length === 0) return currentJob;
+  if('job_number'in effectiveChanges){const conflict=await loadJobNumberConflict(effectiveChanges.job_number,currentJob.id);if(conflict)throw new Error(jobNumberConflictMessage(effectiveChanges.job_number,conflict));}
+
+  const { job, contact } = splitProject(effectiveChanges);
+  const saveContact = Object.keys(contact).length > 0;
+  const { data, error } = await supabase.rpc('save_production_project', {
+    p_job_id: currentJob.id, p_job: job,
+    p_contact: { ...splitProject(currentJob).contact, ...contact }, p_save_contact: saveContact,
+  });
+
+  if(error){if(isJobNumberUniqueViolation(error))throw new Error(jobNumberConflictMessage(effectiveChanges.job_number??currentJob.job_number));throw error;}
+
+  const updatedJob = await loadProductionJob(String(data));
+  if (!updatedJob) throw new Error('Updated Project unavailable.');
+  const publicFields = changedFields.filter(field => !CONTACT_FIELDS.includes(field as typeof CONTACT_FIELDS[number]));
+
+  const { error: activityError } = await supabase.from('job_activity').insert({
+    job_id: currentJob.id,
+    event_type: 'job_updated',
+    summary: `Job updated: ${updatedJob.name}`,
+    metadata: {
+      changed_fields: publicFields,
+      changes: Object.fromEntries(publicFields.map(field => [field, effectiveChanges[field]])),
+      old_values: Object.fromEntries(publicFields.map((field) => [field, currentJob[field]])),
+      new_values: Object.fromEntries(publicFields.map((field) => [field, updatedJob[field]])),
+    },
+  });
+
+  if (activityError) {
+    console.error('Job updated, but activity logging failed:', activityError);
+  }
+
+  return updatedJob;
+}
+
+export async function saveProductionScheduleBatch(args: ProductionScheduleBatchRpcArgs): Promise<ProductionScheduleBatchSuccess> {
+  const { data, error } = await supabase.rpc('save_production_schedule_batch', args);
+  if (error) throw error;
+  return data as ProductionScheduleBatchSuccess;
+}
+
+export async function saveProductionPlanningScheduleBatch(args: import('./schedule-batch-contract').MixedScheduleBatchRpcArgs): Promise<import('./schedule-batch-contract').MixedScheduleBatchSuccess> {
+  const { data, error } = await supabase.rpc('save_production_planning_schedule_batch', args);
+  if (error) throw error;
+  return data as import('./schedule-batch-contract').MixedScheduleBatchSuccess;
+}
+
+export type ProductionJobActivity = { id: string; event_type: string; summary: string; actor_name: string | null; metadata: Record<string, unknown>; occurred_at: string };
+
+export async function loadProductionJobActivity(jobId: string): Promise<ProductionJobActivity[]> {
+  const { data, error } = await supabase.from('job_activity').select('id,event_type,summary,actor_name,metadata,occurred_at').eq('job_id', jobId).order('occurred_at', { ascending: false }).limit(20);
+  if (error) throw error;
+  return (data ?? []) as ProductionJobActivity[];
+}
+
+export async function loadJobUpdates(jobId: string): Promise<JobUpdate[]> {
+  return loadCompleteRows((from,to)=>supabase.from('job_updates').select(JOB_UPDATE_COLUMNS,{count:'exact'}).eq('job_id',jobId).order('created_at',{ascending:false}).order('id').range(from,to).returns<JobUpdate[]>());
+}
+
+export async function createJobUpdate(
+  jobId: string,
+  authorName: string,
+  body: string,
+  requiresFollowUp: boolean,
+  followUpAssigneeName: string | null,
+  followUpAssigneeUserId: string | null = null,
+  mentionedUserIds: string[] = [],
+): Promise<JobUpdate> {
+  const author = authorName.trim();
+  const updateBody = body.trim();
+  if (!author) throw new Error('Your name is required.');
+  if (!updateBody) throw new Error('Enter an update before posting.');
+  const assignee = followUpAssigneeName?.trim() || null;
+  if (requiresFollowUp && !assignee) {
+    throw new Error('Select who needs to resolve this update.');
+  }
+
+  const { data, error } = await supabase.rpc('create_job_update_with_mentions', {
+    p_job_id: jobId,
+    p_author_name: author,
+    p_body: updateBody,
+    p_requires_follow_up: requiresFollowUp,
+    p_follow_up_assignee_name: requiresFollowUp ? assignee : null,
+    p_follow_up_assignee_user_id: requiresFollowUp ? followUpAssigneeUserId : null,
+    p_mentioned_user_ids: mentionedUserIds,
+  });
+
+  if (error) throw error;
+  return data as unknown as JobUpdate;
+}
+
+export async function editJobUpdate(
+  updateId: string,
+  body: string,
+  requiresFollowUp: boolean,
+  followUpAssigneeName: string | null,
+  followUpAssigneeUserId: string | null = null,
+  mentionedUserIds: string[] = [],
+): Promise<JobUpdate> {
+  const updateBody = body.trim();
+  if (!updateBody) throw new Error('Enter an update before saving.');
+  const assignee = followUpAssigneeName?.trim() || null;
+  if (requiresFollowUp && !assignee) {
+    throw new Error('Select who needs to resolve this update.');
+  }
+
+  const { data, error } = await supabase.rpc('edit_job_update_with_mentions', {
+    p_update_id: updateId,
+    p_body: updateBody,
+    p_requires_follow_up: requiresFollowUp,
+    p_follow_up_assignee_name: requiresFollowUp ? assignee : null,
+    p_follow_up_assignee_user_id: requiresFollowUp ? followUpAssigneeUserId : null,
+    p_mentioned_user_ids: mentionedUserIds,
+  });
+
+  if (error) throw error;
+  return data as unknown as JobUpdate;
+}
+
+export async function deleteJobUpdate(updateId: string): Promise<void> {
+  const { error } = await supabase.rpc('delete_job_update', {
+    p_update_id: updateId,
+  });
+  if (error) throw error;
+}
+
+export async function resolveJobUpdate(
+  update: JobUpdate,
+  resolverName: string,
+  resolutionMessage: string,
+  resolverUserId: string | null = null,
+): Promise<JobUpdate> {
+  const resolver = resolverName.trim();
+  if (!resolver) throw new Error('Resolver name is required.');
+  if (!update.requires_follow_up) {
+    throw new Error('Only follow-up updates can be resolved.');
+  }
+
+  const { data, error } = await supabase.rpc('resolve_job_update_with_identity', {
+    p_update_id: update.id,
+    p_resolved_by_name: resolver,
+    p_resolution_message: resolutionMessage.trim() || null,
+    p_resolved_by_user_id: resolverUserId,
+  });
+
+  if (error) throw error;
+  return data as unknown as JobUpdate;
+}
+
+export async function loadJobUpdateCollaborators() {
+  const { data, error } = await supabase.rpc('list_active_job_update_collaborators');
+  if (error) throw error;
+  return ((data ?? []) as Array<{ user_id: string; display_name: string; role: string }>).map((row) => ({
+    userId: row.user_id,
+    displayName: operationalFirstName(row.display_name),
+    role: row.role,
+  }));
+}
+
+export async function loadJobUpdateMentions(jobId: string) {
+  const { data, error } = await supabase.rpc('list_job_update_mentions', { p_job_id: jobId });
+  if (error) throw error;
+  return ((data ?? []) as Array<{ update_id: string; user_id: string; display_name: string; is_active: boolean }>).map((row) => ({
+    updateId: row.update_id,
+    userId: row.user_id,
+    displayName: operationalFirstName(row.display_name),
+    isActive: row.is_active,
+  }));
+}
+
+export async function loadJobAttachmentCounts(jobIds?:string[]): Promise<
+  Record<string, number>
+> {
+  const data = await loadScopedRows(jobIds,(scope,from,to)=>{
+    let query=supabase.from('job_attachments').select('id,job_id',{count:'exact'}).order('id').range(from,to);
+    if(scope)query=query.in('job_id',scope);
+    return query;
+  });
+
+  return (data ?? []).reduce<Record<string, number>>((counts, row) => {
+    const jobId = String(row.job_id);
+    counts[jobId] = (counts[jobId] ?? 0) + 1;
+    return counts;
+  }, {});
+}
+
+export async function loadJobAttachments(
+  jobId: string,
+): Promise<JobAttachment[]> {
+  return await loadCompleteRows((from, to) => supabase
+    .from('job_attachments')
+    .select(ATTACHMENT_COLUMNS, { count: 'exact' })
+    .eq('job_id', jobId)
+    .order('created_at', { ascending: false }).order('id').range(from, to)
+    .returns<JobAttachment[]>());
+
+}
+
+function safeFileName(fileName: string) {
+  return fileName.replace(/[^a-zA-Z0-9._-]+/g, '_');
+}
+
+export async function uploadJobAttachments(
+  jobId: string,
+  files: File[],
+  documentType: JobDocumentType,
+  jobUpdateId: string | null = null,
+  uploadedBy: string | null = null,
+  jobUpdateAttachmentRole: 'update' | 'resolution' | null =
+    jobUpdateId ? 'update' : null,
+): Promise<JobAttachment[]> {
+  const uploaded: JobAttachment[] = [];
+
+  for (const file of files) {
+    const storagePath = `${jobId}/${crypto.randomUUID()}-${safeFileName(
+      file.name,
+    )}`;
+
+    const { error: storageError } = await supabase.storage
+      .from('job-attachments')
+      .upload(storagePath, file, {
+        cacheControl: '3600',
+        contentType: file.type || undefined,
+        upsert: false,
+      });
+
+    if (storageError) throw storageError;
+
+    const { data, error: recordError } = await supabase
+      .from('job_attachments')
+      .insert({
+        job_id: jobId,
+        file_name: file.name,
+        storage_path: storagePath,
+        mime_type: file.type || null,
+        size_bytes: file.size,
+        document_type: documentType,
+        job_update_id: jobUpdateId,
+        job_update_attachment_role: jobUpdateAttachmentRole,
+        uploaded_by: uploadedBy?.trim() || null,
+      })
+      .select(ATTACHMENT_COLUMNS)
+      .single();
+
+    if (recordError) {
+      await supabase.storage.from('job-attachments').remove([storagePath]);
+      throw recordError;
+    }
+
+    uploaded.push(data as unknown as JobAttachment);
+  }
+
+  if (uploaded.length > 0) {
+    const { error: activityError } = await supabase.from('job_activity').insert({
+      job_id: jobId,
+      event_type: 'attachments_uploaded',
+      summary: `${uploaded.length} attachment${uploaded.length === 1 ? '' : 's'} uploaded`,
+      metadata: {
+        attachment_ids: uploaded.map((attachment) => attachment.id),
+        file_names: uploaded.map((attachment) => attachment.file_name),
+      },
+    });
+
+    if (activityError) {
+      console.error('Attachments uploaded, but activity logging failed:', activityError);
+    }
+  }
+
+  return uploaded;
+}
+
+export async function createJobAttachmentDownloadUrl(
+  storagePath: string,
+): Promise<string> {
+  const { data, error } = await supabase.storage
+    .from('job-attachments')
+    .createSignedUrl(storagePath, 60 * 10);
+
+  if (error) throw error;
+  return data.signedUrl;
+}
+
+export async function deleteJobAttachment(
+  attachment: JobAttachment,
+): Promise<void> {
+  const { error: storageError } = await supabase.storage
+    .from('job-attachments')
+    .remove([attachment.storage_path]);
+
+  if (storageError) throw storageError;
+
+  const { error: rowError } = await supabase
+    .from('job_attachments')
+    .delete()
+    .eq('id', attachment.id);
+
+  if (rowError) throw rowError;
+}
+
+export type ProductionJobDeletePreflight={eligible:boolean;blockers:string[];confirmationValue:string;attachmentCount:number};
+export async function preflightPermanentProductionJobDelete(jobId:string):Promise<ProductionJobDeletePreflight>{const{data,error}=await supabase.rpc('preflight_admin_delete_production_job',{p_job_id:jobId});if(error)throw error;const row=(data as Array<{eligible:boolean;blockers:string[];confirmation_value:string;attachment_count:number}>|null)?.[0];if(!row)throw new Error('Unable to evaluate Production Job cleanup.');return{eligible:row.eligible,blockers:Array.isArray(row.blockers)?row.blockers:[],confirmationValue:row.confirmation_value,attachmentCount:Number(row.attachment_count)};}
+export async function permanentlyDeleteProductionJob(jobId:string,confirmation:string):Promise<void>{const prepared=await supabase.rpc('prepare_admin_delete_production_job',{p_job_id:jobId});if(prepared.error)throw prepared.error;const paths=((prepared.data??[]) as Array<{storage_path:string}>).map((row)=>row.storage_path);if(paths.length){const removed=await supabase.storage.from('job-attachments').remove(paths);if(removed.error)throw removed.error;}const finalized=await supabase.rpc('admin_permanently_delete_production_job',{p_job_id:jobId,p_confirmation:confirmation});if(finalized.error)throw finalized.error;}
+
+export async function loadProductionJob(jobId: string): Promise<ProductionJob | null> {
+  const { data, error } = await supabase
+    .from('jobs')
+    .select(JOB_COLUMNS)
+    .eq('id', jobId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ? hydrateProject(data) : null;
+}

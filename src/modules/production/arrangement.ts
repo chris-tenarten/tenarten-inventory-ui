@@ -1,0 +1,52 @@
+import type { ProductionJob, ProductionStatus } from './types';
+
+export type ProductionArrangement = 'stage' | 'recent' | 'deadline';
+export type PersistedProductionArrangement = 'stage' | 'deadline' | 'labor';
+export const PRODUCTION_ARRANGEMENT_KEY = 'tenops.productionArrangement';
+
+export function normalizeProductionArrangement(value: string | null | undefined): ProductionArrangement {
+  if (value === 'labor' || value === 'recent') return 'recent';
+  return value === 'deadline' ? 'deadline' : 'stage';
+}
+
+export function persistedProductionArrangement(value: ProductionArrangement): PersistedProductionArrangement {
+  // The hosted preference contract still accepts "labor"; it is now the
+  // backwards-compatible wire value for the Recent Overview arrangement.
+  if (value === 'recent') return 'labor';
+  return value === 'deadline' ? 'deadline' : 'stage';
+}
+
+const stageOrder: Record<ProductionStatus, number> = {
+  in_production: 0, on_deck: 1, not_started: 2, on_hold: 3,
+  complete: 4, shipped: 5, cancelled: 6,
+};
+
+const identity = (first: ProductionJob, second: ProductionJob) =>
+  (first.job_number ?? '').localeCompare(second.job_number ?? '') || first.name.localeCompare(second.name) || first.id.localeCompare(second.id);
+const date = (value: string | null) => value ?? '9999-12-31';
+
+export function arrangeProductionJobs(jobs: ProductionJob[], arrangement: ProductionArrangement, today = new Date().toISOString().slice(0, 10)) {
+  return [...jobs].sort((first, second) => {
+    if (arrangement === 'recent') return (second.created_at ?? '').localeCompare(first.created_at ?? '') || identity(first, second);
+    if (arrangement === 'deadline') {
+      const firstDate = date(first.requested_delivery_date); const secondDate = date(second.requested_delivery_date);
+      const firstOverdue = firstDate < today ? 0 : 1; const secondOverdue = secondDate < today ? 0 : 1;
+      return firstOverdue - secondOverdue || firstDate.localeCompare(secondDate) || identity(first, second);
+    }
+    return stageOrder[first.production_status] - stageOrder[second.production_status]
+      || date(first.requested_delivery_date).localeCompare(date(second.requested_delivery_date))
+      || date(first.planned_start).localeCompare(date(second.planned_start))
+      || identity(first, second);
+  });
+}
+
+export function arrangeProductionTimelineJobs(jobs: ProductionJob[]) {
+  return [...jobs].sort((first, second) => {
+    const firstHistorical = first.production_status === 'complete' || first.production_status === 'cancelled' ? 1 : 0;
+    const secondHistorical = second.production_status === 'complete' || second.production_status === 'cancelled' ? 1 : 0;
+    return firstHistorical - secondHistorical
+      || date(first.planned_start).localeCompare(date(second.planned_start))
+      || date(first.planned_end).localeCompare(date(second.planned_end))
+      || identity(first, second);
+  });
+}

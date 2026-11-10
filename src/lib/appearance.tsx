@@ -1,0 +1,123 @@
+"use client";
+
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useAccountPreferences } from "@/lib/account-preferences";
+import { BRANDING } from "@/lib/dev-branding.mjs";
+
+import { APPEARANCE_STORAGE_KEY, TENDEV_APPEARANCE_STORAGE_KEY } from "./appearance-storage";
+export { APPEARANCE_STORAGE_KEY, TENDEV_APPEARANCE_STORAGE_KEY } from "./appearance-storage";
+export const APPEARANCES = ["light", "dark"] as const;
+export type Appearance = (typeof APPEARANCES)[number];
+
+type AppearanceContextValue = {
+  appearance: Appearance;
+  setAppearance: (appearance: Appearance) => void;
+};
+
+const AppearanceContext = createContext<AppearanceContextValue | null>(null);
+
+export function isAppearance(value: unknown): value is Appearance {
+  return APPEARANCES.includes(value as Appearance);
+}
+
+function applyAppearance(appearance: Appearance) {
+  document.documentElement.dataset.appearance = appearance;
+}
+
+function readStoredAppearance(storageKey: string) {
+  try {
+    const stored = window.localStorage.getItem(storageKey);
+    return isAppearance(stored) ? stored : null;
+  } catch {
+    return null;
+  }
+}
+
+export function ThemeProvider({
+  children,
+  defaultAppearance = "light",
+}: {
+  children: ReactNode;
+  defaultAppearance?: Appearance;
+}) {
+  const accountPreferences = useAccountPreferences();
+  const isTenDev = BRANDING.showDeveloperArtwork;
+  const storageKey = isTenDev ? TENDEV_APPEARANCE_STORAGE_KEY : APPEARANCE_STORAGE_KEY;
+  const [appearance, setAppearanceState] = useState<Appearance>(defaultAppearance);
+
+  useLayoutEffect(() => {
+    // Keep the already-painted login Appearance while an authenticated
+    // account's canonical preference is resolving. Applying the TenDev default
+    // in this gap causes a light Hero to flash dark during sign-in.
+    if (!isTenDev && accountPreferences.accountScoped && !accountPreferences.ready) return;
+    const accountAppearance = accountPreferences.preferences.appearance;
+    const initial = isTenDev
+      ? readStoredAppearance(storageKey) ?? defaultAppearance
+      : accountPreferences.accountScoped
+        ? (isAppearance(accountAppearance) ? accountAppearance : defaultAppearance)
+        : readStoredAppearance(storageKey)
+        ?? (isAppearance(document.documentElement.dataset.appearance)
+          ? document.documentElement.dataset.appearance
+          : defaultAppearance);
+    applyAppearance(initial);
+    try {
+      window.localStorage.setItem(storageKey, initial);
+    } catch {
+      // Appearance still applies when browser storage is unavailable.
+    }
+    const timeout = window.setTimeout(() => setAppearanceState(initial), 0);
+
+    function syncAppearance(event: StorageEvent) {
+      if (event.key !== storageKey || (!isTenDev && accountPreferences.accountScoped)) return;
+      const next = isAppearance(event.newValue) ? event.newValue : defaultAppearance;
+      setAppearanceState(next);
+      applyAppearance(next);
+    }
+
+    window.addEventListener("storage", syncAppearance);
+    return () => {
+      window.clearTimeout(timeout);
+      window.removeEventListener("storage", syncAppearance);
+    };
+  }, [accountPreferences.accountScoped, accountPreferences.preferences.appearance, accountPreferences.ready, defaultAppearance, isTenDev, storageKey]);
+
+  const setAppearance = useCallback((next: Appearance) => {
+    setAppearanceState(next);
+    applyAppearance(next);
+    try {
+      // Retain the last-used visual mode for the next pre-authentication paint.
+      window.localStorage.setItem(storageKey, next);
+    } catch {
+      // Appearance still applies for the current page when storage is unavailable.
+    }
+    if (!isTenDev && accountPreferences.accountScoped) {
+      void accountPreferences.setPreference("appearance", next);
+      return;
+    }
+  }, [accountPreferences, isTenDev, storageKey]);
+
+  const value = useMemo(
+    () => ({ appearance, setAppearance }),
+    [appearance, setAppearance],
+  );
+
+  return (
+    <AppearanceContext.Provider value={value}>
+      {children}
+    </AppearanceContext.Provider>
+  );
+}
+
+export function useAppearance() {
+  const context = useContext(AppearanceContext);
+  if (!context) throw new Error("useAppearance must be used within ThemeProvider.");
+  return context;
+}

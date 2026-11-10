@@ -1,0 +1,146 @@
+export const APP_ROLES = ["guest", "member", "lead", "developer", "admin"] as const;
+export type AppRole = (typeof APP_ROLES)[number];
+
+export const CAPABILITIES = [
+  "writeBusinessData",
+  "messaging.write",
+  "production_blend.manage",
+  "sample_labels.generate",
+  "readOperationalData",
+  "accessIntake",
+  "viewIntake",
+  "createProductionJob",
+  "editProductionJobRoutine",
+  "editProductionJobDetails",
+  "archiveProductionJob",
+  "scheduleProduction",
+  "manageProductionRework",
+  "modifyPlanning",
+  "managePhaseLibrary",
+  "manageManpowerProductCategories",
+  "postJobUpdate",
+  "editJobUpdate",
+  "deleteJobUpdate",
+  "assignJobUpdate",
+  "resolveJobUpdate",
+  "uploadSupportingFiles",
+  "deleteSupportingFiles",
+  "createPurchaseOrderDraft",
+  "issuePurchaseOrder",
+  "previewOperationalDocuments",
+  "issueTransmittal",
+  "receiveInventory",
+  "adjustInventory",
+  "manageVendorsCatalog",
+  "accessDevelopmentEnvironment",
+  "manageUsers",
+  "manageRolesPermissions",
+] as const;
+
+export type Capability = (typeof CAPABILITIES)[number];
+
+const guest = ["writeBusinessData", "messaging.write", "accessIntake", "viewIntake", "readOperationalData", "previewOperationalDocuments"] as const;
+const member = [
+  ...guest,
+  "createProductionJob",
+  "editProductionJobRoutine",
+  "modifyPlanning",
+  "postJobUpdate",
+  "editJobUpdate",
+  "assignJobUpdate",
+  "resolveJobUpdate",
+  "uploadSupportingFiles",
+  "deleteSupportingFiles",
+  "createPurchaseOrderDraft",
+  "receiveInventory",
+] as const;
+const lead = [
+  ...member,
+  "editProductionJobDetails",
+  "archiveProductionJob",
+  "scheduleProduction",
+  "manageProductionRework",
+  "managePhaseLibrary",
+  "manageManpowerProductCategories",
+  "issuePurchaseOrder",
+  "issueTransmittal",
+  "adjustInventory",
+  "manageVendorsCatalog",
+] as const;
+const developer = [...guest, "accessDevelopmentEnvironment"] as const;
+
+export const ROLE_CAPABILITIES: Record<AppRole, readonly Capability[]> = {
+  guest,
+  member,
+  lead,
+  developer,
+  admin: CAPABILITIES,
+};
+
+export const ROLE_LABELS: Record<AppRole, string> = {
+  guest: "Guest",
+  member: "Member",
+  lead: "Lead",
+  developer: "Developer",
+  admin: "Admin",
+};
+
+export const CAPABILITY_LABELS: Record<Capability, string> = {
+  writeBusinessData: "Write business data (subject to role permissions)",
+  "messaging.write": "Participate in Messaging",
+  "production_blend.manage": "Manage Production Blend planning (explicit grant)",
+  "sample_labels.generate": "Generate Color Plate Labels",
+  readOperationalData: "View operational data",
+  accessIntake: "Manage Intake",
+  viewIntake: "View Intake",
+  createProductionJob: "Create Production Jobs",
+  editProductionJobRoutine: "Update routine Production details",
+  editProductionJobDetails: "Edit elevated Production Job details",
+  archiveProductionJob: "Archive and restore Production Jobs",
+  scheduleProduction: "Schedule Production",
+  manageProductionRework: "Create and manage Rework",
+  modifyPlanning: "Modify Planning",
+  managePhaseLibrary: "Manage Phase Library",
+  manageManpowerProductCategories: "Manage Manhour Product Categories",
+  postJobUpdate: "Post Job Updates",
+  editJobUpdate: "Edit Job Updates",
+  deleteJobUpdate: "Delete Job Updates",
+  assignJobUpdate: "Assign Job Updates",
+  resolveJobUpdate: "Resolve Job Updates",
+  uploadSupportingFiles: "Upload supporting files",
+  deleteSupportingFiles: "Delete supporting files",
+  createPurchaseOrderDraft: "Create Purchase Order drafts",
+  issuePurchaseOrder: "Issue Purchase Orders",
+  previewOperationalDocuments: "Preview operational documents",
+  issueTransmittal: "Issue Letters of Transmittal",
+  receiveInventory: "Receive Inventory",
+  adjustInventory: "Adjust Inventory",
+  manageVendorsCatalog: "Manage vendors and catalog",
+  accessDevelopmentEnvironment: "Access development environment",
+  manageUsers: "Manage users and access",
+  manageRolesPermissions: "Manage roles and permissions",
+};
+
+export const RBAC_MODE =
+  process.env.NEXT_PUBLIC_RBAC_MODE === "enforced" ? "enforced" : "compatibility";
+
+export function isAppRole(value: unknown): value is AppRole {
+  return typeof value === "string" && APP_ROLES.includes(value as AppRole);
+}
+
+export function roleHasCapability(role: AppRole, capability: Capability) {
+  return ROLE_CAPABILITIES[role].includes(capability);
+}
+
+// Read-only is a restriction on the existing role, never a visibility grant.
+export const READ_CAPABILITIES: readonly Capability[] = [
+  "readOperationalData", "viewIntake", "previewOperationalDocuments", "accessDevelopmentEnvironment",
+];
+export function accountHasCapability(role: AppRole, capability: Capability, readOnly: boolean, messagingWrite: boolean, productionBlendManage = false, sampleLabelsGenerate = false, jobUpdatesPost = false) {
+  if (capability === "postJobUpdate" && jobUpdatesPost && !readOnly) return true;
+  if (capability === "sample_labels.generate") return role === "admin" || sampleLabelsGenerate;
+  if (capability === "production_blend.manage") return role === "admin" || productionBlendManage;
+  if (capability === "messaging.write" && readOnly) return messagingWrite;
+  if (readOnly && !READ_CAPABILITIES.includes(capability)) return false;
+  return roleHasCapability(role, capability);
+}

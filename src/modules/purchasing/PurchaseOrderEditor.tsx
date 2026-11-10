@@ -1,0 +1,1576 @@
+"use client";
+import {useMobileNavigationGuard} from '@/components/mobile/useMobileNavigationGuard';
+
+import { BusinessButton, BusinessInput, BusinessSelect, BusinessTextarea } from '@/components/BusinessWriteControls';
+
+import { Download, FileText, RefreshCw, Search, Settings2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import DocumentViewer from "@/components/documents/DocumentViewer";
+import { pdfPreviewInputKey, SessionPdfPreviewCache } from "@/lib/pdf-preview-cache";
+import { JobTag } from "@/modules/production/components/JobTag";
+import {
+  formatProductionJobOptionWithStatus,
+  loadProductionJobOptions,
+  openProductionJob,
+  type ProductionJobOption,
+} from "@/modules/production/job-options";
+import CatalogSearchResults from "./CatalogSearchResults";
+import CatalogItemEditor from "./CatalogItemEditor";
+import PendingReceivalsReviewDialog from "./PendingReceivalsReviewDialog";
+import VendorManager from "./VendorManager";
+import {
+  calculatePurchaseOrderTotals,
+  centsToMoney,
+  lineTotalCents,
+} from "./calculations";
+import {
+  getPurchaseOrderCatalogOrderUnit,
+  loadPurchasingContainerSizeOptions,
+  samePurchasingVendor,
+  searchPurchasingCatalog,
+} from "./catalog";
+import { getApplicableCatalogPrice } from "./catalog-pricing";
+import LineAllocations from './LineAllocations';
+import { applyPurchaseOrderMaterialDefaults, createPurchaseOrderMaterialLine } from "./defaults";
+import { suggestedPartBQuantity } from "./resin-assist";
+import {
+  deletePurchaseOrderDraft,
+  createPendingReceivalsFromPurchaseOrder,
+  generatePurchaseOrderDraftPdf,
+  purchaseOrderDraftPdfInput,
+  generatePurchaseOrderPdf,
+  getPurchaseOrderPdfPreviewUrl,
+  issuePurchaseOrder,
+  purgeTestPurchaseOrder,
+  savePurchaseOrderDraft,
+} from "./mutations";
+import { getHistoricalPriceSuggestions } from "./pricing";
+import { loadPurchaseOrder, loadPurchaseOrderDocument, loadPurchaseOrderPendingReceivalProjection, loadVendors } from "./queries";
+import {
+  PurchasingChoiceWithCustom,
+  PurchasingVendorNameInput,
+  purchasingContainerTypes,
+  purchasingQuantityUnits,
+} from "./material-controls";
+import type {
+  PendingReceivalProposalLine,
+  PriceSuggestion,
+  PurchaseOrderDocument as PurchaseOrderPdfDocument,
+  PurchaseOrderDraft,
+  PurchaseOrderPendingReceivalProjection,
+  PurchaseOrderLine,
+  PurchaseOrderLineMaterialType,
+  PurchasingCatalogSuggestion,
+  VendorOption,
+} from "./types";
+import { useLanguage } from "@/lib/language";
+import { validatePurchaseOrderDraft } from "./validation";
+
+const field = "mt-1 h-10 w-full border border-slate-300 bg-white px-3 text-sm";
+const label = "text-xs font-bold uppercase tracking-[0.08em] text-slate-600";
+
+function containerSize(details: PurchaseOrderLine["details"]) {
+  return [details.packageQuantity, details.packageMeasure].filter(Boolean).join(" ");
+}
+
+function parseContainerSize(value: string) {
+  const source = value.trim();
+  const match = /^(\d+(?:\.\d+)?)\s*(.*)$/.exec(source);
+  return match
+    ? { packageQuantity: match[1], packageMeasure: match[2] }
+    : { packageQuantity: "", packageMeasure: source };
+}
+
+function LineEditor({
+  jobs,
+  line,
+  index,
+  vendorName,
+  vendorId,
+  vendors,
+  allLines,
+  onChange,
+  onRemove,
+  onDuplicate,
+}: {
+  jobs: ProductionJobOption[];
+  line: PurchaseOrderLine;
+  index: number;
+  vendorName: string;
+  vendorId: string;
+  vendors: VendorOption[];
+  allLines: PurchaseOrderLine[];
+  onChange(line: PurchaseOrderLine): void;
+  onRemove(): void;
+  onDuplicate(): void;
+}) {
+  const { tr } = useLanguage();
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<PurchasingCatalogSuggestion[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
+  const [resultKey, setResultKey] = useState("");
+  const searchKey = JSON.stringify([query, vendorName, line.materialType]);
+  const [containerError,setContainerError]=useState('');
+  const [catalogContainerSizes, setCatalogContainerSizes] = useState<string[]>([]);
+  const [reference, setReference] =
+    useState<PurchasingCatalogSuggestion | null>(null);
+  const [priceSuggestions, setPriceSuggestions] = useState<PriceSuggestion[]>(
+    [],
+  );
+  const [priceHistoryState, setPriceHistoryState] = useState<
+    "idle" | "loading" | "empty" | "error"
+  >("idle");
+  const [catalogEditor, setCatalogEditor] = useState<
+    "create" | "update" | "bulk" | "truckload" | null
+  >(null);
+  const searchRequest = useRef(0);
+  const details = line.details;
+  const set = (key: keyof typeof details, value: string) => {
+    const changesCatalogIdentity = [
+      "vendorSkuSnapshot",
+      "materialNameSnapshot",
+      "chipSize",
+      "resinColor",
+      "componentType",
+      "packageQuantity",
+      "packageMeasure",
+      "containerType",
+    ].includes(key);
+    if (changesCatalogIdentity) {
+      setReference(null);
+      setPriceSuggestions([]);
+      setPriceHistoryState("idle");
+    }
+    onChange({
+      ...line,
+      details: {
+        ...details,
+        ...(changesCatalogIdentity
+          ? { catalogSource: "", catalogItemId: "" }
+          : {}),
+        [key]: value,
+      },
+    });
+  };
+  useEffect(() => {
+    const request = ++searchRequest.current;
+    const timer = setTimeout(() => {
+      setResults([]);
+      setSearchError("");
+      if (query.trim().length < 2) {
+        setSearching(false);
+        return;
+      }
+      setSearching(true);
+      searchPurchasingCatalog(query, vendorName, line.materialType)
+        .then((items) => {
+          if (request === searchRequest.current) setResults(items);
+        })
+        .catch((error) => {
+          if (request === searchRequest.current)
+            setSearchError(
+              error instanceof Error ? error.message : "Catalog search failed.",
+            );
+        })
+        .finally(() => {
+          if (request === searchRequest.current) {
+            setSearching(false);
+            setResultKey(searchKey);
+          }
+        });
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [query, vendorName, line.materialType, searchKey]);
+  useEffect(() => {
+    let active = true;
+    loadPurchasingContainerSizeOptions(line.materialType, vendorName)
+      .then((options) => { if (active) {setCatalogContainerSizes(options);setContainerError('');} })
+      .catch(caught => { if (active) {setCatalogContainerSizes([]);setContainerError(caught instanceof Error?caught.message:"Container options unavailable.");} });
+    return () => { active = false; };
+  }, [line.materialType, vendorName]);
+  const select = (item: PurchasingCatalogSuggestion) => {
+    const orderUnit = getPurchaseOrderCatalogOrderUnit(line.materialType, item);
+    const suggestion = getApplicableCatalogPrice(
+      item,
+      details.quantityOrdered,
+      orderUnit,
+    );
+    onChange({
+      ...line,
+      details: {
+        ...details,
+        catalogSource: item.source,
+        catalogItemId: item.id,
+        vendorSkuSnapshot: item.vendorSku,
+        materialNameSnapshot: item.materialName,
+        chipSize: item.chipSize || "",
+        resinColor: item.resinColor || "",
+        componentType: item.componentType || "",
+        packageQuantity: item.packageQuantity || "",
+        packageMeasure: item.packageMeasure || "",
+        containerType: item.containerType || "",
+        orderUnit,
+        unitPrice: suggestion.price,
+        priceBasis: item.priceBasis || "",
+      },
+    });
+    setReference(item);
+    setPriceSuggestions([]);
+    setPriceHistoryState("idle");
+    setQuery("");
+    setResults([]);
+    setCatalogEditor(null);
+  };
+  const loadPrices = async () => {
+    setPriceHistoryState("loading");
+    try {
+      const suggestions = await getHistoricalPriceSuggestions(vendorName, details);
+      setPriceSuggestions(suggestions);
+      setPriceHistoryState(suggestions.length ? "idle" : "empty");
+    } catch {
+      setPriceSuggestions([]);
+      setPriceHistoryState("error");
+    }
+  };
+  const activeReference =
+    reference && samePurchasingVendor(reference.vendor, vendorName)
+      ? reference
+      : null;
+  const applicable = activeReference
+    ? getApplicableCatalogPrice(
+        activeReference,
+        details.quantityOrdered,
+        details.orderUnit,
+      )
+    : null;
+  const canMaintainReference =
+    Boolean(vendorId) &&
+    Boolean(activeReference);
+  const total = lineTotalCents(details.quantityOrdered, details.unitPrice);
+  const availableContainerSizes = [...new Set([
+    containerSize(details),
+    ...catalogContainerSizes,
+    ...results.map((item) => [item.packageQuantity, item.packageMeasure].filter(Boolean).join(" ")),
+  ].filter(Boolean))];
+  const partBSuggestion = line.materialType === "resin" ? suggestedPartBQuantity(allLines, index) : "";
+  const selectMaterialType = (materialType: Exclude<PurchaseOrderLineMaterialType, "">) => {
+    if (line.materialType === materialType) return;
+    const classifyingHistoricalLine = Boolean(line.id) && !line.materialType;
+    const resetDetails: PurchaseOrderLine["details"] = {
+      ...details,
+      catalogSource: "",
+      catalogItemId: "",
+      vendorSkuSnapshot: classifyingHistoricalLine ? details.vendorSkuSnapshot : "",
+      materialNameSnapshot: classifyingHistoricalLine ? details.materialNameSnapshot : "",
+      chipSize: classifyingHistoricalLine && materialType === "chip" ? details.chipSize : "",
+      resinColor: "",
+      componentType: "",
+      moistureCondition: classifyingHistoricalLine && materialType === "chip" ? details.moistureCondition : "",
+      unitPrice: classifyingHistoricalLine ? details.unitPrice : "",
+      priceBasis: classifyingHistoricalLine ? details.priceBasis : "",
+      orderUnit: materialType === "chip" ? "Bag" : details.orderUnit,
+    };
+    setReference(null);
+    setQuery("");
+    setResults([]);
+    onChange({
+      ...line,
+      materialType,
+      details: classifyingHistoricalLine
+        ? resetDetails
+        : applyPurchaseOrderMaterialDefaults(resetDetails, materialType, line.materialType),
+    });
+  };
+  return (
+    <section className="rounded-sm border border-slate-300 bg-white">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-3 py-2">
+        <div className="text-xs font-bold uppercase">{tr('Purchase Order Line', 'Partida de orden de compra')} {index + 1}</div>
+        <div className="flex gap-2">
+          <BusinessButton
+            type="button"
+            onClick={onDuplicate}
+            className="text-xs font-bold text-blue-700"
+          >
+            {tr('Duplicate', 'Duplicar')}
+          </BusinessButton>
+          <BusinessButton
+            type="button"
+            onClick={onRemove}
+            className="text-xs font-bold text-red-700"
+          >
+            {tr('Remove', 'Quitar')}
+          </BusinessButton>
+        </div>
+      </div>
+      <LineAllocations line={line} jobs={jobs} onChange={onChange}/>
+      <div className="m-3 border border-blue-200 bg-blue-50/60 p-3">
+        <div className="mb-3">
+          <div className={label}>{tr('Material Type', 'Tipo de material')}</div>
+          <div className="mt-1 inline-flex border border-slate-300 bg-white p-1">
+            {(['chip', 'resin', 'pigment', 'filler', 'other'] as const).map((materialType) => (
+              <button key={materialType} type="button" onClick={() => selectMaterialType(materialType)} className={`h-8 px-4 text-xs font-bold ${line.materialType === materialType ? 'bg-slate-900 text-white' : 'text-slate-700'}`}>
+                {materialType === 'chip' ? 'Chip / Aggregate' : materialType.replace(/^./, (letter) => letter.toUpperCase())}
+              </button>
+            ))}
+          </div>
+          {!line.materialType && <p className="mt-1 text-xs text-amber-700">Choose a material type before editing or searching this line.</p>}
+        </div>
+        <label className={label}>{tr('Search Catalog', 'Buscar en el catálogo')}</label>
+        <div className="relative mt-1">
+          <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            disabled={!line.materialType}
+            className="h-9 w-full border border-slate-300 bg-white pl-9 pr-3 text-sm"
+            placeholder={line.materialType === 'resin' ? 'Search Resin products, SKU, color, or component...' : line.materialType === 'chip' ? tr('Search Chip materials, SKU, vendor, or size...', 'Buscar materiales, SKU, proveedor o tamaño...') : 'Search matching Catalog products, SKU, or vendor...'}
+          />
+        </div>
+        <p className="mt-1 text-xs text-slate-500">
+          {tr('Search to populate this line from the catalog.', 'Busque para completar esta partida desde el catálogo.')}
+        </p>
+        {query.trim().length >= 2 && (searching || resultKey !== searchKey) && <div className="mt-2 text-xs">Searching…</div>}
+        {resultKey === searchKey && searchError && (
+          <div role="alert" className="mt-2 text-xs font-bold text-red-700">
+            {searchError}
+          </div>
+        )}
+        {containerError && <p role="alert" className="mt-2 text-xs text-red-700">Container options unavailable. {containerError} Manual entry remains available.</p>}
+        {query.trim().length >= 2 && resultKey === searchKey && !searching && !searchError && (
+          <div className="mt-2 overflow-hidden border border-slate-200 bg-white">
+            {results.length > 0 && <CatalogSearchResults key={`${query}:${vendorName}:${line.materialType}`} items={results} onSelect={select} />}
+            {results.length === 0 && (
+              <div className="p-3 text-xs text-slate-500">
+                No matching catalog items. You can continue with freeform
+                fields.
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => setCatalogEditor("create")}
+              className="w-full bg-slate-50 px-3 py-2 text-left text-xs font-bold text-blue-700"
+            >
+              + Create Vendor Catalog Item
+            </button>
+          </div>
+        )}
+      </div>
+      {catalogEditor && (
+        <CatalogItemEditor
+          vendors={vendors}
+          defaultVendorId={vendorId}
+          existing={
+            catalogEditor !== "create" && activeReference
+              ? activeReference
+              : undefined
+          }
+          suggestedMode={catalogEditor === "truckload" ? "truckload" : catalogEditor === "bulk" ? "bulk" : applicable?.mode}
+          proposedPrice={details.unitPrice}
+          materialType={line.materialType || 'chip'}
+          onCancel={() => setCatalogEditor(null)}
+          onSaved={select}
+        />
+      )}
+      <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-4">
+        <label className={label}>
+          {line.materialType === 'resin' ? tr('Product', 'Producto') : tr('Material', 'Material')}
+          <BusinessInput
+            value={details.materialNameSnapshot}
+            onChange={(e) => set("materialNameSnapshot", e.target.value)}
+            className={field}
+          />
+        </label>
+        <label className={label}>
+          {tr('Vendor SKU', 'SKU del proveedor')}
+          <BusinessInput
+            value={details.vendorSkuSnapshot}
+            onChange={(e) => set("vendorSkuSnapshot", e.target.value)}
+            className={field}
+          />
+        </label>
+        {line.materialType === 'chip' && <label className={label}>
+          {tr('Size', 'Tamaño')}<BusinessInput value={details.chipSize} onChange={(e) => set("chipSize", e.target.value)} className={field} />
+        </label>}
+        {line.materialType === 'chip' && <label className={label}>
+          {tr('Moisture', 'Condición de humedad')}
+          <BusinessSelect
+            value={details.moistureCondition}
+            onChange={(e) => set("moistureCondition", e.target.value)}
+            className={field}
+          >
+            <option value="">{tr('Not specified', 'Sin especificar')}</option>
+            <option value="dry">{tr('Dry', 'Seco')}</option>
+            <option value="damp">{tr('Damp', 'Húmedo')}</option>
+            <option value="wet">{tr('Wet', 'Mojado')}</option>
+          </BusinessSelect>
+        </label>}
+        {line.materialType === 'resin' && <label className={label}>Resin Color<BusinessInput value={details.resinColor} onChange={(e) => set('resinColor', e.target.value)} className={field} /></label>}
+        {line.materialType === 'resin' && <label className={label}>Component Type<BusinessInput value={details.componentType} onChange={(e) => set('componentType', e.target.value)} placeholder="Part A, Part B, or Hardener" className={field} /></label>}
+        <label className={label}>
+          {tr('Container Size', 'Tamaño del envase')}
+          <BusinessSelect
+            value={containerSize(details)}
+            onChange={(event) => {
+              const parsed = parseContainerSize(event.target.value);
+              onChange({ ...line, details: { ...details, ...parsed, catalogSource: "", catalogItemId: "" } });
+            }}
+            className={field}
+          >
+            <option value="">Select a Catalog package size</option>
+            {availableContainerSizes.map((size) => <option key={size.toLowerCase()} value={size}>{size}</option>)}
+          </BusinessSelect>
+        </label>
+        <label className={label}>
+          {tr('Container', 'Envase')}
+          <PurchasingChoiceWithCustom value={details.containerType} options={purchasingContainerTypes} onChange={(value) => set("containerType", value)} className={field} />
+        </label>
+        <label className={label}>
+          {tr('Quantity', 'Cantidad')}
+          <BusinessInput
+            inputMode="decimal"
+            value={details.quantityOrdered}
+            onChange={(e) => set("quantityOrdered", e.target.value)}
+            className={field}
+          />
+          {partBSuggestion && partBSuggestion !== details.quantityOrdered && <button type="button" onClick={() => set('quantityOrdered', partBSuggestion)} className="mt-1 text-left text-[11px] font-bold normal-case tracking-normal text-blue-700">Use 5:1 Part B suggestion: {partBSuggestion}</button>}
+        </label>
+        {line.materialType && line.materialType !== 'chip' && <label className={label}>
+          {tr('Quantity Unit', 'Unidad de cantidad')}
+          <PurchasingChoiceWithCustom value={details.orderUnit} options={purchasingQuantityUnits} onChange={(value) => set("orderUnit", value)} className={field} />
+        </label>}
+        <label className={label}>
+          {tr('Unit Cost', 'Costo unitario')}
+          <BusinessInput
+            inputMode="decimal"
+            value={details.unitPrice}
+            onChange={(e) => set("unitPrice", e.target.value)}
+            className={field}
+          />
+        </label>
+        <label className={label}>
+          {tr('Price Basis', 'Base del precio')}
+          <BusinessInput
+            value={details.priceBasis}
+            onChange={(e) => set("priceBasis", e.target.value)}
+            className={field}
+          />
+        </label>
+        <label className={label}>
+          {tr('Line Total', 'Total de partida')}
+          <input
+            readOnly
+            value={total === null ? "—" : `$${centsToMoney(total)}`}
+            className={`${field} bg-slate-50`}
+          />
+        </label>
+        <label className={`${label} sm:col-span-2`}>
+          {tr('Description', 'Descripción')}
+          <BusinessInput
+            value={details.notes}
+            onChange={(e) => set("notes", e.target.value)}
+            className={field}
+          />
+        </label>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 border-t border-slate-200 px-3 py-2 text-xs">
+        {reference?.quoteRequired && <p className="mx-3 text-xs font-semibold text-amber-700">Specialty · Quote required. Enter the vendor’s quoted price manually.</p>}
+        {activeReference && (
+          <>
+            <span>
+              {applicable?.mode === "truckload" ? "Truckload" : applicable?.mode === "bulk" ? "Bulk" : "Individual"} catalog
+              suggestion:{" "}
+              <b>
+                {applicable?.price
+                  ? `$${applicable.price}`
+                  : applicable?.mode === "individual"
+                    ? "No saved price"
+                    : "Call for pricing"}
+              </b>{" "}
+              {activeReference.priceBasis}
+            </span>
+            {applicable?.price && (
+              <button
+                type="button"
+                onClick={() => set("unitPrice", applicable.price)}
+                className="font-bold text-blue-700"
+              >
+                Use Price
+              </button>
+            )}
+            {canMaintainReference && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setCatalogEditor("update")}
+                  className="font-bold text-blue-700"
+                >
+                  {activeReference.source === "standard"
+                    ? "Save as Individual Catalog Price"
+                    : applicable?.mode === "truckload"
+                      ? "Update Truckload Pricing"
+                    : applicable?.mode === "bulk"
+                      ? "Update Bulk Pricing"
+                      : "Update Individual Catalog Price"}
+                </button>
+                {applicable?.mode !== "bulk" && !activeReference.bulkMinimumQuantity && (
+                  <BusinessButton
+                    type="button"
+                    onClick={() => setCatalogEditor("bulk")}
+                    className="font-bold text-blue-700"
+                  >
+                    Configure Bulk Pricing
+                  </BusinessButton>
+                )}
+                {applicable?.mode !== "truckload" && !activeReference.truckloadMinimumQuantity && (
+                  <BusinessButton
+                    type="button"
+                    onClick={() => setCatalogEditor("truckload")}
+                    className="font-bold text-blue-700"
+                  >
+                    Configure Truckload Pricing
+                  </BusinessButton>
+                )}
+              </>
+            )}
+          </>
+        )}
+        <button
+          type="button"
+          onClick={() => void loadPrices()}
+          className="font-bold text-blue-700"
+        >
+          {priceHistoryState === "loading" ? "Loading Historical Prices…" : "View Historical Prices"}
+        </button>
+        {priceHistoryState === "empty" && (
+          <span className="text-slate-500">No issued PO price history was found for this Vendor and material.</span>
+        )}
+        {priceHistoryState === "error" && (
+          <span role="alert" className="font-bold text-red-700">Historical prices could not be loaded. Try again.</span>
+        )}
+        {priceSuggestions.map((item, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => set("unitPrice", item.amount)}
+            className="border border-slate-300 px-2 py-1"
+          >
+            {item.label}: ${item.amount}
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function PurchaseOrderEditor({
+  initial,
+  onClose,
+  onSaved,
+  onPersisted,
+  onDeleted,
+  onIssued,
+}: {
+  initial: PurchaseOrderDraft;
+  onClose(): void;
+  onSaved(id: string): void;
+  onPersisted(): void;
+  onDeleted(id: string): void;
+  onIssued(id: string): void;
+}) {
+  const { tr } = useLanguage();
+  const [draft, setDraft] = useState(initial);
+  const [jobs, setJobs] = useState<ProductionJobOption[]>([]);
+  const [vendors, setVendors] = useState<VendorOption[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [issuing, setIssuing] = useState(false);
+  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<string[]>([]);
+  const [preview, setPreview] = useState(false);
+  const [pdfDocument, setPdfDocument] = useState<PurchaseOrderPdfDocument | null>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState("");
+  const [pendingReceivalProjection, setPendingReceivalProjection] =
+    useState<PurchaseOrderPendingReceivalProjection | null>(null);
+  const [pendingReceivalReviewOpen, setPendingReceivalReviewOpen] = useState(false);
+  const [pendingReceivalLoading, setPendingReceivalLoading] = useState(false);
+  const [pendingReceivalSaving, setPendingReceivalSaving] = useState(false);
+  const [vendorManagerOpen, setVendorManagerOpen] = useState(false);
+  const original = useRef(JSON.stringify(initial));
+  const issuanceInFlight = useRef(false);
+  const draftPreviewCache = useRef(new SessionPdfPreviewCache(3));
+  const dirty = JSON.stringify(draft) !== original.current;
+  useMobileNavigationGuard(dirty, saving || deleting || issuing || pendingReceivalSaving);
+  const readOnly = draft.status === "issued";
+  const refreshPdfDocument = async (issuanceId = draft.issuanceId) => {
+    if (!issuanceId) return null;
+    const document = await loadPurchaseOrderDocument(issuanceId);
+    setPdfDocument(document);
+    return document;
+  };
+  const refreshPendingReceivalProjection = async (issuanceId = draft.issuanceId) => {
+    if (!issuanceId) return null;
+    const projection = await loadPurchaseOrderPendingReceivalProjection(issuanceId);
+    setPendingReceivalProjection(projection);
+    return projection;
+  };
+  useEffect(() => {
+    if (!readOnly || !draft.issuanceId) return;
+    refreshPdfDocument().catch((error) => setErrors([
+      error instanceof Error ? error.message : "Unable to load permanent PDF status.",
+    ]));
+  // refresh only when the immutable issuance changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readOnly, draft.issuanceId]);
+  useEffect(() => {
+    if (!readOnly || !draft.issuanceId || pdfDocument?.status !== "generated") return;
+    refreshPendingReceivalProjection().catch((error) => setErrors([
+      error instanceof Error ? error.message : "Unable to load Pending Receival status.",
+    ]));
+  // refresh only after this immutable issuance has a generated document
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readOnly, draft.issuanceId, pdfDocument?.status]);
+  useEffect(() => {
+    Promise.all([
+      loadProductionJobOptions({ includeArchived: false }),
+      loadVendors(),
+    ])
+      .then(([jobRows, vendorRows]) => {
+        setJobs(jobRows);
+        setVendors(vendorRows);
+      })
+      .catch((error) =>
+        setErrors([
+          error instanceof Error
+            ? error.message
+            : "Unable to load editor options.",
+        ]),
+      );
+  }, []);
+  const totals = useMemo(
+    () =>
+      calculatePurchaseOrderTotals(
+        draft.lines.map((line) => ({
+          quantityOrdered: line.details.quantityOrdered,
+          unitPrice: line.details.unitPrice,
+        })),
+        draft.discountPercent,
+        draft.taxPercent,
+        draft.freight,
+      ),
+    [draft],
+  );
+  const setHeader = <K extends keyof PurchaseOrderDraft>(
+    key: K,
+    value: PurchaseOrderDraft[K],
+  ) => setDraft((current) => ({ ...current, [key]: value }));
+  const selectHeaderJob = (id: string) => {
+    const job = jobs.find((item) => item.id === id);
+    setDraft((current) => ({
+      ...current,
+      productionJobId: id,
+      jobNumberSnapshot: job?.job_number || "",
+      jobNameSnapshot: job?.name || "",
+      jobPoReferenceType: id ? current.jobPoReferenceType : "",
+      requestedDate:
+        current.requestedDate || job?.requested_delivery_date || "",
+      lines: current.lines.map((line) => ({
+        ...line,
+        details: {
+          ...line.details,
+          productionJobId: line.details.productionJobId || id,
+        },
+      })),
+    }));
+  };
+  const selectVendor = (name: string) => {
+    const option = vendors.find(
+      (item) => item.name.toLowerCase() === name.toLowerCase(),
+    );
+    setDraft((current) => {
+      const vendorChanged =
+        current.vendorNameSnapshot.trim().toLowerCase() !==
+        name.trim().toLowerCase();
+      return {
+        ...current,
+        vendorId: option?.id || "",
+        vendorNameSnapshot: name,
+        vendorAddressSnapshot:
+          option?.address || current.vendorAddressSnapshot,
+        vendorContactSnapshot: option?.contact || "",
+        paymentTermsSnapshot:
+          option?.paymentTerms || current.paymentTermsSnapshot,
+        lines: vendorChanged
+          ? current.lines.map((line) => ({
+              ...line,
+              details: {
+                ...line.details,
+                catalogSource: "",
+                catalogItemId: "",
+              },
+            }))
+          : current.lines,
+      };
+    });
+  };
+  const selectContact = (id: string) => {
+    const vendor = vendors.find((item) => item.id === draft.vendorId);
+    const contact = vendor?.contacts.find((item) => item.id === id);
+    if (contact)
+      setHeader(
+        "vendorContactSnapshot",
+        [contact.contactName, contact.role, contact.email, contact.phone]
+          .filter(Boolean)
+          .join(" · "),
+      );
+  };
+  const refreshVendorOptions = async () => {
+    try {
+      setVendors(await loadVendors());
+      setMessage(tr(
+        "Vendor and contact options updated.",
+        "Se actualizaron los proveedores y contactos.",
+      ));
+    } catch (error) {
+      setErrors([
+        error instanceof Error
+          ? error.message
+          : tr(
+              "Unable to refresh Vendor and contact options.",
+              "No se pudieron actualizar los proveedores y contactos.",
+            ),
+      ]);
+    }
+  };
+  const requestClose = () => {
+    if (dirty && !window.confirm("Discard unsaved Purchase Order changes?"))
+      return;
+    onClose();
+  };
+  const save = async () => {
+    if (readOnly) return;
+    const found = validatePurchaseOrderDraft(draft);
+    if (found.length) {
+      setErrors(found);
+      return;
+    }
+    setSaving(true);
+    setErrors([]);
+    try {
+      const id = await savePurchaseOrderDraft(draft);
+      onSaved(id);
+    } catch (error) {
+      setErrors([
+        error instanceof Error
+          ? error.message
+          : "Unable to save Purchase Order draft.",
+      ]);
+    } finally {
+      setSaving(false);
+    }
+  };
+  const remove = async () => {
+    if (!draft.id) return;
+    const identity = [
+      draft.poNumber && `PO ${draft.poNumber}`,
+      draft.vendorNameSnapshot,
+      draft.jobNameSnapshot,
+      draft.orderDate,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    if (
+      !window.confirm(
+        `Delete this saved draft?\n\n${identity}\n\nThis removes its draft lines and cannot be undone.`,
+      )
+    )
+      return;
+    setDeleting(true);
+    setErrors([]);
+    try {
+      await deletePurchaseOrderDraft(
+        draft.id,
+        draft.createdBy || draft.updatedBy || "AI",
+      );
+      onDeleted(draft.id);
+    } catch (error) {
+      setErrors([
+        error instanceof Error
+          ? error.message
+          : "Unable to delete Purchase Order draft.",
+      ]);
+      setDeleting(false);
+    }
+  };
+  const purgeIssuedTest = async () => {
+    if (!draft.id || !draft.poNumber) return;
+    const required = `DELETE ${draft.poNumber}`;
+    const confirmation = window.prompt(
+      `Permanently delete issued test PO ${draft.poNumber}?\n\nThis also removes its cancelled Pending Receivals and generated PDF. Received material or active receivals will block deletion.\n\nType ${required} to continue.`,
+    );
+    if (confirmation !== required) return;
+    setDeleting(true);
+    setErrors([]);
+    try {
+      await purgeTestPurchaseOrder(draft.id, draft.poNumber, confirmation);
+      onDeleted(draft.id);
+    } catch (error) {
+      setErrors([error instanceof Error ? error.message : "Unable to delete issued test Purchase Order."]);
+      setDeleting(false);
+    }
+  };
+  const generatePdf = async (issuanceId = draft.issuanceId) => {
+    if (!issuanceId || pdfLoading) return false;
+    setPdfLoading(true);
+    setPdfDocument((current) => current ? {
+      ...current,
+      status:"generating",
+      generationStartedAt:new Date().toISOString(),
+      lastError:"",
+    } : current);
+    setErrors([]);
+    try {
+      await generatePurchaseOrderPdf(issuanceId, draft.createdBy || draft.issuedBy || "AI");
+      await refreshPdfDocument(issuanceId);
+      setMessage("Permanent Purchase Order PDF generated from the immutable issuance snapshot.");
+      return true;
+    } catch (error) {
+      await refreshPdfDocument(issuanceId).catch(() => null);
+      setErrors([
+        `The Purchase Order remains Issued, but its permanent PDF could not be generated: ${
+          error instanceof Error ? error.message : "Unknown PDF generation error."
+        }`,
+      ]);
+      return false;
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+  const openGeneratedPdf = async () => {
+    if (!draft.issuanceId || pdfLoading) return;
+    setPdfLoading(true);
+    setErrors([]);
+    try {
+      setPdfUrl(await getPurchaseOrderPdfPreviewUrl(draft.issuanceId));
+      setPreview(true);
+    } catch (error) {
+      setErrors([error instanceof Error ? error.message : "Unable to open the permanent PDF."]);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+  const openDraftPdf = async () => {
+    if (pdfLoading) return;
+    const found = validatePurchaseOrderDraft(draft);
+    if (found.length) {
+      setErrors(found);
+      return;
+    }
+    const cached = draftPreviewCache.current.get(pdfPreviewInputKey(purchaseOrderDraftPdfInput(draft)));
+    if (cached) {
+      if (pdfUrl.startsWith("blob:")) URL.revokeObjectURL(pdfUrl);
+      setPdfUrl(URL.createObjectURL(cached));
+      setPreview(true);
+      setMessage("Opened the unchanged saved Draft preview.");
+      return;
+    }
+    setPdfLoading(true);
+    setErrors([]);
+    setMessage("");
+    let savedDraft: PurchaseOrderDraft;
+    try {
+      const id = await savePurchaseOrderDraft(draft);
+      const saved = await loadPurchaseOrder(id);
+      savedDraft = { ...draft, ...saved, id:saved.id, poNumber:saved.poNumber || "", status:"draft" };
+      setDraft(savedDraft);
+      original.current = JSON.stringify(savedDraft);
+      onPersisted();
+    } catch (error) {
+      setErrors([`The Purchase Order Draft was not saved, so no PDF preview was generated: ${error instanceof Error ? error.message : "Unknown save error."}`]);
+      setPdfLoading(false);
+      return;
+    }
+    try {
+      const blob = await generatePurchaseOrderDraftPdf(savedDraft);
+      draftPreviewCache.current.set(pdfPreviewInputKey(purchaseOrderDraftPdfInput(savedDraft)), blob);
+      if (pdfUrl.startsWith("blob:")) URL.revokeObjectURL(pdfUrl);
+      setPdfUrl(URL.createObjectURL(blob));
+      setPreview(true);
+      setMessage("Purchase Order Draft saved before previewing.");
+    } catch (error) {
+      setErrors([`The Purchase Order Draft was saved and is available in the PO library, but its PDF preview could not be generated: ${error instanceof Error ? error.message : "Unknown PDF generation error."} You can retry Preview Draft PDF.`]);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+  const openPendingReceivalReview = async () => {
+    if (!draft.issuanceId || pendingReceivalLoading) return;
+    setPendingReceivalLoading(true);
+    setErrors([]);
+    try {
+      await refreshPendingReceivalProjection(draft.issuanceId);
+      setPendingReceivalReviewOpen(true);
+    } catch (error) {
+      setErrors([error instanceof Error ? error.message : "Unable to prepare Pending Receivals."]);
+    } finally {
+      setPendingReceivalLoading(false);
+    }
+  };
+  const createPendingReceivals = async (lines: PendingReceivalProposalLine[]) => {
+    if (!draft.issuanceId || pendingReceivalSaving) return;
+    setPendingReceivalSaving(true);
+    setErrors([]);
+    setMessage("");
+    try {
+      const results = await createPendingReceivalsFromPurchaseOrder(
+        draft.issuanceId,
+        lines,
+        draft.createdBy || draft.issuedBy || "AI",
+      );
+      const createdCount = results.filter(result => result.creationStatus === "created").length;
+      await refreshPendingReceivalProjection(draft.issuanceId);
+      setPendingReceivalReviewOpen(false);
+      setMessage(
+        createdCount > 0
+          ? `${createdCount} Pending Receival${createdCount === 1 ? "" : "s"} created from PO ${draft.poNumber}.`
+          : "These Purchase Order lines already have Pending Receivals.",
+      );
+    } catch (error) {
+      setErrors([error instanceof Error ? error.message : "Unable to create Pending Receivals. No rows were created."]);
+    } finally {
+      setPendingReceivalSaving(false);
+    }
+  };
+  const issue = async () => {
+    if (!draft.id || readOnly || issuanceInFlight.current) return;
+    if (dirty) {
+      setErrors(["Save your latest changes before issuing this Purchase Order."]);
+      return;
+    }
+    if (!draft.poNumber.trim()) {
+      setErrors(["Enter and save a unique Purchase Order number before issuing."]);
+      return;
+    }
+    if (!draft.vendorId) {
+      setErrors(["Select a configured Vendor before issuing."]);
+      return;
+    }
+    if (!draft.createdBy.trim()) {
+      setErrors(["PO Originated By is required before issuing."]);
+      return;
+    }
+    if (
+      !window.confirm(
+        "Issue this Purchase Order?\n\nThis will freeze the current PO as an issued record. Editing issued Purchase Orders is not supported yet.",
+      )
+    )
+      return;
+    issuanceInFlight.current = true;
+    setIssuing(true);
+    setErrors([]);
+    setMessage("");
+    try {
+      const result = await issuePurchaseOrder(
+        draft.id,
+        draft.createdBy,
+        draft.updatedAt,
+      );
+      const next = {
+        ...draft,
+        status: "issued" as const,
+        issuedAt: result.issuedAt,
+        issuedBy: result.issuedBy,
+        issuanceId: result.issuanceId,
+        snapshotHash: result.snapshotHash,
+      };
+      setDraft(next);
+      original.current = JSON.stringify(next);
+      setPdfDocument({
+        id:"", issuanceId:result.issuanceId, status:"pending", snapshotHash:result.snapshotHash,
+        storageBucket:"purchase-order-documents", storagePath:"", documentVersion:"po-pdf-v2",
+        templateName:draft.documentTemplate || "tenops", templateVersion:1,
+        generationStartedAt:"", generatedAt:"", failedAt:"", lastError:"", attemptCount:0,
+      });
+      setMessage("Purchase Order issued successfully. Generating its permanent PDF…");
+      onIssued(draft.id);
+      await generatePdf(result.issuanceId);
+    } catch (error) {
+      const detail =
+        error instanceof Error
+          ? error.message
+          : typeof error === "object" &&
+              error !== null &&
+              "message" in error &&
+              typeof error.message === "string"
+            ? error.message
+            : "Unable to issue Purchase Order.";
+      setErrors([
+        /changed since|stale|updated/i.test(detail)
+          ? "This draft changed after you opened it. Reload and review the latest changes before issuing."
+          : detail,
+      ]);
+    } finally {
+      issuanceInFlight.current = false;
+      setIssuing(false);
+    }
+  };
+  const pendingReceivalCreatedCount =
+    pendingReceivalProjection?.lines.filter(line => line.alreadyCreated).length ?? 0;
+  const pendingReceivalRemainingCount =
+    pendingReceivalProjection?.lines.filter(line => line.eligible && !line.alreadyCreated).length ?? 0;
+  const provisionalPoPrefix = draft.productionJobId
+    ? `${draft.jobNumberSnapshot.replace(/\D/g, "").slice(-4)}-`
+    : "9999-";
+  const displayedPoNumber = draft.poNumber || provisionalPoPrefix;
+  return (
+    <div data-shell-below-header className="fixed inset-x-0 bottom-0 z-[90] overflow-y-auto bg-slate-950/40 p-2">
+      <div className="mx-auto min-h-full max-w-[1500px] bg-[#eef1f4] shadow-2xl">
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-300 bg-white p-4">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">
+              Purchase Order · {readOnly ? "Issued" : "Draft"}
+            </div>
+            <h2 className="text-xl font-bold">
+              {draft.id ? tr("Edit Purchase Order", "Editar orden de compra") : tr("New Purchase Order", "Nueva orden de compra")}
+            </h2>
+            <div className="mt-1 text-sm text-slate-600">
+              <b>{displayedPoNumber}</b>
+              {!draft.poNumber && <span className="ml-2">{tr('Final suffix assigned on first save', 'El sufijo final se asigna al guardar por primera vez')}</span>}
+            </div>
+          </div>
+          <div className="flex flex-wrap items-end gap-2">
+            {!readOnly && <fieldset disabled={pdfLoading || saving || issuing} className="min-w-0">
+              <legend className="mb-1 text-xs font-bold text-slate-600">{tr('PDF Text Size', 'Tamaño de texto PDF')}</legend>
+              <div className="flex" role="group" aria-label="PDF Text Size">
+                {(['compact', 'standard', 'large'] as const).map(size => <BusinessButton
+                  key={size} type="button" aria-pressed={(draft.pdfTextSize || 'standard') === size}
+                  onClick={() => setHeader('pdfTextSize', size)}
+                  className={`min-h-11 border px-3 text-sm font-bold disabled:opacity-50 ${(draft.pdfTextSize || 'standard') === size ? 'border-blue-700 bg-blue-700 text-white' : 'border-slate-300 bg-white text-slate-700'}`}
+                >{size === 'compact' ? tr('Compact', 'Compacto') : size === 'large' ? tr('Large', 'Grande') : tr('Standard', 'Estándar')}</BusinessButton>)}
+              </div>
+            </fieldset>}
+            <button
+              type="button"
+              onClick={() => readOnly ? void openGeneratedPdf() : void openDraftPdf()}
+              disabled={pdfLoading || (readOnly && pdfDocument?.status !== "generated")}
+              className="h-9 border border-blue-700 bg-white px-3 text-sm font-bold text-blue-800"
+            >
+              {readOnly ? tr("View Issued PDF", "Ver PDF emitido") : tr("Preview Draft PDF", "Vista previa del borrador")}
+            </button>
+            <button
+              type="button"
+              onClick={requestClose}
+              className="h-9 border border-slate-400 bg-white px-3 text-sm font-bold"
+            >
+              {tr('Close', 'Cerrar')}
+            </button>
+          </div>
+        </header>
+        {errors.length > 0 && (
+          <div
+            role="alert"
+            className="border-b border-red-300 bg-red-50 p-3 text-sm text-red-800"
+          >
+            {errors.map((error) => (
+              <div key={error}>{error}</div>
+            ))}
+          </div>
+        )}
+        {message && (
+          <div role="status" className="border-b border-emerald-300 bg-emerald-50 p-3 text-sm font-bold text-emerald-800">
+            {message}
+          </div>
+        )}
+        <div className="grid gap-4 p-3 lg:grid-cols-[1fr_320px]">
+          <main className="space-y-3">
+            <fieldset disabled={readOnly} className="space-y-3 disabled:opacity-80">
+            <section className="grid gap-3 rounded-sm border border-slate-300 bg-white p-3 md:grid-cols-[260px_1fr]">
+              <label className={label}>
+                {tr('Document Template', 'Plantilla del documento')}
+                <BusinessSelect
+                  value={draft.documentTemplate || "tenops"}
+                  onChange={(event) => setHeader("documentTemplate", event.target.value as PurchaseOrderDraft["documentTemplate"])}
+                  className={field}
+                >
+                  <option value="tenops">TenOps</option>
+                  <option value="classic">Legacy (Classic)</option>
+                </BusinessSelect>
+              </label>
+              <div className="self-end pb-2 text-sm text-slate-600">
+                {draft.documentTemplate === "classic"
+                  ? "Legacy (Classic) — Based on the original company Purchase Order."
+                  : "TenOps — Current streamlined TenOps layout."}
+              </div>
+            </section>
+            <section className="grid gap-3 rounded-sm border border-slate-300 bg-white p-3 md:grid-cols-4">
+              <div className="md:col-span-2">
+                <label className={label}>
+                  {tr('Job Reference / Link Production Job', 'Referencia / Vincular trabajo de Producción')}
+                </label>
+                <BusinessSelect
+                  value={draft.productionJobId}
+                  onChange={(e) => selectHeaderJob(e.target.value)}
+                  className={field}
+                >
+                  <option value="">{tr('General / multiple jobs', 'General / varios trabajos')}</option>
+                  {jobs.map((job) => (
+                    <option key={job.id} value={job.id}>
+                      {formatProductionJobOptionWithStatus(job)}
+                    </option>
+                  ))}
+                </BusinessSelect>
+                {draft.productionJobId && (
+                  <JobTag
+                    className="mt-2"
+                    label={`${draft.jobNumberSnapshot ? `${draft.jobNumberSnapshot} — ` : ""}${draft.jobNameSnapshot || "Production Job"}`}
+                    onClick={() => openProductionJob(draft.productionJobId)}
+                  />
+                )}
+              </div>
+              <div>
+                <label className={label}>{tr('Job Number', 'Número de trabajo')}</label>
+                <input
+                  value={draft.jobNumberSnapshot}
+                  readOnly
+                  className={`${field} bg-slate-50`}
+                  placeholder={tr('From linked job', 'Del trabajo vinculado')}
+                />
+              </div>
+              <div>
+                <label className={label}>{tr('Purchase Order Number', 'Número de orden de compra')}</label>
+                <input
+                  value={displayedPoNumber}
+                  readOnly
+                  className={`${field} bg-slate-50`}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className={label}>{tr('Production PO Reference', 'Referencia de OC de Producción')}</label>
+                <BusinessSelect
+                  value={draft.jobPoReferenceType}
+                  onChange={(event) => setHeader("jobPoReferenceType", event.target.value as PurchaseOrderDraft["jobPoReferenceType"])}
+                  disabled={!draft.productionJobId}
+                  className={field}
+                >
+                  <option value="">Do not update a Job PO reference</option>
+                  <option value="resin">Resin PO</option>
+                  <option value="chip">Chip PO</option>
+                </BusinessSelect>
+                <p className="mt-1 text-xs text-slate-500">The selected Job reference is populated only after this PO is successfully issued.</p>
+              </div>
+              <div className="md:col-span-2 2xl:col-span-1">
+                <label className={label} htmlFor="purchase-order-vendor">
+                  {tr('Vendor', 'Proveedor')}
+                </label>
+                <PurchasingVendorNameInput
+                  id="purchase-order-vendor"
+                  value={draft.vendorNameSnapshot}
+                  vendors={vendors}
+                  onChange={selectVendor}
+                  className={field}
+                />
+                <BusinessButton
+                  type="button"
+                  onClick={() => setVendorManagerOpen(true)}
+                  className="mt-2 inline-flex min-h-8 w-full items-center justify-center border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold leading-tight text-blue-800 transition hover:border-blue-500 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                >
+                  <span className="inline-flex w-fit max-w-full items-center justify-center gap-2">
+                    <Settings2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span className="min-w-0 text-center">{tr("Manage Vendors & Contacts", "Administrar proveedores y contactos")}</span>
+                  </span>
+                </BusinessButton>
+              </div>
+              <div>
+                <label className={label}>{tr('PO Date', 'Fecha de OC')}</label>
+                <BusinessInput
+                  type="date"
+                  value={draft.orderDate}
+                  onChange={(e) => setHeader("orderDate", e.target.value)}
+                  className={field}
+                />
+              </div>
+              <div>
+                <label className={label}>{tr('Date Requested', 'Fecha solicitada')}</label>
+                <BusinessInput
+                  type="date"
+                  value={draft.requestedDate}
+                  onChange={(e) => setHeader("requestedDate", e.target.value)}
+                  className={field}
+                />
+              </div>
+              <div>
+                <label className={label}>{tr('PO Originated By', 'OC originada por')}</label>
+                <BusinessInput
+                  value={draft.createdBy}
+                  onChange={(e) => setHeader("createdBy", e.target.value)}
+                  className={field}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className={label}>{tr('Vendor Address', 'Dirección del proveedor')}</label>
+                <BusinessTextarea
+                  value={draft.vendorAddressSnapshot}
+                  onChange={(e) =>
+                    setHeader("vendorAddressSnapshot", e.target.value)
+                  }
+                  rows={3}
+                  className="mt-1 w-full border border-slate-300 p-2 text-sm"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className={label}>{tr('Vendor Contact', 'Contacto del proveedor')}</label>
+                {draft.vendorId && !draft.vendorContactSnapshot.trim() && (
+                  <BusinessSelect
+                    defaultValue=""
+                    onChange={(e) => selectContact(e.target.value)}
+                    className={field}
+                  >
+                    <option value="">Select configured contact…</option>
+                    {vendors
+                      .find((v) => v.id === draft.vendorId)
+                      ?.contacts.filter((c) => c.isActive)
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.contactName}
+                          {c.role ? ` — ${c.role}` : ""}
+                        </option>
+                      ))}
+                  </BusinessSelect>
+                )}
+                <BusinessInput
+                  value={draft.vendorContactSnapshot}
+                  onChange={(e) =>
+                    setHeader("vendorContactSnapshot", e.target.value)
+                  }
+                  className={field}
+                  placeholder="Editable contact snapshot"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className={label}>{tr('Ship To', 'Enviar a')}</label>
+                <BusinessTextarea
+                  value={draft.shipToSnapshot}
+                  onChange={(e) => setHeader("shipToSnapshot", e.target.value)}
+                  rows={2}
+                  className="mt-1 w-full border border-slate-300 p-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className={label}>{tr('Payment Terms', 'Condiciones de pago')}</label>
+                <BusinessInput
+                  value={draft.paymentTermsSnapshot}
+                  onChange={(e) =>
+                    setHeader("paymentTermsSnapshot", e.target.value)
+                  }
+                  className={field}
+                />
+              </div>
+              <div>
+                <label className={label}>{tr('Authorized By', 'Autorizado por')}</label>
+                <BusinessTextarea
+                  value={draft.authorizedBySnapshot}
+                  onChange={(e) =>
+                    setHeader("authorizedBySnapshot", e.target.value)
+                  }
+                  rows={2}
+                  className="mt-1 w-full border border-slate-300 p-2 text-sm"
+                />
+              </div>
+            </section>
+            {draft.lines.map((line, index) => (
+              <LineEditor
+                key={line.id || index}
+                line={line}
+                jobs={jobs}
+                index={index}
+                vendorName={draft.vendorNameSnapshot}
+                vendorId={draft.vendorId}
+                vendors={vendors}
+                allLines={draft.lines}
+                onChange={(next) =>
+                  setDraft((current) => ({
+                    ...current,
+                    lines: current.lines.map((candidate, i) =>
+                      i === index ? { ...next, allocations: next.materialType !== candidate.materialType || ['catalogItemId','catalogSource','vendorSkuSnapshot','materialNameSnapshot','chipSize','orderUnit','packageQuantity','packageMeasure'].some(key => next.details[key as keyof typeof next.details] !== candidate.details[key as keyof typeof candidate.details]) ? [] : next.allocations } : candidate,
+                    ),
+                  }))
+                }
+                onRemove={() =>
+                  setDraft((current) => ({
+                    ...current,
+                    lines: current.lines
+                      .filter((_, i) => i !== index)
+                      .map((item, i) => ({ ...item, lineNumber: i + 1 })),
+                  }))
+                }
+                onDuplicate={() =>
+                  setDraft((current) => ({
+                    ...current,
+                    lines: [
+                      ...current.lines.slice(0, index + 1),
+                      { ...line, id: undefined, details: { ...line.details } },
+                      ...current.lines.slice(index + 1),
+                    ].map((item, i) => ({ ...item, lineNumber: i + 1 })),
+                  }))
+                }
+              />
+            ))}
+            <BusinessButton
+              type="button"
+              onClick={() =>
+                setDraft((current) => ({
+                  ...current,
+                  lines: [
+                    ...current.lines,
+                    createPurchaseOrderMaterialLine('chip', current.lines.length + 1),
+                  ],
+                }))
+              }
+              className="h-9 border border-slate-400 bg-white px-4 text-sm font-bold"
+            >
+              + {tr('Add Chip Line', 'Agregar partida de chip')}
+            </BusinessButton>
+            {(['resin','pigment','filler','other'] as const).map((materialType) => (
+              <BusinessButton key={materialType} type="button" onClick={() => setDraft((current) => ({...current, lines:[...current.lines, createPurchaseOrderMaterialLine(materialType, current.lines.length + 1)]}))} className="ml-2 h-9 border border-slate-400 bg-white px-4 text-sm font-bold">
+                + Add {materialType.replace(/^./, (letter) => letter.toUpperCase())} Line
+              </BusinessButton>
+            ))}
+            </fieldset>
+          </main>
+          <aside className="space-y-3">
+            {readOnly && (
+              <section className="border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900">
+                <div className="font-bold">{tr('Issued Purchase Order', 'Orden de compra emitida')}</div>
+                <div className="mt-1">Issued by {draft.issuedBy || "recorded actor"}{draft.issuedAt ? ` on ${new Date(draft.issuedAt).toLocaleString()}` : ""}</div>
+                {draft.snapshotHash && <div className="mt-2 break-all font-mono text-[10px] text-emerald-800">Snapshot {draft.snapshotHash}</div>}
+              </section>
+            )}
+            <fieldset disabled={readOnly} className="space-y-3 disabled:opacity-80">
+            <section className="rounded-sm border border-slate-300 bg-white p-3">
+              <h3 className="text-sm font-bold">{tr('Purchase Order Summary', 'Resumen de la orden de compra')}</h3>
+              <dl className="mt-3 space-y-2 border-t border-slate-200 pt-3 text-sm">
+                <div className="flex justify-between">
+                  <dt>{tr('Subtotal', 'Subtotal')}</dt>
+                  <dd className="font-bold">
+                    ${centsToMoney(totals.subtotal)}
+                  </dd>
+                </div>
+                <label className={label}>
+                  {tr('Discount %', 'Descuento %')}
+                  <BusinessInput
+                    value={draft.discountPercent}
+                    onChange={(e) =>
+                      setHeader("discountPercent", e.target.value)
+                    }
+                    className={field}
+                  />
+                </label>
+                <label className={label}>
+                  {tr('Sales Tax %', 'Impuesto %')}
+                  <BusinessInput
+                    value={draft.taxPercent}
+                    onChange={(e) => setHeader("taxPercent", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <label className={label}>
+                  {tr('Freight', 'Flete')}
+                  <BusinessInput
+                    value={draft.freight}
+                    onChange={(e) => setHeader("freight", e.target.value)}
+                    className={field}
+                  />
+                </label>
+                <div className="flex justify-between border-t border-slate-300 pt-3 text-base font-bold">
+                  <dt>{tr('Total', 'Total')}</dt>
+                  <dd>
+                    {totals.total === null
+                      ? "Invalid"
+                      : `$${centsToMoney(totals.total)}`}
+                  </dd>
+                </div>
+              </dl>
+            </section>
+            <section className="rounded-sm border border-slate-300 bg-white p-3">
+              <label className={label}>
+                {tr('Additional Notes & Special Conditions', 'Notas adicionales y condiciones especiales')}
+                <BusinessTextarea
+                  value={draft.commercialNotes}
+                  onChange={(e) => setHeader("commercialNotes", e.target.value)}
+                  rows={4}
+                  className="mt-1 w-full border border-slate-300 p-2 text-sm"
+                />
+              </label>
+              <label className={`${label} mt-3 block`}>
+                Internal Notes · Not printed
+                <BusinessTextarea
+                  value={draft.internalNotes}
+                  onChange={(e) => setHeader("internalNotes", e.target.value)}
+                  rows={4}
+                  className="mt-1 w-full border border-slate-300 p-2 text-sm"
+                />
+              </label>
+            </section>
+            </fieldset>
+            {!readOnly && <BusinessButton
+              type="button"
+              onClick={() => void save()}
+              disabled={saving || deleting || issuing}
+              className="h-11 w-full bg-slate-900 px-4 text-sm font-bold text-white disabled:opacity-50"
+            >
+              {saving ? tr("Saving Draft…", "Guardando borrador…") : tr("Save Draft", "Guardar borrador")}
+            </BusinessButton>}
+            {draft.id && !readOnly && (
+              <BusinessButton
+                type="button"
+                onClick={() => void remove()}
+                disabled={saving || deleting || issuing}
+                className="h-10 w-full border border-red-400 bg-white px-4 text-sm font-bold text-red-700 disabled:opacity-50"
+              >
+                {deleting ? tr("Deleting Draft…", "Eliminando borrador…") : tr("Delete Saved Draft", "Eliminar borrador guardado")}
+              </BusinessButton>
+            )}
+            {draft.id && !readOnly && (
+              <BusinessButton
+                type="button"
+                onClick={() => void issue()}
+                disabled={saving || deleting || issuing || dirty}
+                className="h-11 w-full border border-blue-800 bg-blue-700 px-4 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                title={dirty ? "Save your latest changes before issuing." : undefined}
+              >
+                {issuing ? tr("Issuing Purchase Order…", "Emitiendo orden de compra…") : tr("Issue Purchase Order", "Emitir orden de compra")}
+              </BusinessButton>
+            )}
+            {readOnly && (
+              <section className="rounded-sm border border-slate-300 bg-white p-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-slate-600" />
+                  <div className="text-xs font-bold uppercase tracking-[0.08em] text-slate-700">
+                    {tr('Permanent PDF', 'PDF permanente')}
+                  </div>
+                  <span className={`ml-auto border px-2 py-1 text-[10px] font-bold uppercase ${
+                    pdfDocument?.status === "generated"
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                      : pdfDocument?.status === "failed"
+                        ? "border-red-300 bg-red-50 text-red-800"
+                        : "border-amber-300 bg-amber-50 text-amber-800"
+                  }`}>
+                    {pdfDocument?.status || "Pending"}
+                  </span>
+                </div>
+                {pdfDocument?.generatedAt && (
+                  <div className="mt-2 text-xs text-slate-500">
+                    Generated {new Date(pdfDocument.generatedAt).toLocaleString()}
+                  </div>
+                )}
+                {pdfDocument?.lastError && (
+                  <div role="alert" className="mt-2 text-xs font-bold text-red-700">
+                    {pdfDocument.lastError}
+                  </div>
+                )}
+                <div className="mt-3 flex gap-2">
+                  {pdfDocument?.status === "generated" ? (
+                    <button type="button" disabled={pdfLoading} onClick={() => void openGeneratedPdf()} className="inline-flex h-9 flex-1 items-center justify-center gap-2 border border-blue-700 bg-blue-700 px-3 text-xs font-bold text-white disabled:opacity-50">
+                      <Download className="h-4 w-4" />Open / Download
+                    </button>
+                  ) : (
+                    <BusinessButton type="button" disabled={pdfLoading} onClick={() => void generatePdf()} className="inline-flex h-9 flex-1 items-center justify-center gap-2 border border-blue-700 bg-blue-700 px-3 text-xs font-bold text-white disabled:opacity-50">
+                      <RefreshCw className={`h-4 w-4 ${pdfLoading ? "animate-spin" : ""}`} />
+                      {pdfDocument?.status === "failed" ? "Retry PDF Generation" : "Generate PDF"}
+                    </BusinessButton>
+                  )}
+                </div>
+              </section>
+            )}
+            {readOnly && pdfDocument?.status === "generated" && (
+              <section className="rounded-sm border border-slate-300 bg-white p-3">
+                <div className="text-xs font-bold uppercase tracking-[0.08em] text-slate-700">
+                  Pending Receivals
+                </div>
+                <div className="mt-2 text-xs text-slate-600">
+                  {pendingReceivalProjection
+                    ? pendingReceivalRemainingCount > 0
+                      ? `${pendingReceivalRemainingCount} eligible line${pendingReceivalRemainingCount === 1 ? "" : "s"} remaining.`
+                      : pendingReceivalCreatedCount > 0
+                        ? "Pending Receivals have been created for every eligible line."
+                        : "This PO has no eligible material lines."
+                    : "Checking Purchase Order lines…"}
+                </div>
+                <div className="mt-3 grid gap-2">
+                  {(pendingReceivalRemainingCount > 0 || !pendingReceivalProjection) && (
+                    <BusinessButton
+                      type="button"
+                      disabled={pendingReceivalLoading}
+                      onClick={() => void openPendingReceivalReview()}
+                      className="h-9 border border-blue-800 bg-blue-700 px-3 text-xs font-bold text-white disabled:opacity-50"
+                    >
+                      {pendingReceivalLoading
+                        ? "Loading…"
+                        : pendingReceivalCreatedCount > 0
+                          ? "Create Remaining Lines"
+                          : "Create Pending Receivals"}
+                    </BusinessButton>
+                  )}
+                  {pendingReceivalCreatedCount > 0 && (
+                    <a
+                      href="/inventory#pending-receivals"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-9 items-center justify-center border border-slate-400 bg-white px-3 text-xs font-bold text-slate-800"
+                    >
+                      View Pending Receivals
+                    </a>
+                  )}
+                </div>
+              </section>
+            )}
+            {readOnly && draft.id && (
+              <BusinessButton
+                type="button"
+                onClick={() => void purgeIssuedTest()}
+                disabled={deleting}
+                className="h-10 w-full border border-red-500 bg-white px-4 text-sm font-bold text-red-700 disabled:opacity-50"
+              >
+                {deleting ? "Deleting Test PO…" : "Delete Issued Test PO"}
+              </BusinessButton>
+            )}
+            <p className="text-xs text-slate-500">
+              {readOnly
+                ? "This issued record, its PDF source snapshot, and its PO-to-receival provenance are immutable."
+                : "Saving does not issue a PO, create a PDF, or create Pending Receivals."}
+            </p>
+          </aside>
+        </div>
+      </div>
+      {preview && (
+        <DocumentViewer
+          title={readOnly ? "Issued Purchase Order" : "Purchase Order Preview"}
+          filename={`${draft.poNumber || "UNNUMBERED"}-${readOnly ? "ISSUED" : "DRAFT"}.pdf`}
+          metadata={readOnly ? "Immutable issued Purchase Order" : "Current editor values · not issued"}
+          url={pdfUrl}
+          mimeType="application/pdf"
+          onClose={() => {
+            if (!readOnly && pdfUrl.startsWith("blob:")) URL.revokeObjectURL(pdfUrl);
+            setPreview(false);
+            setPdfUrl("");
+          }}
+        />
+      )}
+      {pendingReceivalReviewOpen && pendingReceivalProjection && (
+        <PendingReceivalsReviewDialog
+          initial={pendingReceivalProjection}
+          saving={pendingReceivalSaving}
+          onClose={() => setPendingReceivalReviewOpen(false)}
+          onCreate={createPendingReceivals}
+        />
+      )}
+      {vendorManagerOpen && (
+        <VendorManager
+          onClose={() => setVendorManagerOpen(false)}
+          onChanged={() => void refreshVendorOptions()}
+        />
+      )}
+    </div>
+  );
+}

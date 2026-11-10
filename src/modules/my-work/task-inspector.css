@@ -1,0 +1,23 @@
+/* Preserve the existing right-side/full-phone task panel in a focus-managed modal. */
+dialog.my-work-task-inspector {
+  position: fixed;
+  inset: var(--tenops-shell-header-height, 0px) 0 0 auto;
+  margin: 0;
+  width: 100%;
+  max-width: 36rem;
+  height: calc(100dvh - var(--tenops-shell-header-height, 0px));
+  max-height: calc(100dvh - var(--tenops-shell-header-height, 0px));
+  overflow: hidden;
+  border-width: 0 0 0 1px;
+  background: var(--surface-primary);
+  color: var(--text-primary);
+}
+
+dialog.my-work-task-inspector {
+  border-color: var(--border-default);
+  box-shadow: -12px 0 30px rgb(15 23 42 / 18%);
+}
+dialog.my-work-task-inspector::backdrop {
+  background: rgb(2 6 23 / 35%);
+  backdrop-filter: none;
+}

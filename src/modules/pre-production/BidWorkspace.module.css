@@ -1,0 +1,19 @@
+/* Scoped destructive controls: use TenOps semantic colors in both themes. */
+.cleanup {
+  border-top: 1px solid var(--semantic-error-border, #b91c1c);
+  padding-top: 1rem;
+}
+.cleanupHeading { color: var(--semantic-error-foreground, #991b1b); }
+.destructive {
+  color: var(--semantic-error-foreground, #991b1b);
+  border-color: var(--semantic-error-border, #b91c1c);
+  background: var(--surface-primary);
+}
+.destructive:hover:not(:disabled), .destructive:active:not(:disabled) {
+  background: var(--semantic-error-surface, #fef2f2);
+}
+.destructive:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+.destructive:disabled { cursor: not-allowed; }

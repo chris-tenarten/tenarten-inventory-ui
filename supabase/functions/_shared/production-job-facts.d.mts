@@ -1,0 +1,17 @@
+export const ACTIVE_PRODUCTION_STATUSES: readonly string[];
+export const TERMINAL_PRODUCTION_STATUSES: readonly string[];
+export const PRODUCTION_REWORK_TERMINAL_STATUSES: readonly ['complete', 'cancelled'];
+export const ADMIN_ONLY_PRODUCTION_FIXTURE_ID: string;
+export type PlanningIssueField = 'job_number' | 'customer' | 'requested_delivery_date' | 'estimated_man_hours' | 'planned_start' | 'planned_end';
+export type PlanningInput = { job_number: string | null; customer: string | null; requested_delivery_date: string | null; estimated_man_hours: number | null; planned_start: string | null; planned_end: string | null };
+export type JobReadiness = { state: 'ready' | 'needs_planning' | 'not_scheduled'; label: string; guidance: string; missing: string[]; missingFields: PlanningIssueField[] };
+export const schedulingIssueFields: PlanningIssueField[];
+export const planningIssueLabels: Record<PlanningIssueField, string>;
+export function getJobPlanningIssues(job: PlanningInput): PlanningIssueField[];
+export function getJobSchedulingIssues(job: PlanningInput): PlanningIssueField[];
+export function getJobNonblockingPlanningIssues(job: PlanningInput): PlanningIssueField[];
+export function getJobReadiness(job: PlanningInput): JobReadiness;
+export function schedulingAttentionLabel(count: number): string;
+export function isActiveProductionRework(cycle: { production_status: string }): boolean;
+type Lifecycle = { id: string; production_status: string; planned_start: string | null; planned_end: string | null; updated_at?: string };
+export function applyProductionLifecycle<T extends Lifecycle, C extends Lifecycle>(job: T, cycle: C | null): T & { lifecycle_key: `original:${string}` | `rework:${string}`; rework_cycle: C | null; original_production_status?: T['production_status']; original_planned_start?: string | null; original_planned_end?: string | null; original_updated_at?: string };
