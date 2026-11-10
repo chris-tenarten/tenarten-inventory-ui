@@ -1,0 +1,103 @@
+/* Modern Operations Release 1: presentation only, enabled by the existing TenDev flag.
+   Preserve dimensions, density/display-size preferences, operational status colors,
+   document canvases, branding, and all component interaction/authorization rules. */
+html[data-visual-foundation="modern-operations"] {
+  --background: #f2f5f9;
+  --foreground: #18263b;
+  --surface-page: #f2f5f9;
+  --surface-primary: #ffffff;
+  --surface-secondary: #f8fafc;
+  --surface-raised: #ffffff;
+  --surface-input: #ffffff;
+  --text-primary: #18263b;
+  --text-secondary: #59697d;
+  --text-muted: #59697d;
+  --border-default: #dce3eb;
+  --border-strong: #b7c3d1;
+  --interactive-hover: #edf3ff;
+  --interactive-selected: #edf3ff;
+  --surface-selected: #2359bb;
+  --surface-selected-hover: #1f4da2;
+  --semantic-info-foreground: #2359bb;
+  --foundation-focus: #2359bb;
+  --foundation-control-shadow: 0 1px 2px rgb(24 38 59 / 0.08);
+}
+
+html[data-visual-foundation="modern-operations"][data-appearance="dark"] {
+  --background: #111923;
+  --foreground: #e3ebf6;
+  --surface-page: #111923;
+  --surface-primary: #1b2634;
+  --surface-secondary: #202e3e;
+  --surface-raised: #293849;
+  --surface-input: #1b2634;
+  --text-primary: #e3ebf6;
+  --text-secondary: #a8b8cc;
+  --text-muted: #a8b8cc;
+  --border-default: #344459;
+  --border-strong: #5b6e87;
+  --interactive-hover: #293849;
+  --interactive-selected: #293f60;
+  /* The shared selected primitive has white ink; retain a contrasting dark fill. */
+  --surface-selected: #243b63;
+  --surface-selected-hover: #2d4a78;
+  --semantic-info-foreground: #91b9ff;
+  --foundation-focus: #91b9ff;
+  --foundation-control-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+}
+
+/* Workspace typography inherits into existing controls. Header/wordmark and
+   stencil typography remain source-owned; numeric/monospace utilities still win. */
+html[data-visual-foundation="modern-operations"] [data-app-shell] > main {
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+/* Literal neutral utilities use the existing semantic palette in Light as well
+   as Dark. Production status tokens and printed document colors are independent. */
+html[data-visual-foundation="modern-operations"]:not([data-appearance="dark"]) [data-app-shell] > main :where(.bg-slate-50, .bg-slate-100):not(:where(.document-print-root, .document-print-root *, [class*="production-status-"])) {
+  background-color: var(--surface-secondary);
+}
+
+html[data-visual-foundation="modern-operations"]:not([data-appearance="dark"]) [data-app-shell] > main :where(.text-slate-950, .text-slate-900, .text-slate-800):not(:where(.document-print-root, .document-print-root *, [class*="production-status-"])) {
+  color: var(--text-primary);
+}
+
+html[data-visual-foundation="modern-operations"]:not([data-appearance="dark"]) [data-app-shell] > main :where(.text-slate-600, .text-slate-500):not(:where(.document-print-root, .document-print-root *, [class*="production-status-"])) {
+  color: var(--text-secondary);
+}
+
+html[data-visual-foundation="modern-operations"]:not([data-appearance="dark"]) [data-app-shell] > main :where(.border-slate-200, .border-slate-300):not(:where(.document-print-root, .document-print-root *, [class*="production-status-"])) {
+  border-color: var(--border-default);
+}
+
+/* Paint-only treatment: no padding, radius or height overrides on shared
+   controls, connected segments, calendar bars, row hitboxes or dense editors. */
+html[data-visual-foundation="modern-operations"] [data-app-shell] > main .tenops-selected-surface {
+  box-shadow: var(--foundation-control-shadow);
+}
+
+html[data-visual-foundation="modern-operations"] [data-app-shell] > main :where(input, textarea)::placeholder {
+  color: var(--text-muted);
+}
+
+html[data-visual-foundation="modern-operations"] [data-app-shell] > main :where(button, a[href], input, select, textarea):focus-visible {
+  outline: 2px solid var(--foundation-focus);
+  outline-offset: 2px;
+}
+
+html[data-visual-foundation="modern-operations"] [data-app-shell] > main :where(button, input, select, textarea):disabled {
+  opacity: 0.55;
+}
+
+/* PDFs and document previews retain the accepted body font and paper colors. */
+html[data-visual-foundation="modern-operations"] .document-print-root {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@media (forced-colors: active) {
+  html[data-visual-foundation="modern-operations"] [data-app-shell] > main :where(button, a[href], input, select, textarea):focus-visible {
+    outline-color: Highlight;
+  }
+}

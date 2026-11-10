@@ -62,6 +62,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-display-size="default"
+      data-visual-foundation={BRANDING.showDeveloperArtwork ? "modern-operations" : undefined}
       data-appearance={defaultAppearance}
       suppressHydrationWarning
     >
